@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>demo.js - JSDoc Documentation</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family: Arial, sans-serif;
+        background: #f9f9f9;
+        color: #333;
+        line-height: 1.5;
+      }
+      header {
+        background: #2c3e50;
+        color: white;
+        padding: 20px;
+        text-align: center;
+      }
+      header h1 {
+        font-size: 1.8em;
+        margin: 0;
+      }
+      .container {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+      .nav {
+        background: white;
+        padding: 15px;
+        margin-bottom: 20px;
+        border-bottom: 2px solid #ddd;
+      }
+      .nav h3 {
+        margin: 0 0 10px 0;
+        font-size: 0.95em;
+        color: #2c3e50;
+      }
+      .nav-links {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+      .nav-links a {
+        padding: 6px 12px;
+        background: #3498db;
+        color: white;
+        text-decoration: none;
+        border-radius: 3px;
+        font-size: 0.85em;
+      }
+      .nav-links a:hover {
+        background: #2980b9;
+      }
+      .function-card {
+        background: white;
+        padding: 20px;
+        margin-bottom: 20px;
+        border-left: 3px solid #3498db;
+      }
+      .function-name {
+        font-family: monospace;
+        font-size: 1.1em;
+        font-weight: bold;
+        color: #2c3e50;
+      }
+      .category {
+        font-size: 0.8em;
+        color: #7f8c8d;
+        margin-left: 10px;
+      }
+      .description {
+        color: #555;
+        margin: 10px 0;
+      }
+      .section-title {
+        font-weight: bold;
+        margin-top: 12px;
+        margin-bottom: 6px;
+        font-size: 0.9em;
+      }
+      .param-item {
+        margin: 8px 0;
+        padding-left: 12px;
+        border-left: 2px solid #ecf0f1;
+      }
+      .param-name {
+        font-family: monospace;
+        color: #2980b9;
+        font-weight: bold;
+      }
+      .param-type {
+        font-family: monospace;
+        color: #8e44ad;
+        font-size: 0.9em;
+      }
+      .param-desc {
+        color: #666;
+        margin-left: 5px;
+      }
+      .code-block {
+        background: #2c3e50;
+        color: #ecf0f1;
+        padding: 12px;
+        border-radius: 3px;
+        overflow-x: auto;
+        margin: 10px 0;
+        font-family: monospace;
+        font-size: 0.85em;
+        line-height: 1.4;
+      }
+      .keyword {
+        color: #3498db;
+      }
+      .string {
+        color: #e74c3c;
+      }
+      .comment {
+        color: #95a5a6;
+      }
+      .number {
+        color: #27ae60;
+      }
+      footer {
+        background: #2c3e50;
+        color: white;
+        text-align: center;
+        padding: 15px;
+        margin-top: 30px;
+        font-size: 0.9em;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>demo.js - JSDoc Documentation</h1>
+    </header>
+
+    <div class="container">
+      <div class="nav">
+        <h3>Navigation</h3>
+        <div class="nav-links">
+          <a href="#evaluateDerivedChannel">evaluateDerivedChannel()</a>
+          <a href="#evaluateEquation">evaluateEquation()</a>
+          <a href="#calculateTimeFromSampleNumber"
+            >calculateTimeFromSampleNumber()</a
+          >
+          <a href="#generateUniformTimeArray">generateUniformTimeArray()</a>
+          <a href="#generateSyntheticChannels">generateSyntheticChannels()</a>
+          <a href="#validateEquation">validateEquation()</a>
+          <a href="#escapeHtml">escapeHtml()</a>
+        </div>
+      </div>
+
+      <!-- calculateTimeFromSampleNumber -->
+      <div class="function-card" id="calculateTimeFromSampleNumber">
+        <div class="function-name">
+          calculateTimeFromSampleNumber()
+          <span class="category">[Time Interpolation]</span>
+        </div>
+        <div class="description">
+          Calculate uniform time from sample number: time = sampleNumber /
+          samplingRate
+        </div>
+        <div class="section-title">Parameters</div>
+        <div class="param-item">
+          <span class="param-name">sampleNumber</span>
+          <span class="param-type">{number}</span> - Sample index
+        </div>
+        <div class="param-item">
+          <span class="param-name">samplingRate</span>
+          <span class="param-type">{number}</span> - Sampling rate in Hz
+        </div>
+        <div class="section-title">Returns</div>
+        <div class="param-item">
+          <span class="param-type">{number}</span> - Time value in seconds
+        </div>
+      </div>
+
+      <!-- generateUniformTimeArray -->
+      <div class="function-card" id="generateUniformTimeArray">
+        <div class="function-name">
+          generateUniformTimeArray()
+          <span class="category">[Time Interpolation]</span>
+        </div>
+        <div class="description">
+          Generate uniform time array for all samples with perfect spacing.
+        </div>
+        <div class="section-title">Parameters</div>
+        <div class="param-item">
+          <span class="param-name">totalSamples</span>
+          <span class="param-type">{number}</span> - Total samples to generate
+        </div>
+        <div class="param-item">
+          <span class="param-name">samplingRate</span>
+          <span class="param-type">{number}</span> - Sampling rate in Hz
+        </div>
+        <div class="section-title">Returns</div>
+        <div class="param-item">
+          <span class="param-type">{number[]}</span> - Array of time values
+        </div>
+      </div>
+
+      <!-- generateSyntheticChannels -->
+      <div class="function-card" id="generateSyntheticChannels">
+        <div class="function-name">
+          generateSyntheticChannels()
+          <span class="category">[Data Generation]</span>
+        </div>
+        <div class="description">
+          Generate synthetic three-phase waveform data (VA, VB, VC, IA, IB, IC)
+          with 120° phase separation and 30° current lag.
+        </div>
+        <div class="section-title">Returns</div>
+        <div class="param-item">
+          <span class="param-type">{Object}</span> - Channel data with
+          properties: VA, VB, VC, IA, IB, IC
+        </div>
+      </div>
+
+      <!-- evaluateEquation -->
+      <div class="function-card" id="evaluateEquation">
+        <div class="function-name">
+          evaluateEquation() <span class="category">[Equation Evaluation]</span>
+        </div>
+        <div class="description">
+          Core function that parses and evaluates mathematical expressions using
+          math.js. Performs sample-by-sample calculation.
+        </div>
+        <div class="section-title">Parameters</div>
+        <div class="param-item">
+          <span class="param-name">equationString</span>
+          <span class="param-type">{string}</span> - Mathematical expression
+          (e.g., "VA + VB", "sqrt(VA^2 + VB^2)")
+        </div>
+        <div class="section-title">Returns</div>
+        <div class="param-item">
+          <span class="param-type">{Object}</span> - {success, data, error}
+        </div>
+        <div class="section-title">Supported Operations</div>
+        <div style="margin: 10px 0; color: #555">
+          <strong>Arithmetic:</strong> +, -, *, /, ^ (power), % (modulo)<br />
+          <strong>Functions:</strong> sqrt, sin, cos, tan, abs, min, max, exp,
+          log<br />
+          <strong>Security:</strong> Blocks eval, function, import, require
+        </div>
+        <div class="section-title">Example</div>
+        <div class="code-block">
+          <span class="keyword">const</span> result = evaluateEquation(<span
+            class="string"
+            >"VA / IA"</span
+          >);<br />
+          <span class="comment"
+            >// Returns impedance calculation for each sample</span
+          >
+        </div>
+      </div>
+
+      <!-- validateEquation -->
+      <div class="function-card" id="validateEquation">
+        <div class="function-name">
+          validateEquation() <span class="category">[Validation]</span>
+        </div>
+        <div class="description">
+          Validate mathematical equation for security and correctness. Prevents
+          injection attacks.
+        </div>
+        <div class="section-title">Parameters</div>
+        <div class="param-item">
+          <span class="param-name">equationString</span>
+          <span class="param-type">{string}</span> - Equation to validate
+        </div>
+        <div class="section-title">Returns</div>
+        <div class="param-item">
+          <span class="param-type">{boolean}</span> - True if valid and safe
+        </div>
+        <div class="section-title">Security Checks</div>
+        <div style="margin: 10px 0; color: #555">
+          • Blocks: eval(), function(), import, require()<br />
+          • Verifies only allowed channel variables<br />
+          • Allows standard math functions
+        </div>
+      </div>
+
+      <!-- escapeHtml -->
+      <div class="function-card" id="escapeHtml">
+        <div class="function-name">
+          escapeHtml() <span class="category">[Security]</span>
+        </div>
+        <div class="description">
+          Escape HTML special characters to prevent XSS vulnerabilities.
+        </div>
+        <div class="section-title">Parameters</div>
+        <div class="param-item">
+          <span class="param-name">text</span>
+          <span class="param-type">{string}</span> - Text to escape
+        </div>
+        <div class="section-title">Returns</div>
+        <div class="param-item">
+          <span class="param-type">{string}</span> - Escaped text safe for HTML
+        </div>
+      </div>
+
+      <!-- evaluateDerivedChannel (MAIN PRODUCTION FUNCTION) -->
+      <div
+        class="function-card"
+        id="evaluateDerivedChannel"
+        style="border-left-color: #27ae60; background: #f0fdf4"
+      >
+        <div class="function-name" style="color: #27ae60">
+          evaluateDerivedChannel() ⭐ MAIN API
+        </div>
+        <div class="description" style="color: #27ae60; font-weight: bold">
+          PRIMARY PRODUCTION FUNCTION - Call this from main.js to integrate
+          equation evaluation.
+        </div>
+        <div class="section-title">Parameters</div>
+        <div class="param-item">
+          <span class="param-name">equationString</span>
+          <span class="param-type">{string}</span> - Mathematical expression
+          from user
+        </div>
+        <div class="param-item">
+          <span class="param-name">channelData</span>
+          <span class="param-type">{Object}</span> - Channel data object {VA,
+          VB, VC, IA, IB, IC}
+        </div>
+        <div class="section-title">Returns</div>
+        <div class="param-item">
+          <span class="param-type">{Object}</span> - {success, data: number[],
+          error}
+        </div>
+        <div class="section-title">Workflow</div>
+        <div style="margin: 10px 0; color: #555; line-height: 1.8">
+          1. Child window (Tabulator) sends equation via postMessage<br />
+          2. Parent main.js receives and extracts equation<br />
+          3. Passes equation + channelData to evaluateDerivedChannel()<br />
+          4. Function returns calculated data array<br />
+          5. New channel added to application state<br />
+          6. Charts automatically update
+        </div>
+        <div class="section-title">Integration Code</div>
+        <div class="code-block">
+          window.addEventListener(<span class="string">'message'</span>, (event)
+          => {<br />
+          &nbsp;&nbsp;<span class="keyword">if</span> (event.data.source ===
+          <span class="string">'ChildWindow'</span> &&<br />
+          &nbsp;&nbsp;&nbsp;&nbsp;event.data.type ===
+          <span class="string">'callback_newEquation'</span>) {<br />
+          &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">const</span> equation =
+          event.data.payload.equation;<br />
+          &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">const</span> channels =
+          {<br />
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VA: dataState.analog[<span
+            class="number"
+            >0</span
+          >],<br />
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VB: dataState.analog[<span
+            class="number"
+            >1</span
+          >],<br />
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VC: dataState.analog[<span
+            class="number"
+            >2</span
+          >],<br />
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IA: dataState.analog[<span
+            class="number"
+            >3</span
+          >],<br />
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IB: dataState.analog[<span
+            class="number"
+            >4</span
+          >],<br />
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IC: dataState.analog[<span
+            class="number"
+            >5</span
+          >]<br />
+          &nbsp;&nbsp;&nbsp;&nbsp;};<br />
+          &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">const</span> result =
+          evaluateDerivedChannel(equation, channels);<br />
+          &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">if</span>
+          (result.success) {<br />
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dataState.analog.push(result.data);<br />
+          &nbsp;&nbsp;&nbsp;&nbsp;}<br />
+          &nbsp;&nbsp;}<br />
+          });
+        </div>
+        <div
+          style="
+            margin: 15px 0;
+            padding: 12px;
+            background: #e0f2fe;
+            border-left: 3px solid #0284c7;
+            border-radius: 3px;
+            color: #0c4a6e;
+          "
+        >
+          <strong>Performance:</strong> O(n) where n = samples | 10K samples:
+          ~2-5ms | 100K samples: ~20-50ms
+        </div>
+      </div>
+    </div>
+
+    <footer>
+      <p>demo.js - JSDoc Documentation | Essential Content Only</p>
+    </footer>
+
+    <script>
+      document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+        anchor.addEventListener("click", function (e) {
+          e.preventDefault();
+          const target = document.querySelector(this.getAttribute("href"));
+          if (target) {
+            target.scrollIntoView({ behavior: "smooth", block: "start" });
+          }
+        });
+      });
+    </script>
+  </body>
+</html>

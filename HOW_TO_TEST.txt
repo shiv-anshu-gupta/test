@@ -1,0 +1,313 @@
+╔════════════════════════════════════════════════════════════════════════════╗
+║                      🚀 HOW TO TEST THE APPLICATION                        ║
+║              (Vertical Line Interpolation & Delta Display)                 ║
+╚════════════════════════════════════════════════════════════════════════════╝
+
+
+📌 QUICK START (Choose ONE method - under 30 seconds)
+═══════════════════════════════════════════════════════
+
+METHOD 1: PowerShell (RECOMMENDED - Auto-detects Node/Python)
+─────────────────────────────────────────────────────────────
+  
+  Step 1: Open PowerShell in project directory
+  Step 2: Run this command:
+  
+    .\start-server.ps1
+  
+  Step 3: Open browser:
+  
+    http://localhost:8000
+
+
+METHOD 2: Command Prompt (Windows CMD)
+──────────────────────────────────────
+  
+  Step 1: Open Command Prompt (cmd.exe) in project directory
+  Step 2: Run:
+  
+    start-server.bat
+  
+  Step 3: Browser opens to:
+  
+    http://localhost:8000
+
+
+METHOD 3: Direct Python (Simplest if you have Python)
+──────────────────────────────────────────────────────
+  
+  Step 1: Open PowerShell in project directory
+  Step 2: Run:
+  
+    python -m http.server 8000
+  
+  Step 3: Open browser:
+  
+    http://localhost:8000
+
+
+METHOD 4: Direct Node.js
+────────────────────────
+  
+  Step 1: Open PowerShell in project directory
+  Step 2: Run:
+  
+    node server.js
+  
+  Step 3: Browser opens to:
+  
+    http://localhost:8000
+
+
+METHOD 5: VS Code Live Server Extension
+───────────────────────────────────────
+  
+  Step 1: Install "Live Server" in VS Code
+  Step 2: Right-click index.html → "Open with Live Server"
+  Step 3: Browser opens automatically at http://localhost:5500
+
+
+✅ AFTER SERVER STARTS
+══════════════════════
+
+You should see:
+
+  ╔════════════════════════════════════════════════════════════╗
+  ║          COMTRADE Viewer Development Server               ║
+  ╠════════════════════════════════════════════════════════════╣
+  ║                                                            ║
+  ║  Server running at: http://localhost:8000                 ║
+  ║                                                            ║
+  ║  Press Ctrl+C to stop server                              ║
+  ║                                                            ║
+  ╚════════════════════════════════════════════════════════════╝
+
+Then browser opens automatically showing the COMTRADE Viewer.
+
+
+🧪 TESTING CHECKLIST (5 minutes)
+═════════════════════════════════
+
+□ Browser opens to http://localhost:8000
+□ Title shows "COMTRADE Viewer - Fault Recording Analysis"
+□ Interface displays properly
+
+Now test features:
+
+□ Load a COMTRADE file
+  - Click "Load Files" button
+  - Select a CFG file and corresponding DAT file
+  - Charts appear with data
+
+□ Create Vertical Lines
+  - Click on chart at a data point
+  - Vertical line appears with label (T1, T2, etc.)
+  - Line is color-coded
+
+□ Test Interpolation
+  - Click between two data points
+  - Vertical line appears
+  - Crosshair points show interpolated values
+  - Values make sense (between surrounding points)
+
+□ Test Delta Display
+  - Create 2 vertical lines
+  - Look at bottom section (#fixed-results)
+  - Should show:
+    • "Δtime: X" (time difference)
+    • "ΔY: X" (value difference)
+    • Percentage change
+
+□ Drag Vertical Lines
+  - Hover near line (cursor changes to ↔)
+  - Click and drag
+  - Deltas update automatically
+  - All charts sync if multiple
+
+□ Test Delta Box
+  - Drag creates overlay box (top-right)
+  - Shows V1 and V2 values
+  - Shows percentage changes
+  - Scrolls if needed
+
+
+📂 FILES CREATED FOR TESTING
+════════════════════════════
+
+server.js                    - Node.js development server
+start-server.ps1            - PowerShell script (auto-detects Node/Python)
+start-server.bat            - Windows batch script
+QUICK_START_TESTING.js      - Quick reference guide
+COMPLETE_TESTING_GUIDE.js   - Detailed testing documentation
+TESTING_HOW_TO_RUN.js       - Full testing instructions
+
+
+🔧 ADVANCED TESTING (Browser Console)
+═════════════════════════════════════
+
+Open DevTools: F12 or Ctrl+Shift+I
+
+Try these commands:
+
+1. View current vertical lines:
+   
+   window.verticalLinesX.asArray()
+   
+   Output: [1.5, 3.0]
+
+2. Add lines programmatically:
+   
+   window.verticalLinesX.value = [2.0, 4.0]
+   
+   Lines appear immediately on all charts!
+
+3. Check if errors:
+   
+   Look for RED text in console = errors
+   Warnings (yellow) are okay
+
+4. View delta results:
+   
+   document.getElementById('fixed-results').innerHTML
+
+
+🎯 EXPECTED BEHAVIOR
+════════════════════
+
+When working correctly:
+
+✓ Vertical lines appear where you click
+✓ Lines are draggable (cursor changes near line)
+✓ Crosshair points show interpolated values
+✓ Delta box shows in top-right when dragging
+✓ Delta results show at bottom (#fixed-results)
+✓ No errors in browser console
+✓ Multi-chart sync works if multiple charts
+✓ All features responsive and smooth
+
+
+❌ IF SOMETHING DOESN'T WORK
+════════════════════════════
+
+1. Check browser console for errors (F12)
+   - Red text = errors that need fixing
+   - Yellow = warnings (okay)
+
+2. Verify server is running
+   - Should see startup message in terminal
+   - Should show "http://localhost:8000"
+
+3. Verify port isn't in use
+   - Error: "Port 8000 already in use"
+   - Fix: Use different port:
+     python -m http.server 8001
+     Then open: http://localhost:8001
+
+4. Make sure COMTRADE file loads
+   - Charts should display with data
+   - If not, file may be invalid
+
+5. Check data files exist
+   - src/ directory with all source files
+   - styles/ directory with CSS
+   - index.html in root
+
+
+📋 TESTING SCENARIOS
+════════════════════
+
+SCENARIO 1: Basic Functionality (5 min)
+  1. Load COMTRADE file
+  2. Create 2 vertical lines
+  3. Verify deltas show
+  4. Drag line - verify update
+
+SCENARIO 2: Interpolation Accuracy (10 min)
+  1. Add line at exact data point
+  2. Compare value to data
+  3. Add line between points
+  4. Verify interpolation formula correct
+  
+  Formula: y = y1 + (y2-y1) * (x-x1) / (x2-x1)
+
+SCENARIO 3: Multi-Chart Sync (5 min)
+  1. Display multiple charts
+  2. Add line on one chart
+  3. Verify line on ALL charts
+  4. Drag and verify all sync
+
+SCENARIO 4: Delta Math (5 min)
+  1. Note values at two points
+  2. Calculate expected delta
+  3. Compare to displayed delta
+  4. Verify percentage calculation
+
+
+💡 TIPS
+═══════
+
+• Use keyboard shortcut to open DevTools: F12
+• Use Ctrl+Shift+Delete to clear cache if needed
+• Different browsers all work (Chrome, Firefox, Edge)
+• Max width/height adjusts with window
+• Zoom in/out doesn't break features (Ctrl+Plus/Minus)
+• Refresh page (F5) resets everything cleanly
+
+
+📞 QUICK REFERENCE
+══════════════════
+
+Server Running: http://localhost:8000
+Stop Server:    Press Ctrl+C in terminal
+Reset Page:     Press F5 in browser
+Open Console:   Press F12 in browser
+View Source:    Press Ctrl+U in browser
+
+To test again after restart: Just refresh browser (F5)
+
+
+🎓 UNDERSTANDING THE FEATURES
+══════════════════════════════
+
+VERTICAL LINES:
+  • Drawn at X positions you click
+  • Color-coded for visual distinction
+  • Draggable to reposition
+  • Sync across all charts
+
+INTERPOLATION:
+  • When vertical line falls between data samples
+  • Uses linear interpolation formula
+  • Works with different sampling rates
+  • Each series interpolates independently
+
+DELTA DISPLAY:
+  • Shows time difference (Δt)
+  • Shows value difference (ΔY = V2 - V1)
+  • Shows percentage change
+  • Updates when lines move
+  • Color-matched to chart series
+
+DELTA BOX:
+  • Overlay showing detailed values
+  • V1 = value at first vertical line
+  • V2 = value at second vertical line
+  • Percentage = (ΔY / |V1|) * 100
+
+
+🚀 YOU'RE READY!
+════════════════
+
+Choose any method above and start testing:
+
+1. Open PowerShell/CMD in project directory
+2. Run: .\start-server.ps1 (or other method)
+3. Browser opens to http://localhost:8000
+4. Load COMTRADE file
+5. Click chart to create vertical lines
+6. Drag to test deltas
+7. Check browser console for debug info
+
+Everything should work smoothly! 🎉
+
+═════════════════════════════════════════════════════════════════════════════

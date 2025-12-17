@@ -1,0 +1,254 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title> components/renderComtradeCharts.js</title>
+
+  <script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="./build/entry.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+  <link href="https://fonts.googleapis.com/css?family=Roboto:100,400,700|Inconsolata,700" rel="stylesheet">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+  <link type="text/css" rel="stylesheet" href="https://jmblog.github.io/color-themes-for-google-code-prettify/themes/tomorrow-night.min.css">
+  <link type="text/css" rel="stylesheet" href="styles/app.min.css">
+  <link type="text/css" rel="stylesheet" href="styles/iframe.css">
+  <link type="text/css" rel="stylesheet" href="">
+  <script async defer src="https://buttons.github.io/buttons.js"></script>
+
+  
+</head>
+
+
+
+<body class="layout small-header">
+    <div id="stickyNavbarOverlay"></div>
+    
+
+<div class="top-nav">
+    <div class="inner">
+        <a id="hamburger" role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+        </a>
+        <div class="logo">
+            
+            
+        </div>
+        <div class="menu">
+            
+            <div class="navigation">
+                <a
+                    href="index.html"
+                    class="link"
+                >
+                    Documentation
+                </a>
+                
+                
+                
+            </div>
+        </div>
+    </div>
+</div>
+    <div id="main">
+        <div
+            class="sidebar "
+            id="sidebarNav"
+        >
+            
+            <nav>
+                
+                    <h2><a href="index.html">Documentation</a></h2><div class="category"><h3>Modules</h3><ul><li><a href="module-chartComponent.html">chartComponent</a></li><li><a href="module-chartDomUtils.html">chartDomUtils</a></li><li><a href="module-chartManager.html">chartManager</a></li><li><a href="module-comtradeUtils.html">comtradeUtils</a></li><li><a href="module-createDragBar.html">createDragBar</a></li><li><a href="module-handleVerticalLineShortcuts.html">handleVerticalLineShortcuts</a></li><li><a href="module-main.html">main</a></li><li><a href="module-renderAnalogCharts.html">renderAnalogCharts</a></li><li><a href="module-renderComtradeCharts.html">renderComtradeCharts</a></li><li><a href="module-renderDigitalCharts.html">renderDigitalCharts</a></li><li><a href="module-setupChartDragAndDrop.html">setupChartDragAndDrop</a></li><li><a href="module-showChannelListWindow.html">showChannelListWindow</a></li><li><a href="module-timeInterpolation.html">timeInterpolation</a></li></ul><h3>Global</h3><ul><li><a href="global.html#autoGroupChannels">autoGroupChannels</a></li><li><a href="global.html#createChannelList">createChannelList</a></li><li><a href="global.html#createChartContainer">createChartContainer</a></li><li><a href="global.html#createChartOptions">createChartOptions</a></li><li><a href="global.html#createDigitalFillPlugin">createDigitalFillPlugin</a></li><li><a href="global.html#createState">createState</a></li><li><a href="global.html#createTooltip">createTooltip</a></li><li><a href="global.html#hideTooltip">hideTooltip</a></li><li><a href="global.html#initUPlotChart">initUPlotChart</a></li><li><a href="global.html#showError">showError</a></li><li><a href="global.html#subscribeChartUpdates">subscribeChartUpdates</a></li><li><a href="global.html#updateTooltip">updateTooltip</a></li></ul></div>
+                
+            </nav>
+        </div>
+        <div class="core" id="main-content-wrapper">
+            <div class="content">
+                <header class="page-title">
+                    <p>Source</p>
+                    <h1>components/renderComtradeCharts.js</h1>
+                </header>
+                
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @module renderComtradeCharts
+ * @description
+ * Main chart rendering orchestrator for COMTRADE application.
+ * Handles the complete workflow of rendering analog and digital charts
+ * from parsed COMTRADE data, with support for drag-and-drop reordering
+ * and vertical line overlays.
+ *
+ * @requires chartComponent - for buildChartOptions()
+ * @requires createDragBar - for drag bar DOM elements
+ * @requires setupChartDragAndDrop - for drag/drop functionality
+ * @requires renderAnalogCharts - for analog chart rendering
+ * @requires renderDigitalCharts - for digital chart rendering
+ * @requires autoGroupChannels - for smart analog channel grouping
+ * @requires createState - for reactive state management
+ *
+ * @example
+ * import { renderComtradeCharts } from './components/renderComtradeCharts.js';
+ *
+ * const charts = [];
+ * const verticalLinesX = []; // or createState([])
+ *
+ * renderComtradeCharts(
+ *   cfg,                      // COMTRADE config object
+ *   data,                     // Parsed COMTRADE data
+ *   chartsContainer,          // DOM element for charts
+ *   charts,                   // Array to store chart instances
+ *   verticalLinesX,           // State for vertical line positions
+ *   createState,              // State creation utility
+ *   calculateDeltas,          // Function to calculate time/value deltas
+ *   'seconds',                // TIME_UNIT
+ *   channelState              // Channel metadata state
+ * );
+ */
+
+// src/components/renderComtradeCharts.js
+import { createChartOptions } from "./chartComponent.js";
+import { createDragBar } from "./createDragBar.js";
+import { setupChartDragAndDrop } from "./setupChartDragAndDrop.js";
+import { renderAnalogCharts } from "./renderAnalogCharts.js";
+import { renderDigitalCharts } from "./renderDigitalCharts.js";
+import { destroyCharts } from "../utils/chartUtils.js";
+import { autoGroupChannels } from "../utils/autoGroupChannels.js";
+import { createDigitalFillPlugin } from "../plugins/digitalFillPlugin.js";
+import { unwrap, createState } from "./createState.js";
+
+/**
+ * Render COMTRADE charts (analog and digital) in the container.
+ *
+ * Orchestrates the complete chart rendering workflow:
+ * 1. Clears previous charts and DOM
+ * 2. Sets up drag-and-drop functionality
+ * 3. Renders analog charts with smart grouping
+ * 4. Renders digital charts if present
+ * 5. Calculates and displays time/value deltas for vertical lines
+ *
+ * @function renderComtradeCharts
+ * @param {Object} cfg - COMTRADE configuration object
+ * @param {Array} cfg.analogChannels - Array of analog channel definitions
+ * @param {Array} cfg.digitalChannels - Array of digital channel definitions
+ * @param {number} cfg.samplingRate - Sampling rate in samples/second
+ * @param {Object} data - Parsed COMTRADE data
+ * @param {Float64Array} data.time - Time array (uniform spacing)
+ * @param {Array&lt;Float64Array>} data.analogData - 2D array [channel][sample]
+ * @param {Array&lt;Float64Array>} data.digitalData - 2D array [channel][sample]
+ * @param {HTMLElement} chartsContainer - DOM element to render charts into
+ * @param {Array} charts - Array reference to store uPlot instances
+ * @param {Array|State} verticalLinesX - Array of vertical line X positions (optional, can be createState)
+ * @param {Function} createState - Reactive state creator function
+ * @param {Function} calculateDeltas - Function to calculate deltas at vertical lines
+ * @param {string} TIME_UNIT - Time unit label ('seconds', 'milliseconds', etc)
+ * @param {Object} channelState - Reactive state for channel metadata (colors, labels, scales, units, inverts)
+ * @returns {void}
+ *
+ * @example
+ * renderComtradeCharts(
+ *   cfg,
+ *   data,
+ *   document.getElementById('charts'),
+ *   charts,
+ *   verticalLinesX,
+ *   createState,
+ *   calculateDeltas,
+ *   'seconds',
+ *   channelState
+ * );
+ */
+export function renderComtradeCharts(
+  cfg,
+  data,
+  chartsContainer,
+  charts,
+  verticalLinesX,
+  createState,
+  calculateDeltas,
+  TIME_UNIT,
+  channelState
+) {
+  charts.length = 0; // &lt;-- Clear the array at the start!
+  chartsContainer.innerHTML = "";
+  //destroyCharts(charts);
+  setupChartDragAndDrop(chartsContainer);
+  renderAnalogCharts(
+    cfg,
+    data,
+    chartsContainer,
+    charts,
+    verticalLinesX,
+    channelState,
+    autoGroupChannels
+  );
+  if (
+    cfg.digitalChannels &amp;&amp;
+    cfg.digitalChannels.length > 0 &amp;&amp;
+    data.digitalData &amp;&amp;
+    data.digitalData.length > 0
+  ) {
+    renderDigitalCharts(
+      cfg,
+      data,
+      chartsContainer,
+      charts,
+      verticalLinesX,
+      channelState
+    );
+  }
+  console.log("Charts rendered:", charts.length);
+  if (charts.length > 0) {
+    calculateDeltas(
+      charts,
+      verticalLinesX,
+      charts[0].data[0],
+      charts.map((c) => c.data[1])
+    );
+  }
+  // Do NOT clear charts here!
+}
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+            </div>
+            
+            <footer class="footer">
+                <div class="content has-text-centered">
+                    <p>Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 4.0.5</a></p>
+                    <p class="sidebar-created-by">
+                        <a href="https://github.com/SoftwareBrothers/better-docs" target="_blank">BetterDocs theme</a> provided with <i class="fas fa-heart"></i> by
+                        <a href="http://softwarebrothers.co" target="_blank">SoftwareBrothers - JavaScript Development Agency</a>
+                    </p>
+                </div>
+            </footer>
+            
+        </div>
+        <div id="side-nav" class="side-nav">
+        </div>
+    </div>
+<script src="scripts/app.min.js"></script>
+<script>PR.prettyPrint();</script>
+<script src="scripts/linenumber.js"> </script>
+
+
+</body>
+</html>

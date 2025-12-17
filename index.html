@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>COMTRADE Viewer - Fault Recording Analysis</title>
+    <link rel="stylesheet" href="./styles/main.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/uplot@1.6.32/dist/uPlot.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/tabulator-tables@5.5.0/dist/css/tabulator.min.css"
+    />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.11.0/math.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/tabulator-tables@5.5.0/dist/js/tabulator.min.js"></script>
+    <!-- MathJax for LaTeX rendering -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script
+      id="MathJax-script"
+      async
+      src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
+    ></script>
+  </head>
+
+  <body>
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header" style="display: flex; justify-content: space-between; align-items: center;">
+        <h2 style="margin: 0; font-size: 1rem; color: var(--text-primary);">Analysis</h2>
+        <div style="display: flex; gap: 8px; align-items: center;">
+          <button id="floatingWindowBtn" title="Display as floating window" style="background: var(--bg-tertiary); border: 1px solid var(--border-color); color: var(--text-secondary); cursor: pointer; font-size: 0.75rem; padding: 4px 8px; border-radius: 4px; transition: all 0.2s;">
+            ▦ Floating
+          </button>
+          <button id="belowChartBtn" title="Display below chart" style="background: var(--bg-tertiary); border: 1px solid var(--border-color); color: var(--text-secondary); cursor: pointer; font-size: 0.75rem; padding: 4px 8px; border-radius: 4px; transition: all 0.2s;">
+            📦 Below
+          </button>
+          <button id="returnSidebarBtn" title="Return to sidebar" style="background: var(--bg-tertiary); border: 1px solid var(--border-color); color: var(--text-secondary); cursor: pointer; font-size: 0.75rem; padding: 4px 8px; border-radius: 4px; transition: all 0.2s; display: none;">
+            ⬅ Sidebar
+          </button>
+          <button id="closeSidebarBtn" style="background: none; border: none; color: var(--text-secondary); cursor: pointer; font-size: 1.4rem; padding: 0; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center;">
+            ✕
+          </button>
+        </div>
+      </div>
+
+      <!-- Polar Chart Section -->
+      <div class="polar-chart-section" id="polarChartSection">
+        <div class="polar-section-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+          <h3 style="font-size: 0.85rem; font-weight: 600; color: var(--text-secondary); margin: 0;">Phasor Diagram</h3>
+          <button id="returnSidebarFromBelowBtn" title="Return to sidebar" style="background: var(--bg-tertiary); border: 1px solid var(--border-color); color: var(--text-secondary); cursor: pointer; font-size: 0.75rem; padding: 4px 8px; border-radius: 4px; transition: all 0.2s; display: none;">
+            ⬅ Sidebar
+          </button>
+        </div>
+        <div id="polarChartContainer" class="polar-chart-container" style="width: 100%; height: 400px; background: var(--bg-tertiary); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: var(--text-secondary);">
+          <span>Polar Chart</span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Sidebar (Hidden Channels Section - for future use) -->
+    <div style="display: none;">
+
+        <div class="channel-group">
+          <p
+            style="
+              font-size: 0.85rem;
+              color: var(--text-secondary);
+              margin-bottom: 8px;
+              font-weight: 600;
+            "
+          >
+            Currents
+          </p>
+          <div class="channel-item">
+            <input
+              type="checkbox"
+              class="channel-checkbox"
+              checked
+              id="ch-ia"
+            />
+            <span class="channel-indicator" style="background: #00d9ff"></span>
+            <label for="ch-ia" class="channel-label">IA</label>
+          </div>
+          <div class="channel-item">
+            <input
+              type="checkbox"
+              class="channel-checkbox"
+              checked
+              id="ch-ib"
+            />
+            <span class="channel-indicator" style="background: #2196f3"></span>
+            <label for="ch-ib" class="channel-label">IB</label>
+          </div>
+          <div class="channel-item">
+            <input
+              type="checkbox"
+              class="channel-checkbox"
+              checked
+              id="ch-ic"
+            />
+            <span class="channel-indicator" style="background: #10b981"></span>
+            <label for="ch-ic" class="channel-label">IC</label>
+          </div>
+        </div>
+
+        <div class="channel-group" style="margin-top: 20px">
+          <p
+            style="
+              font-size: 0.85rem;
+              color: var(--text-secondary);
+              margin-bottom: 8px;
+              font-weight: 600;
+            "
+          >
+            Voltages
+          </p>
+          <div class="channel-item">
+            <input
+              type="checkbox"
+              class="channel-checkbox"
+              checked
+              id="ch-va"
+            />
+            <span class="channel-indicator" style="background: #ff6b35"></span>
+            <label for="ch-va" class="channel-label">VA</label>
+          </div>
+          <div class="channel-item">
+            <input
+              type="checkbox"
+              class="channel-checkbox"
+              checked
+              id="ch-vb"
+            />
+            <span class="channel-indicator" style="background: #00d9ff"></span>
+            <label for="ch-vb" class="channel-label">VB</label>
+          </div>
+          <div class="channel-item">
+            <input
+              type="checkbox"
+              class="channel-checkbox"
+              checked
+              id="ch-vc"
+            />
+            <span class="channel-indicator" style="background: #ef4444"></span>
+            <label for="ch-vc" class="channel-label">VC</label>
+          </div>
+        </div>
+
+        <div class="channel-group" style="margin-top: 20px">
+          <p
+            style="
+              font-size: 0.85rem;
+              color: var(--text-secondary);
+              margin-bottom: 8px;
+              font-weight: 600;
+            "
+          >
+            Other
+          </p>
+          <div class="channel-item">
+            <input
+              type="checkbox"
+              class="channel-checkbox"
+              checked
+              id="ch-in"
+            />
+            <span class="channel-indicator" style="background: #7c3aed"></span>
+            <label for="ch-in" class="channel-label">IN</label>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <main>
+      <!-- Top Header -->
+      <header class="top-header">
+        <div class="header-left">
+          <div class="app-logo">⚡</div>
+          <div class="app-title">
+            <h1>COMTRADE Viewer</h1>
+            <p>Fault Recording Analysis</p>
+          </div>
+        </div>
+        <div class="header-actions">
+          <button
+            class="icon-button"
+            id="showChannelListBtn"
+            style="display: none"
+          >
+            <span>📋</span>
+            <span>Channels</span>
+          </button>
+          <button class="icon-button" id="undoBtn" disabled>
+            <span>↶</span>
+            <span>Undo</span>
+          </button>
+          <button class="icon-button" id="redoBtn" disabled>
+            <span>↷</span>
+            <span>Redo</span>
+          </button>
+          <button class="icon-button" id="exportComputedChannelBtn" disabled>
+            <span>📥</span>
+            <span>Export</span>
+          </button>
+          <button class="icon-button" id="exportCSVBtn" disabled>
+            <span>📄</span>
+            <span>CSV</span>
+          </button>
+          <button class="icon-button" id="themeToggleBtn" title="Toggle Light/Dark Theme">
+            <span id="themeIcon">🌙</span>
+            <span id="themeName">Dark</span>
+          </button>
+          <button class="icon-button settings-button">
+            <span>⚙</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- Content Area -->
+      <div class="content-wrapper">
+        <!-- Upload & File Info Container -->
+        <div class="upload-file-container">
+          <!-- Upload Section -->
+          <section class="upload-section" id="uploadSection">
+            <div class="upload-icon">📤</div>
+            <h2>Upload COMTRADE Files</h2>
+            <p>Drag & drop CFG and DAT files or click to browse</p>
+            <div class="upload-actions">
+              <label for="cfgFile">
+                <button
+                  class="btn-primary"
+                  type="button"
+                  onclick="document.getElementById('cfgFile').click()"
+                >
+                  <span>📁</span>
+                  <span>Choose Files</span>
+                </button>
+              </label>
+              <input type="file" id="cfgFile" accept=".cfg,.dat" multiple />
+              <button class="btn-secondary" id="loadBtn">Load Files</button>
+            </div>
+          </section>
+
+          <!-- File Information (Always Visible) -->
+          <section class="file-info-card" id="fileInfo">
+            <div style="width: 100%">
+              <div class="file-info-header">
+                <h2 class="file-info-title">File Information</h2>
+                <div
+                  class="file-status"
+                  id="fileStatus"
+                  style="color: var(--text-secondary)"
+                >
+                  <span
+                    class="status-dot"
+                    style="background: var(--text-secondary)"
+                  ></span>
+                  <span>No File</span>
+                </div>
+              </div>
+              <div class="file-details">
+                <div class="file-detail-item">
+                  <span class="file-detail-label">CFG File</span>
+                  <span
+                    class="file-detail-value"
+                    id="cfgFileName"
+                    style="color: var(--text-secondary)"
+                    >Not Selected</span
+                  >
+                </div>
+                <div class="file-detail-item">
+                  <span class="file-detail-label">DAT File</span>
+                  <span
+                    class="file-detail-value"
+                    id="datFileName"
+                    style="color: var(--text-secondary)"
+                    >Not Selected</span
+                  >
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+
+        <!-- Stats Grid (Hidden initially) -->
+        <section class="stats-grid" id="statsGrid" style="display: none">
+          <div class="stat-card">
+            <div class="stat-header">
+              <span class="stat-icon">⟳</span>
+              <span class="stat-label">Sample Rate</span>
+            </div>
+            <div class="stat-value">4800<span class="stat-unit">Hz</span></div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-header">
+              <span class="stat-icon">⏱</span>
+              <span class="stat-label">Duration</span>
+            </div>
+            <div class="stat-value">2000<span class="stat-unit">ms</span></div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-header">
+              <span class="stat-icon">📊</span>
+              <span class="stat-label">Channels</span>
+            </div>
+            <div class="stat-value">7<span class="stat-unit">total</span></div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-header">
+              <span class="stat-icon">⚠</span>
+              <span class="stat-label">Fault Time</span>
+            </div>
+            <div class="stat-value">850<span class="stat-unit">ms</span></div>
+          </div>
+        </section>
+
+        <!-- Charts Container -->
+        <section id="charts" class="charts-wrapper"></section>
+
+        <!-- Results -->
+        <section
+          id="fixed-results"
+          style="
+            margin-top: 24px;
+            color: var(--text-secondary);
+            font-family: monospace;
+            font-size: 0.85rem;
+          "
+        ></section>
+      </div>
+    </main>
+
+    <!-- Channel List Modal -->
+    <div
+      id="channel-list-modal"
+      style="
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.6);
+        z-index: 5000;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        backdrop-filter: blur(4px);
+      "
+    >
+      <div
+        style="
+          background: #131720;
+          border-radius: 12px;
+          width: 90%;
+          max-width: 900px;
+          max-height: 80vh;
+          overflow: auto;
+          padding: 24px;
+          border: 1px solid #2d3748;
+          box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+        "
+      >
+        <div
+          style="
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+          "
+        >
+          <h2 style="margin: 0; font-size: 1.5rem; color: #e5e7eb">
+            Channel List
+          </h2>
+          <button
+            id="close-channel-modal"
+            style="
+              background: transparent;
+              border: none;
+              color: #e5e7eb;
+              font-size: 1.5rem;
+              cursor: pointer;
+              padding: 0;
+              width: 30px;
+              height: 30px;
+            "
+          >
+            ✕
+          </button>
+        </div>
+        <div
+          id="channel-list-content"
+          style="min-height: 300px; color: #e5e7eb"
+        >
+          Loading channel list...
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/uplot@1.6.32/dist/uPlot.iife.js"></script>
+    
+    <!-- Sidebar Toggle Button for Analysis/Phasor Chart -->
+    <button id="sidebarToggleBtn" class="sidebar-toggle-btn" style="
+      position: fixed;
+      right: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      background: var(--bg-secondary);
+      border: 2px solid var(--border-color);
+      color: var(--text-primary);
+      cursor: pointer;
+      padding: 12px 6px;
+      border-radius: 8px 0 0 8px;
+      z-index: 999;
+      display: none;
+      font-size: 0.85rem;
+      transition: all 0.3s ease;
+      writing-mode: vertical-rl;
+      text-orientation: mixed;
+      font-weight: 600;
+      letter-spacing: 1px;
+      min-width: 40px;
+    " title="Phasor Diagram & Analysis">
+      ANALYSIS
+    </button>
+    
+    <!-- Detached Analysis Window (Floating) -->
+    <div id="detachedWindow" class="detached-window" style="
+      display: none;
+      position: fixed;
+      width: 450px;
+      height: 600px;
+      background: var(--bg-sidebar);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+      z-index: 2000;
+      top: 100px;
+      right: 50px;
+      flex-direction: column;
+      overflow: hidden;
+    ">
+      <!-- Window Title Bar (Draggable) -->
+      <div id="windowTitleBar" class="window-title-bar" style="
+        background: var(--bg-secondary);
+        border-bottom: 1px solid var(--border-color);
+        padding: 12px 16px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        cursor: move;
+        user-select: none;
+      ">
+        <h3 style="margin: 0; font-size: 0.95rem; color: var(--text-primary);">Analysis - Phasor Diagram</h3>
+        <div style="display: flex; gap: 8px;">
+          <button id="attachWindowBtn" style="background: none; border: none; color: var(--text-secondary); cursor: pointer; font-size: 1.1rem; padding: 0; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center;" title="Attach to sidebar">
+            ⬇
+          </button>
+          <button id="closeWindowBtn" style="background: none; border: none; color: var(--text-secondary); cursor: pointer; font-size: 1.2rem; padding: 0; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center;">
+            ✕
+          </button>
+        </div>
+      </div>
+      
+      <!-- Window Content (scrollable) -->
+      <div id="detachedWindowContent" style="
+        flex: 1;
+        overflow-y: auto;
+        padding: 16px;
+      ">
+        <!-- Content will be cloned here -->
+      </div>
+    </div>
+    
+    <script src="src/main.js" type="module"></script>
+  </body>
+</html>

@@ -1,0 +1,402 @@
+// // src/components/showChannelListWindow.js
+// // Opens a child window and renders the channel list with drag-and-drop support
+// import { createChannelList } from './ChannelList.js';
+
+// /**
+//  * Opens a child window and displays the channel list.
+//  * @param {Object} channelState - State object with analog and digital channel info.
+//  * @param {Function} onChannelDrop - Callback(channelType, fromIdx, toIdx) when a channel is reordered.
+//  * @param {Function} onChannelColorChange - Callback(channelType, idx, color) when a channel color is changed.
+//  */
+// export function showChannelListWindow(channelState, onChannelDrop, onChannelColorChange) {
+//   const win = window.open('', 'ChannelListWindow', 'width=400,height=600');
+//   if (!win) return;
+//   win.document.title = 'Channel List';
+//   // Basic styles for the list
+//   win.document.head.innerHTML = `
+//     <title>Channel List</title>
+//     <style>
+//       body { font-family: Arial, sans-serif; margin: 0; padding: 12px; background: #f9f9f9; }
+//       .channel-list-container { padding: 8px; }
+//       .channel-list-section { margin-bottom: 18px; }
+//       .channel-list { list-style: none; padding: 0; margin: 0; }
+//       .channel-list-item { padding: 6px 12px; margin-bottom: 4px; background: #fff; border: 1px solid #ccc; border-radius: 4px; cursor: grab; transition: background 0.2s; }
+//       .channel-list-item.dragging { opacity: 0.5; }
+//       .channel-list-item.drag-over { background: #e6f0fa; }
+//       h3 { margin: 8px 0 8px 0; font-size: 1.1em; }
+//     </style>
+//   `;
+//   win.document.body.innerHTML = '';
+//   // Render the channel list
+//   const renderList = () => {
+//     win.document.body.innerHTML = '';
+//     // Unwrap channelState if it's a proxy/state object
+//     const analogChannels = channelState.analog?.yLabels?.map((id, idx) => ({
+//       id,
+//       color: channelState.analog.lineColors[idx],
+//       type: 'analog',
+//       idx
+//     })) || [];
+//     const digitalChannels = channelState.digital?.yLabels?.map((id, idx) => ({
+//       id,
+//       color: channelState.digital.lineColors[idx],
+//       type: 'digital',
+//       idx
+//     })) || [];
+//     // Compose a cfg-like object for createChannelList
+//     const channelListCfg = {
+//       analogChannels,
+//       digitalChannels
+//     };
+//     const listEl = createChannelList(channelListCfg, (type, fromIdx, toIdx, color) => {
+//       if (color !== undefined && typeof onChannelColorChange === 'function') {
+//         onChannelColorChange(type, fromIdx, color);
+//       } else {
+//         onChannelDrop(type, fromIdx, toIdx);
+//       }
+//       renderList();
+//     });
+//     win.document.body.appendChild(listEl);
+//   };
+//   renderList();
+// }
+
+import { createChannelList } from "./ChannelList.js";
+import { autoGroupChannels } from "../utils/autoGroupChannels.js";
+
+/**
+ * Open a Channel List popup and initialize the child UI.
+ *
+ * This function prepares the child window (loads Tailwind + Tabulator) and
+ * injects the ChannelList UI into the popup. It serializes the current
+ * `channelState` (analog/digital arrays) and passes them to the child. The
+ * child runs `createChannelList` inside its own context and uses
+ * `window.opener.postMessage(...)` to notify the parent of user-driven
+ * changes (color/name/add/delete). The parent listens for these messages and
+ * updates `channelState` (createState), which in turn notifies chart
+ * subscribers.
+ *
+ * Note: the child may also call the `onChannelColorChange` or `onChannelDrop`
+ * callbacks directly if they are supplied, keeping compatibility with the
+ * existing callback-based integration.
+ *
+ * @param {Object} channelState - reactive state (createState) containing channel metadata
+ * @param {Function} [onChannelDrop] - optional callback(type, fromIdx, toIdx)
+ * @param {Function} [onChannelColorChange] - optional callback(type, idx, color)
+ * @returns {Window|undefined} the popup window object if opened
+ */
+export function showChannelListWindow(
+  channelState,
+  onChannelDrop,
+  onChannelColorChange,
+  charts, // optional: pass charts array so we can inspect digital chart plugin for display colors
+  cfg, // COMTRADE config
+  data // COMTRADE data
+) {
+  const win = window.open("", "ChannelListWindow", "width=600,height=700");
+  if (!win) {
+    console.error("Failed to open popup window - popups may be blocked");
+    return false;
+  }
+
+  win.document.title = "Channel List";
+
+  // Bind full cfg/data to the popup for module scripts to consume
+  try {
+    win.globalCfg = cfg;
+    win.globalData = data;
+  } catch (e) {
+    /* ignore */
+  }
+
+  // Add Math.js - needed for expression evaluation in ChannelList
+  const mathScript = win.document.createElement("script");
+  mathScript.src =
+    "https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.11.0/math.min.js";
+  win.document.head.appendChild(mathScript);
+
+  // Tailwind CSS
+  const tailwindScript = win.document.createElement("script");
+  tailwindScript.src = "https://cdn.tailwindcss.com";
+  win.document.head.appendChild(tailwindScript);
+
+  // ✅ Add MathLive CSS for LaTeX editor
+  const mlCoreCSS = win.document.createElement("link");
+  mlCoreCSS.rel = "stylesheet";
+  mlCoreCSS.href = "https://unpkg.com/mathlive/dist/mathlive.core.css";
+  win.document.head.appendChild(mlCoreCSS);
+
+  const mlCSS = win.document.createElement("link");
+  mlCSS.rel = "stylesheet";
+  mlCSS.href = "https://unpkg.com/mathlive/dist/mathlive.css";
+  win.document.head.appendChild(mlCSS);
+
+  // ✅ Add custom CSS for MathLive keyboard z-index
+  const mlKeyboardStyle = win.document.createElement("style");
+  mlKeyboardStyle.textContent = `
+    .ML__keyboard {
+      z-index: 10002 !important;
+    }
+  `;
+  win.document.head.appendChild(mlKeyboardStyle);
+
+  // ✅ Add MathLive JavaScript
+  const mlScript = win.document.createElement("script");
+  mlScript.defer = true;
+  mlScript.src = "https://unpkg.com/mathlive";
+  win.document.head.appendChild(mlScript);
+
+  // Add Tabulator CSS
+  const tabulatorCSS = win.document.createElement("link");
+  tabulatorCSS.rel = "stylesheet";
+  tabulatorCSS.href =
+    "https://unpkg.com/tabulator-tables@5.5.2/dist/css/tabulator.min.css";
+  win.document.head.appendChild(tabulatorCSS);
+
+  // Add Tabulator JS
+  const tabulatorScript = win.document.createElement("script");
+  tabulatorScript.src =
+    "https://unpkg.com/tabulator-tables@5.5.2/dist/js/tabulator.min.js";
+  // tabulatorScript.onload = () => {
+  //   setTimeout(setupChannelList, 20); // small delay to ensure Tailwind is ready
+  // };
+  // win.document.head.appendChild(tabulatorScript);
+  tailwindScript.onload = () => {
+    tabulatorScript.onload = () => {
+      // Debug Tabulator versions to detect mismatches
+      try {
+        console.debug(
+          "popup Tabulator version:",
+          win.Tabulator &&
+            win.Tabulator.prototype &&
+            win.Tabulator.prototype.constructor &&
+            win.Tabulator.prototype.constructor.VERSION
+            ? win.Tabulator.prototype.constructor.VERSION
+            : win.Tabulator?.version || null
+        );
+      } catch (e) {
+        console.debug("popup Tabulator version: (unavailable)");
+      }
+      try {
+        console.debug(
+          "main Tabulator version:",
+          window.Tabulator?.version || null
+        );
+      } catch (e) {
+        console.debug("main Tabulator version: (unavailable)");
+      }
+      // Ensure math.js is available before initializing table
+      if (typeof win.math === "undefined") {
+        mathScript.addEventListener("load", () => setupChannelList());
+      } else {
+        setupChannelList();
+      }
+    };
+    win.document.head.appendChild(tabulatorScript);
+  };
+
+  // Root container with Tailwind styling
+  // win.document.body.innerHTML = `
+  //   <div id="channel-root" class="p-4 bg-red-50 min-h-screen overflow-x-auto"></div>
+  // `;
+
+  win.document.body.innerHTML = `
+  <div id="channel-table" class="w-auto flex flex-col gap-4 rounded-md h-auto p-2 md:p-4">
+    <div id="button-bar" class="flex flex-wrap gap-2 m-2 md:m-3">
+      <select id="group-select" class="border rounded px-2 py-1 text-sm">
+        <option value="Analog">Analog</option>
+        <option value="Digital">Digital</option>
+      </select>
+      <button id="add-row" class="bg-green-500 hover:bg-green-600 text-white text-sm px-3 py-1 rounded">
+        Add Blank Row
+      </button>
+      <button id="history-undo" class="bg-green-500 hover:bg-green-600 text-white text-sm px-3 py-1 rounded">Undo Edit</button>
+      <button id="history-redo" class="bg-green-500 hover:bg-green-600 text-white text-sm px-3 py-1 rounded">Redo Edit</button>
+      <button id="download-pdf" class="bg-green-500 hover:bg-green-600 text-white text-sm px-3 py-1 rounded">Download PDF</button>
+    </div>
+    <div id="channel-root" class="w-auto overflow-y-auto border border-gray-300 rounded-lg shadow-md bg-white"></div>
+  </div>
+  `;
+
+  // Optional: additional custom styles
+  const style = win.document.createElement("style");
+  style.textContent = `
+    body { font-family: sans-serif; }
+  `;
+  win.document.head.appendChild(style);
+
+  function setupChannelList() {
+    // Build analog channel objects and compute group names using autoGroupChannels
+    const analogChannels =
+      channelState.analog?.yLabels?.map((id, idx) => ({
+        id,
+        name: id,
+        channelID: channelState.analog.channelIDs?.[idx],
+        color: channelState.analog.lineColors[idx],
+        type: "Analog",
+        idx,
+      })) || [];
+
+    console.log(
+      "[showChannelListWindow] Analog channels from channelState:",
+      analogChannels
+    );
+    console.log(
+      "[showChannelListWindow] channelState.analog.yUnits:",
+      channelState.analog?.yUnits
+    );
+
+    // Compute grouping for analog channels based on ids/units
+    let analogGroupMap = {};
+    try {
+      const groups = autoGroupChannels(
+        analogChannels.map((ch, i) => ({
+          id: ch.id,
+          unit: channelState.analog.yUnits?.[i],
+        }))
+      );
+      groups.forEach((g) => {
+        g.indices.forEach((gi) => {
+          analogGroupMap[gi] = g.name;
+        });
+      });
+    } catch (e) {
+      // fallback: leave analogGroupMap empty
+    }
+
+    // Prefer using the chart's displayed color for digital channels when available
+    const digitalChannels =
+      channelState.digital?.yLabels?.map((id, idx) => {
+        let color = channelState.digital.lineColors[idx];
+        try {
+          if (charts && charts[1]) {
+            const plugin =
+              charts[1].plugins &&
+              charts[1].plugins.find((p) => p && p.id === "digitalFill");
+            if (plugin && typeof plugin.getSignalColors === "function") {
+              const mapping = plugin.getSignalColors();
+              // Each channel's original index in the state matches its idx in the channelList
+              // Use this to find the displayed color for this channel if it's visible
+              const found = mapping.find((m) => m.originalIndex === idx);
+              if (found && found.color) {
+                // If this channel is currently displayed, use its display color
+                color = found.color;
+              }
+            }
+          }
+        } catch (e) {
+          /* ignore and fallback to channelState color */
+        }
+
+        return {
+          id,
+          name: id,
+          channelID: channelState.digital.channelIDs?.[idx],
+          color: color,
+          type: "Digital",
+          idx,
+          originalIndex: idx,
+          group: "Digital",
+        };
+      }) || [];
+
+    // Attach group names to analog channels (default to 'Group 1' when unknown)
+    const analogChannelsWithGroup = analogChannels.map((ch, i) => ({
+      ...ch,
+      unit: channelState.analog?.yUnits?.[i] || "", // ← Add unit from channelState
+      // prefer persisted group from channelState if present, else autoGroup map, else default
+      group:
+        (channelState.analog &&
+          channelState.analog.groups &&
+          channelState.analog.groups[i]) ||
+        analogGroupMap[i] ||
+        "Group 1",
+    }));
+
+    console.log(
+      "[showChannelListWindow] analogChannelsWithGroup (with units):",
+      analogChannelsWithGroup
+    );
+
+    // Build computed channels from cfg if available
+    const computedChannels =
+      cfg && cfg.computedChannels
+        ? cfg.computedChannels.map((ch, idx) => ({
+            id: ch.id,
+            name: ch.name,
+            type: "Computed",
+            unit: ch.unit || "",
+            group: ch.group || "Computed",
+            color: ch.color || "#888",
+            idx,
+          }))
+        : [];
+
+    console.log(
+      "[showChannelListWindow] cfg.computedChannels:",
+      cfg?.computedChannels
+    );
+    console.log(
+      "[showChannelListWindow] computedChannels (with units):",
+      computedChannels
+    );
+
+    const channelListCfg = {
+      analogChannels: analogChannelsWithGroup,
+      digitalChannels,
+      computedChannels,
+    };
+
+    console.log(
+      "[showChannelListWindow] Final channelListCfg being sent to popup:",
+      channelListCfg
+    );
+
+    // Call createChannelList and append
+    // const listEl = createChannelList.call(
+    //   win,
+    //   channelListCfg,
+    //   (type, fromIdx, toIdx, color) => {
+    //     if (color !== undefined && typeof onChannelColorChange === "function") {
+    //       onChannelColorChange(type, fromIdx, color);
+    //     } else if (typeof onChannelDrop === "function") {
+    //       onChannelDrop(type, fromIdx, toIdx);
+    //     }
+    //   }
+    // );
+
+    // win.document.getElementById("channel-root").appendChild(listEl);
+
+    const root = win.document.getElementById("channel-root");
+
+    // Inject a small module script into the popup so the ChannelList code runs
+    // inside the child window context. That allows the child to postMessage
+    // directly to the parent (window.opener) when changes occur.
+    const moduleScript = win.document.createElement("script");
+    moduleScript.type = "module";
+
+    const serializedCfg = JSON.stringify(channelListCfg || {});
+    const base =
+      window.location && window.location.origin ? window.location.origin : "";
+    const modulePath = base + "/src/components/ChannelList.js";
+
+    moduleScript.textContent = `
+      import { createChannelList } from ${JSON.stringify(modulePath)};
+      (function(){
+        try {
+          const cfg = ${serializedCfg};
+          const root = document.getElementById('channel-root');
+          // createChannelList signature: (cfg, onChannelUpdate, TabulatorInstance, ownerDocument, attachToElement)
+          // We intentionally do not pass onChannelUpdate here: the child will postMessage to opener for callbacks.
+          createChannelList(cfg, undefined, undefined, document, root);
+        } catch (err) {
+          console.error('Child module failed to initialize ChannelList:', err);
+        }
+      })();
+    `;
+
+    win.document.body.appendChild(moduleScript);
+  }
+
+  return true;
+}

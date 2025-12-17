@@ -1,0 +1,3793 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title> Global</title>
+
+  <script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="./build/entry.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+  <link href="https://fonts.googleapis.com/css?family=Roboto:100,400,700|Inconsolata,700" rel="stylesheet">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+  <link type="text/css" rel="stylesheet" href="https://jmblog.github.io/color-themes-for-google-code-prettify/themes/tomorrow-night.min.css">
+  <link type="text/css" rel="stylesheet" href="styles/app.min.css">
+  <link type="text/css" rel="stylesheet" href="styles/iframe.css">
+  <link type="text/css" rel="stylesheet" href="">
+  <script async defer src="https://buttons.github.io/buttons.js"></script>
+
+  
+</head>
+
+
+
+<body class="layout small-header">
+    <div id="stickyNavbarOverlay"></div>
+    
+
+<div class="top-nav">
+    <div class="inner">
+        <a id="hamburger" role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+        </a>
+        <div class="logo">
+            
+            
+        </div>
+        <div class="menu">
+            
+            <div class="navigation">
+                <a
+                    href="index.html"
+                    class="link"
+                >
+                    Documentation
+                </a>
+                
+                
+                
+            </div>
+        </div>
+    </div>
+</div>
+    <div id="main">
+        <div
+            class="sidebar "
+            id="sidebarNav"
+        >
+            
+            <nav>
+                
+                    <h2><a href="index.html">Documentation</a></h2><div class="category"><h3>Modules</h3><ul><li><a href="module-chartComponent.html">chartComponent</a></li><li><a href="module-chartDomUtils.html">chartDomUtils</a></li><li><a href="module-chartManager.html">chartManager</a></li><li><a href="module-comtradeUtils.html">comtradeUtils</a></li><li><a href="module-createDragBar.html">createDragBar</a></li><li><a href="module-handleVerticalLineShortcuts.html">handleVerticalLineShortcuts</a></li><li><a href="module-main.html">main</a></li><li><a href="module-renderAnalogCharts.html">renderAnalogCharts</a></li><li><a href="module-renderComtradeCharts.html">renderComtradeCharts</a></li><li><a href="module-renderDigitalCharts.html">renderDigitalCharts</a></li><li><a href="module-setupChartDragAndDrop.html">setupChartDragAndDrop</a></li><li><a href="module-showChannelListWindow.html">showChannelListWindow</a></li><li><a href="module-timeInterpolation.html">timeInterpolation</a></li></ul><h3>Global</h3><ul><li><a href="global.html#autoGroupChannels">autoGroupChannels</a></li><li><a href="global.html#createChannelList">createChannelList</a></li><li><a href="global.html#createChartContainer">createChartContainer</a></li><li><a href="global.html#createChartOptions">createChartOptions</a></li><li><a href="global.html#createDigitalFillPlugin">createDigitalFillPlugin</a></li><li><a href="global.html#createState">createState</a></li><li><a href="global.html#createTooltip">createTooltip</a></li><li><a href="global.html#hideTooltip">hideTooltip</a></li><li><a href="global.html#initUPlotChart">initUPlotChart</a></li><li><a href="global.html#showError">showError</a></li><li><a href="global.html#subscribeChartUpdates">subscribeChartUpdates</a></li><li><a href="global.html#updateTooltip">updateTooltip</a></li></ul></div>
+                
+            </nav>
+        </div>
+        <div class="core" id="main-content-wrapper">
+            <div class="content">
+                <header class="page-title">
+                    <p></p>
+                    <h1>Global</h1>
+                </header>
+                
+
+
+
+
+<section>
+
+<header>
+    
+        <h2></h2>
+        
+    
+</header>
+
+<article>
+    <div class="container-overview">
+    
+        
+
+        
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+        
+    
+    </div>
+    
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+        <div class='vertical-section'>
+            <h1>Methods</h1>
+            <div class="members">
+            
+                <div class="member">
+
+
+    
+    <h4 class="name" id="autoGroupChannels">
+        <a class="href-link" href="#autoGroupChannels">#</a>
+        
+        <span class="code-name">
+            
+                autoGroupChannels<span class="signature">(analogChannels)</span><span class="type-signature"> &rarr; {Array}</span>
+            
+        </span>
+    </h4>
+    
+
+    
+    
+    <div class="description">
+        <script type="text/javascript" src="https://unpkg.com/mermaid@7.1.0/dist/mermaid.min.js"></script>Group analog channels by pattern (Currents, Voltages, Line Voltages, Other).
+    </div>
+    
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+<div class="table-container">
+    <table class="params table">
+        <thead>
+        <tr>
+            
+            <th>Name</th>
+            
+
+            <th>Type</th>
+
+            
+
+            
+
+            <th class="last">Description</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        
+
+            
+<tr class="deep-level-0">
+  
+      <td class="name"><code>analogChannels</code></td>
+  
+
+  <td class="type">
+  
+      
+<code class="param-type">Array</code>
+
+
+  
+  </td>
+
+  
+
+  
+
+  <td class="description last">Array of analog channel objects with 'id' and 'unit'.</td>
+</tr>
+
+
+        
+        </tbody>
+    </table>
+</div>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    
+
+    
+
+    
+
+    
+        <p class="tag-source">
+            <a href="utils_autoGroupChannels.js.html" class="button">View Source</a>
+            <span>
+                <a href="utils_autoGroupChannels.js.html">utils/autoGroupChannels.js</a>, <a href="utils_autoGroupChannels.js.html#line7">line 7</a>
+            </span>
+        </p>
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <div class='columns method-parameter'>
+        <div class="column is-2"><label>Returns:</label></div>
+        <div class="column is-10">
+            
+                    
+
+<div class="columns">
+    
+    <div class='param-desc column is-7'>Array of grouped channel info: { name, indices, colors }</div>
+    
+    
+    <div class='column is-5 has-text-left'>
+        <label>Type: </label>
+        
+<code class="param-type">Array</code>
+
+
+    </div>
+    
+</div>
+
+                
+        </div>
+    </div>
+
+
+
+
+</div>
+            
+                <div class="member">
+
+
+    
+    <h4 class="name" id="createChannelList">
+        <a class="href-link" href="#createChannelList">#</a>
+        
+        <span class="code-name">
+            
+                createChannelList<span class="signature">(cfg, onChannelUpdate, TabulatorInstance, ownerDocument<span class="signature-attributes">opt</span>, attachToElement<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {HTMLElement}</span>
+            
+        </span>
+    </h4>
+    
+
+    
+    
+    <div class="description">
+        <script type="text/javascript" src="https://unpkg.com/mermaid@7.1.0/dist/mermaid.min.js"></script>Create a Tabulator-based channel editor.This function builds a table of channels (both analog and digital) andwires Tabulator events to a local callback and to window.postMessage so apopup can communicate edits back to the parent window. The payloads matchthe shapes documented in `ChildMessagePayload`.
+    </div>
+    
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+<div class="table-container">
+    <table class="params table">
+        <thead>
+        <tr>
+            
+            <th>Name</th>
+            
+
+            <th>Type</th>
+
+            
+            <th>Attributes</th>
+            
+
+            
+
+            <th class="last">Description</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        
+
+            
+<tr class="deep-level-0">
+  
+      <td class="name"><code>cfg</code></td>
+  
+
+  <td class="type">
+  
+      
+<code class="param-type">Object</code>
+
+
+  
+  </td>
+
+  
+      <td class="attributes">
+      
+
+      
+
+      
+      </td>
+  
+
+  
+
+  <td class="description last">COMTRADE configuration object containing `analogChannels` and `digitalChannels` arrays</td>
+</tr>
+
+
+        
+
+            
+<tr class="deep-level-0">
+  
+      <td class="name"><code>onChannelUpdate</code></td>
+  
+
+  <td class="type">
+  
+      
+<code class="param-type"><a href="global.html#OnChannelUpdate">OnChannelUpdate</a></code>
+
+
+  
+  </td>
+
+  
+      <td class="attributes">
+      
+
+      
+
+      
+      </td>
+  
+
+  
+
+  <td class="description last">Local callback invoked for edits/add/delete</td>
+</tr>
+
+
+        
+
+            
+<tr class="deep-level-0">
+  
+      <td class="name"><code>TabulatorInstance</code></td>
+  
+
+  <td class="type">
+  
+      
+<code class="param-type">function</code>
+|
+
+<code class="param-type">Object</code>
+
+
+  
+  </td>
+
+  
+      <td class="attributes">
+      
+
+      
+
+      
+      </td>
+  
+
+  
+
+  <td class="description last">Tabulator class or instance used to create the table</td>
+</tr>
+
+
+        
+
+            
+<tr class="deep-level-0">
+  
+      <td class="name"><code>ownerDocument</code></td>
+  
+
+  <td class="type">
+  
+      
+<code class="param-type">Document</code>
+
+
+  
+  </td>
+
+  
+      <td class="attributes">
+      
+          &lt;optional><br>
+      
+
+      
+
+      
+      </td>
+  
+
+  
+
+  <td class="description last">Optional `document` to attach the table into (used by popup integration)</td>
+</tr>
+
+
+        
+
+            
+<tr class="deep-level-0">
+  
+      <td class="name"><code>attachToElement</code></td>
+  
+
+  <td class="type">
+  
+      
+<code class="param-type">HTMLElement</code>
+
+
+  
+  </td>
+
+  
+      <td class="attributes">
+      
+          &lt;optional><br>
+      
+
+      
+
+      
+      </td>
+  
+
+  
+
+  <td class="description last">Optional element to append the generated table container</td>
+</tr>
+
+
+        
+        </tbody>
+    </table>
+</div>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    
+
+    
+
+    
+
+    
+        <p class="tag-source">
+            <a href="components_ChannelList.js.html" class="button">View Source</a>
+            <span>
+                <a href="components_ChannelList.js.html">components/ChannelList.js</a>, <a href="components_ChannelList.js.html#line70">line 70</a>
+            </span>
+        </p>
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <div class='columns method-parameter'>
+        <div class="column is-2"><label>Returns:</label></div>
+        <div class="column is-10">
+            
+                    
+
+<div class="columns">
+    
+    <div class='param-desc column is-7'>The DOM container element that holds the Tabulator table</div>
+    
+    
+    <div class='column is-5 has-text-left'>
+        <label>Type: </label>
+        
+<code class="param-type">HTMLElement</code>
+
+
+    </div>
+    
+</div>
+
+                
+        </div>
+    </div>
+
+
+
+
+    <h5>Example</h5>
+    
+    
+        <pre class="prettyprint"><code>createChannelList(cfg, (action, row) => {  if (action === 'update' &amp;&amp; row.invert) console.log('invert toggled', row);}, Tabulator, document, document.body);</code></pre>
+    
+
+
+</div>
+            
+                <div class="member">
+
+
+    
+    <h4 class="name" id="createChartContainer">
+        <a class="href-link" href="#createChartContainer">#</a>
+        
+        <span class="code-name">
+            
+                createChartContainer<span class="signature">(dragBar, chartContainerClass)</span><span class="type-signature"> &rarr; {Object}</span>
+            
+        </span>
+    </h4>
+    
+
+    
+    
+    <div class="description">
+        <script type="text/javascript" src="https://unpkg.com/mermaid@7.1.0/dist/mermaid.min.js"></script>Creates a chart parent container with a drag bar and chart div.
+    </div>
+    
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+<div class="table-container">
+    <table class="params table">
+        <thead>
+        <tr>
+            
+            <th>Name</th>
+            
+
+            <th>Type</th>
+
+            
+
+            
+
+            <th class="last">Description</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        
+
+            
+<tr class="deep-level-0">
+  
+      <td class="name"><code>dragBar</code></td>
+  
+
+  <td class="type">
+  
+      
+<code class="param-type">HTMLElement</code>
+
+
+  
+  </td>
+
+  
+
+  
+
+  <td class="description last">The drag bar element.</td>
+</tr>
+
+
+        
+
+            
+<tr class="deep-level-0">
+  
+      <td class="name"><code>chartContainerClass</code></td>
+  
+
+  <td class="type">
+  
+      
+<code class="param-type">string</code>
+
+
+  
+  </td>
+
+  
+
+  
+
+  <td class="description last">The class for the chart container div.</td>
+</tr>
+
+
+        
+        </tbody>
+    </table>
+</div>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    
+
+    
+
+    
+
+    
+        <p class="tag-source">
+            <a href="utils_chartDomUtils.js.html" class="button">View Source</a>
+            <span>
+                <a href="utils_chartDomUtils.js.html">utils/chartDomUtils.js</a>, <a href="utils_chartDomUtils.js.html#line11">line 11</a>
+            </span>
+        </p>
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <div class='columns method-parameter'>
+        <div class="column is-2"><label>Returns:</label></div>
+        <div class="column is-10">
+            
+                    
+
+<div class="columns">
+    
+    
+    <div class='column is-5 has-text-left'>
+        <label>Type: </label>
+        
+<code class="param-type">Object</code>
+
+
+    </div>
+    
+</div>
+
+                
+        </div>
+    </div>
+
+
+
+
+</div>
+            
+                <div class="member">
+
+
+    
+    <h4 class="name" id="createChartOptions">
+        <a class="href-link" href="#createChartOptions">#</a>
+        
+        <span class="code-name">
+            
+                createChartOptions<span class="signature">(config)</span><span class="type-signature"> &rarr; {Object}</span>
+            
+        </span>
+    </h4>
+    
+
+    
+    
+    <div class="description">
+        <script type="text/javascript" src="https://unpkg.com/mermaid@7.1.0/dist/mermaid.min.js"></script>Factory Function to Generate uPlot Chart Options.All major parameters should be arrays/values (no createState except for verticalLinesX).
+    </div>
+    
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+<div class="table-container">
+    <table class="params table">
+        <thead>
+        <tr>
+            
+            <th>Name</th>
+            
+
+            <th>Type</th>
+
+            
+            <th>Attributes</th>
+            
+
+            
+
+            <th class="last">Description</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        
+
+            
+<tr class="deep-level-0">
+  
+      <td class="name"><code>config</code></td>
+  
+
+  <td class="type">
+  
+      
+<code class="param-type">Object</code>
+
+
+  
+  </td>
+
+  
+      <td class="attributes">
+      
+
+      
+
+      
+      </td>
+  
+
+  
+
+  <td class="description last">Configuration for chart.</td>
+</tr>
+
+  
+  
+    
+<tr class="deep-level-1">
+  
+      <td class="name"><code>title</code></td>
+  
+
+  <td class="type">
+  
+      
+<code class="param-type">string</code>
+
+
+  
+  </td>
+
+  
+      <td class="attributes">
+      
+
+      
+
+      
+      </td>
+  
+
+  
+
+  <td class="description last">Chart title (string).</td>
+</tr>
+
+  
+    
+<tr class="deep-level-1">
+  
+      <td class="name"><code>yLabels</code></td>
+  
+
+  <td class="type">
+  
+      
+<code class="param-type">Array.&lt;string></code>
+
+
+  
+  </td>
+
+  
+      <td class="attributes">
+      
+
+      
+
+      
+      </td>
+  
+
+  
+
+  <td class="description last">Labels for Y-series (array).</td>
+</tr>
+
+  
+    
+<tr class="deep-level-1">
+  
+      <td class="name"><code>lineColors</code></td>
+  
+
+  <td class="type">
+  
+      
+<code class="param-type">Array.&lt;string></code>
+
+
+  
+  </td>
+
+  
+      <td class="attributes">
+      
+
+      
+
+      
+      </td>
+  
+
+  
+
+  <td class="description last">Stroke colors for series (array).</td>
+</tr>
+
+  
+    
+<tr class="deep-level-1">
+  
+      <td class="name"><code>verticalLinesX</code></td>
+  
+
+  <td class="type">
+  
+      
+<code class="param-type">Array.&lt;number></code>
+|
+
+<code class="param-type">object</code>
+
+
+  
+  </td>
+
+  
+      <td class="attributes">
+      
+
+      
+
+      
+      </td>
+  
+
+  
+
+  <td class="description last">Reference array for vertical lines plugin (array or createState).</td>
+</tr>
+
+  
+    
+<tr class="deep-level-1">
+  
+      <td class="name"><code>xLabel</code></td>
+  
+
+  <td class="type">
+  
+      
+<code class="param-type">string</code>
+
+
+  
+  </td>
+
+  
+      <td class="attributes">
+      
+          &lt;optional><br>
+      
+
+      
+
+      
+      </td>
+  
+
+  
+
+  <td class="description last">Label for x-axis (string).</td>
+</tr>
+
+  
+    
+<tr class="deep-level-1">
+  
+      <td class="name"><code>width</code></td>
+  
+
+  <td class="type">
+  
+      
+<code class="param-type">number</code>
+
+
+  
+  </td>
+
+  
+      <td class="attributes">
+      
+          &lt;optional><br>
+      
+
+      
+
+      
+      </td>
+  
+
+  
+
+  <td class="description last">Width of the chart.</td>
+</tr>
+
+  
+    
+<tr class="deep-level-1">
+  
+      <td class="name"><code>height</code></td>
+  
+
+  <td class="type">
+  
+      
+<code class="param-type">number</code>
+
+
+  
+  </td>
+
+  
+      <td class="attributes">
+      
+          &lt;optional><br>
+      
+
+      
+
+      
+      </td>
+  
+
+  
+
+  <td class="description last">Height of the chart.</td>
+</tr>
+
+  
+    
+<tr class="deep-level-1">
+  
+      <td class="name"><code>getCharts</code></td>
+  
+
+  <td class="type">
+  
+      
+<code class="param-type">function</code>
+
+
+  
+  </td>
+
+  
+      <td class="attributes">
+      
+          &lt;optional><br>
+      
+
+      
+
+      
+      </td>
+  
+
+  
+
+  <td class="description last">Optional getter for all charts.</td>
+</tr>
+
+  
+    
+<tr class="deep-level-1">
+  
+      <td class="name"><code>yUnits</code></td>
+  
+
+  <td class="type">
+  
+      
+<code class="param-type">Array.&lt;string></code>
+
+
+  
+  </td>
+
+  
+      <td class="attributes">
+      
+          &lt;optional><br>
+      
+
+      
+
+      
+      </td>
+  
+
+  
+
+  <td class="description last">Array of units for each y axis (array).</td>
+</tr>
+
+  
+    
+<tr class="deep-level-1">
+  
+      <td class="name"><code>scales</code></td>
+  
+
+  <td class="type">
+  
+      
+<code class="param-type">Array.&lt;number></code>
+
+
+  
+  </td>
+
+  
+      <td class="attributes">
+      
+          &lt;optional><br>
+      
+
+      
+
+      
+      </td>
+  
+
+  
+
+  <td class="description last">Array of scale factors for each y axis (array).</td>
+</tr>
+
+  
+    
+<tr class="deep-level-1">
+  
+      <td class="name"><code>singleYAxis</code></td>
+  
+
+  <td class="type">
+  
+      
+<code class="param-type">boolean</code>
+
+
+  
+  </td>
+
+  
+      <td class="attributes">
+      
+          &lt;optional><br>
+      
+
+      
+
+      
+      </td>
+  
+
+  
+
+  <td class="description last">If true, use only one y axis for all series; if false, use multiple y axes (default: false)</td>
+</tr>
+
+  
+    
+<tr class="deep-level-1">
+  
+      <td class="name"><code>autoScaleUnit</code></td>
+  
+
+  <td class="type">
+  
+      
+<code class="param-type">Object</code>
+
+
+  
+  </td>
+
+  
+      <td class="attributes">
+      
+          &lt;optional><br>
+      
+
+      
+
+      
+      </td>
+  
+
+  
+
+  <td class="description last">Auto scale units for x and y axes (default: { x: true, y: true })</td>
+</tr>
+
+  
+
+
+        
+        </tbody>
+    </table>
+</div>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    
+
+    
+
+    
+
+    
+        <p class="tag-source">
+            <a href="components_chartComponent%20-%20Copy.js.html" class="button">View Source</a>
+            <span>
+                <a href="components_chartComponent%20-%20Copy.js.html">components/chartComponent - Copy.js</a>, <a href="components_chartComponent%20-%20Copy.js.html#line34">line 34</a>
+            </span>
+        </p>
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <div class='columns method-parameter'>
+        <div class="column is-2"><label>Returns:</label></div>
+        <div class="column is-10">
+            
+                    
+
+<div class="columns">
+    
+    <div class='param-desc column is-7'>uPlot options.</div>
+    
+    
+    <div class='column is-5 has-text-left'>
+        <label>Type: </label>
+        
+<code class="param-type">Object</code>
+
+
+    </div>
+    
+</div>
+
+                
+        </div>
+    </div>
+
+
+
+
+</div>
+            
+                <div class="member">
+
+
+    
+    <h4 class="name" id="createDigitalFillPlugin">
+        <a class="href-link" href="#createDigitalFillPlugin">#</a>
+        
+        <span class="code-name">
+            
+                createDigitalFillPlugin<span class="signature">(signals)</span><span class="type-signature"> &rarr; {Object}</span>
+            
+        </span>
+    </h4>
+    
+
+    
+    
+    <div class="description">
+        <script type="text/javascript" src="https://unpkg.com/mermaid@7.1.0/dist/mermaid.min.js"></script>uPlot plugin for rendering filled regions under digital (boolean) signals.This plugin draws filled rectangles under digital signals (step lines) when the signal is in the "high" state (as defined by targetVal).It supports multiple digital signals, each with its own vertical offset, color, and target value.The fill is drawn in sync with zoom/pan and respects the current axis scales.
+    </div>
+    
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+<div class="table-container">
+    <table class="params table">
+        <thead>
+        <tr>
+            
+            <th>Name</th>
+            
+
+            <th>Type</th>
+
+            
+
+            
+
+            <th class="last">Description</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        
+
+            
+<tr class="deep-level-0">
+  
+      <td class="name"><code>signals</code></td>
+  
+
+  <td class="type">
+  
+      
+<code class="param-type">Array.&lt;Object></code>
+
+
+  
+  </td>
+
+  
+
+  
+
+  <td class="description last">Array of signal configuration objects.  Each object should have:    - signalIndex {number}: Index of the signal in the uPlot data array (e.g., 1 for the first signal after x).    - offset {number}: Vertical offset to apply to the signal (for stacking multiple signals).    - color {string}: Fill color for the high region (CSS color, e.g., 'rgba(0,150,255,0.3)').    - targetVal {number}: Value to consider as "high" (usually 1).</td>
+</tr>
+
+
+        
+        </tbody>
+    </table>
+</div>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    
+
+    
+
+    
+
+    
+        <p class="tag-source">
+            <a href="plugins_digitalFillPlugin.js.html" class="button">View Source</a>
+            <span>
+                <a href="plugins_digitalFillPlugin.js.html">plugins/digitalFillPlugin.js</a>, <a href="plugins_digitalFillPlugin.js.html#line50">line 50</a>
+            </span>
+        </p>
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <div class='columns method-parameter'>
+        <div class="column is-2"><label>Returns:</label></div>
+        <div class="column is-10">
+            
+                    
+
+<div class="columns">
+    
+    <div class='param-desc column is-7'>uPlot plugin object to be included in the `plugins` array of uPlot options.</div>
+    
+    
+    <div class='column is-5 has-text-left'>
+        <label>Type: </label>
+        
+<code class="param-type">Object</code>
+
+
+    </div>
+    
+</div>
+
+                
+        </div>
+    </div>
+
+
+
+
+    <h5>Example</h5>
+    
+    
+        <pre class="prettyprint"><code>import { createDigitalFillPlugin } from './src/plugins/digitalFillPlugin.js';const xVals = [0, 1, 2, 3, 4, 5, 6];const signal1 = [1, 0, 1, 1, 0, 1, 0];const signal2 = [1, 1, 1, 0, 1, 1, 1];const signals = [  { signalIndex: 1, offset: 0, color: 'rgba(0, 150, 255, 0.3)', targetVal: 1 },  { signalIndex: 2, offset: 3, color: 'rgba(255, 100, 100, 0.3)', targetVal: 1 }];const opts = {  width: 600,  height: 300,  scales: { x: { time: false }, y: { min: 0, max: 6 } },  axes: [{}, {}],  series: [    {}, // x axis    { label: "Signal 1", stroke: "transparent" },    { label: "Signal 2", stroke: "transparent" }  ],  plugins: [    createDigitalFillPlugin(signals)  ]};const data = [xVals, signal1, signal2];new uPlot(opts, data, document.getElementById("chart-digital"));</code></pre>
+    
+
+
+</div>
+            
+                <div class="member">
+
+
+    
+    <h4 class="name" id="createState">
+        <a class="href-link" href="#createState">#</a>
+        
+        <span class="code-name">
+            
+                createState<span class="signature">()</span><span class="type-signature"></span>
+            
+        </span>
+    </h4>
+    
+
+    
+    
+    <div class="description">
+        <script type="text/javascript" src="https://unpkg.com/mermaid@7.1.0/dist/mermaid.min.js"></script>createState.jsHigh-performance, deeply reactive state management for vanilla JS apps.Feature Set:- Deep reactivity: Nested objects, arrays, and Maps are fully reactive using Proxies. Any change, no matter how deep, is detected and can trigger subscribers.- Path-based subscriptions: Subscribe to all changes, a specific property, or all descendants of a path (string or array).- Selector-based subscriptions: Subscribe to changes in derived/computed values using a selector function.- Batching: State change notifications are batched by default for performance; can be disabled per state instance.- Computed/derived properties: Define computed or derived values that update automatically when dependencies change, accessible as properties on the state.- Middleware/interceptors: Intercept, transform, or log state changes before subscribers are notified.- Error handling: Subscriber errors are caught and logged, so one bad subscriber does not break the system.- Unsubscribe: Remove listeners for both global and path-specific subscriptions.- Extensibility: Easily add persistence, devtools, or TypeScript support as needed.---The `change` object passed to subscribers has these properties:  - path: Array of keys from root to the changed property (e.g. ['user','profile','city'])  - newValue: The new value of the property after the change  - oldValue: The previous value of the property before the change  - prop: The property key that was changed (last element in path)  - root: The root state proxy (entire state tree)  - selectorValue (optional): The value returned by your selector function, if using selector-based subscriptionExample `change` object:  {    path: ['user', 'profile', 'city'],    newValue: 'London',    oldValue: 'Paris',    prop: 'city',    root: /* the root state proxy *\,    selectorValue: 'AliceLondon' // only if using a selector  }* ----------------------------------------------------------------------------FUNCTION SIGNATURES:createState(initialState, options?)  - initialState: object, array, or primitive  - options: { batch?: boolean } (default: true)  => Returns a reactive proxy with API methods.state.subscribe(fn, options?)  - fn: (change) => void  - options: {      path?: string | string[],      descendants?: boolean,      selector?: (state) => any,      batch?: boolean    }  => Subscribes to changes. Path/selector/descendants are optional.state.unsubscribe(fn)  - fn: The original subscriber function passed to subscribe.  => Unsubscribes the function.state.computed(name, dependencies, computeFn)  - name: string (property name for computed value)  - dependencies: array of string paths  - computeFn: (state) => any  => Adds a computed property to the state.state.derived(name, dependencies, computeFn)  - Alias for .computedstate.use(middlewareFn)  - middlewareFn: (change) => change | null | undefined | false  => Adds middleware to observe, modify, or block changes.----------------------------------------------------------------------------CHANGE OBJECT PROPERTIES:- path: Array of keys to the changed property (e.g., ['user','profile','city'])- newValue: New value of the property- oldValue: Previous value of the property- prop: The property key that changed (last in path)- root: The root state proxy- selectorValue: (optional) Value returned by selector function----------------------------------------------------------------------------NUANCES:- For object/array state: access properties directly (e.g., state.user.name)- For primitive state: use state.value (e.g., const state = createState(5); state.value = 10; console.log(state.value); // 10)----------------------------------------------------------------------------USAGE EXAMPLES:// 1. Basic usageconst state = createState({ user: { name: "Alice", profile: { city: "Paris" } } });state.user.name = "Bob";// 2. Primitive stateconst num = createState(5);num.value = 10;// 3. Subscribe to all changesstate.subscribe(change => {  console.log(change.path, change.newValue, change.oldValue);});// 4. Subscribe to a specific pathstate.subscribe(change => {  console.log("City changed:", change.newValue);}, { path: "user.profile.city" });// 5. Subscribe to all descendants of a pathstate.subscribe(change => {  console.log("Profile changed:", change.path, change.newValue);}, { path: "user.profile", descendants: true });// 6. Selector-based subscriptionstate.subscribe(change => {  console.log("Selector value changed:", change.selectorValue);}, { selector: s => s.user.name + s.user.profile.city });// 7. Computed/derived propertystate.computed("userInfo", ["user.name", "user.profile.city"], s => s.user.name + "@" + s.user.profile.city);// orstate.derived("userInfo", ["user.name", "user.profile.city"], s => s.user.name + "@" + s.user.profile.city);console.log(state.userInfo); // e.g., "Bob@Paris"// 8. Middleware: log and block invalid changesstate.use(change => {  if (change.prop === "age" && change.newValue < 0) return null; // block  console.log("Change:", change);  return change;});// 9. Unsubscribefunction onChange(change) { ... }state.subscribe(onChange);state.unsubscribe(onChange);---------------------------------------------------------------------------- APIUsage Examples:// 1. Deep reactivity// For object/array state, access properties directly:const state = createState({ user: { name: "Alice" }, items: [1,2,3] });state.user.name = "Bob"; // triggers subscribersstate.items.push(4);      // triggers subscribers// For primitive state, use .value:const numState = createState(5);numState.value = 10; // triggers subscribersconsole.log(numState.value); // 10// 2. Path-based subscriptionsstate.subscribe(change => { console.log("Any change", change); });state.subscribe(change => { ... }, "user.profile.city");state.subscribe(change => { ... }, ["user", "profile", "city"]);state.subscribe(change => { ... }, { path: "user.profile", descendants: true });// 3. Selector-based subscriptions// The selector function receives the state and returns a derived value.// The subscription is triggered only when the selector's return value changes.state.subscribe(change => {  // change.selectorValue is the new derived value  // change.root is the full state  // You can still read or update state via change.root or the state variable  console.log("Selector value:", change.selectorValue);}, { selector: s => s.user.name + s.user.profile.city });// 4. Batching (default: on, can be disabled per state)const state1 = createState({ value: 0 });state1.subscribe(change => { console.log("Batched:", change.newValue); });state1.value = 1; state1.value = 2; // Only one notification per tickconst state2 = createState({ value: 0 }, { batch: false });state2.subscribe(change => { console.log("Immediate:", change.newValue); });state2.value = 1; state2.value = 2; // Notified for each change// 5. Computed/derived properties (syntactic sugar)// Using .computed (existing)state.computed("userInfo", ["user.profile.city", "user.name"], () => {  return state.user.name + "@" + state.user.profile.city;});console.log(state.userInfo); // "Bob@NY"// Using .derived (alias for .computed)state.derived("userCity", ["user.profile.city"], s => s.user.profile.city.toUpperCase());console.log(state.userCity); // "LONDON"// 6. Middleware/interceptorsstate.use(change => { console.log("Middleware:", change); return change; });// 7. Error handlingstate.subscribe(() => { throw new Error("fail"); }); // Error is caught and logged// 8. Unsubscribefunction onChange(change) { ... }state.subscribe(onChange, "user.name");state.unsubscribe(onChange);// 9. Extensibility// Add persistence, devtools, or TypeScript as needed.---Nuance:- For object/array state, access properties directly (e.g., state.user.name).- For primitive state (number, string, boolean), use state.value to get/set the value.
+    </div>
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    
+
+    
+
+    
+
+    
+        <p class="tag-source">
+            <a href="components_createState.js.html" class="button">View Source</a>
+            <span>
+                <a href="components_createState.js.html">components/createState.js</a>, <a href="components_createState.js.html#line206">line 206</a>
+            </span>
+        </p>
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</div>
+            
+                <div class="member">
+
+
+    
+    <h4 class="name" id="createTooltip">
+        <a class="href-link" href="#createTooltip">#</a>
+        
+        <span class="code-name">
+            
+                createTooltip<span class="signature">()</span><span class="type-signature"> &rarr; {HTMLElement}</span>
+            
+        </span>
+    </h4>
+    
+
+    
+    
+    <div class="description">
+        <script type="text/javascript" src="https://unpkg.com/mermaid@7.1.0/dist/mermaid.min.js"></script>Create a single tooltip element globally (on body).
+    </div>
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    
+
+    
+
+    
+
+    
+        <p class="tag-source">
+            <a href="components_Tooltip.js.html" class="button">View Source</a>
+            <span>
+                <a href="components_Tooltip.js.html">components/Tooltip.js</a>, <a href="components_Tooltip.js.html#line9">line 9</a>
+            </span>
+        </p>
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <div class='columns method-parameter'>
+        <div class="column is-2"><label>Returns:</label></div>
+        <div class="column is-10">
+            
+                    
+
+<div class="columns">
+    
+    <div class='param-desc column is-7'>tooltip element</div>
+    
+    
+    <div class='column is-5 has-text-left'>
+        <label>Type: </label>
+        
+<code class="param-type">HTMLElement</code>
+
+
+    </div>
+    
+</div>
+
+                
+        </div>
+    </div>
+
+
+
+
+</div>
+            
+                <div class="member">
+
+
+    
+    <h4 class="name" id="hideTooltip">
+        <a class="href-link" href="#hideTooltip">#</a>
+        
+        <span class="code-name">
+            
+                hideTooltip<span class="signature">()</span><span class="type-signature"></span>
+            
+        </span>
+    </h4>
+    
+
+    
+    
+    <div class="description">
+        <script type="text/javascript" src="https://unpkg.com/mermaid@7.1.0/dist/mermaid.min.js"></script>Hide tooltip.
+    </div>
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    
+
+    
+
+    
+
+    
+        <p class="tag-source">
+            <a href="components_Tooltip.js.html" class="button">View Source</a>
+            <span>
+                <a href="components_Tooltip.js.html">components/Tooltip.js</a>, <a href="components_Tooltip.js.html#line65">line 65</a>
+            </span>
+        </p>
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</div>
+            
+                <div class="member">
+
+
+    
+    <h4 class="name" id="initUPlotChart">
+        <a class="href-link" href="#initUPlotChart">#</a>
+        
+        <span class="code-name">
+            
+                initUPlotChart<span class="signature">(opts, chartData, chartDiv, charts)</span><span class="type-signature"> &rarr; {uPlot}</span>
+            
+        </span>
+    </h4>
+    
+
+    
+    
+    <div class="description">
+        <script type="text/javascript" src="https://unpkg.com/mermaid@7.1.0/dist/mermaid.min.js"></script>Initializes a uPlot chart, sets series colors, adds to array, and attaches ResizeObserver.
+    </div>
+    
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+<div class="table-container">
+    <table class="params table">
+        <thead>
+        <tr>
+            
+            <th>Name</th>
+            
+
+            <th>Type</th>
+
+            
+
+            
+
+            <th class="last">Description</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        
+
+            
+<tr class="deep-level-0">
+  
+      <td class="name"><code>opts</code></td>
+  
+
+  <td class="type">
+  
+      
+<code class="param-type">Object</code>
+
+
+  
+  </td>
+
+  
+
+  
+
+  <td class="description last"></td>
+</tr>
+
+
+        
+
+            
+<tr class="deep-level-0">
+  
+      <td class="name"><code>chartData</code></td>
+  
+
+  <td class="type">
+  
+      
+<code class="param-type">Array</code>
+
+
+  
+  </td>
+
+  
+
+  
+
+  <td class="description last"></td>
+</tr>
+
+
+        
+
+            
+<tr class="deep-level-0">
+  
+      <td class="name"><code>chartDiv</code></td>
+  
+
+  <td class="type">
+  
+      
+<code class="param-type">HTMLElement</code>
+
+
+  
+  </td>
+
+  
+
+  
+
+  <td class="description last"></td>
+</tr>
+
+
+        
+
+            
+<tr class="deep-level-0">
+  
+      <td class="name"><code>charts</code></td>
+  
+
+  <td class="type">
+  
+      
+<code class="param-type">Array</code>
+
+
+  
+  </td>
+
+  
+
+  
+
+  <td class="description last"></td>
+</tr>
+
+
+        
+        </tbody>
+    </table>
+</div>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    
+
+    
+
+    
+
+    
+        <p class="tag-source">
+            <a href="utils_chartDomUtils.js.html" class="button">View Source</a>
+            <span>
+                <a href="utils_chartDomUtils.js.html">utils/chartDomUtils.js</a>, <a href="utils_chartDomUtils.js.html#line30">line 30</a>
+            </span>
+        </p>
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <div class='columns method-parameter'>
+        <div class="column is-2"><label>Returns:</label></div>
+        <div class="column is-10">
+            
+                    
+
+<div class="columns">
+    
+    
+    <div class='column is-5 has-text-left'>
+        <label>Type: </label>
+        
+<code class="param-type">uPlot</code>
+
+
+    </div>
+    
+</div>
+
+                
+        </div>
+    </div>
+
+
+
+
+</div>
+            
+                <div class="member">
+
+
+    
+    <h4 class="name" id="showError">
+        <a class="href-link" href="#showError">#</a>
+        
+        <span class="code-name">
+            
+                showError<span class="signature">(message, fixedResultsEl)</span><span class="type-signature"></span>
+            
+        </span>
+    </h4>
+    
+
+    
+    
+    <div class="description">
+        <script type="text/javascript" src="https://unpkg.com/mermaid@7.1.0/dist/mermaid.min.js"></script>Show an error message to the user and update the results element.
+    </div>
+    
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+<div class="table-container">
+    <table class="params table">
+        <thead>
+        <tr>
+            
+            <th>Name</th>
+            
+
+            <th>Type</th>
+
+            
+
+            
+
+            <th class="last">Description</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        
+
+            
+<tr class="deep-level-0">
+  
+      <td class="name"><code>message</code></td>
+  
+
+  <td class="type">
+  
+      
+<code class="param-type">string</code>
+
+
+  
+  </td>
+
+  
+
+  
+
+  <td class="description last">The error message to display.</td>
+</tr>
+
+
+        
+
+            
+<tr class="deep-level-0">
+  
+      <td class="name"><code>fixedResultsEl</code></td>
+  
+
+  <td class="type">
+  
+      
+<code class="param-type">HTMLElement</code>
+
+
+  
+  </td>
+
+  
+
+  
+
+  <td class="description last">The element to display the error message.</td>
+</tr>
+
+
+        
+        </tbody>
+    </table>
+</div>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    
+
+    
+
+    
+
+    
+        <p class="tag-source">
+            <a href="components_showError.js.html" class="button">View Source</a>
+            <span>
+                <a href="components_showError.js.html">components/showError.js</a>, <a href="components_showError.js.html#line7">line 7</a>
+            </span>
+        </p>
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</div>
+            
+                <div class="member">
+
+
+    
+    <h4 class="name" id="subscribeChartUpdates">
+        <a class="href-link" href="#subscribeChartUpdates">#</a>
+        
+        <span class="code-name">
+            
+                subscribeChartUpdates<span class="signature">(channelState, dataState, charts, chartsContainer, verticalLinesX)</span><span class="type-signature"></span>
+            
+        </span>
+    </h4>
+    
+
+    
+    
+    <div class="description">
+        <script type="text/javascript" src="https://unpkg.com/mermaid@7.1.0/dist/mermaid.min.js"></script>subscribeChartUpdates(channelState, dataState, charts, chartsContainer, verticalLinesX)Publishes how `chartManager` wires into application state so that JSDocproduces a clear page describing the subscription flow.Responsibilities:- Subscribes to `channelState` and `dataState` reactive stores.- Listens specifically for property-level changes (via `subscribeProperty`) for  fast in-place updates (color, name) and for 'start'/'duration' changes which* are resolved to absolute time windows and applied to uPlot via `applyScale`.Contract (short):- Inputs: `channelState` (see module:message-flow~ChannelStateShape),  `dataState` (see module:message-flow~DataStateShape), `charts` array  of uPlot instances, `chartsContainer` parent DOM node, `verticalLinesX` reactive.- Outputs/side-effects: updates uPlot chart instances in-place when possible,  or recreates charts when structural changes occur.Example (flow):```js// child posts message -> parent main updates channelState -> chartManager resolves// start/duration -> applyScale(chart, type, idx, min, max)```
+    </div>
+    
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+<div class="table-container">
+    <table class="params table">
+        <thead>
+        <tr>
+            
+            <th>Name</th>
+            
+
+            <th>Type</th>
+
+            
+
+            
+
+            <th class="last">Description</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        
+
+            
+<tr class="deep-level-0">
+  
+      <td class="name"><code>channelState</code></td>
+  
+
+  <td class="type">
+  
+      
+<code class="param-type">Object</code>
+
+
+  
+  </td>
+
+  
+
+  
+
+  <td class="description last">reactive channel metadata store</td>
+</tr>
+
+
+        
+
+            
+<tr class="deep-level-0">
+  
+      <td class="name"><code>dataState</code></td>
+  
+
+  <td class="type">
+  
+      
+<code class="param-type">Object</code>
+
+
+  
+  </td>
+
+  
+
+  
+
+  <td class="description last">reactive data arrays (time + series)</td>
+</tr>
+
+
+        
+
+            
+<tr class="deep-level-0">
+  
+      <td class="name"><code>charts</code></td>
+  
+
+  <td class="type">
+  
+      
+<code class="param-type">Array</code>
+
+
+  
+  </td>
+
+  
+
+  
+
+  <td class="description last">array of uPlot chart instances (analog, digital)</td>
+</tr>
+
+
+        
+
+            
+<tr class="deep-level-0">
+  
+      <td class="name"><code>chartsContainer</code></td>
+  
+
+  <td class="type">
+  
+      
+<code class="param-type">HTMLElement</code>
+
+
+  
+  </td>
+
+  
+
+  
+
+  <td class="description last">DOM container for charts</td>
+</tr>
+
+
+        
+
+            
+<tr class="deep-level-0">
+  
+      <td class="name"><code>verticalLinesX</code></td>
+  
+
+  <td class="type">
+  
+      
+<code class="param-type">Object</code>
+
+
+  
+  </td>
+
+  
+
+  
+
+  <td class="description last">reactive state for vertical line overlays</td>
+</tr>
+
+
+        
+        </tbody>
+    </table>
+</div>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    
+
+    
+
+    
+
+    
+        <p class="tag-source">
+            <a href="components_chartManager%20-%20Copy.js.html" class="button">View Source</a>
+            <span>
+                <a href="components_chartManager%20-%20Copy.js.html">components/chartManager - Copy.js</a>, <a href="components_chartManager%20-%20Copy.js.html#line68">line 68</a>
+            </span>
+        </p>
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</div>
+            
+                <div class="member">
+
+
+    
+    <h4 class="name" id="updateTooltip">
+        <a class="href-link" href="#updateTooltip">#</a>
+        
+        <span class="code-name">
+            
+                updateTooltip<span class="signature">(pageX, pageY, text)</span><span class="type-signature"></span>
+            
+        </span>
+    </h4>
+    
+
+    
+    
+    <div class="description">
+        <script type="text/javascript" src="https://unpkg.com/mermaid@7.1.0/dist/mermaid.min.js"></script>Update tooltip position and content.
+    </div>
+    
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+<div class="table-container">
+    <table class="params table">
+        <thead>
+        <tr>
+            
+            <th>Name</th>
+            
+
+            <th>Type</th>
+
+            
+
+            
+
+            <th class="last">Description</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        
+
+            
+<tr class="deep-level-0">
+  
+      <td class="name"><code>pageX</code></td>
+  
+
+  <td class="type">
+  
+      
+<code class="param-type">number</code>
+
+
+  
+  </td>
+
+  
+
+  
+
+  <td class="description last">Mouse X (page coordinates)</td>
+</tr>
+
+
+        
+
+            
+<tr class="deep-level-0">
+  
+      <td class="name"><code>pageY</code></td>
+  
+
+  <td class="type">
+  
+      
+<code class="param-type">number</code>
+
+
+  
+  </td>
+
+  
+
+  
+
+  <td class="description last">Mouse Y (page coordinates)</td>
+</tr>
+
+
+        
+
+            
+<tr class="deep-level-0">
+  
+      <td class="name"><code>text</code></td>
+  
+
+  <td class="type">
+  
+      
+<code class="param-type">string</code>
+
+
+  
+  </td>
+
+  
+
+  
+
+  <td class="description last">HTML content to show</td>
+</tr>
+
+
+        
+        </tbody>
+    </table>
+</div>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    
+
+    
+
+    
+
+    
+        <p class="tag-source">
+            <a href="components_Tooltip.js.html" class="button">View Source</a>
+            <span>
+                <a href="components_Tooltip.js.html">components/Tooltip.js</a>, <a href="components_Tooltip.js.html#line38">line 38</a>
+            </span>
+        </p>
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</div>
+            
+            </div>
+        </div>
+    
+
+    
+        <div class='vertical-section'>
+            <h1>Type Definitions</h1>
+            <div class="members">
+            
+                <div class="member">
+
+    <span class="method-parameter is-pulled-right">
+        <label>Type:</label>
+        
+<code class="param-type">Object</code>
+
+
+    </span>
+
+<h4 class="name" id="ChannelRow">
+    <a class="href-link" href="#ChannelRow">#</a>
+    
+    <span class="code-name">
+        ChannelRow
+    </span>
+    
+</h4>
+
+
+
+
+<div class="description">
+    <script type="text/javascript" src="https://unpkg.com/mermaid@7.1.0/dist/mermaid.min.js"></script>Row object shape used by Tabulator and by the postMessage payload.
+</div>
+
+
+
+
+
+    <h5 class="subsection-title">Properties:</h5>
+
+    
+<div class="table-container">
+    <table class="props table">
+        <thead>
+        <tr>
+            
+            <th>Name</th>
+            
+
+            <th>Type</th>
+
+            
+            <th>Attributes</th>
+            
+
+            
+
+            <th class="last">Description</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        
+            
+<tr class="deep-level-0">
+    
+        <td class="name"><code>type</code></td>
+    
+
+    <td class="type">
+    
+        
+<code class="param-type">string</code>
+
+
+    
+    </td>
+
+    
+        <td class="attributes">
+        
+
+        
+        </td>
+    
+
+    
+
+    <td class="description last">Either "Analog" or "Digital" (capitals used in UI rows)</td>
+</tr>
+
+        
+            
+<tr class="deep-level-0">
+    
+        <td class="name"><code>id</code></td>
+    
+
+    <td class="type">
+    
+        
+<code class="param-type">number</code>
+
+
+    
+    </td>
+
+    
+        <td class="attributes">
+        
+
+        
+        </td>
+    
+
+    
+
+    <td class="description last">1-based displayed id in the table</td>
+</tr>
+
+        
+            
+<tr class="deep-level-0">
+    
+        <td class="name"><code>originalIndex</code></td>
+    
+
+    <td class="type">
+    
+        
+<code class="param-type">number</code>
+
+
+    
+    </td>
+
+    
+        <td class="attributes">
+        
+            &lt;optional><br>
+        
+
+        
+        </td>
+    
+
+    
+
+    <td class="description last">Optional original zero-based channel index</td>
+</tr>
+
+        
+            
+<tr class="deep-level-0">
+    
+        <td class="name"><code>channelID</code></td>
+    
+
+    <td class="type">
+    
+        
+<code class="param-type">string</code>
+
+
+    
+    </td>
+
+    
+        <td class="attributes">
+        
+            &lt;optional><br>
+        
+
+        
+        </td>
+    
+
+    
+
+    <td class="description last">Stable channel identifier assigned by parent</td>
+</tr>
+
+        
+            
+<tr class="deep-level-0">
+    
+        <td class="name"><code>name</code></td>
+    
+
+    <td class="type">
+    
+        
+<code class="param-type">string</code>
+
+
+    
+    </td>
+
+    
+        <td class="attributes">
+        
+            &lt;optional><br>
+        
+
+        
+        </td>
+    
+
+    
+
+    <td class="description last">Channel display name</td>
+</tr>
+
+        
+            
+<tr class="deep-level-0">
+    
+        <td class="name"><code>unit</code></td>
+    
+
+    <td class="type">
+    
+        
+<code class="param-type">string</code>
+
+
+    
+    </td>
+
+    
+        <td class="attributes">
+        
+            &lt;optional><br>
+        
+
+        
+        </td>
+    
+
+    
+
+    <td class="description last">Channel unit string</td>
+</tr>
+
+        
+            
+<tr class="deep-level-0">
+    
+        <td class="name"><code>group</code></td>
+    
+
+    <td class="type">
+    
+        
+<code class="param-type">string</code>
+
+
+    
+    </td>
+
+    
+        <td class="attributes">
+        
+            &lt;optional><br>
+        
+
+        
+        </td>
+    
+
+    
+
+    <td class="description last">Group label (e.g. "Group 1")</td>
+</tr>
+
+        
+            
+<tr class="deep-level-0">
+    
+        <td class="name"><code>color</code></td>
+    
+
+    <td class="type">
+    
+        
+<code class="param-type">string</code>
+
+
+    
+    </td>
+
+    
+        <td class="attributes">
+        
+            &lt;optional><br>
+        
+
+        
+        </td>
+    
+
+    
+
+    <td class="description last">Hex color string (e.g. "#ff0000")</td>
+</tr>
+
+        
+            
+<tr class="deep-level-0">
+    
+        <td class="name"><code>scale</code></td>
+    
+
+    <td class="type">
+    
+        
+<code class="param-type">number</code>
+|
+
+<code class="param-type">string</code>
+
+
+    
+    </td>
+
+    
+        <td class="attributes">
+        
+            &lt;optional><br>
+        
+
+        
+        </td>
+    
+
+    
+
+    <td class="description last">Scale multiplier</td>
+</tr>
+
+        
+            
+<tr class="deep-level-0">
+    
+        <td class="name"><code>start</code></td>
+    
+
+    <td class="type">
+    
+        
+<code class="param-type">number</code>
+|
+
+<code class="param-type">string</code>
+
+
+    
+    </td>
+
+    
+        <td class="attributes">
+        
+            &lt;optional><br>
+        
+
+        
+        </td>
+    
+
+    
+
+    <td class="description last">Start sample or timestamp</td>
+</tr>
+
+        
+            
+<tr class="deep-level-0">
+    
+        <td class="name"><code>duration</code></td>
+    
+
+    <td class="type">
+    
+        
+<code class="param-type">number</code>
+|
+
+<code class="param-type">string</code>
+
+
+    
+    </td>
+
+    
+        <td class="attributes">
+        
+            &lt;optional><br>
+        
+
+        
+        </td>
+    
+
+    
+
+    <td class="description last">Duration samples or time</td>
+</tr>
+
+        
+            
+<tr class="deep-level-0">
+    
+        <td class="name"><code>invert</code></td>
+    
+
+    <td class="type">
+    
+        
+<code class="param-type">boolean</code>
+
+
+    
+    </td>
+
+    
+        <td class="attributes">
+        
+            &lt;optional><br>
+        
+
+        
+        </td>
+    
+
+    
+
+    <td class="description last">Invert flag</td>
+</tr>
+
+        
+            
+<tr class="deep-level-0">
+    
+        <td class="name"><code>isNew</code></td>
+    
+
+    <td class="type">
+    
+        
+<code class="param-type">boolean</code>
+
+
+    
+    </td>
+
+    
+        <td class="attributes">
+        
+            &lt;optional><br>
+        
+
+        
+        </td>
+    
+
+    
+
+    <td class="description last">Helper for UI to mark newly added rows</td>
+</tr>
+
+        
+        </tbody>
+    </table>
+</div>
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    
+
+    
+
+    
+
+    
+        <p class="tag-source">
+            <a href="components_ChannelList.js.html" class="button">View Source</a>
+            <span>
+                <a href="components_ChannelList.js.html">components/ChannelList.js</a>, <a href="components_ChannelList.js.html#line11">line 11</a>
+            </span>
+        </p>
+    
+</dl>
+
+
+
+
+
+</div>
+            
+                <div class="member">
+
+    <span class="method-parameter is-pulled-right">
+        <label>Type:</label>
+        
+<code class="param-type">Object</code>
+
+
+    </span>
+
+<h4 class="name" id="ChildMessagePayload">
+    <a class="href-link" href="#ChildMessagePayload">#</a>
+    
+    <span class="code-name">
+        ChildMessagePayload
+    </span>
+    
+</h4>
+
+
+
+
+<div class="description">
+    <script type="text/javascript" src="https://unpkg.com/mermaid@7.1.0/dist/mermaid.min.js"></script>Payload shape posted from child -> parent (Tabulator popup -> main window).
+</div>
+
+
+
+
+
+    <h5 class="subsection-title">Properties:</h5>
+
+    
+<div class="table-container">
+    <table class="props table">
+        <thead>
+        <tr>
+            
+            <th>Name</th>
+            
+
+            <th>Type</th>
+
+            
+            <th>Attributes</th>
+            
+
+            
+
+            <th class="last">Description</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        
+            
+<tr class="deep-level-0">
+    
+        <td class="name"><code>field</code></td>
+    
+
+    <td class="type">
+    
+        
+<code class="param-type">string</code>
+
+
+    
+    </td>
+
+    
+        <td class="attributes">
+        
+            &lt;optional><br>
+        
+
+        
+        </td>
+    
+
+    
+
+    <td class="description last">Edited field name when applicable (e.g. "color")</td>
+</tr>
+
+        
+            
+<tr class="deep-level-0">
+    
+        <td class="name"><code>row</code></td>
+    
+
+    <td class="type">
+    
+        
+<code class="param-type"><a href="global.html#ChannelRow">ChannelRow</a></code>
+
+
+    
+    </td>
+
+    
+        <td class="attributes">
+        
+            &lt;optional><br>
+        
+
+        
+        </td>
+    
+
+    
+
+    <td class="description last">The full row object for the edited row</td>
+</tr>
+
+        
+            
+<tr class="deep-level-0">
+    
+        <td class="name"><code>newValue</code></td>
+    
+
+    <td class="type">
+    
+        
+<code class="param-type">any</code>
+
+
+    
+    </td>
+
+    
+        <td class="attributes">
+        
+            &lt;optional><br>
+        
+
+        
+        </td>
+    
+
+    
+
+    <td class="description last">New value for the edited field</td>
+</tr>
+
+        
+            
+<tr class="deep-level-0">
+    
+        <td class="name"><code>channelID</code></td>
+    
+
+    <td class="type">
+    
+        
+<code class="param-type">string</code>
+
+
+    
+    </td>
+
+    
+        <td class="attributes">
+        
+            &lt;optional><br>
+        
+
+        
+        </td>
+    
+
+    
+
+    <td class="description last">Stable channel id when available</td>
+</tr>
+
+        
+            
+<tr class="deep-level-0">
+    
+        <td class="name"><code>args</code></td>
+    
+
+    <td class="type">
+    
+        
+<code class="param-type">Array</code>
+
+
+    
+    </td>
+
+    
+        <td class="attributes">
+        
+            &lt;optional><br>
+        
+
+        
+        </td>
+    
+
+    
+
+    <td class="description last">Optional generic args used by legacy callers</td>
+</tr>
+
+        
+        </tbody>
+    </table>
+</div>
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    
+
+    
+
+    
+
+    
+        <p class="tag-source">
+            <a href="components_ChannelList.js.html" class="button">View Source</a>
+            <span>
+                <a href="components_ChannelList.js.html">components/ChannelList.js</a>, <a href="components_ChannelList.js.html#line29">line 29</a>
+            </span>
+        </p>
+    
+</dl>
+
+
+
+
+
+</div>
+            
+                <div class="member">
+
+
+    
+    <h4 class="name" id="OnChannelUpdate">
+        <a class="href-link" href="#OnChannelUpdate">#</a>
+        
+        <span class="code-name">
+            
+                OnChannelUpdate<span class="signature">(action, arg)</span><span class="type-signature"></span>
+            
+        </span>
+    </h4>
+    
+
+    
+    
+    <div class="description">
+        <script type="text/javascript" src="https://unpkg.com/mermaid@7.1.0/dist/mermaid.min.js"></script>Callback fired by `createChannelList` to notify the embedding context ofchannel changes. This is used when the Tabulator table is created inline(not in a child popup) and the host page wants immediate callbacks.
+    </div>
+    
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+<div class="table-container">
+    <table class="params table">
+        <thead>
+        <tr>
+            
+            <th>Name</th>
+            
+
+            <th>Type</th>
+
+            
+
+            
+
+            <th class="last">Description</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        
+
+            
+<tr class="deep-level-0">
+  
+      <td class="name"><code>action</code></td>
+  
+
+  <td class="type">
+  
+      
+<code class="param-type">string</code>
+
+
+  
+  </td>
+
+  
+
+  
+
+  <td class="description last">Action type: one of "update", "add", "delete"</td>
+</tr>
+
+
+        
+
+            
+<tr class="deep-level-0">
+  
+      <td class="name"><code>arg</code></td>
+  
+
+  <td class="type">
+  
+      
+<code class="param-type"><a href="global.html#ChannelRow">ChannelRow</a></code>
+|
+
+<code class="param-type">Object</code>
+
+
+  
+  </td>
+
+  
+
+  
+
+  <td class="description last">For "update" this is the updated row object,                                 for "add" it's the new row, for "delete" it's the deleted row.</td>
+</tr>
+
+
+        
+        </tbody>
+    </table>
+</div>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    
+
+    
+
+    
+
+    
+        <p class="tag-source">
+            <a href="components_ChannelList.js.html" class="button">View Source</a>
+            <span>
+                <a href="components_ChannelList.js.html">components/ChannelList.js</a>, <a href="components_ChannelList.js.html#line39">line 39</a>
+            </span>
+        </p>
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</div>
+            
+            </div>
+        </div>
+    
+
+    
+</article>
+
+</section>
+
+
+
+
+            </div>
+            
+            <footer class="footer">
+                <div class="content has-text-centered">
+                    <p>Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 4.0.5</a></p>
+                    <p class="sidebar-created-by">
+                        <a href="https://github.com/SoftwareBrothers/better-docs" target="_blank">BetterDocs theme</a> provided with <i class="fas fa-heart"></i> by
+                        <a href="http://softwarebrothers.co" target="_blank">SoftwareBrothers - JavaScript Development Agency</a>
+                    </p>
+                </div>
+            </footer>
+            
+        </div>
+        <div id="side-nav" class="side-nav">
+        </div>
+    </div>
+<script src="scripts/app.min.js"></script>
+<script>PR.prettyPrint();</script>
+<script src="scripts/linenumber.js"> </script>
+
+
+</body>
+</html>

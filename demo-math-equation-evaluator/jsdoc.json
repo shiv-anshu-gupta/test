@@ -1,0 +1,38 @@
+{
+  "tags": {
+    "allowUnknownTags": true,
+    "dictionaries": ["jsdoc", "closure"]
+  },
+  "source": {
+    "include": ["./demo.js"],
+    "includePattern": ".+\\.js(doc)?$",
+    "excludePattern": "(^|\\/|\\\\)_"
+  },
+  "opts": {
+    "destination": "./docs",
+    "recurse": true,
+    "readme": "./README.md",
+    "template": "./node_modules/better-docs",
+    "tutorials": "./tutorials"
+  },
+  "plugins": ["plugins/markdown"],
+  "markdown": {
+    "hardwrap": false,
+    "idInHeadings": true
+  },
+  "templates": {
+    "better-docs": {
+      "name": "Math Equation Evaluator Demo",
+      "logo": "",
+      "logoStyle": "width: 200px;",
+      "navLinks": [
+        {
+          "label": "GitHub",
+          "href": "https://github.com"
+        }
+      ],
+      "footer": "Generated with better-docs",
+      "hideGenerator": false
+    }
+  }
+}

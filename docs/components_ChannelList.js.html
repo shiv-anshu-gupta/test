@@ -1,0 +1,835 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title> components/ChannelList.js</title>
+
+  <script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="./build/entry.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+  <link href="https://fonts.googleapis.com/css?family=Roboto:100,400,700|Inconsolata,700" rel="stylesheet">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+  <link type="text/css" rel="stylesheet" href="https://jmblog.github.io/color-themes-for-google-code-prettify/themes/tomorrow-night.min.css">
+  <link type="text/css" rel="stylesheet" href="styles/app.min.css">
+  <link type="text/css" rel="stylesheet" href="styles/iframe.css">
+  <link type="text/css" rel="stylesheet" href="">
+  <script async defer src="https://buttons.github.io/buttons.js"></script>
+
+  
+</head>
+
+
+
+<body class="layout small-header">
+    <div id="stickyNavbarOverlay"></div>
+    
+
+<div class="top-nav">
+    <div class="inner">
+        <a id="hamburger" role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+        </a>
+        <div class="logo">
+            
+            
+        </div>
+        <div class="menu">
+            
+            <div class="navigation">
+                <a
+                    href="index.html"
+                    class="link"
+                >
+                    Documentation
+                </a>
+                
+                
+                
+            </div>
+        </div>
+    </div>
+</div>
+    <div id="main">
+        <div
+            class="sidebar "
+            id="sidebarNav"
+        >
+            
+            <nav>
+                
+                    <h2><a href="index.html">Documentation</a></h2><div class="category"><h3>Modules</h3><ul><li><a href="module-chartComponent.html">chartComponent</a></li><li><a href="module-chartDomUtils.html">chartDomUtils</a></li><li><a href="module-chartManager.html">chartManager</a></li><li><a href="module-comtradeUtils.html">comtradeUtils</a></li><li><a href="module-createDragBar.html">createDragBar</a></li><li><a href="module-handleVerticalLineShortcuts.html">handleVerticalLineShortcuts</a></li><li><a href="module-main.html">main</a></li><li><a href="module-renderAnalogCharts.html">renderAnalogCharts</a></li><li><a href="module-renderComtradeCharts.html">renderComtradeCharts</a></li><li><a href="module-renderDigitalCharts.html">renderDigitalCharts</a></li><li><a href="module-setupChartDragAndDrop.html">setupChartDragAndDrop</a></li><li><a href="module-showChannelListWindow.html">showChannelListWindow</a></li><li><a href="module-timeInterpolation.html">timeInterpolation</a></li></ul><h3>Global</h3><ul><li><a href="global.html#autoGroupChannels">autoGroupChannels</a></li><li><a href="global.html#createChannelList">createChannelList</a></li><li><a href="global.html#createChartContainer">createChartContainer</a></li><li><a href="global.html#createChartOptions">createChartOptions</a></li><li><a href="global.html#createDigitalFillPlugin">createDigitalFillPlugin</a></li><li><a href="global.html#createState">createState</a></li><li><a href="global.html#createTooltip">createTooltip</a></li><li><a href="global.html#hideTooltip">hideTooltip</a></li><li><a href="global.html#initUPlotChart">initUPlotChart</a></li><li><a href="global.html#showError">showError</a></li><li><a href="global.html#subscribeChartUpdates">subscribeChartUpdates</a></li><li><a href="global.html#updateTooltip">updateTooltip</a></li></ul></div>
+                
+            </nav>
+        </div>
+        <div class="core" id="main-content-wrapper">
+            <div class="content">
+                <header class="page-title">
+                    <p>Source</p>
+                    <h1>components/ChannelList.js</h1>
+                </header>
+                
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>// src/components/ChannelList.js
+/**
+ * ChannelList
+ *
+ * Tabulator-based UI for editing channel metadata. This module builds a
+ * Tabulator table and posts messages to the parent window (when opened as
+ * a popup) to notify the main application about changes. It also accepts a
+ * local callback `onChannelUpdate` for in-process integration.
+ */
+
+/**
+ * Row object shape used by Tabulator and by the postMessage payload.
+ * @typedef {Object} ChannelRow
+ * @property {string} type - Either "Analog" or "Digital" (capitals used in UI rows)
+ * @property {number} id - 1-based displayed id in the table
+ * @property {number} [originalIndex] - Optional original zero-based channel index
+ * @property {string} [channelID] - Stable channel identifier assigned by parent
+ * @property {string} [name] - Channel display name
+ * @property {string} [unit] - Channel unit string
+ * @property {string} [group] - Group label (e.g. "Group 1")
+ * @property {string} [color] - Hex color string (e.g. "#ff0000")
+ * @property {number|string} [scale] - Scale multiplier
+ * @property {number|string} [start] - Start sample or timestamp
+ * @property {number|string} [duration] - Duration samples or time
+ * @property {boolean} [invert] - Invert flag
+ * @property {boolean} [isNew] - Helper for UI to mark newly added rows
+ */
+
+/**
+ * Payload shape posted from child -> parent (Tabulator popup -> main window).
+ * @typedef {Object} ChildMessagePayload
+ * @property {string} [field] - Edited field name when applicable (e.g. "color")
+ * @property {ChannelRow} [row] - The full row object for the edited row
+ * @property {any} [newValue] - New value for the edited field
+ * @property {string} [channelID] - Stable channel id when available
+ * @property {Array} [args] - Optional generic args used by legacy callers
+ */
+
+/**
+ * Callback fired by `createChannelList` to notify the embedding context of
+ * channel changes. This is used when the Tabulator table is created inline
+ * (not in a child popup) and the host page wants immediate callbacks.
+ *
+ * @callback OnChannelUpdate
+ * @param {string} action - Action type: one of "update", "add", "delete"
+ * @param {ChannelRow|Object} arg - For "update" this is the updated row object,
+ *                                  for "add" it's the new row, for "delete" it's the deleted row.
+ */
+
+/**
+ * Create a Tabulator-based channel editor.
+ *
+ * This function builds a table of channels (both analog and digital) and
+ * wires Tabulator events to a local callback and to window.postMessage so a
+ * popup can communicate edits back to the parent window. The payloads match
+ * the shapes documented in `ChildMessagePayload`.
+ *
+ * @param {Object} cfg - COMTRADE configuration object containing `analogChannels` and `digitalChannels` arrays
+ * @param {OnChannelUpdate} onChannelUpdate - Local callback invoked for edits/add/delete
+ * @param {Function|Object} TabulatorInstance - Tabulator class or instance used to create the table
+ * @param {Document} [ownerDocument] - Optional `document` to attach the table into (used by popup integration)
+ * @param {HTMLElement} [attachToElement] - Optional element to append the generated table container
+ * @returns {HTMLElement} The DOM container element that holds the Tabulator table
+ *
+ * @example
+ * createChannelList(cfg, (action, row) => {
+ *   if (action === 'update' &amp;&amp; row.invert) console.log('invert toggled', row);
+ * }, Tabulator, document, document.body);
+ */
+export function createChannelList(
+  cfg,
+  onChannelUpdate,
+  TabulatorInstance,
+  ownerDocument,
+  attachToElement
+) {
+  const doc =
+    ownerDocument ||
+    (typeof document !== "undefined" ? document : window.document);
+  const rootWin =
+    (doc &amp;&amp; doc.defaultView) || (typeof window !== "undefined" ? window : null);
+
+  const container = doc.createElement("div");
+  container.className =
+    "channel-list-container rounded-lg shadow p-4 flex flex-col gap-4 transition-colors duration-300 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100";
+
+  if (attachToElement &amp;&amp; attachToElement.appendChild) {
+    try {
+      attachToElement.appendChild(container);
+    } catch (e) {
+      console.warn("createChannelList: failed to append to attachToElement", e);
+    }
+  }
+
+  // Tailwind mapping for groups
+  const groupClasses = {
+    "Group 1": "bg-pink-100",
+    "Group 2": "bg-green-100",
+    "Group 3": "bg-blue-100",
+  };
+
+  // defensively build tableData
+  const analog = Array.isArray(cfg?.analogChannels) ? cfg.analogChannels : [];
+  const digital = Array.isArray(cfg?.digitalChannels)
+    ? cfg.digitalChannels
+    : [];
+
+  const tableData = [
+    ...analog.map((ch, i) => ({
+      id: i + 1,
+      channelID: ch.channelID,
+      originalIndex: i,
+      type: "Analog",
+      name: ch.id || `Analog ${i + 1}`,
+      unit: ch.unit || "",
+      group: ch.group || "Group 1",
+      color: ch.color || "#888888",
+      scale: ch.scale ?? 1,
+      start: ch.start ?? 0,
+      duration: ch.duration ?? "",
+      invert: ch.invert ?? false,
+      isNew: false,
+    })),
+    ...digital.map((ch, i) => ({
+      id: i + 1,
+      channelID: ch.channelID,
+      originalIndex: i,
+      type: "Digital",
+      name: ch.id || `Digital ${i + 1}`,
+      unit: ch.unit || "",
+      group: ch.group || "Group 1",
+      color: ch.color || "#888888",
+      scale: ch.scale ?? 1,
+      start: ch.start ?? 0,
+      duration: ch.duration ?? "",
+      invert: ch.invert ?? false,
+      isNew: false,
+    })),
+  ];
+
+  const columns = [
+    { title: "ID", field: "id", width: 60, hozAlign: "center", responsive: 0 },
+    {
+      title: "Channel Name (Unit)",
+      field: "name",
+      headerFilter: "input",
+      editor: "input",
+      resizable: true,
+      responsive: 0,
+      width: 150,
+      hozAlign: "center",
+      validator: "required",
+    },
+    {
+      title: "Color",
+      field: "color",
+      width: 120,
+      hozAlign: "center",
+      validator: "required",
+      formatter: (cell) => {
+        const v = cell.getValue() || "#888888";
+        return `&lt;input type="color" value="${v}" class="w-10 h-6 border-none cursor-pointer p-0 rounded focus:outline-none" />`;
+      },
+      cellClick: (e, cell) => {
+        if (e.target.tagName === "INPUT" &amp;&amp; e.target.type === "color") {
+          e.target.addEventListener(
+            "change",
+            (evt) => cell.setValue(evt.target.value),
+            { once: true }
+          );
+        }
+      },
+    },
+    {
+      title: "Unit",
+      field: "unit",
+      editor: "input",
+      responsive: 1,
+      width: 150,
+      hozAlign: "center",
+      validator: "numeric",
+    },
+    {
+      title: "Group",
+      field: "group",
+      responsive: 1,
+      width: 150,
+      hozAlign: "center",
+      editor: "list",
+      editorParams: {
+        autocomplete: true,
+        allowEmpty: true,
+        listOnEmpty: true,
+        values: {
+          "Group 1": "Group 1",
+          "Group 2": "Group 2",
+          "Group 3": "Group 3",
+        },
+      },
+    },
+    {
+      title: "Scale",
+      field: "scale",
+      editor: "input",
+      headerSort: true,
+      responsive: 2,
+      width: 150,
+      hozAlign: "center",
+      validator: "numeric",
+    },
+    {
+      title: "Start",
+      field: "start",
+      editor: "input",
+      responsive: 2,
+      width: 150,
+      hozAlign: "center",
+      validator: "numeric",
+    },
+    {
+      title: "Duration",
+      field: "duration",
+      editor: "input",
+      responsive: 1,
+      hozAlign: "center",
+      width: 150,
+      validator: "numeric",
+    },
+    {
+      title: "Invert",
+      field: "invert",
+      hozAlign: "center",
+      responsive: 1,
+      width: 150,
+      formatter: (cell) => {
+        const value = cell.getValue() === true || cell.getValue() === "true";
+        const checked = value ? "checked" : "";
+        return `
+          &lt;label class="inline-flex items-center cursor-pointer relative">
+            &lt;input type="checkbox" class="sr-only peer" ${checked}>
+            &lt;div class="w-11 h-6 bg-gray-200 dark:bg-gray-600 rounded-full peer peer-checked:bg-green-500
+                        peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-green-400
+                        after:content-[''] after:absolute after:top-[2px] after:left-[2px]
+                        after:bg-white after:border-gray-300 after:border after:rounded-full
+                        after:h-5 after:w-5 after:transition-all peer-checked:after:translate-x-full
+                        peer-checked:after:border-white relative">&lt;/div>
+          &lt;/label>
+        `;
+      },
+      cellClick: (e, cell) => {
+        const checkbox = e.target.closest("label")?.querySelector("input");
+        if (checkbox) {
+          const newValue = !checkbox.checked;
+          checkbox.checked = newValue;
+          cell.setValue(newValue);
+        }
+      },
+    },
+    { title: "isNew", field: "isNew", visible: false },
+    {
+      title: "Delete",
+      field: "delete",
+      width: 150,
+      formatter: () =>
+        `&lt;button class="bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded transition duration-150">Delete&lt;/button>`,
+      hozAlign: "center",
+      cellClick: (e, cell) => cell.getRow().delete(),
+      responsive: 2,
+    },
+  ];
+
+  // choose Tabulator (popup's Tabulator preferred)
+  let TabulatorClass =
+    (rootWin &amp;&amp; rootWin.Tabulator) ||
+    TabulatorInstance ||
+    (typeof Tabulator !== "undefined" ? Tabulator : null);
+  if (!TabulatorClass) {
+    console.error("Tabulator not available. Please ensure it's loaded.");
+    return container;
+  }
+
+  // create table root in the correct document
+  const tableRoot = doc.createElement("div");
+  tableRoot.className = "tabulator-root w-full";
+  container.appendChild(tableRoot);
+
+  const table = new TabulatorClass(tableRoot, {
+    data: tableData,
+    layout: "fitDataStretch",
+    responsiveLayout: "collapse",
+    responsiveLayoutCollapseStartOpen: false,
+    groupBy: "type",
+    columns,
+    history: true,
+    resizableColumnFit: true,
+    movableColumns: true,
+    movableRows: true,
+    pagination: "local",
+    paginationSize: 20,
+    paginationSizeSelector: [5, 10, 20, 50],
+    debugInvalidOptions: true,
+  });
+
+  // cellEdited: call local callback + postMessage to parent (if popup)
+  try {
+    table.on("cellEdited", (cell) => {
+      const field = cell.getField ? cell.getField() : null;
+      const rowData = cell.getRow().getData();
+      const newValue = cell.getValue();
+
+      // Local callback compatibility:
+      if (typeof onChannelUpdate === "function") {
+        try {
+          if (field === "color") {
+            const type = rowData?.type ? rowData.type.toLowerCase() : undefined;
+            const idx =
+              typeof rowData?.originalIndex === "number"
+                ? rowData.originalIndex
+                : typeof rowData?.id === "number"
+                ? rowData.id - 1
+                : undefined;
+            onChannelUpdate(type, idx, undefined, newValue);
+          } else {
+            onChannelUpdate("update", rowData);
+          }
+        } catch (e) {
+          try {
+            onChannelUpdate("update", rowData);
+          } catch (_) {}
+        }
+      }
+
+      // Post message to parent if opened as popup
+      try {
+        if (
+          typeof window !== "undefined" &amp;&amp;
+          window.opener &amp;&amp;
+          !window.opener.closed
+        ) {
+          const payload = {
+            field,
+            row: rowData,
+            newValue,
+            channelID: rowData?.channelID ?? null,
+            args: [null, rowData?.channelID ?? null, newValue],
+          };
+          let type = "callback_update";
+          if (field === "color") type = "callback_color";
+          else if (field === "name") type = "callback_channelName";
+          else if (field === "group") type = "callback_group";
+          else if (field === "scale") type = "callback_scale";
+          else if (field === "start") type = "callback_start";
+          else if (field === "duration") type = "callback_duration";
+          else if (field === "invert") type = "callback_invert";
+
+          window.opener.postMessage(
+            { source: "ChildWindow", type, payload },
+            "*"
+          );
+        }
+      } catch (e) {
+        /* non-fatal */
+      }
+
+      // When group changed, update row background class
+      if (field === "group") {
+        const row = cell.getRow();
+        const rowEl = row.getElement();
+        const newGroup = (cell.getValue() || "")
+          .trim()
+          .replace(/^\w/, (c) => c.toUpperCase());
+        rowEl.classList.remove("bg-pink-100", "bg-green-100", "bg-blue-100");
+        const newClass = groupClasses[newGroup];
+        if (newClass) rowEl.classList.add(newClass);
+      }
+
+      // When a new row gets a name, move it after last of same type &amp; clear isNew
+      if (
+        rowData.isNew &amp;&amp;
+        field === "name" &amp;&amp;
+        rowData.name &amp;&amp;
+        rowData.name.trim()
+      ) {
+        const activeRows = table.getRows("active");
+        const sameType = activeRows.filter(
+          (r) =>
+            r !== cell.getRow() &amp;&amp;
+            r.getData().type === rowData.type &amp;&amp;
+            !r.getData().isNew
+        );
+        const lastOfType = sameType[sameType.length - 1];
+        if (lastOfType) {
+          cell.getRow().update({ isNew: false });
+          cell.getRow().move(lastOfType, "after");
+          const el = cell.getRow().getElement();
+          el.classList.add("bg-yellow-100");
+          setTimeout(() => el.classList.remove("bg-yellow-100"), 800);
+        } else {
+          cell.getRow().update({ isNew: false });
+        }
+      }
+
+      updateUndoRedoButtons();
+    });
+
+    // tableBuilt styling + apply group classes
+    table.on("tableBuilt", () => {
+      table.getRows().forEach((row) => {
+        const rowEl = row.getElement();
+        const grp = (row.getData().group || "").trim();
+        const formatted = grp.replace(/^\w/, (c) => c.toUpperCase());
+        rowEl.classList.remove("bg-pink-100", "bg-green-100", "bg-blue-100");
+        if (groupClasses[formatted])
+          rowEl.classList.add(groupClasses[formatted]);
+      });
+
+      container.querySelectorAll(".tabulator-row").forEach((row) => {
+        row.classList.add(
+          "hover:bg-gray-50",
+          "dark:hover:bg-gray-700",
+          "dark:bg-gray-800",
+          "rounded-md",
+          "shadow-sm",
+          "transition-colors",
+          "duration-200"
+        );
+      });
+      container.querySelectorAll(".tabulator-cell").forEach((cell) => {
+        cell.classList.add("px-4", "py-2", "sm:px-4", "sm:py-2");
+      });
+
+      updateUndoRedoButtons();
+    });
+  } catch (e) {
+    console.warn("Failed to attach Tabulator events:", e);
+  }
+
+  // rowAdded / rowDeleted notifications (local + parent)
+  try {
+    table.on("rowAdded", (row) => {
+      const data = row.getData ? row.getData() : row;
+      try {
+        data.tempClientId = `tmp-${Date.now()}-${Math.random()
+          .toString(36)
+          .slice(2, 6)}`;
+      } catch (e) {
+        data.tempClientId = `tmp-${Date.now()}`;
+      }
+      if (typeof onChannelUpdate === "function") {
+        try {
+          onChannelUpdate("add", data);
+        } catch (_) {}
+      }
+      try {
+        if (
+          typeof window !== "undefined" &amp;&amp;
+          window.opener &amp;&amp;
+          !window.opener.closed
+        ) {
+          window.opener.postMessage(
+            {
+              source: "ChildWindow",
+              type: "callback_addChannel",
+              payload: data,
+            },
+            "*"
+          );
+        }
+      } catch (e) {}
+      updateUndoRedoButtons();
+    });
+
+    table.on("rowDeleted", (row) => {
+      const data = row.getData ? row.getData() : row;
+      if (typeof onChannelUpdate === "function") {
+        try {
+          onChannelUpdate("delete", data);
+        } catch (_) {}
+      }
+      try {
+        if (
+          typeof window !== "undefined" &amp;&amp;
+          window.opener &amp;&amp;
+          !window.opener.closed
+        ) {
+          window.opener.postMessage(
+            { source: "ChildWindow", type: "callback_delete", payload: data },
+            "*"
+          );
+        }
+      } catch (e) {}
+      updateUndoRedoButtons();
+    });
+  } catch (e) {
+    /* ignore */
+  }
+
+  // parent ack handler for addChannel (matches tempClientId)
+  try {
+    if (
+      typeof window !== "undefined" &amp;&amp;
+      typeof window.addEventListener === "function"
+    ) {
+      window.addEventListener("message", (ev) => {
+        try {
+          const d = ev &amp;&amp; ev.data;
+          if (!d || d.source !== "ParentWindow") return;
+          if (d.type === "ack_addChannel" &amp;&amp; d.payload) {
+            const { tempClientId, channelID, assignedIndex } = d.payload;
+            if (!tempClientId || !channelID) return;
+            const rows = table.getRows ? table.getRows() : [];
+            for (let r of rows) {
+              const rd = r.getData ? r.getData() : null;
+              if (!rd) continue;
+              if (rd.tempClientId &amp;&amp; rd.tempClientId === tempClientId) {
+                const updateObj = { channelID };
+                if (typeof assignedIndex === "number")
+                  updateObj.originalIndex = assignedIndex;
+                updateObj.tempClientId = null;
+                try {
+                  if (typeof r.update === "function") r.update(updateObj);
+                } catch (e) {
+                  rd.channelID = channelID;
+                  if (typeof assignedIndex === "number")
+                    rd.originalIndex = assignedIndex;
+                }
+                break;
+              }
+            }
+          }
+        } catch (e) {}
+      });
+    }
+  } catch (e) {}
+
+  // Optional controls (undo/redo/add-row/download) — looks up IDs in the provided doc
+  try {
+    const rootDoc = doc;
+    const rootWindow = rootWin;
+
+    const undoBtn = rootDoc?.getElementById
+      ? rootDoc.getElementById("history-undo")
+      : null;
+    const redoBtn = rootDoc?.getElementById
+      ? rootDoc.getElementById("history-redo")
+      : null;
+    const addRowBtn = rootDoc?.getElementById
+      ? rootDoc.getElementById("add-row")
+      : null;
+    const groupSelect = rootDoc?.getElementById
+      ? rootDoc.getElementById("group-select")
+      : null;
+    const downloadBtn = rootDoc?.getElementById
+      ? rootDoc.getElementById("download-pdf")
+      : null;
+
+    function updateUndoRedoButtons() {
+      try {
+        if (undoBtn)
+          undoBtn.disabled = !(
+            table.getHistoryUndoSize &amp;&amp; table.getHistoryUndoSize() > 0
+          );
+        if (redoBtn)
+          redoBtn.disabled = !(
+            table.getHistoryRedoSize &amp;&amp; table.getHistoryRedoSize() > 0
+          );
+      } catch (e) {}
+    }
+
+    if (undoBtn) {
+      undoBtn.addEventListener("click", () => {
+        try {
+          if (table &amp;&amp; typeof table.undo === "function") table.undo();
+        } catch (e) {
+        } finally {
+          updateUndoRedoButtons();
+        }
+      });
+    }
+    if (redoBtn) {
+      redoBtn.addEventListener("click", () => {
+        try {
+          if (table &amp;&amp; typeof table.redo === "function") table.redo();
+        } catch (e) {
+        } finally {
+          updateUndoRedoButtons();
+        }
+      });
+    }
+
+    if (addRowBtn) {
+      addRowBtn.addEventListener("click", (e) => {
+        const groupType = (groupSelect &amp;&amp; groupSelect.value) || "Analog";
+        const addBlank = !!(e &amp;&amp; e.altKey);
+        try {
+          const groupRows = table
+            .getRows()
+            .filter((r) => r.getData().type === groupType);
+          const maxIdForType =
+            groupRows.length > 0
+              ? Math.max(...groupRows.map((r) => r.getData().id))
+              : 0;
+          const lastGroupRow = groupRows[groupRows.length - 1];
+          const groupName = lastGroupRow
+            ? lastGroupRow.getData().group
+            : "Group 1";
+
+          let newRow;
+          if (addBlank) {
+            newRow = {
+              id: maxIdForType + 1,
+              type: groupType,
+              name: "",
+              unit: "",
+              group: "",
+              color: "#888",
+              scale: "",
+              start: "",
+              duration: "",
+              invert: "",
+            };
+          } else {
+            newRow = {
+              id: maxIdForType + 1,
+              type: groupType,
+              name: `${groupType} ${maxIdForType + 1}`,
+              unit: "",
+              group: groupName,
+              color: "#888",
+              scale: 1,
+              start: 0,
+              duration: "",
+              invert: false,
+              isNew: true,
+            };
+          }
+          table.addRow(newRow, true);
+        } catch (e) {
+          console.warn("add-row failed:", e);
+        }
+      });
+    }
+
+    if (downloadBtn) {
+      downloadBtn.addEventListener("click", async () => {
+        try {
+          const jsPDFLib =
+            (rootWindow &amp;&amp; (rootWindow.jspdf || rootWindow.jsPDF)) ||
+            window.jspdf ||
+            window.jsPDF;
+          if (!jsPDFLib || !jsPDFLib.jsPDF) {
+            alert("jsPDF not loaded yet. Please wait a second and try again.");
+            return;
+          }
+          if (rootWindow) rootWindow.jspdf = jsPDFLib;
+          table.download("pdf", "channel-list.pdf", {
+            orientation: "landscape",
+            title: "Channel List",
+            autoTable: {
+              theme: "grid",
+              styles: { fontSize: 8, cellPadding: 2 },
+              headStyles: { fillColor: [41, 128, 185], textColor: 255 },
+              margin: { top: 25 },
+            },
+          });
+        } catch (err) {
+          console.error("Error generating PDF:", err);
+        }
+      });
+    }
+
+    updateUndoRedoButtons();
+  } catch (e) {}
+
+  // keyboard undo/redo
+  try {
+    const keyHandler = (e) => {
+      if ((e.ctrlKey || e.metaKey) &amp;&amp; e.key === "z" &amp;&amp; !e.shiftKey) {
+        e.preventDefault();
+        if (table.undo()) updateUndoRedoButtons();
+      } else if (
+        (e.ctrlKey || e.metaKey) &amp;&amp;
+        (e.key === "y" || (e.key === "z" &amp;&amp; e.shiftKey))
+      ) {
+        e.preventDefault();
+        if (table.redo()) updateUndoRedoButtons();
+      }
+    };
+    rootWin?.addEventListener?.("keydown", keyHandler);
+    if (rootWin) {
+      const cleanup = () =>
+        rootWin.removeEventListener?.("keydown", keyHandler);
+      rootWin.addEventListener?.("beforeunload", cleanup);
+    }
+  } catch (e) {}
+
+  function updateUndoRedoButtons() {
+    // placeholder: actual function bound inside controls block above when available
+    try {
+      const u =
+        (doc &amp;&amp; doc.getElementById &amp;&amp; doc.getElementById("history-undo")) ||
+        null;
+      const r =
+        (doc &amp;&amp; doc.getElementById &amp;&amp; doc.getElementById("history-redo")) ||
+        null;
+      if (u)
+        u.disabled = !(
+          table.getHistoryUndoSize &amp;&amp; table.getHistoryUndoSize() > 0
+        );
+      if (r)
+        r.disabled = !(
+          table.getHistoryRedoSize &amp;&amp; table.getHistoryRedoSize() > 0
+        );
+    } catch (e) {}
+  }
+
+  return container;
+}
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+            </div>
+            
+            <footer class="footer">
+                <div class="content has-text-centered">
+                    <p>Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 4.0.5</a></p>
+                    <p class="sidebar-created-by">
+                        <a href="https://github.com/SoftwareBrothers/better-docs" target="_blank">BetterDocs theme</a> provided with <i class="fas fa-heart"></i> by
+                        <a href="http://softwarebrothers.co" target="_blank">SoftwareBrothers - JavaScript Development Agency</a>
+                    </p>
+                </div>
+            </footer>
+            
+        </div>
+        <div id="side-nav" class="side-nav">
+        </div>
+    </div>
+<script src="scripts/app.min.js"></script>
+<script>PR.prettyPrint();</script>
+<script src="scripts/linenumber.js"> </script>
+
+
+</body>
+</html>
