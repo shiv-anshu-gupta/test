@@ -1,0 +1,125 @@
+/* General body styling */
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background: #fafbfc;
+}
+
+main {
+  max-width: auto;
+  margin: 0 auto;
+  padding: 24px 12px 32px 12px;
+}
+
+h1 {
+  text-align: center;
+  margin-top: 24px;
+  margin-bottom: 16px;
+}
+
+section {
+  margin-bottom: 24px;
+}
+
+#fileInfo {
+  background: #f5f5f5;
+  border-radius: 6px;
+  padding: 12px 18px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+  margin-bottom: 18px;
+}
+
+#cfgFileName,
+#datFileName {
+  margin: 0 0 4px 0;
+  font-size: 15px;
+}
+
+.charts {
+  display: grid;
+  width: 100%;
+  gap: 18px;
+}
+
+.chart-parent-container {
+  display: flex;
+  align-items: stretch;
+  border: 1px solid #ddd;
+  background: #f9f9f9;
+  margin-bottom: 10px;
+  transition: background 0.2s;
+  min-height: 150px;
+  height: 220px;
+  box-sizing: border-box;
+  resize: vertical;
+  overflow: auto;
+}
+
+.chart-parent-container.dragging {
+  opacity: 0.5;
+}
+
+.chart-container {
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  align-items: stretch;
+  height: 100%;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0;
+}
+
+.dragBar {
+  width: 5%;
+  min-width: 30px;
+  background: #eaece8;
+  cursor: grab;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+  border-right: 1px solid #bbb;
+}
+
+.chart-left-handle:hover {
+  background: #e6f0fa;
+}
+
+#fixed-results {
+  margin: 20px 0 0 0;
+  font-size: 14px;
+  text-align: center;
+}
+
+.border-bottom {
+  border-bottom: 1px solid #ccc;
+  margin: 5px 0;
+}
+
+.uplot-ew-resize {
+  cursor: ew-resize !important;
+}
+
+.uplot-noselect,
+.uplot-noselect * {
+  user-select: none !important;
+  -webkit-user-select: none !important;
+}
+.uplot-container.block-selection {
+  pointer-events: none;
+}
+
+.tabulator .tabulator-row {
+  background-color: #ffffff !important;
+}
+
+.tabulator .tabulator-row.tabulator-row-even,
+.tabulator .tabulator-row.tabulator-row-odd {
+  background-color: #ffffff !important;
+}
+
+.tabulator .tabulator-cell {
+  background-color: #ffffff !important;
+}

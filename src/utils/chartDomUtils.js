@@ -10,6 +10,7 @@ import { fixChartAxisColors } from "../components/chartComponent.js";
  * @param {string|Array} label - Optional label to display on left side (string or array of channel names).
  * @param {Array} colors - Optional array of colors for each channel.
  * @param {string} typeLabel - Optional channel type label (e.g., "Analog Channels", "Digital Channels").
+ * @param {string} groupId - Optional group ID to display once below type label (e.g., "G0", "G1"). Shows at group level, not per-channel.
  * @returns {{ parentDiv: HTMLElement, chartDiv: HTMLElement }}
  */
 export function createChartContainer(
@@ -17,7 +18,8 @@ export function createChartContainer(
   chartContainerClass = "chart-container",
   label = "",
   colors = [],
-  typeLabel = ""
+  typeLabel = "",
+  groupId = ""
 ) {
   const parentDiv = createCustomElement("div", "chart-parent-container");
 
@@ -46,9 +48,27 @@ export function createChartContainer(
         typeSpan.style.textTransform = "uppercase";
         typeSpan.style.letterSpacing = "0.05em";
         typeSpan.style.paddingBottom = "4px";
-        typeSpan.style.borderBottom = "1px solid var(--border-color)";
         typeSpan.style.width = "100%";
         labelDiv.appendChild(typeSpan);
+
+        // NEW: Display group ID once below type label (if provided)
+        // This shows the group assignment for all channels in this chart
+        if (groupId) {
+          const groupIdSpan = document.createElement("span");
+          groupIdSpan.textContent = groupId;
+          groupIdSpan.style.fontSize = "0.65rem";
+          groupIdSpan.style.fontWeight = "700";
+          groupIdSpan.style.color = "var(--accent-cyan)";
+          groupIdSpan.style.textAlign = "center";
+          groupIdSpan.style.paddingTop = "2px";
+          groupIdSpan.style.paddingBottom = "4px";
+          groupIdSpan.style.borderBottom = "1px solid var(--border-color)";
+          groupIdSpan.style.width = "100%";
+          labelDiv.appendChild(groupIdSpan);
+        } else {
+          // No group ID - just add border below type label
+          typeSpan.style.borderBottom = "1px solid var(--border-color)";
+        }
       }
 
       // Add channel names with color indicators

@@ -1,4 +1,7 @@
-import { createChartOptions } from "./chartComponent.js";
+import {
+  createChartOptions,
+  getMaxYAxesForAlignment,
+} from "./chartComponent.js";
 import { createDragBar } from "./createDragBar.js";
 import { createDigitalFillPlugin } from "../plugins/digitalFillPlugin.js";
 import { findChangedDigitalChannelIndices } from "../utils/digitalChannelUtils.js";
@@ -38,6 +41,12 @@ export function renderDigitalCharts(
   // Get digital channel names for display on left side
   const digitalYLabels = digitalIndicesToShow.map((i) => yLabels[i]);
 
+  // Create a pseudo-group for alignment calculation
+  const digitalGroup = {
+    indices: digitalIndicesToShow,
+    name: "Digital Channels",
+  };
+
   const dragBar = createDragBar(
     {
       indices: digitalChannelsToShow.map((_, i) => i),
@@ -74,6 +83,10 @@ export function renderDigitalCharts(
     x: { time: false, auto: true },
     y: { min: yMin, max: yMax, auto: false },
   };
+
+  // Get max Y-axes for alignment (use 1 for digital since it's typically a single axis)
+  const maxYAxes = 1;
+
   const opts = createChartOptions({
     title: "Digital Channels",
     yLabels,
@@ -87,6 +100,7 @@ export function renderDigitalCharts(
     scales,
     singleYAxis: true,
     autoScaleUnit: { x: true, y: false },
+    maxYAxes: maxYAxes,
   });
   opts.axes = [
     opts.axes[0],

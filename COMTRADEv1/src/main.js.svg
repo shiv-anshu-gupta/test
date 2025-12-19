@@ -1,0 +1,4278 @@
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+                <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" 
+                width="1592" height="9761" shape-rendering="optimizeSpeed">
+                
+            <g>
+                <rect x="50" y="80"
+            width="375.4" height="30"
+            style="fill:#fff; stroke:#444; stroke-width:1" />
+                    
+                <line x1="55" y1="80" x2="55" y2="110"
+                style="fill:#fff; stroke:#444; stroke-width:1" />
+                <line x1="420.4" y1="80" x2="420.4" y2="110"
+                style="fill:#fff; stroke:#444; stroke-width:1" />
+             
+                <title>import from&quot;./components/chartComponent.js&quot;</title>
+            <text x="70" y="100"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="70" y="100">import from&quot;./components/chartComponent.js&quot;</tspan>
+            </text>
+                
+            </g>
+                <g>
+                   <rect x="87" y="128.5"
+            width="170.4" height="30"
+            rx="2" ry="2"
+            style="fill:#81d4fa; stroke:#444; stroke-width:1" />
+                   <title>createChartOptions</title>
+            <text x="102" y="148.5"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="102" y="148.5">createChartOptions</tspan>
+            </text>
+                   
+                   
+                </g>
+            <g>
+                <rect x="50" y="192"
+            width="367.59999999999997" height="30"
+            style="fill:#fff; stroke:#444; stroke-width:1" />
+                    
+                <line x1="55" y1="192" x2="55" y2="222"
+                style="fill:#fff; stroke:#444; stroke-width:1" />
+                <line x1="412.59999999999997" y1="192" x2="412.59999999999997" y2="222"
+                style="fill:#fff; stroke:#444; stroke-width:1" />
+             
+                <title>import from&quot;./components/comtradeUtils.js&quot;</title>
+            <text x="70" y="212"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="70" y="212">import from&quot;./components/comtradeUtils.js&quot;</tspan>
+            </text>
+                
+            </g>
+                <g>
+                   <rect x="87" y="240.5"
+            width="92.4" height="30"
+            rx="2" ry="2"
+            style="fill:#81d4fa; stroke:#444; stroke-width:1" />
+                   <title>parseCFG</title>
+            <text x="102" y="260.5"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="102" y="260.5">parseCFG</tspan>
+            </text>
+                   
+                   
+                </g>
+                <g>
+                   <rect x="87" y="289"
+            width="92.4" height="30"
+            rx="2" ry="2"
+            style="fill:#81d4fa; stroke:#444; stroke-width:1" />
+                   <title>parseDAT</title>
+            <text x="102" y="309"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="102" y="309">parseDAT</tspan>
+            </text>
+                   
+                   
+                </g>
+            <g>
+                <rect x="50" y="352.5"
+            width="352" height="30"
+            style="fill:#fff; stroke:#444; stroke-width:1" />
+                    
+                <line x1="55" y1="352.5" x2="55" y2="382.5"
+                style="fill:#fff; stroke:#444; stroke-width:1" />
+                <line x1="397" y1="352.5" x2="397" y2="382.5"
+                style="fill:#fff; stroke:#444; stroke-width:1" />
+             
+                <title>import from&apos;./components/createState.js&apos;</title>
+            <text x="70" y="372.5"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="70" y="372.5">import from&apos;./components/createState.js&apos;</tspan>
+            </text>
+                
+            </g>
+                <g>
+                   <rect x="87" y="401"
+            width="115.8" height="30"
+            rx="2" ry="2"
+            style="fill:#81d4fa; stroke:#444; stroke-width:1" />
+                   <title>createState</title>
+            <text x="102" y="421"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="102" y="421">createState</tspan>
+            </text>
+                   
+                   
+                </g>
+            <g>
+                <rect x="50" y="464.5"
+            width="344.2" height="30"
+            style="fill:#fff; stroke:#444; stroke-width:1" />
+                    
+                <line x1="55" y1="464.5" x2="55" y2="494.5"
+                style="fill:#fff; stroke:#444; stroke-width:1" />
+                <line x1="389.2" y1="464.5" x2="389.2" y2="494.5"
+                style="fill:#fff; stroke:#444; stroke-width:1" />
+             
+                <title>import from&quot;./utils/calculateDeltas.js&quot;</title>
+            <text x="70" y="484.5"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="70" y="484.5">import from&quot;./utils/calculateDeltas.js&quot;</tspan>
+            </text>
+                
+            </g>
+                <g>
+                   <rect x="87" y="513"
+            width="147" height="30"
+            rx="2" ry="2"
+            style="fill:#81d4fa; stroke:#444; stroke-width:1" />
+                   <title>calculateDeltas</title>
+            <text x="102" y="533"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="102" y="533">calculateDeltas</tspan>
+            </text>
+                   
+                   
+                </g>
+            <g>
+                <rect x="50" y="576.5"
+            width="359.8" height="30"
+            style="fill:#fff; stroke:#444; stroke-width:1" />
+                    
+                <line x1="55" y1="576.5" x2="55" y2="606.5"
+                style="fill:#fff; stroke:#444; stroke-width:1" />
+                <line x1="404.8" y1="576.5" x2="404.8" y2="606.5"
+                style="fill:#fff; stroke:#444; stroke-width:1" />
+             
+                <title>import from&quot;./utils/autoGroupChannels.js&quot;</title>
+            <text x="70" y="596.5"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="70" y="596.5">import from&quot;./utils/autoGroupChannels.js&quot;</tspan>
+            </text>
+                
+            </g>
+                <g>
+                   <rect x="87" y="625"
+            width="162.6" height="30"
+            rx="2" ry="2"
+            style="fill:#81d4fa; stroke:#444; stroke-width:1" />
+                   <title>autoGroupChannels</title>
+            <text x="102" y="645"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="102" y="645">autoGroupChannels</tspan>
+            </text>
+                   
+                   
+                </g>
+            <g>
+                <rect x="50" y="688.5"
+            width="367.59999999999997" height="30"
+            style="fill:#fff; stroke:#444; stroke-width:1" />
+                    
+                <line x1="55" y1="688.5" x2="55" y2="718.5"
+                style="fill:#fff; stroke:#444; stroke-width:1" />
+                <line x1="412.59999999999997" y1="688.5" x2="412.59999999999997" y2="718.5"
+                style="fill:#fff; stroke:#444; stroke-width:1" />
+             
+                <title>import from&quot;./components/createDragBar.js&quot;</title>
+            <text x="70" y="708.5"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="70" y="708.5">import from&quot;./components/createDragBar.js&quot;</tspan>
+            </text>
+                
+            </g>
+                <g>
+                   <rect x="87" y="737"
+            width="131.39999999999998" height="30"
+            rx="2" ry="2"
+            style="fill:#81d4fa; stroke:#444; stroke-width:1" />
+                   <title>createDragBar</title>
+            <text x="102" y="757"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="102" y="757">createDragBar</tspan>
+            </text>
+                   
+                   
+                </g>
+            <g>
+                <rect x="50" y="800.5"
+            width="430" height="30"
+            style="fill:#fff; stroke:#444; stroke-width:1" />
+                    
+                <line x1="55" y1="800.5" x2="55" y2="830.5"
+                style="fill:#fff; stroke:#444; stroke-width:1" />
+                <line x1="475" y1="800.5" x2="475" y2="830.5"
+                style="fill:#fff; stroke:#444; stroke-width:1" />
+             
+                <title>import from&quot;./components/setupChartDragAndDrop.js&quot;</title>
+            <text x="70" y="820.5"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="70" y="820.5">import from&quot;./components/setupChartDragAndDrop.js&quot;</tspan>
+            </text>
+                
+            </g>
+                <g>
+                   <rect x="87" y="849"
+            width="193.79999999999998" height="30"
+            rx="2" ry="2"
+            style="fill:#81d4fa; stroke:#444; stroke-width:1" />
+                   <title>setupChartDragAndDrop</title>
+            <text x="102" y="869"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="102" y="869">setupChartDragAndDrop</tspan>
+            </text>
+                   
+                   
+                </g>
+            <g>
+                <rect x="50" y="912.5"
+            width="453.4" height="30"
+            style="fill:#fff; stroke:#444; stroke-width:1" />
+                    
+                <line x1="55" y1="912.5" x2="55" y2="942.5"
+                style="fill:#fff; stroke:#444; stroke-width:1" />
+                <line x1="498.4" y1="912.5" x2="498.4" y2="942.5"
+                style="fill:#fff; stroke:#444; stroke-width:1" />
+             
+                <title>import from&quot;./components/handleVerticalLineShortcuts.js&quot;</title>
+            <text x="70" y="932.5"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="70" y="932.5">import from&quot;./components/handleVerticalLineShortcu...</tspan>
+            </text>
+                
+            </g>
+                <g>
+                   <rect x="87" y="961"
+            width="240.6" height="30"
+            rx="2" ry="2"
+            style="fill:#81d4fa; stroke:#444; stroke-width:1" />
+                   <title>handleVerticalLineShortcuts</title>
+            <text x="102" y="981"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="102" y="981">handleVerticalLineShortcuts</tspan>
+            </text>
+                   
+                   
+                </g>
+            <g>
+                <rect x="50" y="1024.5"
+            width="336.4" height="30"
+            style="fill:#fff; stroke:#444; stroke-width:1" />
+                    
+                <line x1="55" y1="1024.5" x2="55" y2="1054.5"
+                style="fill:#fff; stroke:#444; stroke-width:1" />
+                <line x1="381.4" y1="1024.5" x2="381.4" y2="1054.5"
+                style="fill:#fff; stroke:#444; stroke-width:1" />
+             
+                <title>import from&quot;./components/showError.js&quot;</title>
+            <text x="70" y="1044.5"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="70" y="1044.5">import from&quot;./components/showError.js&quot;</tspan>
+            </text>
+                
+            </g>
+                <g>
+                   <rect x="87" y="1073"
+            width="100.2" height="30"
+            rx="2" ry="2"
+            style="fill:#81d4fa; stroke:#444; stroke-width:1" />
+                   <title>showError</title>
+            <text x="102" y="1093"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="102" y="1093">showError</tspan>
+            </text>
+                   
+                   
+                </g>
+            <g>
+                <rect x="50" y="1136.5"
+            width="422.2" height="30"
+            style="fill:#fff; stroke:#444; stroke-width:1" />
+                    
+                <line x1="55" y1="1136.5" x2="55" y2="1166.5"
+                style="fill:#fff; stroke:#444; stroke-width:1" />
+                <line x1="467.2" y1="1136.5" x2="467.2" y2="1166.5"
+                style="fill:#fff; stroke:#444; stroke-width:1" />
+             
+                <title>import from&quot;./components/renderComtradeCharts.js&quot;</title>
+            <text x="70" y="1156.5"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="70" y="1156.5">import from&quot;./components/renderComtradeCharts.js&quot;</tspan>
+            </text>
+                
+            </g>
+                <g>
+                   <rect x="87" y="1185"
+            width="186" height="30"
+            rx="2" ry="2"
+            style="fill:#81d4fa; stroke:#444; stroke-width:1" />
+                   <title>renderComtradeCharts</title>
+            <text x="102" y="1205"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="102" y="1205">renderComtradeCharts</tspan>
+            </text>
+                   
+                   
+                </g>
+            <g>
+                <rect x="50" y="1248.5"
+            width="375.4" height="30"
+            style="fill:#fff; stroke:#444; stroke-width:1" />
+                    
+                <line x1="55" y1="1248.5" x2="55" y2="1278.5"
+                style="fill:#fff; stroke:#444; stroke-width:1" />
+                <line x1="420.4" y1="1248.5" x2="420.4" y2="1278.5"
+                style="fill:#fff; stroke:#444; stroke-width:1" />
+             
+                <title>import from&apos;./components/ResizableGroup.js&apos;</title>
+            <text x="70" y="1268.5"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="70" y="1268.5">import from&apos;./components/ResizableGroup.js&apos;</tspan>
+            </text>
+                
+            </g>
+                <g>
+                   <rect x="87" y="1297"
+            width="139.2" height="30"
+            rx="2" ry="2"
+            style="fill:#81d4fa; stroke:#444; stroke-width:1" />
+                   <title>ResizableGroup</title>
+            <text x="102" y="1317"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="102" y="1317">ResizableGroup</tspan>
+            </text>
+                   
+                   
+                </g>
+            <g>
+                <rect x="50" y="1360.5"
+            width="430" height="30"
+            style="fill:#fff; stroke:#444; stroke-width:1" />
+                    
+                <line x1="55" y1="1360.5" x2="55" y2="1390.5"
+                style="fill:#fff; stroke:#444; stroke-width:1" />
+                <line x1="475" y1="1360.5" x2="475" y2="1390.5"
+                style="fill:#fff; stroke:#444; stroke-width:1" />
+             
+                <title>import from&quot;./components/showChannelListWindow.js&quot;</title>
+            <text x="70" y="1380.5"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="70" y="1380.5">import from&quot;./components/showChannelListWindow.js&quot;</tspan>
+            </text>
+                
+            </g>
+                <g>
+                   <rect x="87" y="1409"
+            width="193.79999999999998" height="30"
+            rx="2" ry="2"
+            style="fill:#81d4fa; stroke:#444; stroke-width:1" />
+                   <title>showChannelListWindow</title>
+            <text x="102" y="1429"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="102" y="1429">showChannelListWindow</tspan>
+            </text>
+                   
+                   
+                </g>
+            <g>
+                <rect x="50" y="1472.5"
+            width="281.79999999999995" height="30"
+            style="fill:#fff; stroke:#444; stroke-width:1" />
+                    
+                <line x1="55" y1="1472.5" x2="55" y2="1502.5"
+                style="fill:#fff; stroke:#444; stroke-width:1" />
+                <line x1="326.79999999999995" y1="1472.5" x2="326.79999999999995" y2="1502.5"
+                style="fill:#fff; stroke:#444; stroke-width:1" />
+             
+                <title>import from&apos;./utils/helpers.js&apos;</title>
+            <text x="70" y="1492.5"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="70" y="1492.5">import from&apos;./utils/helpers.js&apos;</tspan>
+            </text>
+                
+            </g>
+                <g>
+                   <rect x="87" y="1521"
+            width="178.2" height="30"
+            rx="2" ry="2"
+            style="fill:#81d4fa; stroke:#444; stroke-width:1" />
+                   <title>createCustomElement</title>
+            <text x="102" y="1541"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="102" y="1541">createCustomElement</tspan>
+            </text>
+                   
+                   
+                </g>
+            <g>
+                <rect x="50" y="1584.5"
+            width="297.4" height="30"
+            style="fill:#fff; stroke:#444; stroke-width:1" />
+                    
+                <line x1="55" y1="1584.5" x2="55" y2="1614.5"
+                style="fill:#fff; stroke:#444; stroke-width:1" />
+                <line x1="342.4" y1="1584.5" x2="342.4" y2="1614.5"
+                style="fill:#fff; stroke:#444; stroke-width:1" />
+             
+                <title>import from&quot;./utils/constants.js&quot;</title>
+            <text x="70" y="1604.5"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="70" y="1604.5">import from&quot;./utils/constants.js&quot;</tspan>
+            </text>
+                
+            </g>
+                <g>
+                   <rect x="87" y="1633"
+            width="131.39999999999998" height="30"
+            rx="2" ry="2"
+            style="fill:#81d4fa; stroke:#444; stroke-width:1" />
+                   <title>analogPalette</title>
+            <text x="102" y="1653"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="102" y="1653">analogPalette</tspan>
+            </text>
+                   
+                   
+                </g>
+                <g>
+                   <rect x="87" y="1681.5"
+            width="139.2" height="30"
+            rx="2" ry="2"
+            style="fill:#81d4fa; stroke:#444; stroke-width:1" />
+                   <title>digitalPalette</title>
+            <text x="102" y="1701.5"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="102" y="1701.5">digitalPalette</tspan>
+            </text>
+                   
+                   
+                </g>
+            <g>
+                <rect x="50" y="1745"
+            width="359.8" height="30"
+            style="fill:#fff; stroke:#444; stroke-width:1" />
+                    
+                <line x1="55" y1="1745" x2="55" y2="1775"
+                style="fill:#fff; stroke:#444; stroke-width:1" />
+                <line x1="404.8" y1="1745" x2="404.8" y2="1775"
+                style="fill:#fff; stroke:#444; stroke-width:1" />
+             
+                <title>import from&apos;./components/chartManager.js&apos;</title>
+            <text x="70" y="1765"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="70" y="1765">import from&apos;./components/chartManager.js&apos;</tspan>
+            </text>
+                
+            </g>
+                <g>
+                   <rect x="87" y="1793.5"
+            width="193.79999999999998" height="30"
+            rx="2" ry="2"
+            style="fill:#81d4fa; stroke:#444; stroke-width:1" />
+                   <title>subscribeChartUpdates</title>
+            <text x="102" y="1813.5"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="102" y="1813.5">subscribeChartUpdates</tspan>
+            </text>
+                   
+                   
+                </g>
+            <g>
+                <rect x="50" y="1857"
+            width="193.79999999999998" height="30"
+            rx="3" ry="3"
+            style="fill:#81d4fa; stroke:#444; stroke-width:1" />
+                
+                <line x1="243.79999999999998" y1="1867" x2="248.79999999999998" y2="1867"
+                style="fill:#fff; stroke:#444; stroke-width:1" />
+                
+                <line x1="243.79999999999998" y1="1877" x2="248.79999999999998" y2="1877"
+                style="fill:#fff; stroke:#444; stroke-width:1" />
+
+                <path d="M248.79999999999998, 1858 L268.79999999999995, 1872 L248.79999999999998, 1886 Z" 
+        fill="#fff" stroke="#444" stroke-width="1" />
+                             
+                <title>export verticalLinesX</title>
+            <text x="65" y="1877"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="65" y="1877">export verticalLinesX</tspan>
+            </text>
+                
+            </g>
+                <g>
+                   <rect x="87" y="1905.5"
+            width="326.4" height="30"
+            rx="3" ry="3"
+            style="fill:#90caf9; stroke:#444; stroke-width:1" />
+                   <title>const verticalLinesX = createState([])</title>
+            <text x="102" y="1925.5"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="102" y="1925.5">const verticalLinesX = createState([])</tspan>
+            </text>
+                   
+                   
+                </g>
+                <g>
+                   <rect x="124" y="1954"
+            width="147" height="30"
+            rx="2" ry="2"
+            style="fill:#C5E1A5; stroke:#444; stroke-width:1" />
+                   <title>createState([])</title>
+            <text x="139" y="1974"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="139" y="1974">createState([])</tspan>
+            </text>
+                   
+                   
+                </g>
+            <g>
+                <rect x="50" y="2017.5"
+            width="154.8" height="30"
+            rx="3" ry="3"
+            style="fill:#81d4fa; stroke:#444; stroke-width:1" />
+                
+                <line x1="204.8" y1="2027.5" x2="209.8" y2="2027.5"
+                style="fill:#fff; stroke:#444; stroke-width:1" />
+                
+                <line x1="204.8" y1="2037.5" x2="209.8" y2="2037.5"
+                style="fill:#fff; stroke:#444; stroke-width:1" />
+
+                <path d="M209.8, 2018.5 L229.8, 2032.5 L209.8, 2046.5 Z" 
+        fill="#fff" stroke="#444" stroke-width="1" />
+                             
+                <title>export dataState</title>
+            <text x="65" y="2037.5"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="65" y="2037.5">export dataState</tspan>
+            </text>
+                
+            </g>
+                <g>
+                   <rect x="87" y="2066"
+            width="295.2" height="30"
+            rx="3" ry="3"
+            style="fill:#90caf9; stroke:#444; stroke-width:1" />
+                   <title>const dataState = createState({*})</title>
+            <text x="102" y="2086"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="102" y="2086">const dataState = createState({*})</tspan>
+            </text>
+                   
+                   
+                </g>
+                <g>
+                   <rect x="124" y="2114.5"
+            width="154.8" height="30"
+            rx="2" ry="2"
+            style="fill:#C5E1A5; stroke:#444; stroke-width:1" />
+                   <title>createState({*})</title>
+            <text x="139" y="2134.5"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="139" y="2134.5">createState({*})</tspan>
+            </text>
+                   
+                   
+                </g>
+                <g>
+                   <rect x="161" y="2163"
+            width="53.4" height="30"
+            rx="3" ry="3"
+            style="fill:#90caf9; stroke:#444; stroke-width:1" />
+                   <title>{*}</title>
+            <text x="176" y="2183"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="176" y="2183">{*}</tspan>
+            </text>
+                   
+                   
+                </g>
+                <g>
+                   <rect x="198" y="2211.5"
+            width="108" height="30"
+            rx="2" ry="2"
+            style="fill:#90caf9; stroke:#444; stroke-width:1" />
+                   <title>analog: []</title>
+            <text x="213" y="2231.5"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="213" y="2231.5">analog: []</tspan>
+            </text>
+                   
+                   
+                </g>
+                <g>
+                   <rect x="198" y="2260"
+            width="115.8" height="30"
+            rx="2" ry="2"
+            style="fill:#90caf9; stroke:#444; stroke-width:1" />
+                   <title>digital: []</title>
+            <text x="213" y="2280"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="213" y="2280">digital: []</tspan>
+            </text>
+                   
+                   
+                </g>
+                <g>
+                   <rect x="50" y="2308.5"
+            width="225" height="30"
+            rx="3" ry="3"
+            style="fill:#90caf9; stroke:#444; stroke-width:1" />
+                   <title>let charts = [null, null]</title>
+            <text x="65" y="2328.5"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="65" y="2328.5">let charts = [null, null]</tspan>
+            </text>
+                   
+                   
+                </g>
+                <g>
+                   <rect x="50" y="2357"
+            width="342" height="30"
+            rx="3" ry="3"
+            style="fill:#90caf9; stroke:#444; stroke-width:1" />
+                   <title>const chartTypes = [&apos;analog&apos;, &apos;digital&apos;]</title>
+            <text x="65" y="2377"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="65" y="2377">const chartTypes = [&apos;analog&apos;, &apos;digital&apos;]</tspan>
+            </text>
+                   
+                   
+                </g>
+                <g>
+                   <rect x="50" y="2405.5"
+            width="240.6" height="30"
+            rx="3" ry="3"
+            style="fill:#90caf9; stroke:#444; stroke-width:1" />
+                   <title>const TIME_UNIT = &quot;seconds&quot;</title>
+            <text x="65" y="2425.5"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="65" y="2425.5">const TIME_UNIT = &quot;seconds&quot;</tspan>
+            </text>
+                   
+                   
+                </g>
+            <g>
+                <rect x="50" y="2469"
+            width="178.2" height="30"
+            rx="3" ry="3"
+            style="fill:#81d4fa; stroke:#444; stroke-width:1" />
+                
+                <line x1="228.2" y1="2479" x2="233.2" y2="2479"
+                style="fill:#fff; stroke:#444; stroke-width:1" />
+                
+                <line x1="228.2" y1="2489" x2="233.2" y2="2489"
+                style="fill:#fff; stroke:#444; stroke-width:1" />
+
+                <path d="M233.2, 2470 L253.2, 2484 L233.2, 2498 Z" 
+        fill="#fff" stroke="#444" stroke-width="1" />
+                             
+                <title>export channelState</title>
+            <text x="65" y="2489"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="65" y="2489">export channelState</tspan>
+            </text>
+                
+            </g>
+                <g>
+                   <rect x="87" y="2517.5"
+            width="318.59999999999997" height="30"
+            rx="3" ry="3"
+            style="fill:#90caf9; stroke:#444; stroke-width:1" />
+                   <title>const channelState = createState({*})</title>
+            <text x="102" y="2537.5"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="102" y="2537.5">const channelState = createState({*})</tspan>
+            </text>
+                   
+                   
+                </g>
+                <g>
+                   <rect x="124" y="2566"
+            width="154.8" height="30"
+            rx="2" ry="2"
+            style="fill:#C5E1A5; stroke:#444; stroke-width:1" />
+                   <title>createState({*})</title>
+            <text x="139" y="2586"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="139" y="2586">createState({*})</tspan>
+            </text>
+                   
+                   
+                </g>
+                <g>
+                   <rect x="161" y="2614.5"
+            width="53.4" height="30"
+            rx="3" ry="3"
+            style="fill:#90caf9; stroke:#444; stroke-width:1" />
+                   <title>{*}</title>
+            <text x="176" y="2634.5"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="176" y="2634.5">{*}</tspan>
+            </text>
+                   
+                   
+                </g>
+                <g>
+                   <rect x="198" y="2663"
+            width="115.8" height="30"
+            rx="2" ry="2"
+            style="fill:#90caf9; stroke:#444; stroke-width:1" />
+                   <title>analog: {*}</title>
+            <text x="213" y="2683"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="213" y="2683">analog: {*}</tspan>
+            </text>
+                   
+                   
+                </g>
+                <g>
+                   <rect x="235" y="2711.5"
+            width="115.8" height="30"
+            rx="2" ry="2"
+            style="fill:#90caf9; stroke:#444; stroke-width:1" />
+                   <title>yLabels: []</title>
+            <text x="250" y="2731.5"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="250" y="2731.5">yLabels: []</tspan>
+            </text>
+                   
+                   
+                </g>
+                <g>
+                   <rect x="235" y="2760"
+            width="139.2" height="30"
+            rx="2" ry="2"
+            style="fill:#90caf9; stroke:#444; stroke-width:1" />
+                   <title>lineColors: []</title>
+            <text x="250" y="2780"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="250" y="2780">lineColors: []</tspan>
+            </text>
+                   
+                   
+                </g>
+                <g>
+                   <rect x="235" y="2808.5"
+            width="108" height="30"
+            rx="2" ry="2"
+            style="fill:#90caf9; stroke:#444; stroke-width:1" />
+                   <title>yUnits: []</title>
+            <text x="250" y="2828.5"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="250" y="2828.5">yUnits: []</tspan>
+            </text>
+                   
+                   
+                </g>
+                <g>
+                   <rect x="235" y="2857"
+            width="139.2" height="30"
+            rx="2" ry="2"
+            style="fill:#90caf9; stroke:#444; stroke-width:1" />
+                   <title>axesScales: []</title>
+            <text x="250" y="2877"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="250" y="2877">axesScales: []</tspan>
+            </text>
+                   
+                   
+                </g>
+                <g>
+                   <rect x="235" y="2905.5"
+            width="108" height="30"
+            rx="2" ry="2"
+            style="fill:#90caf9; stroke:#444; stroke-width:1" />
+                   <title>xLabel: &quot;&quot;</title>
+            <text x="250" y="2925.5"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="250" y="2925.5">xLabel: &quot;&quot;</tspan>
+            </text>
+                   
+                   
+                </g>
+                <g>
+                   <rect x="235" y="2954"
+            width="100.2" height="30"
+            rx="2" ry="2"
+            style="fill:#90caf9; stroke:#444; stroke-width:1" />
+                   <title>xUnit: &quot;&quot;</title>
+            <text x="250" y="2974"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="250" y="2974">xUnit: &quot;&quot;</tspan>
+            </text>
+                   
+                   
+                </g>
+                <g>
+                   <rect x="198" y="3002.5"
+            width="123.6" height="30"
+            rx="2" ry="2"
+            style="fill:#90caf9; stroke:#444; stroke-width:1" />
+                   <title>digital: {*}</title>
+            <text x="213" y="3022.5"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="213" y="3022.5">digital: {*}</tspan>
+            </text>
+                   
+                   
+                </g>
+                <g>
+                   <rect x="235" y="3051"
+            width="115.8" height="30"
+            rx="2" ry="2"
+            style="fill:#90caf9; stroke:#444; stroke-width:1" />
+                   <title>yLabels: []</title>
+            <text x="250" y="3071"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="250" y="3071">yLabels: []</tspan>
+            </text>
+                   
+                   
+                </g>
+                <g>
+                   <rect x="235" y="3099.5"
+            width="139.2" height="30"
+            rx="2" ry="2"
+            style="fill:#90caf9; stroke:#444; stroke-width:1" />
+                   <title>lineColors: []</title>
+            <text x="250" y="3119.5"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="250" y="3119.5">lineColors: []</tspan>
+            </text>
+                   
+                   
+                </g>
+                <g>
+                   <rect x="235" y="3148"
+            width="108" height="30"
+            rx="2" ry="2"
+            style="fill:#90caf9; stroke:#444; stroke-width:1" />
+                   <title>yUnits: []</title>
+            <text x="250" y="3168"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="250" y="3168">yUnits: []</tspan>
+            </text>
+                   
+                   
+                </g>
+                <g>
+                   <rect x="235" y="3196.5"
+            width="139.2" height="30"
+            rx="2" ry="2"
+            style="fill:#90caf9; stroke:#444; stroke-width:1" />
+                   <title>axesScales: []</title>
+            <text x="250" y="3216.5"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="250" y="3216.5">axesScales: []</tspan>
+            </text>
+                   
+                   
+                </g>
+                <g>
+                   <rect x="235" y="3245"
+            width="108" height="30"
+            rx="2" ry="2"
+            style="fill:#90caf9; stroke:#444; stroke-width:1" />
+                   <title>xLabel: &quot;&quot;</title>
+            <text x="250" y="3265"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="250" y="3265">xLabel: &quot;&quot;</tspan>
+            </text>
+                   
+                   
+                </g>
+                <g>
+                   <rect x="235" y="3293.5"
+            width="100.2" height="30"
+            rx="2" ry="2"
+            style="fill:#90caf9; stroke:#444; stroke-width:1" />
+                   <title>xUnit: &quot;&quot;</title>
+            <text x="250" y="3313.5"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="250" y="3313.5">xUnit: &quot;&quot;</tspan>
+            </text>
+                   
+                   
+                </g>
+            <g>
+                <rect x="50" y="3357"
+            width="201.6" height="30"
+            rx="3" ry="3"
+            style="fill:#81d4fa; stroke:#444; stroke-width:1" />
+                
+                <line x1="251.6" y1="3367" x2="256.6" y2="3367"
+                style="fill:#fff; stroke:#444; stroke-width:1" />
+                
+                <line x1="251.6" y1="3377" x2="256.6" y2="3377"
+                style="fill:#fff; stroke:#444; stroke-width:1" />
+
+                <path d="M256.6, 3358 L276.6, 3372 L256.6, 3386 Z" 
+        fill="#fff" stroke="#444" stroke-width="1" />
+                             
+                <title>export whiteBackground</title>
+            <text x="65" y="3377"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="65" y="3377">export whiteBackground</tspan>
+            </text>
+                
+            </g>
+                <g>
+                   <rect x="87" y="3405.5"
+            width="326.4" height="30"
+            rx="3" ry="3"
+            style="fill:#90caf9; stroke:#444; stroke-width:1" />
+                   <title>const whiteBackground = createState(0)</title>
+            <text x="102" y="3425.5"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="102" y="3425.5">const whiteBackground = createState(0)</tspan>
+            </text>
+                   
+                   
+                </g>
+                <g>
+                   <rect x="124" y="3454"
+            width="139.2" height="30"
+            rx="2" ry="2"
+            style="fill:#C5E1A5; stroke:#444; stroke-width:1" />
+                   <title>createState(0)</title>
+            <text x="139" y="3474"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="139" y="3474">createState(0)</tspan>
+            </text>
+                   
+                   
+                </g>
+                <g>
+                   <rect x="50" y="3502.5"
+            width="443.4" height="30"
+            rx="3" ry="3"
+            style="fill:#90caf9; stroke:#444; stroke-width:1" />
+                   <title>const cfgFileInput = document.getElementById(&apos;cfgFile&apos;)</title>
+            <text x="65" y="3522.5"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="65" y="3522.5">const cfgFileInput = document.getElementById(&apos;cfgF...</tspan>
+            </text>
+                   
+                   
+                </g>
+                <g>
+                   <rect x="50" y="3551"
+            width="420" height="30"
+            rx="3" ry="3"
+            style="fill:#90caf9; stroke:#444; stroke-width:1" />
+                   <title>const loadBtn = document.getElementById(&apos;loadBtn&apos;)</title>
+            <text x="65" y="3571"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="65" y="3571">const loadBtn = document.getElementById(&apos;loadBtn&apos;)</tspan>
+            </text>
+                   
+                   
+                </g>
+                <g>
+                   <rect x="50" y="3599.5"
+            width="443.4" height="30"
+            rx="3" ry="3"
+            style="fill:#90caf9; stroke:#444; stroke-width:1" />
+                   <title>const cfgFileNameEl = document.getElementById(&apos;cfgFileName&apos;)</title>
+            <text x="65" y="3619.5"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="65" y="3619.5">const cfgFileNameEl = document.getElementById(&apos;cfg...</tspan>
+            </text>
+                   
+                   
+                </g>
+                <g>
+                   <rect x="50" y="3648"
+            width="443.4" height="30"
+            rx="3" ry="3"
+            style="fill:#90caf9; stroke:#444; stroke-width:1" />
+                   <title>const datFileNameEl = document.getElementById(&apos;datFileName&apos;)</title>
+            <text x="65" y="3668"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="65" y="3668">const datFileNameEl = document.getElementById(&apos;dat...</tspan>
+            </text>
+                   
+                   
+                </g>
+                <g>
+                   <rect x="50" y="3696.5"
+            width="443.4" height="30"
+            rx="3" ry="3"
+            style="fill:#90caf9; stroke:#444; stroke-width:1" />
+                   <title>const chartsContainer = document.getElementById(&apos;charts&apos;)</title>
+            <text x="65" y="3716.5"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="65" y="3716.5">const chartsContainer = document.getElementById(&apos;c...</tspan>
+            </text>
+                   
+                   
+                </g>
+                <g>
+                   <rect x="50" y="3745"
+            width="443.4" height="30"
+            rx="3" ry="3"
+            style="fill:#90caf9; stroke:#444; stroke-width:1" />
+                   <title>const fixedResultsEl = document.getElementById(&apos;fixed-results&apos;)</title>
+            <text x="65" y="3765"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="65" y="3765">const fixedResultsEl = document.getElementById(&apos;fi...</tspan>
+            </text>
+                   
+                   
+                </g>
+                <g>
+                   <rect x="50" y="3793.5"
+            width="420" height="30"
+            rx="2" ry="2"
+            style="fill:#C5E1A5; stroke:#444; stroke-width:1" />
+                   <title>loadBtn.addEventListener(&apos;click&apos;, handleLoadFiles)</title>
+            <text x="65" y="3813.5"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="65" y="3813.5">loadBtn.addEventListener(&apos;click&apos;, handleLoadFiles)</tspan>
+            </text>
+                   
+                   
+                </g>
+                <g>
+                   <rect x="50" y="3842"
+            width="349.8" height="30"
+            rx="2" ry="2"
+            style="fill:#C5E1A5; stroke:#444; stroke-width:1" />
+                   <title>document.addEventListener(&apos;keydown&apos;, *())</title>
+            <text x="65" y="3862"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="65" y="3862">document.addEventListener(&apos;keydown&apos;, *())</tspan>
+            </text>
+                   
+                   
+                </g>
+            <g>
+                <rect x="87" y="3890.5"
+            width="96.8" height="30"
+            style="fill:#a5d6a7; stroke:#444; stroke-width:1" />
+                    
+                <line x1="97" y1="3890.5" x2="97" y2="3920.5"
+                style="fill:#a5d6a7; stroke:#444; stroke-width:1" />
+                <line x1="173.8" y1="3890.5" x2="173.8" y2="3920.5"
+                style="fill:#a5d6a7; stroke:#444; stroke-width:1" />
+             
+                <title>(e) =&gt;</title>
+            <text x="112" y="3910.5"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="112" y="3910.5">(e) =&gt;</tspan>
+            </text>
+                
+            </g>
+            <g>
+                <rect x="124" y="3939"
+            width="443.4" height="30"
+            rx="3" ry="3"
+            style="fill:#90caf9; stroke:#444; stroke-width:1" />
+                
+                <line x1="567.4" y1="3949" x2="572.4" y2="3949"
+                style="fill:#a5d6a7; stroke:#444; stroke-width:1" />
+                
+                <line x1="567.4" y1="3959" x2="572.4" y2="3959"
+                style="fill:#a5d6a7; stroke:#444; stroke-width:1" />
+
+                <path d="M572.4, 3943 L588.4, 3954 L572.4, 3965 Z" 
+        fill="#a5d6a7" stroke="#444" stroke-width="1" />
+                             
+                <title>return handleVerticalLineShortcuts(e, charts, verticalLinesX, fixedResultsEl, TIME_UNIT, calculateDeltas)</title>
+            <text x="139" y="3959"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="139" y="3959">return handleVerticalLineShortcuts(e, charts, vert...</tspan>
+            </text>
+                
+            </g>
+                <g>
+                   <rect x="50" y="3987.5"
+            width="443.4" height="30"
+            rx="3" ry="3"
+            style="fill:#90caf9; stroke:#444; stroke-width:1" />
+                   <title>const showChannelListBtn = createCustomElement(&apos;button&apos;)</title>
+            <text x="65" y="4007.5"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="65" y="4007.5">const showChannelListBtn = createCustomElement(&apos;bu...</tspan>
+            </text>
+                   
+                   
+                </g>
+                <g>
+                   <rect x="50" y="4036"
+            width="373.2" height="30"
+            rx="3" ry="3"
+            style="fill:#90caf9; stroke:#444; stroke-width:1" />
+                   <title>showChannelListBtn.id = &apos;showChannelListBtn&apos;</title>
+            <text x="65" y="4056"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="65" y="4056">showChannelListBtn.id = &apos;showChannelListBtn&apos;</tspan>
+            </text>
+                   
+                   
+                </g>
+                <g>
+                   <rect x="50" y="4084.5"
+            width="443.4" height="30"
+            rx="3" ry="3"
+            style="fill:#90caf9; stroke:#444; stroke-width:1" />
+                   <title>showChannelListBtn.textContent = &apos;Show Channel List&apos;</title>
+            <text x="65" y="4104.5"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="65" y="4104.5">showChannelListBtn.textContent = &apos;Show Channel Lis...</tspan>
+            </text>
+                   
+                   
+                </g>
+                <g>
+                   <rect x="50" y="4133"
+            width="443.4" height="30"
+            rx="2" ry="2"
+            style="fill:#C5E1A5; stroke:#444; stroke-width:1" />
+                   <title>loadBtn.insertAdjacentElement(&apos;afterend&apos;, showChannelListBtn)</title>
+            <text x="65" y="4153"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="65" y="4153">loadBtn.insertAdjacentElement(&apos;afterend&apos;, showChan...</tspan>
+            </text>
+                   
+                   
+                </g>
+                <g>
+                   <rect x="50" y="4181.5"
+            width="412.2" height="30"
+            rx="2" ry="2"
+            style="fill:#C5E1A5; stroke:#444; stroke-width:1" />
+                   <title>showChannelListBtn.addEventListener(&apos;click&apos;, *())</title>
+            <text x="65" y="4201.5"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="65" y="4201.5">showChannelListBtn.addEventListener(&apos;click&apos;, *())</tspan>
+            </text>
+                   
+                   
+                </g>
+            <g>
+                <rect x="87" y="4230"
+            width="89" height="30"
+            style="fill:#a5d6a7; stroke:#444; stroke-width:1" />
+                    
+                <line x1="97" y1="4230" x2="97" y2="4260"
+                style="fill:#a5d6a7; stroke:#444; stroke-width:1" />
+                <line x1="166" y1="4230" x2="166" y2="4260"
+                style="fill:#a5d6a7; stroke:#444; stroke-width:1" />
+             
+                <title>() =&gt;</title>
+            <text x="112" y="4250"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="112" y="4250">() =&gt;</tspan>
+            </text>
+                
+            </g>
+                <g>
+                   <rect x="124" y="4278.5"
+            width="381" height="30"
+            rx="2" ry="2"
+            style="fill:#C5E1A5; stroke:#444; stroke-width:1" />
+                   <title>showChannelListWindow(channelState, *(), *())</title>
+            <text x="139" y="4298.5"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="139" y="4298.5">showChannelListWindow(channelState, *(), *())</tspan>
+            </text>
+                   
+                   
+                </g>
+            <g>
+                <rect x="161" y="4327"
+            width="245" height="30"
+            style="fill:#a5d6a7; stroke:#444; stroke-width:1" />
+                    
+                <line x1="171" y1="4327" x2="171" y2="4357"
+                style="fill:#a5d6a7; stroke:#444; stroke-width:1" />
+                <line x1="396" y1="4327" x2="396" y2="4357"
+                style="fill:#a5d6a7; stroke:#444; stroke-width:1" />
+             
+                <title>(type, fromIdx, toIdx) =&gt;</title>
+            <text x="186" y="4347"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="186" y="4347">(type, fromIdx, toIdx) =&gt;</tspan>
+            </text>
+                
+            </g>
+                <g>
+                   <rect x="198" y="4375.5"
+            width="443.4" height="30"
+            rx="2" ry="2"
+            style="fill:#C5E1A5; stroke:#444; stroke-width:1" />
+                   <title>renderComtradeCharts(cfg, data, chartsContainer, charts, verticalLinesX, createState, calculateDeltas, TIME_UNIT, channelState)</title>
+            <text x="213" y="4395.5"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="213" y="4395.5">renderComtradeCharts(cfg, data, chartsContainer, c...</tspan>
+            </text>
+                   
+                   
+                </g>
+            <g>
+                <rect x="161" y="4424"
+            width="213.79999999999998" height="30"
+            style="fill:#a5d6a7; stroke:#444; stroke-width:1" />
+                    
+                <line x1="171" y1="4424" x2="171" y2="4454"
+                style="fill:#a5d6a7; stroke:#444; stroke-width:1" />
+                <line x1="364.79999999999995" y1="4424" x2="364.79999999999995" y2="4454"
+                style="fill:#a5d6a7; stroke:#444; stroke-width:1" />
+             
+                <title>(type, idx, color) =&gt;</title>
+            <text x="186" y="4444"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="186" y="4444">(type, idx, color) =&gt;</tspan>
+            </text>
+                
+            </g><g>
+            <rect x="228" y="4487.5"
+            width="208.2" height="30"
+            rx="3" ry="3"
+            style="fill:#ce93d8; stroke:#444; stroke-width:1" />                
+            <polygon points="198,4502.5 228,4472.5 258,4502.5 228,4532.5"
+            style="fill:#ce93d8; stroke:#444; stroke-width:1" />
+            <title>(type === &apos;analog&apos;)</title>
+            <text x="273" y="4507.5"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="273" y="4507.5">(type === &apos;analog&apos;)</tspan>
+            </text>
+            
+            <text x="220.2" y="4507.5"
+        font-family="monospace" font-size="13" fill="#222">if</text> <text x="235.8" y="4534.45"
+        font-family="monospace" font-size="13" fill="#222">+</text> <text x="440.09999999999997" y="4500.55"
+        font-family="monospace" font-size="13" fill="#222">-</text>
+        </g>
+                <g>
+                   <rect x="248" y="4542.5"
+            width="365.4" height="30"
+            rx="3" ry="3"
+            style="fill:#90caf9; stroke:#444; stroke-width:1" />
+                   <title>channelState.analog.lineColors[idx] = color</title>
+            <text x="263" y="4562.5"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="263" y="4562.5">channelState.analog.lineColors[idx] = color</tspan>
+            </text>
+                   
+                   
+                </g><g>
+            <rect x="703.4" y="4557.5"
+            width="216" height="30"
+            rx="3" ry="3"
+            style="fill:#ce93d8; stroke:#444; stroke-width:1" />                
+            <polygon points="673.4,4572.5 703.4,4542.5 733.4,4572.5 703.4,4602.5"
+            style="fill:#ce93d8; stroke:#444; stroke-width:1" />
+            <title>(type === &apos;digital&apos;)</title>
+            <text x="748.4" y="4577.5"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="748.4" y="4577.5">(type === &apos;digital&apos;)</tspan>
+            </text>
+            
+            <text x="695.6" y="4577.5"
+        font-family="monospace" font-size="13" fill="#222">if</text> <text x="711.1999999999999" y="4604.45"
+        font-family="monospace" font-size="13" fill="#222">+</text> 
+        </g>
+                <g>
+                   <rect x="723.4" y="4612.5"
+            width="373.2" height="30"
+            rx="3" ry="3"
+            style="fill:#90caf9; stroke:#444; stroke-width:1" />
+                   <title>channelState.digital.lineColors[idx] = color</title>
+            <text x="738.4" y="4632.5"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="738.4" y="4632.5">channelState.digital.lineColors[idx] = color</tspan>
+            </text>
+                   
+                   
+                </g>
+                <g>
+                   <rect x="198" y="4662.5"
+            width="443.4" height="30"
+            rx="2" ry="2"
+            style="fill:#C5E1A5; stroke:#444; stroke-width:1" />
+                   <title>renderComtradeCharts(cfg, data, chartsContainer, charts, verticalLinesX, createState, calculateDeltas, TIME_UNIT, channelState)</title>
+            <text x="213" y="4682.5"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="213" y="4682.5">renderComtradeCharts(cfg, data, chartsContainer, c...</tspan>
+            </text>
+                   
+                   
+                </g>
+            <g>
+                <rect x="50" y="4726"
+            width="252.79999999999998" height="30"
+            style="fill:#a5d6a7; stroke:#444; stroke-width:1" />
+                    
+                <line x1="60" y1="4726" x2="60" y2="4756"
+                style="fill:#a5d6a7; stroke:#444; stroke-width:1" />
+                <line x1="292.79999999999995" y1="4726" x2="292.79999999999995" y2="4756"
+                style="fill:#a5d6a7; stroke:#444; stroke-width:1" />
+             
+                <title>function handleLoadFiles()</title>
+            <text x="75" y="4746"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="75" y="4746">function handleLoadFiles()</tspan>
+            </text>
+                
+            </g>
+                <g>
+                   <rect x="87" y="4774.5"
+            width="373.2" height="30"
+            rx="3" ry="3"
+            style="fill:#90caf9; stroke:#444; stroke-width:1" />
+                   <title>const files = Array.from(cfgFileInput.files)</title>
+            <text x="102" y="4794.5"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="102" y="4794.5">const files = Array.from(cfgFileInput.files)</tspan>
+            </text>
+                   
+                   
+                </g><g>
+            <rect x="117" y="4838"
+            width="216" height="30"
+            rx="3" ry="3"
+            style="fill:#ce93d8; stroke:#444; stroke-width:1" />                
+            <polygon points="87,4853 117,4823 147,4853 117,4883"
+            style="fill:#ce93d8; stroke:#444; stroke-width:1" />
+            <title>(files.length === 0)</title>
+            <text x="162" y="4858"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="162" y="4858">(files.length === 0)</tspan>
+            </text>
+            
+            <text x="109.2" y="4858"
+        font-family="monospace" font-size="13" fill="#222">if</text> <text x="124.8" y="4884.95"
+        font-family="monospace" font-size="13" fill="#222">+</text> 
+        </g>
+                <g>
+                   <rect x="137" y="4893"
+            width="443.4" height="30"
+            rx="2" ry="2"
+            style="fill:#C5E1A5; stroke:#444; stroke-width:1" />
+                   <title>showError(&apos;Please select a CFG file and its corresponding DAT file.&apos;, fixedResultsEl)</title>
+            <text x="152" y="4913"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="152" y="4913">showError(&apos;Please select a CFG file and its corres...</tspan>
+            </text>
+                   
+                   
+                </g>
+            <g>
+                <rect x="137" y="4941.5"
+            width="76.8" height="30"
+            rx="3" ry="3"
+            style="fill:#90caf9; stroke:#444; stroke-width:1" />
+                
+                <line x1="213.8" y1="4951.5" x2="218.8" y2="4951.5"
+                style="fill:#a5d6a7; stroke:#444; stroke-width:1" />
+                
+                <line x1="213.8" y1="4961.5" x2="218.8" y2="4961.5"
+                style="fill:#a5d6a7; stroke:#444; stroke-width:1" />
+
+                <path d="M218.8, 4945.5 L234.8, 4956.5 L218.8, 4967.5 Z" 
+        fill="#a5d6a7" stroke="#444" stroke-width="1" />
+                             
+                <title>return</title>
+            <text x="152" y="4961.5"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="152" y="4961.5">return</tspan>
+            </text>
+                
+            </g>
+                <g>
+                   <rect x="87" y="4991.5"
+            width="271.79999999999995" height="30"
+            rx="3" ry="3"
+            style="fill:#90caf9; stroke:#444; stroke-width:1" />
+                   <title>const cfgFile = files.find(*())</title>
+            <text x="102" y="5011.5"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="102" y="5011.5">const cfgFile = files.find(*())</tspan>
+            </text>
+                   
+                   
+                </g>
+            <g>
+                <rect x="124" y="5040"
+            width="120.2" height="30"
+            style="fill:#a5d6a7; stroke:#444; stroke-width:1" />
+                    
+                <line x1="134" y1="5040" x2="134" y2="5070"
+                style="fill:#a5d6a7; stroke:#444; stroke-width:1" />
+                <line x1="234.2" y1="5040" x2="234.2" y2="5070"
+                style="fill:#a5d6a7; stroke:#444; stroke-width:1" />
+             
+                <title>(file) =&gt;</title>
+            <text x="149" y="5060"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="149" y="5060">(file) =&gt;</tspan>
+            </text>
+                
+            </g>
+            <g>
+                <rect x="161" y="5088.5"
+            width="217.2" height="30"
+            rx="3" ry="3"
+            style="fill:#90caf9; stroke:#444; stroke-width:1" />
+                
+                <line x1="378.2" y1="5098.5" x2="383.2" y2="5098.5"
+                style="fill:#a5d6a7; stroke:#444; stroke-width:1" />
+                
+                <line x1="378.2" y1="5108.5" x2="383.2" y2="5108.5"
+                style="fill:#a5d6a7; stroke:#444; stroke-width:1" />
+
+                <path d="M383.2, 5092.5 L399.2, 5103.5 L383.2, 5114.5 Z" 
+        fill="#a5d6a7" stroke="#444" stroke-width="1" />
+                             
+                <title>return .endsWith(&apos;.cfg&apos;)</title>
+            <text x="176" y="5108.5"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="176" y="5108.5">return .endsWith(&apos;.cfg&apos;)</tspan>
+            </text>
+                
+            </g><g>
+            <rect x="117" y="5152"
+            width="138" height="30"
+            rx="3" ry="3"
+            style="fill:#ce93d8; stroke:#444; stroke-width:1" />                
+            <polygon points="87,5167 117,5137 147,5167 117,5197"
+            style="fill:#ce93d8; stroke:#444; stroke-width:1" />
+            <title>(!cfgFile)</title>
+            <text x="162" y="5172"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="162" y="5172">(!cfgFile)</tspan>
+            </text>
+            
+            <text x="109.2" y="5172"
+        font-family="monospace" font-size="13" fill="#222">if</text> <text x="124.8" y="5198.95"
+        font-family="monospace" font-size="13" fill="#222">+</text> 
+        </g>
+                <g>
+                   <rect x="137" y="5207"
+            width="443.4" height="30"
+            rx="2" ry="2"
+            style="fill:#C5E1A5; stroke:#444; stroke-width:1" />
+                   <title>showError(&apos;CFG file not found. Please ensure you upload a valid CFG file.&apos;, fixedResultsEl)</title>
+            <text x="152" y="5227"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="152" y="5227">showError(&apos;CFG file not found. Please ensure you u...</tspan>
+            </text>
+                   
+                   
+                </g>
+            <g>
+                <rect x="137" y="5255.5"
+            width="76.8" height="30"
+            rx="3" ry="3"
+            style="fill:#90caf9; stroke:#444; stroke-width:1" />
+                
+                <line x1="213.8" y1="5265.5" x2="218.8" y2="5265.5"
+                style="fill:#a5d6a7; stroke:#444; stroke-width:1" />
+                
+                <line x1="213.8" y1="5275.5" x2="218.8" y2="5275.5"
+                style="fill:#a5d6a7; stroke:#444; stroke-width:1" />
+
+                <path d="M218.8, 5259.5 L234.8, 5270.5 L218.8, 5281.5 Z" 
+        fill="#a5d6a7" stroke="#444" stroke-width="1" />
+                             
+                <title>return</title>
+            <text x="152" y="5275.5"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="152" y="5275.5">return</tspan>
+            </text>
+                
+            </g>
+                <g>
+                   <rect x="87" y="5305.5"
+            width="53.4" height="30"
+            rx="2" ry="2"
+            style="fill:#FFE082; stroke:#444; stroke-width:1" />
+                   <title>try</title>
+            <text x="102" y="5325.5"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="102" y="5325.5">try</tspan>
+            </text>
+                   
+                   
+                </g>
+                <g>
+                   <rect x="124" y="5354"
+            width="443.4" height="30"
+            rx="3" ry="3"
+            style="fill:#90caf9; stroke:#444; stroke-width:1" />
+                   <title>cfgFileNameEl.textContent = `CFG File: ${cfgFile.name}`</title>
+            <text x="139" y="5374"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="139" y="5374">cfgFileNameEl.textContent = `CFG File: ${cfgFile.n...</tspan>
+            </text>
+                   
+                   
+                </g>
+                <g>
+                   <rect x="124" y="5402.5"
+            width="310.8" height="30"
+            rx="3" ry="3"
+            style="fill:#90caf9; stroke:#444; stroke-width:1" />
+                   <title>const cfgText = await cfgFile.text()</title>
+            <text x="139" y="5422.5"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="139" y="5422.5">const cfgText = await cfgFile.text()</tspan>
+            </text>
+                   
+                   
+                </g>
+                <g>
+                   <rect x="124" y="5451"
+            width="295.2" height="30"
+            rx="3" ry="3"
+            style="fill:#90caf9; stroke:#444; stroke-width:1" />
+                   <title>cfg = parseCFG(cfgText, TIME_UNIT)</title>
+            <text x="139" y="5471"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="139" y="5471">cfg = parseCFG(cfgText, TIME_UNIT)</tspan>
+            </text>
+                   
+                   
+                </g>
+                <g>
+                   <rect x="124" y="5499.5"
+            width="443.4" height="30"
+            rx="3" ry="3"
+            style="fill:#90caf9; stroke:#444; stroke-width:1" />
+                   <title>const baseName = cfgFile.name.replace(/\.cfg$/i, &quot;&quot;)</title>
+            <text x="139" y="5519.5"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="139" y="5519.5">const baseName = cfgFile.name.replace(/\.cfg$/i, &quot;...</tspan>
+            </text>
+                   
+                   
+                </g>
+                <g>
+                   <rect x="124" y="5548"
+            width="318.59999999999997" height="30"
+            rx="3" ry="3"
+            style="fill:#90caf9; stroke:#444; stroke-width:1" />
+                   <title>const datFileName = `${baseName}.dat`</title>
+            <text x="139" y="5568"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="139" y="5568">const datFileName = `${baseName}.dat`</tspan>
+            </text>
+                   
+                   
+                </g>
+                <g>
+                   <rect x="161" y="5596.5"
+            width="92.4" height="30"
+            rx="3" ry="3"
+            style="fill:#90caf9; stroke:#444; stroke-width:1" />
+                   <title>baseName</title>
+            <text x="176" y="5616.5"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="176" y="5616.5">baseName</tspan>
+            </text>
+                   
+                   
+                </g>
+                <g>
+                   <rect x="124" y="5645"
+            width="271.79999999999995" height="30"
+            rx="3" ry="3"
+            style="fill:#90caf9; stroke:#444; stroke-width:1" />
+                   <title>const datFile = files.find(*())</title>
+            <text x="139" y="5665"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="139" y="5665">const datFile = files.find(*())</tspan>
+            </text>
+                   
+                   
+                </g>
+            <g>
+                <rect x="161" y="5693.5"
+            width="120.2" height="30"
+            style="fill:#a5d6a7; stroke:#444; stroke-width:1" />
+                    
+                <line x1="171" y1="5693.5" x2="171" y2="5723.5"
+                style="fill:#a5d6a7; stroke:#444; stroke-width:1" />
+                <line x1="271.2" y1="5693.5" x2="271.2" y2="5723.5"
+                style="fill:#a5d6a7; stroke:#444; stroke-width:1" />
+             
+                <title>(file) =&gt;</title>
+            <text x="186" y="5713.5"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="186" y="5713.5">(file) =&gt;</tspan>
+            </text>
+                
+            </g>
+            <g>
+                <rect x="198" y="5742"
+            width="443.4" height="30"
+            rx="3" ry="3"
+            style="fill:#90caf9; stroke:#444; stroke-width:1" />
+                
+                <line x1="641.4" y1="5752" x2="646.4" y2="5752"
+                style="fill:#a5d6a7; stroke:#444; stroke-width:1" />
+                
+                <line x1="641.4" y1="5762" x2="646.4" y2="5762"
+                style="fill:#a5d6a7; stroke:#444; stroke-width:1" />
+
+                <path d="M646.4, 5746 L662.4, 5757 L646.4, 5768 Z" 
+        fill="#a5d6a7" stroke="#444" stroke-width="1" />
+                             
+                <title>return file.name.toLowerCase() === datFileName.toLowerCase()</title>
+            <text x="213" y="5762"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="213" y="5762">return file.name.toLowerCase() === datFileName.toL...</tspan>
+            </text>
+                
+            </g><g>
+            <rect x="154" y="5805.5"
+            width="138" height="30"
+            rx="3" ry="3"
+            style="fill:#ce93d8; stroke:#444; stroke-width:1" />                
+            <polygon points="124,5820.5 154,5790.5 184,5820.5 154,5850.5"
+            style="fill:#ce93d8; stroke:#444; stroke-width:1" />
+            <title>(!datFile)</title>
+            <text x="199" y="5825.5"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="199" y="5825.5">(!datFile)</tspan>
+            </text>
+            
+            <text x="146.2" y="5825.5"
+        font-family="monospace" font-size="13" fill="#222">if</text> <text x="161.8" y="5852.45"
+        font-family="monospace" font-size="13" fill="#222">+</text> 
+        </g>
+                <g>
+                   <rect x="174" y="5860.5"
+            width="115.8" height="30"
+            rx="3" ry="3"
+            style="fill:#90caf9; stroke:#444; stroke-width:1" />
+                   <title>datFileName</title>
+            <text x="189" y="5880.5"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="189" y="5880.5">datFileName</tspan>
+            </text>
+                   
+                   
+                </g>
+                <g>
+                   <rect x="174" y="5909"
+            width="443.4" height="30"
+            rx="2" ry="2"
+            style="fill:#C5E1A5; stroke:#444; stroke-width:1" />
+                   <title>showError(`DAT file (${datFileName}) not found. Please ensure it is uploaded along with the CFG file.`, fixedResultsEl)</title>
+            <text x="189" y="5929"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="189" y="5929">showError(`DAT file (${datFileName}) not found. Pl...</tspan>
+            </text>
+                   
+                   
+                </g>
+            <g>
+                <rect x="174" y="5957.5"
+            width="76.8" height="30"
+            rx="3" ry="3"
+            style="fill:#90caf9; stroke:#444; stroke-width:1" />
+                
+                <line x1="250.8" y1="5967.5" x2="255.8" y2="5967.5"
+                style="fill:#a5d6a7; stroke:#444; stroke-width:1" />
+                
+                <line x1="250.8" y1="5977.5" x2="255.8" y2="5977.5"
+                style="fill:#a5d6a7; stroke:#444; stroke-width:1" />
+
+                <path d="M255.8, 5961.5 L271.8, 5972.5 L255.8, 5983.5 Z" 
+        fill="#a5d6a7" stroke="#444" stroke-width="1" />
+                             
+                <title>return</title>
+            <text x="189" y="5977.5"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="189" y="5977.5">return</tspan>
+            </text>
+                
+            </g>
+                <g>
+                   <rect x="124" y="6007.5"
+            width="443.4" height="30"
+            rx="3" ry="3"
+            style="fill:#90caf9; stroke:#444; stroke-width:1" />
+                   <title>datFileNameEl.textContent = `DAT File: ${datFile.name}`</title>
+            <text x="139" y="6027.5"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="139" y="6027.5">datFileNameEl.textContent = `DAT File: ${datFile.n...</tspan>
+            </text>
+                   
+                   
+                </g>
+                <g>
+                   <rect x="124" y="6056"
+            width="318.59999999999997" height="30"
+            rx="3" ry="3"
+            style="fill:#90caf9; stroke:#444; stroke-width:1" />
+                   <title>const fileType = cfg.ft.toUpperCase()</title>
+            <text x="139" y="6076"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="139" y="6076">const fileType = cfg.ft.toUpperCase()</tspan>
+            </text>
+                   
+                   
+                </g><g>
+            <rect x="154" y="6119.5"
+            width="231.60000000000002" height="30"
+            rx="3" ry="3"
+            style="fill:#ce93d8; stroke:#444; stroke-width:1" />                
+            <polygon points="124,6134.5 154,6104.5 184,6134.5 154,6164.5"
+            style="fill:#ce93d8; stroke:#444; stroke-width:1" />
+            <title>(fileType === &quot;ASCII&quot;)</title>
+            <text x="199" y="6139.5"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="199" y="6139.5">(fileType === &quot;ASCII&quot;)</tspan>
+            </text>
+            
+            <text x="146.2" y="6139.5"
+        font-family="monospace" font-size="13" fill="#222">if</text> <text x="161.8" y="6166.45"
+        font-family="monospace" font-size="13" fill="#222">+</text> <text x="389.5" y="6132.55"
+        font-family="monospace" font-size="13" fill="#222">-</text>
+        </g>
+                <g>
+                   <rect x="174" y="6174.5"
+            width="287.4" height="30"
+            rx="3" ry="3"
+            style="fill:#90caf9; stroke:#444; stroke-width:1" />
+                   <title>datContent = await datFile.text()</title>
+            <text x="189" y="6194.5"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="189" y="6194.5">datContent = await datFile.text()</tspan>
+            </text>
+                   
+                   
+                </g>
+                <g>
+                   <rect x="211" y="6223"
+            width="139.2" height="30"
+            rx="2" ry="2"
+            style="fill:#C5E1A5; stroke:#444; stroke-width:1" />
+                   <title>datFile.text()</title>
+            <text x="226" y="6243"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="226" y="6243">datFile.text()</tspan>
+            </text>
+                   
+                   
+                </g>
+                <g>
+                   <rect x="521.4" y="6174.5"
+            width="342" height="30"
+            rx="3" ry="3"
+            style="fill:#90caf9; stroke:#444; stroke-width:1" />
+                   <title>datContent = await datFile.arrayBuffer()</title>
+            <text x="536.4" y="6194.5"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="536.4" y="6194.5">datContent = await datFile.arrayBuffer()</tspan>
+            </text>
+                   
+                   
+                </g>
+                <g>
+                   <rect x="558.4" y="6223"
+            width="193.79999999999998" height="30"
+            rx="2" ry="2"
+            style="fill:#C5E1A5; stroke:#444; stroke-width:1" />
+                   <title>datFile.arrayBuffer()</title>
+            <text x="573.4" y="6243"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="573.4" y="6243">datFile.arrayBuffer()</tspan>
+            </text>
+                   
+                   
+                </g>
+                <g>
+                   <rect x="124" y="6273"
+            width="443.4" height="30"
+            rx="3" ry="3"
+            style="fill:#90caf9; stroke:#444; stroke-width:1" />
+                   <title>data = parseDAT(datContent, cfg, fileType, TIME_UNIT)</title>
+            <text x="139" y="6293"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="139" y="6293">data = parseDAT(datContent, cfg, fileType, TIME_UN...</tspan>
+            </text>
+                   
+                   
+                </g><g>
+            <rect x="154" y="6336.5"
+            width="356.4" height="30"
+            rx="3" ry="3"
+            style="fill:#ce93d8; stroke:#444; stroke-width:1" />                
+            <polygon points="124,6351.5 154,6321.5 184,6351.5 154,6381.5"
+            style="fill:#ce93d8; stroke:#444; stroke-width:1" />
+            <title>(!data.time || data.time.length === 0)</title>
+            <text x="199" y="6356.5"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="199" y="6356.5">(!data.time || data.time.length === 0)</tspan>
+            </text>
+            
+            <text x="146.2" y="6356.5"
+        font-family="monospace" font-size="13" fill="#222">if</text> <text x="161.8" y="6383.45"
+        font-family="monospace" font-size="13" fill="#222">+</text> 
+        </g>
+                <g>
+                   <rect x="174" y="6391.5"
+            width="443.4" height="30"
+            rx="2" ry="2"
+            style="fill:#C5E1A5; stroke:#444; stroke-width:1" />
+                   <title>showError(&apos;Failed to parse COMTRADE data.&apos;, fixedResultsEl)</title>
+            <text x="189" y="6411.5"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="189" y="6411.5">showError(&apos;Failed to parse COMTRADE data.&apos;, fixedR...</tspan>
+            </text>
+                   
+                   
+                </g>
+            <g>
+                <rect x="174" y="6440"
+            width="76.8" height="30"
+            rx="3" ry="3"
+            style="fill:#90caf9; stroke:#444; stroke-width:1" />
+                
+                <line x1="250.8" y1="6450" x2="255.8" y2="6450"
+                style="fill:#a5d6a7; stroke:#444; stroke-width:1" />
+                
+                <line x1="250.8" y1="6460" x2="255.8" y2="6460"
+                style="fill:#a5d6a7; stroke:#444; stroke-width:1" />
+
+                <path d="M255.8, 6444 L271.8, 6455 L255.8, 6466 Z" 
+        fill="#a5d6a7" stroke="#444" stroke-width="1" />
+                             
+                <title>return</title>
+            <text x="189" y="6460"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="189" y="6460">return</tspan>
+            </text>
+                
+            </g>
+                <g>
+                   <rect x="124" y="6490"
+            width="264" height="30"
+            rx="3" ry="3"
+            style="fill:#90caf9; stroke:#444; stroke-width:1" />
+                   <title>dataState.analog = data.analog</title>
+            <text x="139" y="6510"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="139" y="6510">dataState.analog = data.analog</tspan>
+            </text>
+                   
+                   
+                </g>
+                <g>
+                   <rect x="124" y="6538.5"
+            width="279.6" height="30"
+            rx="3" ry="3"
+            style="fill:#90caf9; stroke:#444; stroke-width:1" />
+                   <title>dataState.digital = data.digital</title>
+            <text x="139" y="6558.5"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="139" y="6558.5">dataState.digital = data.digital</tspan>
+            </text>
+                   
+                   
+                </g>
+                <g>
+                   <rect x="124" y="6587"
+            width="162.6" height="30"
+            rx="2" ry="2"
+            style="fill:#C5E1A5; stroke:#444; stroke-width:1" />
+                   <title>Promise.resolve()</title>
+            <text x="139" y="6607"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="139" y="6607">Promise.resolve()</tspan>
+            </text>
+                   
+                   
+                </g>
+                <g>
+                   <rect x="124" y="6635.5"
+            width="287.4" height="30"
+            rx="2" ry="2"
+            style="fill:#C5E1A5; stroke:#444; stroke-width:1" />
+                   <title>initializeChannelState(cfg, data)</title>
+            <text x="139" y="6655.5"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="139" y="6655.5">initializeChannelState(cfg, data)</tspan>
+            </text>
+                   
+                   
+                </g>
+                <g>
+                   <rect x="124" y="6684"
+            width="443.4" height="30"
+            rx="2" ry="2"
+            style="fill:#C5E1A5; stroke:#444; stroke-width:1" />
+                   <title>renderComtradeCharts(cfg, data, chartsContainer, charts, verticalLinesX, createState, calculateDeltas, TIME_UNIT, channelState)</title>
+            <text x="139" y="6704"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="139" y="6704">renderComtradeCharts(cfg, data, chartsContainer, c...</tspan>
+            </text>
+                   
+                   
+                </g><g>
+            <rect x="154" y="6747.5"
+            width="247.2" height="30"
+            rx="3" ry="3"
+            style="fill:#ce93d8; stroke:#444; stroke-width:1" />                
+            <polygon points="124,6762.5 154,6732.5 184,6762.5 154,6792.5"
+            style="fill:#ce93d8; stroke:#444; stroke-width:1" />
+            <title>(window._resizableGroup)</title>
+            <text x="199" y="6767.5"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="199" y="6767.5">(window._resizableGroup)</tspan>
+            </text>
+            
+            <text x="146.2" y="6767.5"
+        font-family="monospace" font-size="13" fill="#222">if</text> <text x="161.8" y="6794.45"
+        font-family="monospace" font-size="13" fill="#222">+</text> 
+        </g>
+                <g>
+                   <rect x="174" y="6802.5"
+            width="303" height="30"
+            rx="2" ry="2"
+            style="fill:#C5E1A5; stroke:#444; stroke-width:1" />
+                   <title>window._resizableGroup.disconnect()</title>
+            <text x="189" y="6822.5"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="189" y="6822.5">window._resizableGroup.disconnect()</tspan>
+            </text>
+                   
+                   
+                </g>
+                <g>
+                   <rect x="124" y="6852.5"
+            width="443.4" height="30"
+            rx="3" ry="3"
+            style="fill:#90caf9; stroke:#444; stroke-width:1" />
+                   <title>window._resizableGroup = ResizableGroup(&apos;.dragBar&apos;)</title>
+            <text x="139" y="6872.5"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="139" y="6872.5">window._resizableGroup = ResizableGroup(&apos;.dragBar&apos;...</tspan>
+            </text>
+                   
+                   
+                </g>
+                <g>
+                   <rect x="124" y="6901"
+            width="443.4" height="30"
+            rx="2" ry="2"
+            style="fill:#C5E1A5; stroke:#444; stroke-width:1" />
+                   <title>subscribeChartUpdates(channelState, dataState, charts, chartsContainer, verticalLinesX)</title>
+            <text x="139" y="6921"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="139" y="6921">subscribeChartUpdates(channelState, dataState, cha...</tspan>
+            </text>
+                   
+                   
+                </g>
+            <g>
+                <rect x="124" y="6949.5"
+            width="131.39999999999998" height="30"
+            rx="2" ry="2"
+            style="fill:#ef9a9a; stroke:#444; stroke-width:1" />
+                
+                <line x1="255.39999999999998" y1="6962.5" x2="257.4" y2="6962.5"
+                style="fill:#ef9a9a; stroke:#444; stroke-width:1" />
+                
+                <line x1="255.39999999999998" y1="6966.5" x2="257.4" y2="6966.5"
+                style="fill:#ef9a9a; stroke:#444; stroke-width:1" />
+
+                <path d="M257.4, 6950.5 L273.4, 6964.5 L257.4, 6978.5 Z" 
+        fill="#ef9a9a" stroke="#444" stroke-width="1" />
+                             
+                <title>catch (error)</title>
+            <text x="139" y="6969.5"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="139" y="6969.5">catch (error)</tspan>
+            </text>
+                
+            </g>
+                <g>
+                   <rect x="161" y="6998"
+            width="69" height="30"
+            rx="3" ry="3"
+            style="fill:#90caf9; stroke:#444; stroke-width:1" />
+                   <title>error</title>
+            <text x="176" y="7018"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="176" y="7018">error</tspan>
+            </text>
+                   
+                   
+                </g>
+                <g>
+                   <rect x="161" y="7046.5"
+            width="443.4" height="30"
+            rx="2" ry="2"
+            style="fill:#C5E1A5; stroke:#444; stroke-width:1" />
+                   <title>console.error(&apos;Error processing COMTRADE files:&apos;, error)</title>
+            <text x="176" y="7066.5"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="176" y="7066.5">console.error(&apos;Error processing COMTRADE files:&apos;, ...</tspan>
+            </text>
+                   
+                   
+                </g>
+                <g>
+                   <rect x="161" y="7095"
+            width="443.4" height="30"
+            rx="2" ry="2"
+            style="fill:#C5E1A5; stroke:#444; stroke-width:1" />
+                   <title>showError(&apos;An error occurred while processing the COMTRADE files. Check the console for details.&apos;, fixedResultsEl)</title>
+            <text x="176" y="7115"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="176" y="7115">showError(&apos;An error occurred while processing the ...</tspan>
+            </text>
+                   
+                   
+                </g>
+            <g>
+                <rect x="50" y="7158.5"
+            width="377.59999999999997" height="30"
+            style="fill:#a5d6a7; stroke:#444; stroke-width:1" />
+                    
+                <line x1="60" y1="7158.5" x2="60" y2="7188.5"
+                style="fill:#a5d6a7; stroke:#444; stroke-width:1" />
+                <line x1="417.59999999999997" y1="7158.5" x2="417.59999999999997" y2="7188.5"
+                style="fill:#a5d6a7; stroke:#444; stroke-width:1" />
+             
+                <title>function initializeChannelState(cfg, data)</title>
+            <text x="75" y="7178.5"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="75" y="7178.5">function initializeChannelState(cfg, data)</tspan>
+            </text>
+                
+            </g>
+                <g>
+                   <rect x="87" y="7207"
+            width="412.2" height="30"
+            rx="3" ry="3"
+            style="fill:#90caf9; stroke:#444; stroke-width:1" />
+                   <title>const analogIndices = cfg.analogChannels.map(*())</title>
+            <text x="102" y="7227"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="102" y="7227">const analogIndices = cfg.analogChannels.map(*())</tspan>
+            </text>
+                   
+                   
+                </g>
+            <g>
+                <rect x="124" y="7255.5"
+            width="135.8" height="30"
+            style="fill:#a5d6a7; stroke:#444; stroke-width:1" />
+                    
+                <line x1="134" y1="7255.5" x2="134" y2="7285.5"
+                style="fill:#a5d6a7; stroke:#444; stroke-width:1" />
+                <line x1="249.8" y1="7255.5" x2="249.8" y2="7285.5"
+                style="fill:#a5d6a7; stroke:#444; stroke-width:1" />
+             
+                <title>(_, idx) =&gt;</title>
+            <text x="149" y="7275.5"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="149" y="7275.5">(_, idx) =&gt;</tspan>
+            </text>
+                
+            </g>
+            <g>
+                <rect x="161" y="7304"
+            width="108" height="30"
+            rx="3" ry="3"
+            style="fill:#90caf9; stroke:#444; stroke-width:1" />
+                
+                <line x1="269" y1="7314" x2="274" y2="7314"
+                style="fill:#a5d6a7; stroke:#444; stroke-width:1" />
+                
+                <line x1="269" y1="7324" x2="274" y2="7324"
+                style="fill:#a5d6a7; stroke:#444; stroke-width:1" />
+
+                <path d="M274, 7308 L290, 7319 L274, 7330 Z" 
+        fill="#a5d6a7" stroke="#444" stroke-width="1" />
+                             
+                <title>return idx</title>
+            <text x="176" y="7324"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="176" y="7324">return idx</tspan>
+            </text>
+                
+            </g>
+                <g>
+                   <rect x="87" y="7352.5"
+            width="326.4" height="30"
+            rx="3" ry="3"
+            style="fill:#90caf9; stroke:#444; stroke-width:1" />
+                   <title>channelState.analog.yLabels.length = 0</title>
+            <text x="102" y="7372.5"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="102" y="7372.5">channelState.analog.yLabels.length = 0</tspan>
+            </text>
+                   
+                   
+                </g>
+                <g>
+                   <rect x="87" y="7401"
+            width="349.8" height="30"
+            rx="3" ry="3"
+            style="fill:#90caf9; stroke:#444; stroke-width:1" />
+                   <title>channelState.analog.lineColors.length = 0</title>
+            <text x="102" y="7421"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="102" y="7421">channelState.analog.lineColors.length = 0</tspan>
+            </text>
+                   
+                   
+                </g>
+                <g>
+                   <rect x="87" y="7449.5"
+            width="318.59999999999997" height="30"
+            rx="3" ry="3"
+            style="fill:#90caf9; stroke:#444; stroke-width:1" />
+                   <title>channelState.analog.yUnits.length = 0</title>
+            <text x="102" y="7469.5"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="102" y="7469.5">channelState.analog.yUnits.length = 0</tspan>
+            </text>
+                   
+                   
+                </g>
+                <g>
+                   <rect x="87" y="7498"
+            width="349.8" height="30"
+            rx="3" ry="3"
+            style="fill:#90caf9; stroke:#444; stroke-width:1" />
+                   <title>channelState.analog.axesScales.length = 0</title>
+            <text x="102" y="7518"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="102" y="7518">channelState.analog.axesScales.length = 0</tspan>
+            </text>
+                   
+                   
+                </g>
+                <g>
+                   <rect x="87" y="7546.5"
+            width="381" height="30"
+            rx="2" ry="2"
+            style="fill:#C5E1A5; stroke:#444; stroke-width:1" />
+                   <title>channelState.analog.axesScales.push(0.000001)</title>
+            <text x="102" y="7566.5"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="102" y="7566.5">channelState.analog.axesScales.push(0.000001)</tspan>
+            </text>
+                   
+                   
+                </g>
+                <g>
+                   <rect x="87" y="7595"
+            width="381" height="30"
+            rx="3" ry="3"
+            style="fill:#90caf9; stroke:#444; stroke-width:1" />
+                   <title>const paletteRow = whiteBackground.value || 0</title>
+            <text x="102" y="7615"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="102" y="7615">const paletteRow = whiteBackground.value || 0</tspan>
+            </text>
+                   
+                   
+                </g>
+                <g>
+                   <rect x="87" y="7643.5"
+            width="217.2" height="30"
+            rx="3" ry="3"
+            style="fill:#90caf9; stroke:#444; stroke-width:1" />
+                   <title>let analogPaletteIdx = 0</title>
+            <text x="102" y="7663.5"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="102" y="7663.5">let analogPaletteIdx = 0</tspan>
+            </text>
+                   
+                   
+                </g><g>
+
+            <rect x="117" y="7727"
+            width="223.79999999999998" height="30"
+            rx="3" ry="3"
+            style="fill:#b39ddb; stroke:#444; stroke-width:1" />
+            <polygon points="87,7742 117,7712 147,7742 117,7772"
+            style="fill:#b39ddb; stroke:#444; stroke-width:1" />
+                
+            <title> idx of analogIndices</title>
+            <text x="162" y="7747"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="162" y="7747"> idx of analogIndices</tspan>
+            </text>
+            
+            <text x="105.3" y="7747"
+        font-family="monospace" font-size="13" fill="#222">for</text>
+        </g><g>
+            <rect x="167" y="7797"
+            width="309.6" height="30"
+            rx="3" ry="3"
+            style="fill:#ce93d8; stroke:#444; stroke-width:1" />                
+            <polygon points="137,7812 167,7782 197,7812 167,7842"
+            style="fill:#ce93d8; stroke:#444; stroke-width:1" />
+            <title>(!cfg.analogChannels[idx].color)</title>
+            <text x="212" y="7817"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="212" y="7817">(!cfg.analogChannels[idx].color)</tspan>
+            </text>
+            
+            <text x="159.2" y="7817"
+        font-family="monospace" font-size="13" fill="#222">if</text> <text x="174.8" y="7843.95"
+        font-family="monospace" font-size="13" fill="#222">+</text> 
+        </g>
+                <g>
+                   <rect x="187" y="7852"
+            width="443.4" height="30"
+            rx="3" ry="3"
+            style="fill:#90caf9; stroke:#444; stroke-width:1" />
+                   <title>cfg.analogChannels[idx].color = analogPalette[paletteRow][analogPaletteIdx % analogPalette[paletteRow].length]</title>
+            <text x="202" y="7872"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="202" y="7872">cfg.analogChannels[idx].color = analogPalette[pale...</tspan>
+            </text>
+                   
+                   
+                </g><g>
+            <rect x="167" y="7917"
+            width="317.4" height="30"
+            rx="3" ry="3"
+            style="fill:#ce93d8; stroke:#444; stroke-width:1" />                
+            <polygon points="137,7932 167,7902 197,7932 167,7962"
+            style="fill:#ce93d8; stroke:#444; stroke-width:1" />
+            <title>(!cfg.analogChannels[idx].stroke)</title>
+            <text x="212" y="7937"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="212" y="7937">(!cfg.analogChannels[idx].stroke)</tspan>
+            </text>
+            
+            <text x="159.2" y="7937"
+        font-family="monospace" font-size="13" fill="#222">if</text> <text x="174.8" y="7963.95"
+        font-family="monospace" font-size="13" fill="#222">+</text> 
+        </g>
+                <g>
+                   <rect x="187" y="7972"
+            width="443.4" height="30"
+            rx="3" ry="3"
+            style="fill:#90caf9; stroke:#444; stroke-width:1" />
+                   <title>cfg.analogChannels[idx].stroke = analogPalette[paletteRow][analogPaletteIdx % analogPalette[paletteRow].length]</title>
+            <text x="202" y="7992"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="202" y="7992">cfg.analogChannels[idx].stroke = analogPalette[pal...</tspan>
+            </text>
+                   
+                   
+                </g>
+                <g>
+                   <rect x="137" y="8022"
+            width="443.4" height="30"
+            rx="2" ry="2"
+            style="fill:#C5E1A5; stroke:#444; stroke-width:1" />
+                   <title>channelState.analog.yLabels.push(cfg.analogChannels[idx].id)</title>
+            <text x="152" y="8042"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="152" y="8042">channelState.analog.yLabels.push(cfg.analogChannel...</tspan>
+            </text>
+                   
+                   
+                </g>
+                <g>
+                   <rect x="137" y="8070.5"
+            width="443.4" height="30"
+            rx="3" ry="3"
+            style="fill:#90caf9; stroke:#444; stroke-width:1" />
+                   <title>let color = analogPalette[paletteRow][analogPaletteIdx % analogPalette[paletteRow].length]</title>
+            <text x="152" y="8090.5"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="152" y="8090.5">let color = analogPalette[paletteRow][analogPalett...</tspan>
+            </text>
+                   
+                   
+                </g>
+                <g>
+                   <rect x="137" y="8119"
+            width="170.4" height="30"
+            rx="3" ry="3"
+            style="fill:#90caf9; stroke:#444; stroke-width:1" />
+                   <title>analogPaletteIdx++</title>
+            <text x="152" y="8139"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="152" y="8139">analogPaletteIdx++</tspan>
+            </text>
+                   
+                   
+                </g>
+                <g>
+                   <rect x="137" y="8167.5"
+            width="357.59999999999997" height="30"
+            rx="2" ry="2"
+            style="fill:#C5E1A5; stroke:#444; stroke-width:1" />
+                   <title>channelState.analog.lineColors.push(color)</title>
+            <text x="152" y="8187.5"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="152" y="8187.5">channelState.analog.lineColors.push(color)</tspan>
+            </text>
+                   
+                   
+                </g>
+                <g>
+                   <rect x="137" y="8216"
+            width="443.4" height="30"
+            rx="2" ry="2"
+            style="fill:#C5E1A5; stroke:#444; stroke-width:1" />
+                   <title>channelState.analog.yUnits.push(cfg.analogChannels[idx].unit || &quot;&quot;)</title>
+            <text x="152" y="8236"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="152" y="8236">channelState.analog.yUnits.push(cfg.analogChannels...</tspan>
+            </text>
+                   
+                   
+                </g>
+                <g>
+                   <rect x="137" y="8264.5"
+            width="396.59999999999997" height="30"
+            rx="3" ry="3"
+            style="fill:#90caf9; stroke:#444; stroke-width:1" />
+                   <title>const unit = cfg.analogChannels[idx].unit || &quot;&quot;</title>
+            <text x="152" y="8284.5"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="152" y="8284.5">const unit = cfg.analogChannels[idx].unit || &quot;&quot;</tspan>
+            </text>
+                   
+                   
+                </g><g>
+            <rect x="167" y="8328"
+            width="450" height="30"
+            rx="3" ry="3"
+            style="fill:#ce93d8; stroke:#444; stroke-width:1" />                
+            <polygon points="137,8343 167,8313 197,8343 167,8373"
+            style="fill:#ce93d8; stroke:#444; stroke-width:1" />
+            <title>(unit === &quot;s&quot; &amp;&amp; data.timeUnit === &quot;microseconds&quot;)</title>
+            <text x="212" y="8348"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="212" y="8348">(unit === &quot;s&quot; &amp;&amp; data.timeUnit === &quot;microseconds&quot;)</tspan>
+            </text>
+            
+            <text x="159.2" y="8348"
+        font-family="monospace" font-size="13" fill="#222">if</text> <text x="174.8" y="8374.95"
+        font-family="monospace" font-size="13" fill="#222">+</text> <text x="620.9" y="8341.05"
+        font-family="monospace" font-size="13" fill="#222">-</text>
+        </g>
+                <g>
+                   <rect x="187" y="8383"
+            width="381" height="30"
+            rx="2" ry="2"
+            style="fill:#C5E1A5; stroke:#444; stroke-width:1" />
+                   <title>channelState.analog.axesScales.push(0.000001)</title>
+            <text x="202" y="8403"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="202" y="8403">channelState.analog.axesScales.push(0.000001)</tspan>
+            </text>
+                   
+                   
+                </g><g>
+            <rect x="707" y="8398"
+            width="473.4" height="30"
+            rx="3" ry="3"
+            style="fill:#ce93d8; stroke:#444; stroke-width:1" />                
+            <polygon points="677,8413 707,8383 737,8413 707,8443"
+            style="fill:#ce93d8; stroke:#444; stroke-width:1" />
+            <title>(unit === &quot;ms&quot; &amp;&amp; data.timeUnit === &quot;microseconds&quot;)</title>
+            <text x="752" y="8418"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="752" y="8418">(unit === &quot;ms&quot; &amp;&amp; data.timeUnit === &quot;microseconds&quot;...</tspan>
+            </text>
+            
+            <text x="699.2" y="8418"
+        font-family="monospace" font-size="13" fill="#222">if</text> <text x="714.8" y="8444.95"
+        font-family="monospace" font-size="13" fill="#222">+</text> <text x="1184.3000000000002" y="8411.05"
+        font-family="monospace" font-size="13" fill="#222">-</text>
+        </g>
+                <g>
+                   <rect x="727" y="8453"
+            width="357.59999999999997" height="30"
+            rx="2" ry="2"
+            style="fill:#C5E1A5; stroke:#444; stroke-width:1" />
+                   <title>channelState.analog.axesScales.push(0.001)</title>
+            <text x="742" y="8473"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="742" y="8473">channelState.analog.axesScales.push(0.001)</tspan>
+            </text>
+                   
+                   
+                </g>
+                <g>
+                   <rect x="1240.4" y="8453"
+            width="326.4" height="30"
+            rx="2" ry="2"
+            style="fill:#C5E1A5; stroke:#444; stroke-width:1" />
+                   <title>channelState.analog.axesScales.push(1)</title>
+            <text x="1255.4" y="8473"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="1255.4" y="8473">channelState.analog.axesScales.push(1)</tspan>
+            </text>
+                   
+                   
+                </g>
+                <g>
+                   <rect x="87" y="8503"
+            width="303" height="30"
+            rx="3" ry="3"
+            style="fill:#90caf9; stroke:#444; stroke-width:1" />
+                   <title>channelState.analog.xLabel = &quot;Time&quot;</title>
+            <text x="102" y="8523"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="102" y="8523">channelState.analog.xLabel = &quot;Time&quot;</tspan>
+            </text>
+                   
+                   
+                </g>
+                <g>
+                   <rect x="87" y="8551.5"
+            width="287.4" height="30"
+            rx="3" ry="3"
+            style="fill:#90caf9; stroke:#444; stroke-width:1" />
+                   <title>channelState.analog.xUnit = &quot;sec&quot;</title>
+            <text x="102" y="8571.5"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="102" y="8571.5">channelState.analog.xUnit = &quot;sec&quot;</tspan>
+            </text>
+                   
+                   
+                </g>
+                <g>
+                   <rect x="87" y="8600"
+            width="443.4" height="30"
+            rx="3" ry="3"
+            style="fill:#90caf9; stroke:#444; stroke-width:1" />
+                   <title>const digitalIndices = cfg.digitalChannels.map(*())</title>
+            <text x="102" y="8620"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="102" y="8620">const digitalIndices = cfg.digitalChannels.map(*()...</tspan>
+            </text>
+                   
+                   
+                </g>
+            <g>
+                <rect x="124" y="8648.5"
+            width="135.8" height="30"
+            style="fill:#a5d6a7; stroke:#444; stroke-width:1" />
+                    
+                <line x1="134" y1="8648.5" x2="134" y2="8678.5"
+                style="fill:#a5d6a7; stroke:#444; stroke-width:1" />
+                <line x1="249.8" y1="8648.5" x2="249.8" y2="8678.5"
+                style="fill:#a5d6a7; stroke:#444; stroke-width:1" />
+             
+                <title>(_, idx) =&gt;</title>
+            <text x="149" y="8668.5"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="149" y="8668.5">(_, idx) =&gt;</tspan>
+            </text>
+                
+            </g>
+            <g>
+                <rect x="161" y="8697"
+            width="108" height="30"
+            rx="3" ry="3"
+            style="fill:#90caf9; stroke:#444; stroke-width:1" />
+                
+                <line x1="269" y1="8707" x2="274" y2="8707"
+                style="fill:#a5d6a7; stroke:#444; stroke-width:1" />
+                
+                <line x1="269" y1="8717" x2="274" y2="8717"
+                style="fill:#a5d6a7; stroke:#444; stroke-width:1" />
+
+                <path d="M274, 8701 L290, 8712 L274, 8723 Z" 
+        fill="#a5d6a7" stroke="#444" stroke-width="1" />
+                             
+                <title>return idx</title>
+            <text x="176" y="8717"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="176" y="8717">return idx</tspan>
+            </text>
+                
+            </g>
+                <g>
+                   <rect x="87" y="8745.5"
+            width="334.2" height="30"
+            rx="3" ry="3"
+            style="fill:#90caf9; stroke:#444; stroke-width:1" />
+                   <title>channelState.digital.yLabels.length = 0</title>
+            <text x="102" y="8765.5"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="102" y="8765.5">channelState.digital.yLabels.length = 0</tspan>
+            </text>
+                   
+                   
+                </g>
+                <g>
+                   <rect x="87" y="8794"
+            width="357.59999999999997" height="30"
+            rx="3" ry="3"
+            style="fill:#90caf9; stroke:#444; stroke-width:1" />
+                   <title>channelState.digital.lineColors.length = 0</title>
+            <text x="102" y="8814"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="102" y="8814">channelState.digital.lineColors.length = 0</tspan>
+            </text>
+                   
+                   
+                </g>
+                <g>
+                   <rect x="87" y="8842.5"
+            width="326.4" height="30"
+            rx="3" ry="3"
+            style="fill:#90caf9; stroke:#444; stroke-width:1" />
+                   <title>channelState.digital.yUnits.length = 0</title>
+            <text x="102" y="8862.5"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="102" y="8862.5">channelState.digital.yUnits.length = 0</tspan>
+            </text>
+                   
+                   
+                </g>
+                <g>
+                   <rect x="87" y="8891"
+            width="357.59999999999997" height="30"
+            rx="3" ry="3"
+            style="fill:#90caf9; stroke:#444; stroke-width:1" />
+                   <title>channelState.digital.axesScales.length = 0</title>
+            <text x="102" y="8911"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="102" y="8911">channelState.digital.axesScales.length = 0</tspan>
+            </text>
+                   
+                   
+                </g>
+                <g>
+                   <rect x="87" y="8939.5"
+            width="412.2" height="30"
+            rx="2" ry="2"
+            style="fill:#C5E1A5; stroke:#444; stroke-width:1" />
+                   <title>channelState.digital.axesScales.push(0.000001, 1)</title>
+            <text x="102" y="8959.5"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="102" y="8959.5">channelState.digital.axesScales.push(0.000001, 1)</tspan>
+            </text>
+                   
+                   
+                </g>
+                <g>
+                   <rect x="87" y="8988"
+            width="225" height="30"
+            rx="3" ry="3"
+            style="fill:#90caf9; stroke:#444; stroke-width:1" />
+                   <title>let digitalPaletteIdx = 0</title>
+            <text x="102" y="9008"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="102" y="9008">let digitalPaletteIdx = 0</tspan>
+            </text>
+                   
+                   
+                </g><g>
+
+            <rect x="117" y="9071.5"
+            width="255" height="30"
+            rx="3" ry="3"
+            style="fill:#b39ddb; stroke:#444; stroke-width:1" />
+            <polygon points="87,9086.5 117,9056.5 147,9086.5 117,9116.5"
+            style="fill:#b39ddb; stroke:#444; stroke-width:1" />
+                
+            <title>i &lt; digitalIndices.length</title>
+            <text x="162" y="9091.5"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="162" y="9091.5">i &lt; digitalIndices.length</tspan>
+            </text>
+            
+            <text x="105.3" y="9091.5"
+        font-family="monospace" font-size="13" fill="#222">for</text>
+        </g>
+                <g>
+                   <rect x="137" y="9126.5"
+            width="53.4" height="30"
+            rx="3" ry="3"
+            style="fill:#90caf9; stroke:#444; stroke-width:1" />
+                   <title>++i</title>
+            <text x="152" y="9146.5"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="152" y="9146.5">++i</tspan>
+            </text>
+                   
+                   
+                </g><g>
+            <rect x="167" y="9190"
+            width="301.79999999999995" height="30"
+            rx="3" ry="3"
+            style="fill:#ce93d8; stroke:#444; stroke-width:1" />                
+            <polygon points="137,9205 167,9175 197,9205 167,9235"
+            style="fill:#ce93d8; stroke:#444; stroke-width:1" />
+            <title>(!cfg.digitalChannels[i].color)</title>
+            <text x="212" y="9210"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="212" y="9210">(!cfg.digitalChannels[i].color)</tspan>
+            </text>
+            
+            <text x="159.2" y="9210"
+        font-family="monospace" font-size="13" fill="#222">if</text> <text x="174.8" y="9236.95"
+        font-family="monospace" font-size="13" fill="#222">+</text> 
+        </g>
+                <g>
+                   <rect x="187" y="9245"
+            width="443.4" height="30"
+            rx="3" ry="3"
+            style="fill:#90caf9; stroke:#444; stroke-width:1" />
+                   <title>cfg.digitalChannels[i].color = digitalPalette[paletteRow][digitalPaletteIdx % digitalPalette[paletteRow].length]</title>
+            <text x="202" y="9265"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="202" y="9265">cfg.digitalChannels[i].color = digitalPalette[pale...</tspan>
+            </text>
+                   
+                   
+                </g><g>
+            <rect x="167" y="9310"
+            width="309.6" height="30"
+            rx="3" ry="3"
+            style="fill:#ce93d8; stroke:#444; stroke-width:1" />                
+            <polygon points="137,9325 167,9295 197,9325 167,9355"
+            style="fill:#ce93d8; stroke:#444; stroke-width:1" />
+            <title>(!cfg.digitalChannels[i].stroke)</title>
+            <text x="212" y="9330"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="212" y="9330">(!cfg.digitalChannels[i].stroke)</tspan>
+            </text>
+            
+            <text x="159.2" y="9330"
+        font-family="monospace" font-size="13" fill="#222">if</text> <text x="174.8" y="9356.95"
+        font-family="monospace" font-size="13" fill="#222">+</text> 
+        </g>
+                <g>
+                   <rect x="187" y="9365"
+            width="443.4" height="30"
+            rx="3" ry="3"
+            style="fill:#90caf9; stroke:#444; stroke-width:1" />
+                   <title>cfg.digitalChannels[i].stroke = digitalPalette[paletteRow][digitalPaletteIdx % digitalPalette[paletteRow].length]</title>
+            <text x="202" y="9385"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="202" y="9385">cfg.digitalChannels[i].stroke = digitalPalette[pal...</tspan>
+            </text>
+                   
+                   
+                </g>
+                <g>
+                   <rect x="137" y="9415"
+            width="443.4" height="30"
+            rx="2" ry="2"
+            style="fill:#C5E1A5; stroke:#444; stroke-width:1" />
+                   <title>channelState.digital.yLabels.push(cfg.digitalChannels[i].id)</title>
+            <text x="152" y="9435"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="152" y="9435">channelState.digital.yLabels.push(cfg.digitalChann...</tspan>
+            </text>
+                   
+                   
+                </g>
+                <g>
+                   <rect x="137" y="9463.5"
+            width="443.4" height="30"
+            rx="3" ry="3"
+            style="fill:#90caf9; stroke:#444; stroke-width:1" />
+                   <title>let color = digitalPalette[paletteRow][digitalPaletteIdx % digitalPalette[paletteRow].length]</title>
+            <text x="152" y="9483.5"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="152" y="9483.5">let color = digitalPalette[paletteRow][digitalPale...</tspan>
+            </text>
+                   
+                   
+                </g>
+                <g>
+                   <rect x="137" y="9512"
+            width="178.2" height="30"
+            rx="3" ry="3"
+            style="fill:#90caf9; stroke:#444; stroke-width:1" />
+                   <title>digitalPaletteIdx++</title>
+            <text x="152" y="9532"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="152" y="9532">digitalPaletteIdx++</tspan>
+            </text>
+                   
+                   
+                </g>
+                <g>
+                   <rect x="137" y="9560.5"
+            width="365.4" height="30"
+            rx="2" ry="2"
+            style="fill:#C5E1A5; stroke:#444; stroke-width:1" />
+                   <title>channelState.digital.lineColors.push(color)</title>
+            <text x="152" y="9580.5"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="152" y="9580.5">channelState.digital.lineColors.push(color)</tspan>
+            </text>
+                   
+                   
+                </g>
+                <g>
+                   <rect x="137" y="9609"
+            width="310.8" height="30"
+            rx="2" ry="2"
+            style="fill:#C5E1A5; stroke:#444; stroke-width:1" />
+                   <title>channelState.digital.yUnits.push(&quot;&quot;)</title>
+            <text x="152" y="9629"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="152" y="9629">channelState.digital.yUnits.push(&quot;&quot;)</tspan>
+            </text>
+                   
+                   
+                </g>
+                <g>
+                   <rect x="87" y="9657.5"
+            width="310.8" height="30"
+            rx="3" ry="3"
+            style="fill:#90caf9; stroke:#444; stroke-width:1" />
+                   <title>channelState.digital.xLabel = &quot;Time&quot;</title>
+            <text x="102" y="9677.5"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="102" y="9677.5">channelState.digital.xLabel = &quot;Time&quot;</tspan>
+            </text>
+                   
+                   
+                </g>
+                <g>
+                   <rect x="87" y="9706"
+            width="295.2" height="30"
+            rx="3" ry="3"
+            style="fill:#90caf9; stroke:#444; stroke-width:1" />
+                   <title>channelState.digital.xUnit = &quot;sec&quot;</title>
+            <text x="102" y="9726"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="102" y="9726">channelState.digital.xUnit = &quot;sec&quot;</tspan>
+            </text>
+                   
+                   
+                </g>
+            <g>
+               <rect x="25" y="13.75"
+            width="216.6" height="24"
+            style="fill:#fff59d; stroke:#444; stroke-width:1" />
+               <circle cx="25" cy="25" r="15"
+        style="fill:#fff59d; stroke:#444; stroke-width:1" />
+               <title>Program: source module</title>
+            <text x="55" y="30"
+                font-family="monospace" font-size="13" fill="#222">
+                <tspan x="55" y="30">Program: source module</tspan>
+            </text>
+            </g>
+            <g>
+               <path d="M25, 40 L25 91 Q25 95
+                29 95
+                L42 95 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M42, 92 L50, 95 L42, 98 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M68.5, 110 L68.5 139.5 Q68.5 143.5
+                72.5 143.5
+                L87 143.5 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               false
+            </g>
+            <g>
+               <path d="M25, 40 L25 203 Q25 207
+                29 207
+                L42 207 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M42, 204 L50, 207 L42, 210 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M68.5, 222 L68.5 251.5 Q68.5 255.5
+                72.5 255.5
+                L87 255.5 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               false
+            </g>
+            <g>
+               <path d="M68.5, 222 L68.5 300 Q68.5 304
+                72.5 304
+                L87 304 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               false
+            </g>
+            <g>
+               <path d="M25, 40 L25 363.5 Q25 367.5
+                29 367.5
+                L42 367.5 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M42, 364.5 L50, 367.5 L42, 370.5 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M68.5, 382.5 L68.5 412 Q68.5 416
+                72.5 416
+                L87 416 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               false
+            </g>
+            <g>
+               <path d="M25, 40 L25 475.5 Q25 479.5
+                29 479.5
+                L42 479.5 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M42, 476.5 L50, 479.5 L42, 482.5 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M68.5, 494.5 L68.5 524 Q68.5 528
+                72.5 528
+                L87 528 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               false
+            </g>
+            <g>
+               <path d="M25, 40 L25 587.5 Q25 591.5
+                29 591.5
+                L42 591.5 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M42, 588.5 L50, 591.5 L42, 594.5 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M68.5, 606.5 L68.5 636 Q68.5 640
+                72.5 640
+                L87 640 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               false
+            </g>
+            <g>
+               <path d="M25, 40 L25 699.5 Q25 703.5
+                29 703.5
+                L42 703.5 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M42, 700.5 L50, 703.5 L42, 706.5 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M68.5, 718.5 L68.5 748 Q68.5 752
+                72.5 752
+                L87 752 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               false
+            </g>
+            <g>
+               <path d="M25, 40 L25 811.5 Q25 815.5
+                29 815.5
+                L42 815.5 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M42, 812.5 L50, 815.5 L42, 818.5 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M68.5, 830.5 L68.5 860 Q68.5 864
+                72.5 864
+                L87 864 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               false
+            </g>
+            <g>
+               <path d="M25, 40 L25 923.5 Q25 927.5
+                29 927.5
+                L42 927.5 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M42, 924.5 L50, 927.5 L42, 930.5 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M68.5, 942.5 L68.5 972 Q68.5 976
+                72.5 976
+                L87 976 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               false
+            </g>
+            <g>
+               <path d="M25, 40 L25 1035.5 Q25 1039.5
+                29 1039.5
+                L42 1039.5 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M42, 1036.5 L50, 1039.5 L42, 1042.5 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M68.5, 1054.5 L68.5 1084 Q68.5 1088
+                72.5 1088
+                L87 1088 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               false
+            </g>
+            <g>
+               <path d="M25, 40 L25 1147.5 Q25 1151.5
+                29 1151.5
+                L42 1151.5 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M42, 1148.5 L50, 1151.5 L42, 1154.5 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M68.5, 1166.5 L68.5 1196 Q68.5 1200
+                72.5 1200
+                L87 1200 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               false
+            </g>
+            <g>
+               <path d="M25, 40 L25 1259.5 Q25 1263.5
+                29 1263.5
+                L42 1263.5 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M42, 1260.5 L50, 1263.5 L42, 1266.5 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M68.5, 1278.5 L68.5 1308 Q68.5 1312
+                72.5 1312
+                L87 1312 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               false
+            </g>
+            <g>
+               <path d="M25, 40 L25 1371.5 Q25 1375.5
+                29 1375.5
+                L42 1375.5 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M42, 1372.5 L50, 1375.5 L42, 1378.5 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M68.5, 1390.5 L68.5 1420 Q68.5 1424
+                72.5 1424
+                L87 1424 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               false
+            </g>
+            <g>
+               <path d="M25, 40 L25 1483.5 Q25 1487.5
+                29 1487.5
+                L42 1487.5 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M42, 1484.5 L50, 1487.5 L42, 1490.5 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M68.5, 1502.5 L68.5 1532 Q68.5 1536
+                72.5 1536
+                L87 1536 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               false
+            </g>
+            <g>
+               <path d="M25, 40 L25 1595.5 Q25 1599.5
+                29 1599.5
+                L42 1599.5 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M42, 1596.5 L50, 1599.5 L42, 1602.5 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M68.5, 1614.5 L68.5 1644 Q68.5 1648
+                72.5 1648
+                L87 1648 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               false
+            </g>
+            <g>
+               <path d="M68.5, 1614.5 L68.5 1692.5 Q68.5 1696.5
+                72.5 1696.5
+                L87 1696.5 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               false
+            </g>
+            <g>
+               <path d="M25, 40 L25 1756 Q25 1760
+                29 1760
+                L42 1760 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M42, 1757 L50, 1760 L42, 1763 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M68.5, 1775 L68.5 1804.5 Q68.5 1808.5
+                72.5 1808.5
+                L87 1808.5 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               false
+            </g>
+            <g>
+               <path d="M25, 40 L25 1868 Q25 1872
+                29 1872
+                L42 1872 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M42, 1869 L50, 1872 L42, 1875 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M68.5, 1887 L68.5 1916.5 Q68.5 1920.5
+                72.5 1920.5
+                L79 1920.5 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M79, 1917.5 L87, 1920.5 L79, 1923.5 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M105.5, 1935.5 L105.5 1965 Q105.5 1969
+                109.5 1969
+                L116 1969 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M116, 1966 L124, 1969 L116, 1972 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M25, 40 L25 2028.5 Q25 2032.5
+                29 2032.5
+                L42 2032.5 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M42, 2029.5 L50, 2032.5 L42, 2035.5 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M68.5, 2047.5 L68.5 2077 Q68.5 2081
+                72.5 2081
+                L79 2081 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M79, 2078 L87, 2081 L79, 2084 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M105.5, 2096 L105.5 2125.5 Q105.5 2129.5
+                109.5 2129.5
+                L116 2129.5 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M116, 2126.5 L124, 2129.5 L116, 2132.5 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M142.5, 2144.5 L142.5 2174 Q142.5 2178
+                146.5 2178
+                L153 2178 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M153, 2175 L161, 2178 L153, 2181 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M179.5, 2193 L179.5 2222.5 Q179.5 2226.5
+                183.5 2226.5
+                L198 2226.5 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               false
+            </g>
+            <g>
+               <path d="M179.5, 2193 L179.5 2271 Q179.5 2275
+                183.5 2275
+                L198 2275 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               false
+            </g>
+            <g>
+               <path d="M25, 40 L25 2319.5 Q25 2323.5
+                29 2323.5
+                L42 2323.5 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M42, 2320.5 L50, 2323.5 L42, 2326.5 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M25, 40 L25 2368 Q25 2372
+                29 2372
+                L42 2372 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M42, 2369 L50, 2372 L42, 2375 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M25, 40 L25 2416.5 Q25 2420.5
+                29 2420.5
+                L42 2420.5 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M42, 2417.5 L50, 2420.5 L42, 2423.5 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M25, 40 L25 2480 Q25 2484
+                29 2484
+                L42 2484 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M42, 2481 L50, 2484 L42, 2487 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M68.5, 2499 L68.5 2528.5 Q68.5 2532.5
+                72.5 2532.5
+                L79 2532.5 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M79, 2529.5 L87, 2532.5 L79, 2535.5 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M105.5, 2547.5 L105.5 2577 Q105.5 2581
+                109.5 2581
+                L116 2581 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M116, 2578 L124, 2581 L116, 2584 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M142.5, 2596 L142.5 2625.5 Q142.5 2629.5
+                146.5 2629.5
+                L153 2629.5 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M153, 2626.5 L161, 2629.5 L153, 2632.5 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M179.5, 2644.5 L179.5 2674 Q179.5 2678
+                183.5 2678
+                L198 2678 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               false
+            </g>
+            <g>
+               <path d="M216.5, 2693 L216.5 2722.5 Q216.5 2726.5
+                220.5 2726.5
+                L235 2726.5 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               false
+            </g>
+            <g>
+               <path d="M216.5, 2693 L216.5 2771 Q216.5 2775
+                220.5 2775
+                L235 2775 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               false
+            </g>
+            <g>
+               <path d="M216.5, 2693 L216.5 2819.5 Q216.5 2823.5
+                220.5 2823.5
+                L235 2823.5 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               false
+            </g>
+            <g>
+               <path d="M216.5, 2693 L216.5 2868 Q216.5 2872
+                220.5 2872
+                L235 2872 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               false
+            </g>
+            <g>
+               <path d="M216.5, 2693 L216.5 2916.5 Q216.5 2920.5
+                220.5 2920.5
+                L235 2920.5 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               false
+            </g>
+            <g>
+               <path d="M216.5, 2693 L216.5 2965 Q216.5 2969
+                220.5 2969
+                L235 2969 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               false
+            </g>
+            <g>
+               <path d="M179.5, 2644.5 L179.5 3013.5 Q179.5 3017.5
+                183.5 3017.5
+                L198 3017.5 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               false
+            </g>
+            <g>
+               <path d="M216.5, 3032.5 L216.5 3062 Q216.5 3066
+                220.5 3066
+                L235 3066 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               false
+            </g>
+            <g>
+               <path d="M216.5, 3032.5 L216.5 3110.5 Q216.5 3114.5
+                220.5 3114.5
+                L235 3114.5 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               false
+            </g>
+            <g>
+               <path d="M216.5, 3032.5 L216.5 3159 Q216.5 3163
+                220.5 3163
+                L235 3163 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               false
+            </g>
+            <g>
+               <path d="M216.5, 3032.5 L216.5 3207.5 Q216.5 3211.5
+                220.5 3211.5
+                L235 3211.5 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               false
+            </g>
+            <g>
+               <path d="M216.5, 3032.5 L216.5 3256 Q216.5 3260
+                220.5 3260
+                L235 3260 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               false
+            </g>
+            <g>
+               <path d="M216.5, 3032.5 L216.5 3304.5 Q216.5 3308.5
+                220.5 3308.5
+                L235 3308.5 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               false
+            </g>
+            <g>
+               <path d="M25, 40 L25 3368 Q25 3372
+                29 3372
+                L42 3372 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M42, 3369 L50, 3372 L42, 3375 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M68.5, 3387 L68.5 3416.5 Q68.5 3420.5
+                72.5 3420.5
+                L79 3420.5 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M79, 3417.5 L87, 3420.5 L79, 3423.5 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M105.5, 3435.5 L105.5 3465 Q105.5 3469
+                109.5 3469
+                L116 3469 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M116, 3466 L124, 3469 L116, 3472 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M25, 40 L25 3513.5 Q25 3517.5
+                29 3517.5
+                L42 3517.5 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M42, 3514.5 L50, 3517.5 L42, 3520.5 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M25, 40 L25 3562 Q25 3566
+                29 3566
+                L42 3566 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M42, 3563 L50, 3566 L42, 3569 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M25, 40 L25 3610.5 Q25 3614.5
+                29 3614.5
+                L42 3614.5 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M42, 3611.5 L50, 3614.5 L42, 3617.5 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M25, 40 L25 3659 Q25 3663
+                29 3663
+                L42 3663 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M42, 3660 L50, 3663 L42, 3666 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M25, 40 L25 3707.5 Q25 3711.5
+                29 3711.5
+                L42 3711.5 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M42, 3708.5 L50, 3711.5 L42, 3714.5 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M25, 40 L25 3756 Q25 3760
+                29 3760
+                L42 3760 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M42, 3757 L50, 3760 L42, 3763 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M25, 40 L25 3804.5 Q25 3808.5
+                29 3808.5
+                L42 3808.5 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M42, 3805.5 L50, 3808.5 L42, 3811.5 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M25, 40 L25 3853 Q25 3857
+                29 3857
+                L42 3857 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M42, 3854 L50, 3857 L42, 3860 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M68.5, 3872 L68.5 3901.5 Q68.5 3905.5
+                72.5 3905.5
+                L87 3905.5 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               false
+            </g>
+            <g>
+               <path d="M105.5, 3920.5 L105.5 3950 Q105.5 3954
+                109.5 3954
+                L116 3954 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M116, 3951 L124, 3954 L116, 3957 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M25, 40 L25 3998.5 Q25 4002.5
+                29 4002.5
+                L42 4002.5 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M42, 3999.5 L50, 4002.5 L42, 4005.5 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M25, 40 L25 4047 Q25 4051
+                29 4051
+                L42 4051 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M42, 4048 L50, 4051 L42, 4054 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M25, 40 L25 4095.5 Q25 4099.5
+                29 4099.5
+                L42 4099.5 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M42, 4096.5 L50, 4099.5 L42, 4102.5 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M25, 40 L25 4144 Q25 4148
+                29 4148
+                L42 4148 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M42, 4145 L50, 4148 L42, 4151 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M25, 40 L25 4192.5 Q25 4196.5
+                29 4196.5
+                L42 4196.5 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M42, 4193.5 L50, 4196.5 L42, 4199.5 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M68.5, 4211.5 L68.5 4241 Q68.5 4245
+                72.5 4245
+                L87 4245 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               false
+            </g>
+            <g>
+               <path d="M105.5, 4260 L105.5 4289.5 Q105.5 4293.5
+                109.5 4293.5
+                L116 4293.5 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M116, 4290.5 L124, 4293.5 L116, 4296.5 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M142.5, 4308.5 L142.5 4338 Q142.5 4342
+                146.5 4342
+                L161 4342 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               false
+            </g>
+            <g>
+               <path d="M179.5, 4357 L179.5 4386.5 Q179.5 4390.5
+                183.5 4390.5
+                L190 4390.5 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M190, 4387.5 L198, 4390.5 L190, 4393.5 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M142.5, 4308.5 L142.5 4435 Q142.5 4439
+                146.5 4439
+                L161 4439 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               false
+            </g>
+            <g>
+               <path d="M179.5, 4454 L179.5 4498.5 Q179.5 4502.5
+                183.5 4502.5
+                L190 4502.5 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M190, 4499.5 L198, 4502.5 L190, 4505.5 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M228, 4532.5 L228 4553.5 Q228 4557.5
+                232 4557.5
+                L240 4557.5 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M240, 4554.5 L248, 4557.5 L240, 4560.5 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M436.2, 4502.5 L649.4 4502.5  Q653.4 4502.5
+                653.4 4506.5
+                L653.4 4564.5 Q653.4 4572.5
+                657.4 4572.5
+                L665.4 4572.5 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M665.4, 4569.5 L673.4, 4572.5 L665.4, 4575.5 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M703.4, 4602.5 L703.4 4623.5 Q703.4 4627.5
+                707.4 4627.5
+                L715.4 4627.5 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M715.4, 4624.5 L723.4, 4627.5 L715.4, 4630.5 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M179.5, 4454 L179.5 4673.5 Q179.5 4677.5
+                183.5 4677.5
+                L190 4677.5 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M190, 4674.5 L198, 4677.5 L190, 4680.5 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M25, 40 L25 4737 Q25 4741
+                29 4741
+                L42 4741 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M42, 4738 L50, 4741 L42, 4744 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M68.5, 4756 L68.5 4785.5 Q68.5 4789.5
+                72.5 4789.5
+                L79 4789.5 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M79, 4786.5 L87, 4789.5 L79, 4792.5 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M68.5, 4756 L68.5 4849 Q68.5 4853
+                72.5 4853
+                L79 4853 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M79, 4850 L87, 4853 L79, 4856 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M117, 4883 L117 4904 Q117 4908
+                121 4908
+                L129 4908 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M129, 4905 L137, 4908 L129, 4911 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M117, 4883 L117 4952.5 Q117 4956.5
+                121 4956.5
+                L129 4956.5 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M129, 4953.5 L137, 4956.5 L129, 4959.5 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M68.5, 4756 L68.5 5002.5 Q68.5 5006.5
+                72.5 5006.5
+                L79 5006.5 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M79, 5003.5 L87, 5006.5 L79, 5009.5 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M105.5, 5021.5 L105.5 5051 Q105.5 5055
+                109.5 5055
+                L124 5055 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               false
+            </g>
+            <g>
+               <path d="M142.5, 5070 L142.5 5099.5 Q142.5 5103.5
+                146.5 5103.5
+                L153 5103.5 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M153, 5100.5 L161, 5103.5 L153, 5106.5 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M68.5, 4756 L68.5 5163 Q68.5 5167
+                72.5 5167
+                L79 5167 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M79, 5164 L87, 5167 L79, 5170 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M117, 5197 L117 5218 Q117 5222
+                121 5222
+                L129 5222 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M129, 5219 L137, 5222 L129, 5225 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M117, 5197 L117 5266.5 Q117 5270.5
+                121 5270.5
+                L129 5270.5 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M129, 5267.5 L137, 5270.5 L129, 5273.5 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M68.5, 4756 L68.5 5316.5 Q68.5 5320.5
+                72.5 5320.5
+                L79 5320.5 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M79, 5317.5 L87, 5320.5 L79, 5323.5 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M105.5, 5335.5 L105.5 5365 Q105.5 5369
+                109.5 5369
+                L116 5369 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M116, 5366 L124, 5369 L116, 5372 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M105.5, 5335.5 L105.5 5413.5 Q105.5 5417.5
+                109.5 5417.5
+                L116 5417.5 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M116, 5414.5 L124, 5417.5 L116, 5420.5 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M105.5, 5335.5 L105.5 5462 Q105.5 5466
+                109.5 5466
+                L116 5466 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M116, 5463 L124, 5466 L116, 5469 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M105.5, 5335.5 L105.5 5510.5 Q105.5 5514.5
+                109.5 5514.5
+                L116 5514.5 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M116, 5511.5 L124, 5514.5 L116, 5517.5 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M105.5, 5335.5 L105.5 5559 Q105.5 5563
+                109.5 5563
+                L116 5563 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M116, 5560 L124, 5563 L116, 5566 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M142.5, 5578 L142.5 5607.5 Q142.5 5611.5
+                146.5 5611.5
+                L153 5611.5 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M153, 5608.5 L161, 5611.5 L153, 5614.5 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M105.5, 5335.5 L105.5 5656 Q105.5 5660
+                109.5 5660
+                L116 5660 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M116, 5657 L124, 5660 L116, 5663 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M142.5, 5675 L142.5 5704.5 Q142.5 5708.5
+                146.5 5708.5
+                L161 5708.5 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               false
+            </g>
+            <g>
+               <path d="M179.5, 5723.5 L179.5 5753 Q179.5 5757
+                183.5 5757
+                L190 5757 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M190, 5754 L198, 5757 L190, 5760 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M105.5, 5335.5 L105.5 5816.5 Q105.5 5820.5
+                109.5 5820.5
+                L116 5820.5 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M116, 5817.5 L124, 5820.5 L116, 5823.5 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M154, 5850.5 L154 5871.5 Q154 5875.5
+                158 5875.5
+                L166 5875.5 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M166, 5872.5 L174, 5875.5 L166, 5878.5 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M154, 5850.5 L154 5920 Q154 5924
+                158 5924
+                L166 5924 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M166, 5921 L174, 5924 L166, 5927 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M154, 5850.5 L154 5968.5 Q154 5972.5
+                158 5972.5
+                L166 5972.5 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M166, 5969.5 L174, 5972.5 L166, 5975.5 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M105.5, 5335.5 L105.5 6018.5 Q105.5 6022.5
+                109.5 6022.5
+                L116 6022.5 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M116, 6019.5 L124, 6022.5 L116, 6025.5 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M105.5, 5335.5 L105.5 6067 Q105.5 6071
+                109.5 6071
+                L116 6071 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M116, 6068 L124, 6071 L116, 6074 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M105.5, 5335.5 L105.5 6130.5 Q105.5 6134.5
+                109.5 6134.5
+                L116 6134.5 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M116, 6131.5 L124, 6134.5 L116, 6137.5 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M154, 6164.5 L154 6185.5 Q154 6189.5
+                158 6189.5
+                L166 6189.5 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M166, 6186.5 L174, 6189.5 L166, 6192.5 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M192.5, 6204.5 L192.5 6234 Q192.5 6238
+                196.5 6238
+                L203 6238 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M203, 6235 L211, 6238 L203, 6241 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M385.6, 6134.5 L497.4 6134.5  Q501.4 6134.5
+                501.4 6138.5
+                L501.4 6181.5 Q501.4 6189.5
+                505.4 6189.5
+                L513.4 6189.5 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M513.4, 6186.5 L521.4, 6189.5 L513.4, 6192.5 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M539.9, 6204.5 L539.9 6234 Q539.9 6238
+                543.9 6238
+                L550.4 6238 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M550.4, 6235 L558.4, 6238 L550.4, 6241 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M105.5, 5335.5 L105.5 6284 Q105.5 6288
+                109.5 6288
+                L116 6288 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M116, 6285 L124, 6288 L116, 6291 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M105.5, 5335.5 L105.5 6347.5 Q105.5 6351.5
+                109.5 6351.5
+                L116 6351.5 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M116, 6348.5 L124, 6351.5 L116, 6354.5 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M154, 6381.5 L154 6402.5 Q154 6406.5
+                158 6406.5
+                L166 6406.5 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M166, 6403.5 L174, 6406.5 L166, 6409.5 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M154, 6381.5 L154 6451 Q154 6455
+                158 6455
+                L166 6455 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M166, 6452 L174, 6455 L166, 6458 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M105.5, 5335.5 L105.5 6501 Q105.5 6505
+                109.5 6505
+                L116 6505 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M116, 6502 L124, 6505 L116, 6508 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M105.5, 5335.5 L105.5 6549.5 Q105.5 6553.5
+                109.5 6553.5
+                L116 6553.5 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M116, 6550.5 L124, 6553.5 L116, 6556.5 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M105.5, 5335.5 L105.5 6598 Q105.5 6602
+                109.5 6602
+                L116 6602 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M116, 6599 L124, 6602 L116, 6605 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M105.5, 5335.5 L105.5 6646.5 Q105.5 6650.5
+                109.5 6650.5
+                L116 6650.5 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M116, 6647.5 L124, 6650.5 L116, 6653.5 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M105.5, 5335.5 L105.5 6695 Q105.5 6699
+                109.5 6699
+                L116 6699 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M116, 6696 L124, 6699 L116, 6702 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M105.5, 5335.5 L105.5 6758.5 Q105.5 6762.5
+                109.5 6762.5
+                L116 6762.5 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M116, 6759.5 L124, 6762.5 L116, 6765.5 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M154, 6792.5 L154 6813.5 Q154 6817.5
+                158 6817.5
+                L166 6817.5 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M166, 6814.5 L174, 6817.5 L166, 6820.5 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M105.5, 5335.5 L105.5 6863.5 Q105.5 6867.5
+                109.5 6867.5
+                L116 6867.5 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M116, 6864.5 L124, 6867.5 L116, 6870.5 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M105.5, 5335.5 L105.5 6912 Q105.5 6916
+                109.5 6916
+                L116 6916 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M116, 6913 L124, 6916 L116, 6919 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M105.5, 5335.5 L105.5 6960.5 Q105.5 6964.5
+                109.5 6964.5
+                L116 6964.5 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M116, 6961.5 L124, 6964.5 L116, 6967.5 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M142.5, 6979.5 L142.5 7009 Q142.5 7013
+                146.5 7013
+                L153 7013 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M153, 7010 L161, 7013 L153, 7016 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M142.5, 6979.5 L142.5 7057.5 Q142.5 7061.5
+                146.5 7061.5
+                L153 7061.5 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M153, 7058.5 L161, 7061.5 L153, 7064.5 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M142.5, 6979.5 L142.5 7106 Q142.5 7110
+                146.5 7110
+                L153 7110 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M153, 7107 L161, 7110 L153, 7113 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M25, 40 L25 7169.5 Q25 7173.5
+                29 7173.5
+                L42 7173.5 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M42, 7170.5 L50, 7173.5 L42, 7176.5 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M68.5, 7188.5 L68.5 7218 Q68.5 7222
+                72.5 7222
+                L79 7222 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M79, 7219 L87, 7222 L79, 7225 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M105.5, 7237 L105.5 7266.5 Q105.5 7270.5
+                109.5 7270.5
+                L124 7270.5 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               false
+            </g>
+            <g>
+               <path d="M142.5, 7285.5 L142.5 7315 Q142.5 7319
+                146.5 7319
+                L153 7319 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M153, 7316 L161, 7319 L153, 7322 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M68.5, 7188.5 L68.5 7363.5 Q68.5 7367.5
+                72.5 7367.5
+                L79 7367.5 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M79, 7364.5 L87, 7367.5 L79, 7370.5 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M68.5, 7188.5 L68.5 7412 Q68.5 7416
+                72.5 7416
+                L79 7416 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M79, 7413 L87, 7416 L79, 7419 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M68.5, 7188.5 L68.5 7460.5 Q68.5 7464.5
+                72.5 7464.5
+                L79 7464.5 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M79, 7461.5 L87, 7464.5 L79, 7467.5 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M68.5, 7188.5 L68.5 7509 Q68.5 7513
+                72.5 7513
+                L79 7513 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M79, 7510 L87, 7513 L79, 7516 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M68.5, 7188.5 L68.5 7557.5 Q68.5 7561.5
+                72.5 7561.5
+                L79 7561.5 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M79, 7558.5 L87, 7561.5 L79, 7564.5 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M68.5, 7188.5 L68.5 7606 Q68.5 7610
+                72.5 7610
+                L79 7610 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M79, 7607 L87, 7610 L79, 7613 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M68.5, 7188.5 L68.5 7654.5 Q68.5 7658.5
+                72.5 7658.5
+                L79 7658.5 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M79, 7655.5 L87, 7658.5 L79, 7661.5 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M68.5, 7188.5 L68.5 7738 Q68.5 7742
+                72.5 7742
+                L79 7742 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M79, 7739 L87, 7742 L79, 7745 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M117, 7772 L117 7808 Q117 7812
+                121 7812
+                L129 7812 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M129, 7809 L137, 7812 L129, 7815 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M167, 7842 L167 7863 Q167 7867
+                171 7867
+                L179 7867 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M179, 7864 L187, 7867 L179, 7870 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M117, 7772 L117 7928 Q117 7932
+                121 7932
+                L129 7932 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M129, 7929 L137, 7932 L129, 7935 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M167, 7962 L167 7983 Q167 7987
+                171 7987
+                L179 7987 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M179, 7984 L187, 7987 L179, 7990 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M117, 7772 L117 8033 Q117 8037
+                121 8037
+                L129 8037 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M129, 8034 L137, 8037 L129, 8040 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M117, 7772 L117 8081.5 Q117 8085.5
+                121 8085.5
+                L129 8085.5 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M129, 8082.5 L137, 8085.5 L129, 8088.5 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M117, 7772 L117 8130 Q117 8134
+                121 8134
+                L129 8134 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M129, 8131 L137, 8134 L129, 8137 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M117, 7772 L117 8178.5 Q117 8182.5
+                121 8182.5
+                L129 8182.5 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M129, 8179.5 L137, 8182.5 L129, 8185.5 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M117, 7772 L117 8227 Q117 8231
+                121 8231
+                L129 8231 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M129, 8228 L137, 8231 L129, 8234 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M117, 7772 L117 8275.5 Q117 8279.5
+                121 8279.5
+                L129 8279.5 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M129, 8276.5 L137, 8279.5 L129, 8282.5 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M117, 7772 L117 8339 Q117 8343
+                121 8343
+                L129 8343 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M129, 8340 L137, 8343 L129, 8346 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M167, 8373 L167 8394 Q167 8398
+                171 8398
+                L179 8398 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M179, 8395 L187, 8398 L179, 8401 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M617, 8343 L653 8343  Q657 8343
+                657 8347
+                L657 8405 Q657 8413
+                661 8413
+                L669 8413 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M669, 8410 L677, 8413 L669, 8416 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M707, 8443 L707 8464 Q707 8468
+                711 8468
+                L719 8468 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M719, 8465 L727, 8468 L719, 8471 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M1180.4, 8413 L1216.4 8413  Q1220.4 8413
+                1220.4 8417
+                L1220.4 8460 Q1220.4 8468
+                1224.4 8468
+                L1232.4 8468 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M1232.4, 8465 L1240.4, 8468 L1232.4, 8471 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M1566.8000000000002, 8468 L1582.8000000000002 8468  Q1586.8000000000002 8468
+                1586.8000000000002 8464
+                L1586.8000000000002 7700 Q1586.8000000000002 7692
+                1582.8000000000002 7692
+                L125 7692  Q117 7692
+                117 7696
+                L117 7704"
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M114, 7704 L117, 7712 L120, 7704 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M68.5, 7188.5 L68.5 8514 Q68.5 8518
+                72.5 8518
+                L79 8518 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M79, 8515 L87, 8518 L79, 8521 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M68.5, 7188.5 L68.5 8562.5 Q68.5 8566.5
+                72.5 8566.5
+                L79 8566.5 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M79, 8563.5 L87, 8566.5 L79, 8569.5 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M68.5, 7188.5 L68.5 8611 Q68.5 8615
+                72.5 8615
+                L79 8615 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M79, 8612 L87, 8615 L79, 8618 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M105.5, 8630 L105.5 8659.5 Q105.5 8663.5
+                109.5 8663.5
+                L124 8663.5 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               false
+            </g>
+            <g>
+               <path d="M142.5, 8678.5 L142.5 8708 Q142.5 8712
+                146.5 8712
+                L153 8712 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M153, 8709 L161, 8712 L153, 8715 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M68.5, 7188.5 L68.5 8756.5 Q68.5 8760.5
+                72.5 8760.5
+                L79 8760.5 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M79, 8757.5 L87, 8760.5 L79, 8763.5 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M68.5, 7188.5 L68.5 8805 Q68.5 8809
+                72.5 8809
+                L79 8809 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M79, 8806 L87, 8809 L79, 8812 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M68.5, 7188.5 L68.5 8853.5 Q68.5 8857.5
+                72.5 8857.5
+                L79 8857.5 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M79, 8854.5 L87, 8857.5 L79, 8860.5 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M68.5, 7188.5 L68.5 8902 Q68.5 8906
+                72.5 8906
+                L79 8906 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M79, 8903 L87, 8906 L79, 8909 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M68.5, 7188.5 L68.5 8950.5 Q68.5 8954.5
+                72.5 8954.5
+                L79 8954.5 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M79, 8951.5 L87, 8954.5 L79, 8957.5 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M68.5, 7188.5 L68.5 8999 Q68.5 9003
+                72.5 9003
+                L79 9003 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M79, 9000 L87, 9003 L79, 9006 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M68.5, 7188.5 L68.5 9082.5 Q68.5 9086.5
+                72.5 9086.5
+                L79 9086.5 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M79, 9083.5 L87, 9086.5 L79, 9089.5 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M117, 9116.5 L117 9137.5 Q117 9141.5
+                121 9141.5
+                L129 9141.5 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M129, 9138.5 L137, 9141.5 L129, 9144.5 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M117, 9116.5 L117 9201 Q117 9205
+                121 9205
+                L129 9205 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M129, 9202 L137, 9205 L129, 9208 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M167, 9235 L167 9256 Q167 9260
+                171 9260
+                L179 9260 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M179, 9257 L187, 9260 L179, 9263 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M117, 9116.5 L117 9321 Q117 9325
+                121 9325
+                L129 9325 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M129, 9322 L137, 9325 L129, 9328 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M167, 9355 L167 9376 Q167 9380
+                171 9380
+                L179 9380 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M179, 9377 L187, 9380 L179, 9383 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M117, 9116.5 L117 9426 Q117 9430
+                121 9430
+                L129 9430 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M129, 9427 L137, 9430 L129, 9433 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M117, 9116.5 L117 9474.5 Q117 9478.5
+                121 9478.5
+                L129 9478.5 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M129, 9475.5 L137, 9478.5 L129, 9481.5 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M117, 9116.5 L117 9523 Q117 9527
+                121 9527
+                L129 9527 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M129, 9524 L137, 9527 L129, 9530 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M117, 9116.5 L117 9571.5 Q117 9575.5
+                121 9575.5
+                L129 9575.5 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M129, 9572.5 L137, 9575.5 L129, 9578.5 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M117, 9116.5 L117 9620 Q117 9624
+                121 9624
+                L129 9624 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M129, 9621 L137, 9624 L129, 9627 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M447.8, 9624 L646.4 9624  Q650.4 9624
+                650.4 9620
+                L650.4 9044.5 Q650.4 9036.5
+                646.4 9036.5
+                L125 9036.5  Q117 9036.5
+                117 9040.5
+                L117 9048.5"
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M114, 9048.5 L117, 9056.5 L120, 9048.5 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M68.5, 7188.5 L68.5 9668.5 Q68.5 9672.5
+                72.5 9672.5
+                L79 9672.5 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M79, 9669.5 L87, 9672.5 L79, 9675.5 Z" 
+        fill="#333" />
+            </g>
+            <g>
+               <path d="M68.5, 7188.5 L68.5 9717 Q68.5 9721
+                72.5 9721
+                L79 9721 "
+        style="fill:none; stroke:#444; stroke-width:1" />
+               <path d="M79, 9718 L87, 9721 L79, 9724 Z" 
+        fill="#333" />
+            </g>
+            </svg>

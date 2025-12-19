@@ -1,4 +1,7 @@
-import { createChartOptions } from "./chartComponent.js";
+import {
+  createChartOptions,
+  getMaxYAxesForAlignment,
+} from "./chartComponent.js";
 import { createDragBar } from "./createDragBar.js";
 import { createCustomElement } from "../utils/helpers.js";
 import {
@@ -24,15 +27,33 @@ export function renderAnalogCharts(
 ) {
   let groups;
 
+  const optimizationStartTime = performance.now();
+  const userGroups = channelState?.analog?.groups || [];
+
+  // LOG: Debug group population
+  console.log("[renderAnalogCharts] 📊 userGroups from state:", userGroups);
+  console.log(
+    "[renderAnalogCharts] Total analog channels:",
+    cfg.analogChannels?.length
+  );
+
   // Build groups using stable channelIDs when available.
   // Each group object will have: { name, ids: [channelID,...], indices: [globalIndex,...] }
   const totalAnalog = Array.isArray(cfg.analogChannels)
     ? cfg.analogChannels
     : [];
-  const userGroups = channelState?.analog?.groups;
   const channelIDs = channelState?.analog?.channelIDs || [];
 
-  if (Array.isArray(userGroups) && userGroups.length > 0) {
+  if (
+    Array.isArray(userGroups) &&
+    userGroups.length > 0 &&
+    userGroups.some((g) => g !== undefined && g !== null && g !== "")
+  ) {
+    // ⚡ OPTIMIZATION: User has assigned groups - use them directly without autoGroupChannels
+    console.log(
+      `[renderAnalogCharts] ⚡ Using user-assigned groups (${userGroups.length} channels)`
+    );
+
     // collect explicit groups by name using channelIDs; keep unassigned indices for auto grouping
     const explicit = {};
     const autoIndices = [];
@@ -54,8 +75,21 @@ export function renderAnalogCharts(
 
     // Auto-group any remaining channels and remap to global indices/ids
     if (autoIndices.length > 0) {
+      console.log(
+        `[renderAnalogCharts] ⚡ Auto-grouping ${autoIndices.length} unassigned channels`
+      );
+      const autoStartTime = performance.now();
+
       const remainingChannels = autoIndices.map((i) => totalAnalog[i]);
       const autoGroups = autoGroupChannels(remainingChannels || []);
+
+      const autoEndTime = performance.now();
+      console.log(
+        `[renderAnalogCharts] ✓ Auto-grouping took ${(
+          autoEndTime - autoStartTime
+        ).toFixed(2)}ms`
+      );
+
       autoGroups.forEach((ag) => {
         const globalIndices = ag.indices.map(
           (localIdx) => autoIndices[localIdx]
@@ -70,7 +104,20 @@ export function renderAnalogCharts(
     }
   } else {
     // full auto grouping -> convert local indices to global indices and ids
+    console.log(
+      `[renderAnalogCharts] 🔄 Running full autoGroupChannels on ${totalAnalog.length} channels...`
+    );
+    const autoStartTime = performance.now();
+
     const autoGroups = autoGroupChannels(cfg.analogChannels || []);
+
+    const autoEndTime = performance.now();
+    console.log(
+      `[renderAnalogCharts] ✓ Full autoGroupChannels took ${(
+        autoEndTime - autoStartTime
+      ).toFixed(2)}ms`
+    );
+
     groups = autoGroups.map((g) => ({
       name: g.name,
       indices: (g.indices || []).slice(),
@@ -79,8 +126,25 @@ export function renderAnalogCharts(
     }));
   }
 
+  // Calculate max Y-axes for alignment across all groups
+  const maxYAxes = getMaxYAxesForAlignment(groups);
+  console.log(
+    "[renderAnalogCharts] Max Y-axes for alignment:",
+    maxYAxes,
+    "across",
+    groups.length,
+    "groups"
+  );
+
+  // ⏱️ TIMING: Start chart creation
+  const chartsStartTime = performance.now();
+  console.log(
+    `[renderAnalogCharts] 🔧 Starting chart creation for ${groups.length} groups...`
+  );
+
   // Render each group as a chart
   groups.forEach((group) => {
+    const groupStartTime = performance.now();
     // resolve any missing ids -> indices mapping defensively
     const resolvedIndicesRaw = (group.ids || []).map((id, i) => {
       if (id == null) return group.indices ? group.indices[i] : -1;
@@ -116,13 +180,28 @@ export function renderAnalogCharts(
       ...resolvedIndices.map((idx) => axesScales[idx + 1]),
     ];
 
-    // Create chart container with individual channel names, colors, and type label
+    // Extract group ID from first channel in this group
+    // All channels in the same group share the same groupId, so just take the first one
+    const groupId =
+      resolvedIndices.length > 0 ? userGroups[resolvedIndices[0]] : "";
+
+    // LOG: Debug group extraction
+    console.log(
+      `[renderAnalogCharts] 🏷️ Group "${
+        group.name
+      }": resolved indices = [${resolvedIndices.join(
+        ","
+      )}], extracted groupId = "${groupId}"`
+    );
+
+    // Create chart container with individual channel names, colors, type label, and single group ID
     const { parentDiv, chartDiv } = createChartContainer(
       dragBar,
       "chart-container",
       groupYLabels,
       groupLineColors,
-      "Analog Channels"
+      "Analog Channels",
+      groupId
     );
     chartsContainer.appendChild(parentDiv);
 
@@ -142,6 +221,7 @@ export function renderAnalogCharts(
       yUnits: groupYUnits,
       axesScales: groupAxesScales,
       singleYAxis: true,
+      maxYAxes: maxYAxes,
     });
 
     console.log("[renderAnalogCharts] Chart options for group:", {
@@ -277,5 +357,46 @@ export function renderAnalogCharts(
         }, 0);
       }
     });
+
+    // ⏱️ Log time for this group
+    const groupEndTime = performance.now();
+    const groupTime = groupEndTime - groupStartTime;
+    if (groupTime > 1000) {
+      console.warn(
+        `[renderAnalogCharts] ⚠️ SLOW GROUP: "${
+          group.name
+        }" took ${groupTime.toFixed(0)}ms`
+      );
+    } else {
+      console.log(
+        `[renderAnalogCharts] ✓ Group "${
+          group.name
+        }" created in ${groupTime.toFixed(0)}ms`
+      );
+    }
   });
+
+  // ⏱️ Log chart creation time
+  const chartsEndTime = performance.now();
+  const chartsTime = chartsEndTime - chartsStartTime;
+  console.log(
+    `[renderAnalogCharts] ✓ All ${
+      groups.length
+    } charts created in ${chartsTime.toFixed(0)}ms`
+  );
+
+  // ⏱️ Log total render time
+  const optimizationEndTime = performance.now();
+  const totalTime = optimizationEndTime - optimizationStartTime;
+  if (totalTime > 1000) {
+    console.warn(
+      `[renderAnalogCharts] ⚠️ SLOW RENDER: ${totalTime.toFixed(0)}ms for ${
+        groups.length
+      } groups`
+    );
+  } else {
+    console.log(
+      `[renderAnalogCharts] ✅ Render complete in ${totalTime.toFixed(0)}ms`
+    );
+  }
 }

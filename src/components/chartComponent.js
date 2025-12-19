@@ -53,6 +53,21 @@ import verticalLinePlugin from "../plugins/verticalLinePlugin.js";
 import horizontalZoomPanPlugin from "../plugins/horizontalZoomPanPlugin.js";
 
 /**
+ * Calculate the maximum number of Y-axes needed across all chart groups
+ * This ensures all charts have the same number of axes for alignment
+ * @param {Array} groups - Array of channel groups (from autoGroupChannels)
+ * @returns {number} Maximum number of Y-axes needed
+ */
+export function getMaxYAxesForAlignment(groups) {
+  if (!groups || groups.length === 0) return 1;
+
+  // In single Y-axis mode, we just need 1 axis per chart
+  // But in multi-axis mode, find the group with most channels
+  const maxChannelsInGroup = Math.max(...groups.map((g) => g.indices.length));
+  return Math.max(1, maxChannelsInGroup); // At least 1 axis
+}
+
+/**
  * Generate complete uPlot chart options configuration.
  *
  * Factory function that builds a comprehensive uPlot options object from
@@ -203,7 +218,7 @@ export function createChartOptions({
         ? [
             {
               scale: "y",
-              side: 1,
+              side: 3,
               label: (() => {
                 const unit = yUnits[0] || extractUnit(yLabels[0]);
                 const scaleVal = axesScales[1] || 1;
@@ -224,7 +239,7 @@ export function createChartOptions({
             const labelWithUnit = unit ? `(${siPrefix}${unit})` : label;
             return {
               scale: `y${idx}`,
-              side: idx % 2 === 0 ? 3 : 1,
+              side: 3, // All Y-axes on the right side
               label: labelWithUnit,
               grid: { show: idx === 0 },
               values: makeAxisValueFormatter(unit, scaleVal),

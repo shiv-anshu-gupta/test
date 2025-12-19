@@ -1,5 +1,8 @@
 // src/components/renderComputedChannels.js
-import { createChartOptions } from "./chartComponent.js";
+import {
+  createChartOptions,
+  getMaxYAxesForAlignment,
+} from "./chartComponent.js";
 import { createDragBar } from "./createDragBar.js";
 import {
   createTooltip,
@@ -234,6 +237,9 @@ export function renderComputedChannels(
 
   const chartData = [timeArray, ...channelDataArrays];
 
+  // Get max Y-axes for alignment (use 1 for computed since it's typically a single axis)
+  const maxYAxes = 1;
+
   const opts = createChartOptions({
     title: "Computed Channels",
     yLabels: groupYLabels,
@@ -245,6 +251,7 @@ export function renderComputedChannels(
     yUnits: groupYUnits,
     axesScales: [1, ...computedChannels.map(() => 1)],
     singleYAxis: true,
+    maxYAxes: maxYAxes,
   });
 
   opts.plugins = opts.plugins || [];

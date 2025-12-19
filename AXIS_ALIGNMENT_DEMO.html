@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Y-Axis Alignment Problem & Solution Demo</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        padding: 30px;
+      }
+
+      .container {
+        max-width: 1400px;
+        margin: 0 auto;
+      }
+
+      h1 {
+        color: white;
+        text-align: center;
+        margin-bottom: 10px;
+        font-size: 2.5em;
+      }
+
+      .subtitle {
+        color: rgba(255, 255, 255, 0.9);
+        text-align: center;
+        margin-bottom: 40px;
+        font-size: 1.1em;
+      }
+
+      .content {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 30px;
+        margin-bottom: 40px;
+      }
+
+      .section {
+        background: white;
+        border-radius: 15px;
+        padding: 30px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+      }
+
+      .section h2 {
+        color: #333;
+        margin-bottom: 5px;
+        font-size: 1.8em;
+      }
+
+      .problem {
+        border-top: 5px solid #e74c3c;
+      }
+
+      .problem h2 {
+        color: #e74c3c;
+      }
+
+      .solution {
+        border-top: 5px solid #27ae60;
+      }
+
+      .solution h2 {
+        color: #27ae60;
+      }
+
+      .subtitle-small {
+        color: #7f8c8d;
+        font-size: 0.95em;
+        margin-bottom: 20px;
+        font-style: italic;
+      }
+
+      .canvas-container {
+        background: #f8f9fa;
+        border-radius: 10px;
+        padding: 15px;
+        margin-bottom: 20px;
+        overflow-x: auto;
+      }
+
+      canvas {
+        display: block;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        background: white;
+      }
+
+      .explanation {
+        background: #ecf0f1;
+        border-left: 4px solid #3498db;
+        padding: 15px;
+        border-radius: 5px;
+        margin-top: 20px;
+        line-height: 1.6;
+        color: #2c3e50;
+      }
+
+      .explanation strong {
+        color: #e74c3c;
+      }
+
+      .explanation.solution-text strong {
+        color: #27ae60;
+      }
+
+      .problem-list {
+        list-style: none;
+        margin: 15px 0;
+      }
+
+      .problem-list li {
+        padding: 10px 0;
+        padding-left: 30px;
+        position: relative;
+        color: #2c3e50;
+        line-height: 1.6;
+      }
+
+      .problem-list li:before {
+        content: "✗";
+        position: absolute;
+        left: 0;
+        color: #e74c3c;
+        font-weight: bold;
+        font-size: 1.2em;
+      }
+
+      .solution-list {
+        list-style: none;
+        margin: 15px 0;
+      }
+
+      .solution-list li {
+        padding: 10px 0;
+        padding-left: 30px;
+        position: relative;
+        color: #2c3e50;
+        line-height: 1.6;
+      }
+
+      .solution-list li:before {
+        content: "✓";
+        position: absolute;
+        left: 0;
+        color: #27ae60;
+        font-weight: bold;
+        font-size: 1.2em;
+      }
+
+      .toggle-section {
+        background: white;
+        border-radius: 15px;
+        padding: 30px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        text-align: center;
+        margin-top: 20px;
+      }
+
+      .toggle-section h2 {
+        color: #333;
+        margin-bottom: 20px;
+      }
+
+      .button-group {
+        display: flex;
+        gap: 15px;
+        justify-content: center;
+        margin-bottom: 30px;
+      }
+
+      button {
+        padding: 12px 30px;
+        font-size: 1em;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-weight: 600;
+      }
+
+      .btn-problem {
+        background: #e74c3c;
+        color: white;
+      }
+
+      .btn-problem:hover {
+        background: #c0392b;
+        transform: translateY(-2px);
+      }
+
+      .btn-solution {
+        background: #27ae60;
+        color: white;
+      }
+
+      .btn-solution:hover {
+        background: #229954;
+        transform: translateY(-2px);
+      }
+
+      .btn-both {
+        background: #3498db;
+        color: white;
+      }
+
+      .btn-both:hover {
+        background: #2980b9;
+        transform: translateY(-2px);
+      }
+
+      .toggle-canvas {
+        background: #f8f9fa;
+        border-radius: 10px;
+        padding: 15px;
+        overflow-x: auto;
+      }
+
+      .info-box {
+        background: #fff3cd;
+        border-left: 4px solid #ffc107;
+        padding: 15px;
+        border-radius: 5px;
+        margin-top: 20px;
+        color: #856404;
+        line-height: 1.6;
+      }
+
+      .legend {
+        display: grid;
+        grid-template-columns: auto auto;
+        gap: 20px;
+        margin-top: 20px;
+        padding: 15px;
+        background: #f0f0f0;
+        border-radius: 8px;
+      }
+
+      .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .legend-color {
+        width: 20px;
+        height: 20px;
+        border-radius: 3px;
+      }
+
+      @media (max-width: 1024px) {
+        .content {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>🎯 Sir का Point समझते हैं</h1>
+      <p class="subtitle">Y-Axis Alignment Problem & Solution</p>
+
+      <div class="content">
+        <!-- PROBLEM SECTION -->
+        <div class="section problem">
+          <h2>❌ Problem</h2>
+          <p class="subtitle-small">
+            जब सभी charts में Y-axes की संख्या अलग-अलग हो
+          </p>
+
+          <div class="canvas-container">
+            <canvas id="problemCanvas" width="380" height="400"></canvas>
+          </div>
+
+          <ul class="problem-list">
+            <li>Chart 1 में 1 Y-axis है</li>
+            <li>Chart 2 में 2 Y-axes हैं</li>
+            <li>Y-axis labels जगह लेते हैं</li>
+            <li>Waveforms अलग positions से शुरू होते हैं</li>
+            <li>Visually misaligned दिखते हैं!</li>
+          </ul>
+
+          <div class="explanation">
+            <strong>क्या होता है:</strong><br />
+            जब Chart 1 में सिर्फ 1 label है (कम space), तो waveform ज्यादा बाईं
+            तरफ शुरू होता है।<br /><br />
+            जब Chart 2 में 2 labels हैं (ज्यादा space), तो waveform दाईं तरफ
+            खिसक जाता है।<br /><br />
+            <strong style="color: #e74c3c"
+              >नतीजा: दोनों waveforms अलग-अलग positions पर हैं!</strong
+            >
+          </div>
+        </div>
+
+        <!-- SOLUTION SECTION -->
+        <div class="section solution">
+          <h2>✅ Solution</h2>
+          <p class="subtitle-small">
+            जब सभी charts में Y-axes की संख्या same हो
+          </p>
+
+          <div class="canvas-container">
+            <canvas id="solutionCanvas" width="380" height="400"></canvas>
+          </div>
+
+          <ul class="solution-list">
+            <li>सभी charts में 2 Y-axes हैं</li>
+            <li>Chart 1 में 1 real + 1 खाली (placeholder)</li>
+            <li>Chart 2 में 2 real axes</li>
+            <li>Waveforms same space reserve करते हैं</li>
+            <li>सभी perfectly aligned दिखते हैं!</li>
+          </ul>
+
+          <div class="explanation solution-text">
+            <strong>क्या होता है:</strong><br />
+            दोनों charts में 2 labels का space reserve है।<br /><br />
+            Chart 1 में दूसरा label खाली है (कोई text नहीं), पर space reserve
+            है।<br /><br />
+            <strong style="color: #27ae60"
+              >नतीजा: दोनों waveforms बिल्कुल same position से शुरू होते
+              हैं!</strong
+            >
+          </div>
+        </div>
+      </div>
+
+      <!-- TOGGLE DEMO -->
+      <div class="toggle-section">
+        <h2>🔄 Interactive Demo - Problem vs Solution</h2>
+
+        <div class="button-group">
+          <button class="btn-problem" onclick="showProblemOnly()">
+            Problem दिखाओ
+          </button>
+          <button class="btn-solution" onclick="showSolutionOnly()">
+            Solution दिखाओ
+          </button>
+          <button class="btn-both" onclick="showComparison()">
+            दोनों साथ-साथ
+          </button>
+        </div>
+
+        <div class="toggle-canvas">
+          <canvas id="toggleCanvas" width="800" height="450"></canvas>
+        </div>
+
+        <div class="info-box">
+          <strong>💡 Key Point:</strong><br />
+          अगर सभी charts में same number of Y-axes हो (भले ही कुछ खाली हों), तो
+          waveforms visually aligned रहते हैं और app बहुत अच्छा लगता है!
+        </div>
+
+        <div class="legend">
+          <div class="legend-item">
+            <div class="legend-color" style="background: #e74c3c"></div>
+            <span>Chart/Data (1st)</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-color" style="background: #3498db"></div>
+            <span>Chart/Data (2nd)</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-color" style="background: #95a5a6"></div>
+            <span>Y-Axis (खाली/Placeholder)</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-color" style="background: #f39c12"></div>
+            <span>Waveform</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // PROBLEM CANVAS
+      function drawProblem() {
+        const canvas = document.getElementById("problemCanvas");
+        const ctx = canvas.getContext("2d");
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        ctx.fillStyle = "#f8f9fa";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // Chart 1 (1 Y-axis)
+        ctx.font = "bold 14px Arial";
+        ctx.fillStyle = "#333";
+        ctx.fillText("Chart 1: 1 Y-axis", 20, 30);
+
+        // Y-axis 1
+        ctx.strokeStyle = "#333";
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(50, 60);
+        ctx.lineTo(50, 150);
+        ctx.stroke();
+
+        // Y-axis labels
+        ctx.font = "12px Arial";
+        ctx.fillStyle = "#666";
+        ctx.fillText("100", 25, 65);
+        ctx.fillText("50", 30, 107);
+        ctx.fillText("0", 35, 150);
+
+        // Waveform 1
+        ctx.strokeStyle = "#f39c12";
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(60, 100);
+        ctx.lineTo(80, 80);
+        ctx.lineTo(100, 90);
+        ctx.lineTo(120, 70);
+        ctx.lineTo(140, 110);
+        ctx.stroke();
+
+        // Chart 2 (2 Y-axes)
+        ctx.font = "bold 14px Arial";
+        ctx.fillStyle = "#333";
+        ctx.fillText("Chart 2: 2 Y-axes", 20, 200);
+
+        // Y-axis 1
+        ctx.strokeStyle = "#333";
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(50, 230);
+        ctx.lineTo(50, 320);
+        ctx.stroke();
+
+        // Y-axis 2
+        ctx.beginPath();
+        ctx.moveTo(90, 230);
+        ctx.lineTo(90, 320);
+        ctx.stroke();
+
+        // Y-axis labels
+        ctx.font = "12px Arial";
+        ctx.fillStyle = "#666";
+        ctx.fillText("100", 25, 235);
+        ctx.fillText("50", 30, 277);
+        ctx.fillText("0", 35, 320);
+        ctx.fillText("300", 60, 235);
+        ctx.fillText("200", 60, 277);
+        ctx.fillText("100", 60, 320);
+
+        // Waveform 2 (shifted because of extra axis!)
+        ctx.strokeStyle = "#f39c12";
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(100, 260);
+        ctx.lineTo(120, 240);
+        ctx.lineTo(140, 250);
+        ctx.lineTo(160, 230);
+        ctx.lineTo(180, 280);
+        ctx.stroke();
+
+        // Annotation
+        ctx.font = "bold 12px Arial";
+        ctx.fillStyle = "#e74c3c";
+        ctx.fillText("← अलग position!", 180, 130);
+        ctx.fillText("← अलग position!", 180, 300);
+      }
+
+      // SOLUTION CANVAS
+      function drawSolution() {
+        const canvas = document.getElementById("solutionCanvas");
+        const ctx = canvas.getContext("2d");
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        ctx.fillStyle = "#f8f9fa";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // Chart 1 (2 Y-axes: 1 real + 1 placeholder)
+        ctx.font = "bold 14px Arial";
+        ctx.fillStyle = "#333";
+        ctx.fillText("Chart 1: 2 Y-axes (1 real + 1 placeholder)", 10, 30);
+
+        // Y-axis 1 (real)
+        ctx.strokeStyle = "#333";
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(50, 60);
+        ctx.lineTo(50, 150);
+        ctx.stroke();
+
+        // Y-axis 2 (placeholder - खाली)
+        ctx.strokeStyle = "#95a5a6";
+        ctx.lineWidth = 1;
+        ctx.setLineDash([5, 5]);
+        ctx.beginPath();
+        ctx.moveTo(90, 60);
+        ctx.lineTo(90, 150);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        // Y-axis labels
+        ctx.font = "12px Arial";
+        ctx.fillStyle = "#666";
+        ctx.fillText("100", 25, 65);
+        ctx.fillText("50", 30, 107);
+        ctx.fillText("0", 35, 150);
+        ctx.fillStyle = "#95a5a6";
+        ctx.fillText("-", 80, 107);
+
+        // Waveform 1
+        ctx.strokeStyle = "#f39c12";
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(100, 100);
+        ctx.lineTo(120, 80);
+        ctx.lineTo(140, 90);
+        ctx.lineTo(160, 70);
+        ctx.lineTo(180, 110);
+        ctx.stroke();
+
+        // Chart 2 (2 Y-axes: both real)
+        ctx.font = "bold 14px Arial";
+        ctx.fillStyle = "#333";
+        ctx.fillText("Chart 2: 2 Y-axes (both real)", 10, 200);
+
+        // Y-axis 1
+        ctx.strokeStyle = "#333";
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(50, 230);
+        ctx.lineTo(50, 320);
+        ctx.stroke();
+
+        // Y-axis 2
+        ctx.beginPath();
+        ctx.moveTo(90, 230);
+        ctx.lineTo(90, 320);
+        ctx.stroke();
+
+        // Y-axis labels
+        ctx.font = "12px Arial";
+        ctx.fillStyle = "#666";
+        ctx.fillText("100", 25, 235);
+        ctx.fillText("50", 30, 277);
+        ctx.fillText("0", 35, 320);
+        ctx.fillText("300", 60, 235);
+        ctx.fillText("200", 60, 277);
+        ctx.fillText("100", 60, 320);
+
+        // Waveform 2 (same position!)
+        ctx.strokeStyle = "#f39c12";
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(100, 260);
+        ctx.lineTo(120, 240);
+        ctx.lineTo(140, 250);
+        ctx.lineTo(160, 230);
+        ctx.lineTo(180, 280);
+        ctx.stroke();
+
+        // Annotation
+        ctx.font = "bold 12px Arial";
+        ctx.fillStyle = "#27ae60";
+        ctx.fillText("← Same position! ✓", 180, 130);
+        ctx.fillText("← Same position! ✓", 180, 300);
+      }
+
+      // TOGGLE DEMO
+      let currentMode = "both";
+
+      function drawComparison() {
+        const canvas = document.getElementById("toggleCanvas");
+        const ctx = canvas.getContext("2d");
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        ctx.fillStyle = "#f8f9fa";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        if (currentMode === "problem" || currentMode === "both") {
+          // Problem on left
+          ctx.font = "bold 16px Arial";
+          ctx.fillStyle = "#e74c3c";
+          ctx.fillText("❌ PROBLEM", 50, 30);
+
+          ctx.font = "12px Arial";
+          ctx.fillStyle = "#333";
+          ctx.fillText("Chart 1 (1 axis)", 30, 60);
+          ctx.fillText("Chart 2 (2 axes)", 30, 200);
+
+          // Chart 1 - left side
+          ctx.strokeStyle = "#333";
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.moveTo(40, 80);
+          ctx.lineTo(40, 170);
+          ctx.stroke();
+
+          ctx.strokeStyle = "#f39c12";
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.moveTo(50, 110);
+          ctx.lineTo(80, 95);
+          ctx.lineTo(110, 125);
+          ctx.stroke();
+
+          // Chart 2 - left side
+          ctx.strokeStyle = "#333";
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.moveTo(40, 220);
+          ctx.lineTo(40, 310);
+          ctx.stroke();
+
+          ctx.beginPath();
+          ctx.moveTo(70, 220);
+          ctx.lineTo(70, 310);
+          ctx.stroke();
+
+          ctx.strokeStyle = "#f39c12";
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.moveTo(80, 245);
+          ctx.lineTo(110, 230);
+          ctx.lineTo(140, 260);
+          ctx.stroke();
+
+          ctx.font = "bold 12px Arial";
+          ctx.fillStyle = "#e74c3c";
+          ctx.fillText("← Different!", 150, 130);
+        }
+
+        if (currentMode === "solution" || currentMode === "both") {
+          // Solution on right (or full screen if solution only)
+          const xOffset = currentMode === "both" ? 420 : 50;
+
+          ctx.font = "bold 16px Arial";
+          ctx.fillStyle = "#27ae60";
+          ctx.fillText("✅ SOLUTION", xOffset, 30);
+
+          ctx.font = "12px Arial";
+          ctx.fillStyle = "#333";
+          ctx.fillText("Chart 1 (2 axes)", xOffset - 20, 60);
+          ctx.fillText("Chart 2 (2 axes)", xOffset - 20, 200);
+
+          // Chart 1 - right side
+          ctx.strokeStyle = "#333";
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.moveTo(xOffset + 10, 80);
+          ctx.lineTo(xOffset + 10, 170);
+          ctx.stroke();
+
+          ctx.strokeStyle = "#95a5a6";
+          ctx.lineWidth = 1;
+          ctx.setLineDash([5, 5]);
+          ctx.beginPath();
+          ctx.moveTo(xOffset + 40, 80);
+          ctx.lineTo(xOffset + 40, 170);
+          ctx.stroke();
+          ctx.setLineDash([]);
+
+          ctx.strokeStyle = "#f39c12";
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.moveTo(xOffset + 50, 110);
+          ctx.lineTo(xOffset + 80, 95);
+          ctx.lineTo(xOffset + 110, 125);
+          ctx.stroke();
+
+          // Chart 2 - right side
+          ctx.strokeStyle = "#333";
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.moveTo(xOffset + 10, 220);
+          ctx.lineTo(xOffset + 10, 310);
+          ctx.stroke();
+
+          ctx.beginPath();
+          ctx.moveTo(xOffset + 40, 220);
+          ctx.lineTo(xOffset + 40, 310);
+          ctx.stroke();
+
+          ctx.strokeStyle = "#f39c12";
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.moveTo(xOffset + 50, 245);
+          ctx.lineTo(xOffset + 80, 230);
+          ctx.lineTo(xOffset + 110, 260);
+          ctx.stroke();
+
+          ctx.font = "bold 12px Arial";
+          ctx.fillStyle = "#27ae60";
+          ctx.fillText("← Same! ✓", xOffset + 130, 130);
+        }
+
+        if (currentMode === "both") {
+          // Divider line
+          ctx.strokeStyle = "#bdc3c7";
+          ctx.lineWidth = 2;
+          ctx.setLineDash([5, 5]);
+          ctx.beginPath();
+          ctx.moveTo(400, 0);
+          ctx.lineTo(400, 450);
+          ctx.stroke();
+          ctx.setLineDash([]);
+        }
+      }
+
+      function showProblemOnly() {
+        currentMode = "problem";
+        drawComparison();
+      }
+
+      function showSolutionOnly() {
+        currentMode = "solution";
+        drawComparison();
+      }
+
+      function showComparison() {
+        currentMode = "both";
+        drawComparison();
+      }
+
+      // Initial draw
+      drawProblem();
+      drawSolution();
+      showComparison();
+
+      window.addEventListener("resize", () => {
+        drawProblem();
+        drawSolution();
+        drawComparison();
+      });
+    </script>
+  </body>
+</html>

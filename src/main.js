@@ -1614,6 +1614,21 @@ async function handleLoadFiles() {
       channelState.suspendHistory();
     try {
       initializeChannelState(cfg, data);
+
+      // NEW: Populate group IDs from autoGroupChannels results
+      // Convert group objects { groupId, indices, ... } into per-channel array
+      // Build array where each index corresponds to a channel and contains its group ID
+      const analogGroupIds = new Array(cfg.analogChannels.length);
+      groups.forEach((group) => {
+        group.indices.forEach((channelIdx) => {
+          analogGroupIds[channelIdx] = group.groupId; // e.g., "G0", "G1", "G2"
+        });
+      });
+      channelState.analog.groups = analogGroupIds;
+      console.log(
+        "[handleLoadFiles] ✅ Populated analog group IDs:",
+        analogGroupIds
+      );
     } finally {
       if (channelState && channelState.resumeHistory)
         channelState.resumeHistory();

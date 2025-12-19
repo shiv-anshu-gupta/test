@@ -1514,18 +1514,65 @@ function createSimpleChannelList(cfg, onChannelUpdate) {
  */
 function createAnalogChannelGroupMap(analogChannels) {
   const groupMap = {};
-  const autoGroups = autoGroupChannels(analogChannels);
+  const autoIndices = []; // Channels that need auto-grouping
 
-  autoGroups.forEach((group) => {
-    group.indices.forEach((idx) => {
-      groupMap[idx] = group.groupId;
-    });
+  // ✅ STEP 1: Collect explicit groups (user-assigned)
+  // Only accept groups that start with "G" followed by digits (valid format)
+  // Reject invalid formats like "Currents", "Voltages", "Other"
+  let hasValidExplicitGroups = false;
+  analogChannels.forEach((ch, idx) => {
+    if (
+      ch &&
+      ch.group &&
+      typeof ch.group === "string" &&
+      /^G\d+$/.test(ch.group)
+    ) {
+      // Valid explicit group format (G0, G1, G2, etc.)
+      groupMap[idx] = ch.group;
+      hasValidExplicitGroups = true;
+    } else {
+      // Invalid or missing group -> mark for auto-grouping
+      autoIndices.push(idx);
+    }
   });
 
-  console.log(
-    "[createAnalogChannelGroupMap] Mapped analog channels to group IDs:",
-    groupMap
-  );
+  // ✅ STEP 2: Auto-group any channels without valid explicit groups
+  if (autoIndices.length > 0) {
+    console.log(
+      `[createAnalogChannelGroupMap] Found ${
+        analogChannels.length - autoIndices.length
+      } explicit groups and ${
+        autoIndices.length
+      } channels needing auto-grouping`
+    );
+
+    // Build subset of channels that need auto-grouping
+    const autoChannels = autoIndices.map((idx) => analogChannels[idx]);
+    const autoGroups = autoGroupChannels(autoChannels);
+
+    // Map auto-group indices back to global indices
+    autoGroups.forEach((group) => {
+      group.indices.forEach((localIdx) => {
+        const globalIdx = autoIndices[localIdx];
+        groupMap[globalIdx] = group.groupId; // Use groupId: "G0", "G1", "G2", etc.
+      });
+    });
+
+    console.log(
+      "[createAnalogChannelGroupMap] Auto-grouping assigned groups:",
+      autoGroups.map((g) => ({
+        groupId: g.groupId,
+        name: g.name,
+        count: g.indices.length,
+      }))
+    );
+  } else {
+    console.log(
+      "[createAnalogChannelGroupMap] All channels have explicit group assignments"
+    );
+  }
+
+  console.log("[createAnalogChannelGroupMap] Final group mapping:", groupMap);
   return groupMap;
 }
 
