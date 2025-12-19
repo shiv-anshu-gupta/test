@@ -1,4 +1,7 @@
-import { createChartOptions } from "./components/chartComponent.js";
+import {
+  createChartOptions,
+  updateAllChartAxisColors,
+} from "./components/chartComponent.js";
 import { parseCFG, parseDAT } from "./components/comtradeUtils.js";
 import { createState } from "./components/createState.js";
 import { handleMultipleFiles } from "./utils/multiFileHandler.js";
@@ -140,6 +143,9 @@ export function getPolarChart() {
 
 let charts = [null, null]; // [analogChart, digitalChart]
 const chartTypes = ["analog", "digital"];
+
+// Expose charts globally for theme system to access
+window.__charts = charts;
 
 // Global config and data
 let cfg, data;
@@ -1374,6 +1380,9 @@ if (themeToggleBtn) {
     const newTheme = toggleTheme();
     updateThemeButton(newTheme);
     console.log(`[main.js] Theme switched to: ${newTheme}`);
+
+    // Update all chart colors with the new theme
+    updateAllChartAxisColors(charts);
   });
 }
 
@@ -1655,15 +1664,51 @@ async function handleLoadFiles() {
     // Yield to event loop
     await yieldToEventLoop(50);
 
-    console.log("[handleLoadFiles] 🎯 PHASE 5: Polar chart initialization");
+    console.log(
+      "[handleLoadFiles] 🎯 PHASE 5: Polar chart initialization (deferred)"
+    );
 
-    // PHASE 5: Initialize Polar Chart
+    // PHASE 5: Initialize Polar Chart WITH DEFERRED RENDERING
+    // ✅ Strategy: Create instance immediately, but defer SVG rendering to next idle frame
+    // This unblocks the UI thread so user can interact with charts immediately
     try {
       console.log("[handleLoadFiles] Creating PolarChart instance...");
       polarChart = new PolarChart("polarChartContainer");
-      polarChart.init();
-      polarChart.updatePhasorAtTimeIndex(cfg, data, 0);
-      console.log("[handleLoadFiles] ✅ Polar chart initialized");
+      polarChart.init(); // This just clears container
+
+      // ⏱️ Defer the expensive updatePhasorAtTimeIndex to avoid blocking
+      // Use requestIdleCallback for low-priority background task
+      if (window.requestIdleCallback) {
+        window.requestIdleCallback(
+          () => {
+            try {
+              console.log("[PolarChart] Background: Updating phasor data...");
+              polarChart.updatePhasorAtTimeIndex(cfg, data, 0);
+              console.log("[PolarChart] ✅ Background phasor update complete");
+            } catch (err) {
+              console.error("[PolarChart] Background update failed:", err);
+            }
+          },
+          { timeout: 2000 } // Timeout after 2s if browser too busy
+        );
+      } else {
+        // Fallback: Use requestAnimationFrame for older browsers
+        requestAnimationFrame(() => {
+          setTimeout(() => {
+            try {
+              console.log("[PolarChart] Fallback: Updating phasor data...");
+              polarChart.updatePhasorAtTimeIndex(cfg, data, 0);
+              console.log("[PolarChart] ✅ Fallback phasor update complete");
+            } catch (err) {
+              console.error("[PolarChart] Fallback update failed:", err);
+            }
+          }, 100);
+        });
+      }
+
+      console.log(
+        "[handleLoadFiles] ✅ Polar chart instance created (rendering deferred)"
+      );
     } catch (err) {
       console.error(
         "[handleLoadFiles] ❌ Failed to initialize polar chart:",
@@ -1759,18 +1804,47 @@ async function handleLoadFiles() {
     if (window._resizableGroup) window._resizableGroup.disconnect();
     window._resizableGroup = new ResizableGroup(".dragBar");
 
-    subscribeChartUpdates(
-      channelState,
-      dataState,
-      charts,
-      chartsContainer,
-      verticalLinesX,
-      cfg,
-      data,
-      createState,
-      calculateDeltas,
-      TIME_UNIT
-    );
+    // ⏱️ OPTIMIZATION: Defer subscription setup to avoid blocking UI
+    // subscribeChartUpdates sets up many listeners - do this in idle time
+    if (window.requestIdleCallback) {
+      window.requestIdleCallback(
+        () => {
+          console.log(
+            "[handleLoadFiles] Background: Setting up chart subscriptions..."
+          );
+          subscribeChartUpdates(
+            channelState,
+            dataState,
+            charts,
+            chartsContainer,
+            verticalLinesX,
+            cfg,
+            data,
+            createState,
+            calculateDeltas,
+            TIME_UNIT
+          );
+          console.log("[handleLoadFiles] ✅ Chart subscriptions ready");
+        },
+        { timeout: 2000 }
+      );
+    } else {
+      // Fallback for older browsers
+      setTimeout(() => {
+        subscribeChartUpdates(
+          channelState,
+          dataState,
+          charts,
+          chartsContainer,
+          verticalLinesX,
+          cfg,
+          data,
+          createState,
+          calculateDeltas,
+          TIME_UNIT
+        );
+      }, 500);
+    }
 
     console.log(
       "[handleLoadFiles] 🎉 COMPLETE - All files loaded and rendered successfully"

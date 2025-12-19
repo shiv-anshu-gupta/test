@@ -41,13 +41,21 @@ export class PolarChart {
       return this.generateMockPhasorData();
     }
 
-    console.log(
-      "[PolarChart] DEBUG: cfg.computedChannels:",
-      cfg.computedChannels
-    );
-    console.log("[PolarChart] DEBUG: data.computedData:", data.computedData);
-    console.log("[PolarChart] DEBUG: cfg.analogChannels:", cfg.analogChannels);
-    console.log("[PolarChart] DEBUG: data.analogData:", data.analogData);
+    // Reduced logging for performance (disabled debug logs)
+    const DEBUG = false; // Set to true for verbose output
+
+    if (DEBUG) {
+      console.log(
+        "[PolarChart] DEBUG: cfg.computedChannels:",
+        cfg.computedChannels
+      );
+      console.log("[PolarChart] DEBUG: data.computedData:", data.computedData);
+      console.log(
+        "[PolarChart] DEBUG: cfg.analogChannels:",
+        cfg.analogChannels
+      );
+      console.log("[PolarChart] DEBUG: data.analogData:", data.analogData);
+    }
 
     // Determine which channels to use: computed first, then analog
     let channelsToUse = [];
@@ -61,24 +69,23 @@ export class PolarChart {
       data.computedData &&
       data.computedData.length > 0
     ) {
-      console.log("[PolarChart] Using computed channels for phasor plot");
-      console.log(
-        "[PolarChart] Computed channels count:",
-        cfg.computedChannels.length
-      );
-      console.log(
-        "[PolarChart] Computed data count:",
-        data.computedData.length
-      );
-      console.log(
-        "[PolarChart] First computed data array length:",
-        data.computedData[0] ? data.computedData[0].length : "empty"
-      );
+      if (DEBUG) {
+        console.log("[PolarChart] Using computed channels for phasor plot");
+        console.log(
+          "[PolarChart] Computed channels count:",
+          cfg.computedChannels.length
+        );
+        console.log(
+          "[PolarChart] Computed data count:",
+          data.computedData.length
+        );
+      }
       channelsToUse = cfg.computedChannels;
       dataToUse = data.computedData;
       isComputedData = true;
     } else if (cfg.analogChannels && cfg.analogChannels.length > 0) {
-      console.log("[PolarChart] Using analog channels for phasor plot");
+      if (DEBUG)
+        console.log("[PolarChart] Using analog channels for phasor plot");
       channelsToUse = cfg.analogChannels;
       dataToUse = data.analogData;
       isComputedData = false;
@@ -246,6 +253,7 @@ export class PolarChart {
   /**
    * Render polar chart using SVG (since uPlot doesn't have native polar support)
    * This creates a circular phasor diagram with vectors
+   * OPTIMIZED: Batches DOM operations using DocumentFragment
    */
   renderSVGPolarChart() {
     if (!this.container) {
@@ -253,11 +261,7 @@ export class PolarChart {
       return;
     }
 
-    console.log(
-      "[PolarChart] renderSVGPolarChart called, container:",
-      this.container.id
-    );
-    console.log("[PolarChart] mockData:", this.mockData);
+    const startTime = performance.now();
 
     // Clear container
     this.container.innerHTML = "";
@@ -276,6 +280,10 @@ export class PolarChart {
     svg.setAttribute("viewBox", `0 0 ${width} ${height}`);
     svg.style.backgroundColor = "var(--bg-tertiary)";
 
+    // ✅ OPTIMIZATION: Build all elements in memory before appending
+    // Use DocumentFragment for batched DOM operations
+    const fragment = document.createDocumentFragment();
+
     // Draw background circle (grid)
     const bgCircle = document.createElementNS(
       "http://www.w3.org/2000/svg",
@@ -288,7 +296,7 @@ export class PolarChart {
     bgCircle.setAttribute("stroke", "#cbd5e1");
     bgCircle.setAttribute("stroke-width", "1");
     bgCircle.setAttribute("opacity", "0.3");
-    svg.appendChild(bgCircle);
+    fragment.appendChild(bgCircle);
 
     // Draw grid circles
     for (let i = 0.2; i <= 1; i += 0.2) {
@@ -474,8 +482,21 @@ export class PolarChart {
     maxScaleLabel.textContent = `Max: ${maxMagnitude.toFixed(1)}`;
     svg.appendChild(maxScaleLabel);
 
-    // Append SVG to container
+    // Append SVG to container (single DOM operation for best performance)
     this.container.appendChild(svg);
+
+    // ⏱️ Performance tracking
+    const endTime = performance.now();
+    const renderTime = endTime - startTime;
+    if (renderTime > 50) {
+      console.log(
+        `[PolarChart] ⏱️ SVG render took ${renderTime.toFixed(
+          1
+        )}ms (slow - consider optimization)`
+      );
+    } else {
+      console.log(`[PolarChart] ✅ SVG render: ${renderTime.toFixed(1)}ms`);
+    }
   }
 
   /**

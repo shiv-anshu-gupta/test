@@ -32,10 +32,16 @@ export function renderComtradeCharts(
   TIME_UNIT,
   channelState
 ) {
+  const renderStartTime = performance.now();
+
   charts.length = 0; // <-- Clear the array at the start!
   chartsContainer.innerHTML = "";
   //destroyCharts(charts);
   setupChartDragAndDrop(chartsContainer);
+
+  console.log("[renderComtradeCharts] Starting chart rendering...");
+
+  // Phase 1: Render analog charts
   renderAnalogCharts(
     cfg,
     data,
@@ -45,6 +51,8 @@ export function renderComtradeCharts(
     channelState,
     autoGroupChannels
   );
+
+  // Phase 2: Render digital charts
   if (
     cfg.digitalChannels &&
     cfg.digitalChannels.length > 0 &&
@@ -61,7 +69,7 @@ export function renderComtradeCharts(
     );
   }
 
-  // Render computed channels if any exist
+  // Phase 3: Render computed channels
   renderComputedChannels(
     data,
     chartsContainer,
@@ -70,21 +78,22 @@ export function renderComtradeCharts(
     channelState
   );
 
-  console.log("Charts rendered:", charts.length);
+  const renderEndTime = performance.now();
+  const totalTime = renderEndTime - renderStartTime;
+  console.log(
+    `[renderComtradeCharts] ✅ All ${
+      charts.length
+    } charts rendered in ${totalTime.toFixed(1)}ms`
+  );
+
   if (charts.length > 0) {
-    // Call calculateDeltas with new signature for each chart
-    // Collect all delta data from all charts and show in a single window
+    // Process deltas
     console.log(
-      "[renderComtradeCharts] Calling calculateDeltas for all charts:",
-      {
-        totalCharts: charts.length,
-        verticalLines: Array.isArray(verticalLinesX)
-          ? verticalLinesX.length
-          : 0,
-      }
+      "[renderComtradeCharts] Processing deltas for",
+      charts.length,
+      "charts"
     );
 
-    // Use IIFE to handle async operations without making this function async
     (async () => {
       try {
         const { collectChartDeltas } = await import(
@@ -93,11 +102,6 @@ export function renderComtradeCharts(
         const allDeltaData = [];
 
         for (const chart of charts) {
-          console.log(`[renderComtradeCharts] Processing chart:`, {
-            hasData: !!chart && !!chart.data,
-            seriesCount: chart && chart.data ? chart.data.length - 1 : 0,
-          });
-          // Collect deltas from this chart (without updating UI yet)
           const chartDeltas = collectChartDeltas(
             verticalLinesX,
             chart,
@@ -105,27 +109,13 @@ export function renderComtradeCharts(
           );
           if (chartDeltas.length > 0) {
             allDeltaData.push(...chartDeltas);
-            console.log(
-              `[renderComtradeCharts] Collected ${chartDeltas.length} delta sections from chart`
-            );
           }
         }
 
-        // Now update delta window with ALL collected data
         if (allDeltaData.length > 0) {
           try {
             const { deltaWindow } = await import("../main.js");
             if (deltaWindow) {
-              console.log(
-                "[renderComtradeCharts] Updating deltaWindow with combined data:",
-                {
-                  sections: allDeltaData.length,
-                  totalSeries: allDeltaData.reduce(
-                    (sum, s) => sum + s.series.length,
-                    0
-                  ),
-                }
-              );
               deltaWindow.update(allDeltaData);
             }
           } catch (e) {
@@ -143,5 +133,4 @@ export function renderComtradeCharts(
       }
     })();
   }
-  // Do NOT clear charts here!
 }

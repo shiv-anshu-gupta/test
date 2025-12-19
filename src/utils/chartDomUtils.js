@@ -137,6 +137,7 @@ export function createSimpleContainer(containerClass = "analysis-container") {
 export function initUPlotChart(opts, chartData, chartDiv, charts) {
   const chart = new uPlot(opts, chartData, chartDiv);
   chart._seriesColors = opts.series.slice(1).map((s) => s.stroke);
+
   charts.push(chart);
   // Fix axis text colors for dark theme - call twice with delay to ensure it works
   fixChartAxisColors(chartDiv);
