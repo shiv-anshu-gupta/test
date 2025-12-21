@@ -213,15 +213,15 @@ export function subscribeChartUpdates(
   // Format: { "analog-5": [chart0, chart2], "digital-3": [chart1] }
   // Rebuilt whenever chart structure changes
   const channelToChartsIndex = new Map();
-  
+
   function rebuildChannelToChartsIndex() {
     channelToChartsIndex.clear();
     for (let ci = 0; ci < charts.length; ci++) {
       const chart = charts[ci];
       if (!chart || !chart._channelIndices || !chart._type) continue;
-      
+
       const type = chart._type;
-      chart._channelIndices.forEach(globalIdx => {
+      chart._channelIndices.forEach((globalIdx) => {
         const key = `${type}-${globalIdx}`;
         if (!channelToChartsIndex.has(key)) {
           channelToChartsIndex.set(key, []);
@@ -230,7 +230,7 @@ export function subscribeChartUpdates(
       });
     }
   }
-  
+
   // Initialize index on first call
   rebuildChannelToChartsIndex();
 
@@ -241,30 +241,32 @@ export function subscribeChartUpdates(
   function scheduleChartRedraw(chart) {
     if (!chart) return;
     redrawBatch.add(chart);
-    
+
     if (redrawRAFId === null) {
       redrawRAFId = requestAnimationFrame(() => {
         const t0 = performance.now();
         let count = 0;
-        
+
         // Execute all pending redraws in batch
         for (const c of redrawBatch) {
           try {
-            if (typeof c.redraw === 'function') {
+            if (typeof c.redraw === "function") {
               c.redraw(false); // Don't clear canvas
               count++;
             }
           } catch (e) {
-            console.warn('[scheduleChartRedraw] Batch redraw failed:', e);
+            console.warn("[scheduleChartRedraw] Batch redraw failed:", e);
           }
         }
-        
+
         redrawBatch.clear();
         redrawRAFId = null;
-        
+
         const elapsed = (performance.now() - t0).toFixed(2);
         if (count > 0 && elapsed > 5) {
-          console.log(`[Performance] Batch redraw: ${count} charts in ${elapsed}ms`);
+          console.log(
+            `[Performance] Batch redraw: ${count} charts in ${elapsed}ms`
+          );
         }
       });
     }
@@ -560,10 +562,10 @@ export function subscribeChartUpdates(
 
         // Fix axis text colors for dark theme
         fixChartAxisColors(container);
-        
+
         // ⚡ Rebuild the fast lookup index since we added a new chart
         rebuildChannelToChartsIndex();
-        
+
         console.log(
           `[recreateChart] ✅ Successfully recreated chart[${idx}] for type "${type}"`
         );
@@ -594,34 +596,33 @@ export function subscribeChartUpdates(
    */
   function forceRedraw(chart) {
     if (!chart) return;
-    
+
     try {
       // Method 1: Direct redraw (fastest - ~5ms)
-      if (typeof chart.redraw === 'function') {
+      if (typeof chart.redraw === "function") {
         chart.redraw(false); // false = don't clear canvas
         return;
       }
-      
+
       // Method 2: Batch + noop scale update (slower - ~20ms)
-      if (typeof chart.batch === 'function') {
+      if (typeof chart.batch === "function") {
         chart.batch(() => {
           // Trigger internal recalculation without full resize
           const currentMin = chart.scales.x.min;
           const currentMax = chart.scales.x.max;
-          
+
           if (currentMin !== undefined && currentMax !== undefined) {
-            chart.setScale('x', { min: currentMin, max: currentMax });
+            chart.setScale("x", { min: currentMin, max: currentMax });
           }
         });
         return;
       }
-      
+
       // Method 3: Fallback to setSize (slowest - ~100ms)
-      console.warn('[forceRedraw] Using slow setSize fallback');
+      console.warn("[forceRedraw] Using slow setSize fallback");
       chart.setSize({ width: chart.width, height: chart.height });
-      
     } catch (e) {
-      console.warn('[forceRedraw] Failed:', e);
+      console.warn("[forceRedraw] Failed:", e);
     }
   }
 
@@ -636,14 +637,14 @@ export function subscribeChartUpdates(
     // ✨ Optimized color updates (5-10x faster than full recreation)
     channelState.subscribeProperty("color", (change) => {
       const t0 = performance.now();
-      
+
       try {
         const t1 = performance.now();
         const type = change.path && change.path[0];
         const globalIdx = change.path && change.path[2];
-        
+
         if (!type || !Number.isFinite(globalIdx)) {
-          console.warn('[color subscriber] Invalid path:', change.path);
+          console.warn("[color subscriber] Invalid path:", change.path);
           return;
         }
 
@@ -656,7 +657,7 @@ export function subscribeChartUpdates(
         const t2 = performance.now();
         const cacheKey = `${type}-${globalIdx}`;
         let strokeFn = strokeFunctions.get(cacheKey);
-        
+
         if (!strokeFn || strokeFn._color !== newColor) {
           // Create new function that returns the color
           strokeFn = () => newColor;
@@ -667,33 +668,30 @@ export function subscribeChartUpdates(
 
         // ✅ FIX 2: Update all charts that contain this channel using fast index
         const t4 = performance.now();
-        const chartsWithThisChannel = channelToChartsIndex.get(`${type}-${globalIdx}`) || [];
-        
+        const chartsWithThisChannel =
+          channelToChartsIndex.get(`${type}-${globalIdx}`) || [];
+
         for (const chart of chartsWithThisChannel) {
           try {
             // Find the series index in this specific chart
             const mapping = chart._channelIndices || [];
             const pos = mapping.indexOf(globalIdx);
             if (pos < 0) continue;
-            
+
             const seriesIdx = pos + 1; // uPlot series index (0 is x-axis)
-            
+
             // Update both stroke and cached stroke
             chart.series[seriesIdx].stroke = strokeFn;
             chart.series[seriesIdx]._stroke = newColor; // Cached value
-            
+
             if (chart.series[seriesIdx].points) {
               chart.series[seriesIdx].points.stroke = strokeFn;
               chart.series[seriesIdx].points._stroke = newColor;
             }
-            
+
             updateCount++;
-            
           } catch (err) {
-            console.warn(
-              `[color subscriber] Failed to update series:`,
-              err
-            );
+            console.warn(`[color subscriber] Failed to update series:`, err);
             failedCharts.push(chart);
           }
         }
@@ -718,7 +716,7 @@ export function subscribeChartUpdates(
           console.warn(
             `[color subscriber] All updates failed, recreating ${failedCharts.length} charts`
           );
-          failedCharts.forEach(chart => {
+          failedCharts.forEach((chart) => {
             const type = chart._type;
             const idx = charts.indexOf(chart);
             if (idx >= 0) recreateChartSync(type, idx);
@@ -726,30 +724,31 @@ export function subscribeChartUpdates(
         }
 
         const totalTime = t7 - t0;
-        
+
         // Detailed timing breakdown
         const timings = {
-          'pathExtract': (t1 - t0).toFixed(2),
-          'cacheFunc': (t3 - t2).toFixed(2),
-          'seriesUpdate': (t5 - t4).toFixed(2),
-          'redraw': (t7 - t6).toFixed(2),
-          'total': totalTime.toFixed(2)
+          pathExtract: (t1 - t0).toFixed(2),
+          cacheFunc: (t3 - t2).toFixed(2),
+          seriesUpdate: (t5 - t4).toFixed(2),
+          redraw: (t7 - t6).toFixed(2),
+          total: totalTime.toFixed(2),
         };
 
         // Log only if slow or in debug mode
         if (totalTime > 20) {
           console.warn(
             `[Performance] 🐢 Color update SLOW: ${totalTime.toFixed(0)}ms | ` +
-            `[Extract: ${timings.pathExtract}ms | Cache: ${timings.cacheFunc}ms | ` +
-            `Series: ${timings.seriesUpdate}ms | Redraw: ${timings.redraw}ms] | ` +
-            `Charts: ${updateCount}, Redraws: ${redrawCount}`
+              `[Extract: ${timings.pathExtract}ms | Cache: ${timings.cacheFunc}ms | ` +
+              `Series: ${timings.seriesUpdate}ms | Redraw: ${timings.redraw}ms] | ` +
+              `Charts: ${updateCount}, Redraws: ${redrawCount}`
           );
         } else if (updateCount > 0) {
           console.log(
-            `[Performance] ✅ Color update FAST: ${totalTime.toFixed(1)}ms for ${updateCount} charts`
+            `[Performance] ✅ Color update FAST: ${totalTime.toFixed(
+              1
+            )}ms for ${updateCount} charts`
           );
         }
-        
       } catch (err) {
         console.error("[color subscriber] Unhandled error:", err);
       }
@@ -794,7 +793,9 @@ export function subscribeChartUpdates(
           }
           const elapsed = (performance.now() - t0).toFixed(2);
           if (elapsed > 20) {
-            console.warn(`[Performance] Name update scheduled: ${elapsed}ms (array replace)`);
+            console.warn(
+              `[Performance] Name update scheduled: ${elapsed}ms (array replace)`
+            );
           }
           return;
         }
@@ -816,7 +817,9 @@ export function subscribeChartUpdates(
                 } catch (e) {}
                 const elapsed = (performance.now() - t0).toFixed(2);
                 if (elapsed > 10) {
-                  console.warn(`[Performance] Name update scheduled: ${elapsed}ms for 1 channel`);
+                  console.warn(
+                    `[Performance] Name update scheduled: ${elapsed}ms for 1 channel`
+                  );
                 }
                 return;
               } catch (e) {

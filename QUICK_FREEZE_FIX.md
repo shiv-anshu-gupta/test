@@ -3,7 +3,7 @@
 ### 🎯 What to Do Right Now
 
 1. **Open your app** with DevTools Console visible (F12)
-2. **Change a color** in Tabulator 
+2. **Change a color** in Tabulator
 3. **Look at the console** for these logs:
 
 ```
@@ -14,11 +14,11 @@
 
 ### 📊 What Each Timing Means
 
-| Log | Time | Meaning |
-|-----|------|---------|
+| Log                | Time   | Meaning                                     |
+| ------------------ | ------ | ------------------------------------------- |
 | Message processing | >100ms | **MAIN.JS IS SLOW** → debugLite.log problem |
-| Color update | >50ms | **CHARTMANAGER IS SLOW** → redraw problem |
-| Redraw phase | >20ms | **uPLOT IS SLOW** → might need optimization |
+| Color update       | >50ms  | **CHARTMANAGER IS SLOW** → redraw problem   |
+| Redraw phase       | >20ms  | **uPLOT IS SLOW** → might need optimization |
 
 ---
 
@@ -48,8 +48,9 @@ Go to `src/main.js` line ~2380 and find all `debugLite.log()` calls in the messa
 ```
 
 Find and comment out ALL `debugLite.log()` calls in:
+
 - `updateChannelFieldByID()` function
-- `updateChannelFieldByIndex()` function  
+- `updateChannelFieldByIndex()` function
 - The message event listener (lines 2390-2850)
 
 **Total lines to comment: ~20-30**
@@ -61,11 +62,13 @@ After commenting, **reload** and test color change again.
 ### 📈 Expected Results
 
 **Before (with debugLite):**
+
 ```
 [Performance] ⚠️ SLOW Message processing: callback_color { totalMs: "145.32" }
 ```
 
 **After (without debugLite):**
+
 ```
 [Performance] ✅ Message processing: callback_color { totalMs: "8.42" }
 ```
@@ -77,8 +80,9 @@ That's a **17x speedup** from just disabling debug logs!
 ### 🚀 Why This Works
 
 `debugLite.log()` does three expensive things:
+
 1. **DOM query** - Finds the debug panel element
-2. **DOM creation** - Creates new log entry HTML elements  
+2. **DOM creation** - Creates new log entry HTML elements
 3. **DOM insert** - Inserts into the panel (causes reflow)
 
 Each color change triggers multiple log calls × 2-3 = 6-9 DOM operations = browser freeze!
@@ -111,11 +115,12 @@ This way you can enable debugging when needed without affecting performance.
 If color changes are STILL slow after disabling debugLite:
 
 ### Check: Is chart.redraw() expensive?
+
 In `chartManager.js` line ~500, try SKIPPING the redraw:
 
 ```javascript
 // Current:
-if (typeof chart.redraw === 'function') {
+if (typeof chart.redraw === "function") {
   chart.redraw(false);
 }
 
@@ -128,13 +133,14 @@ if (typeof chart.redraw === 'function') {
 If that makes colors fast, the problem is uPlot's redraw method.
 
 ### Check: Is setSeries() failing?
+
 Add this log in chartManager color subscriber:
 
 ```javascript
 if (chart.series[seriesIdx].stroke !== strokeFn) {
-  console.error('❌ Stroke not set! Method failed.');
-  console.log('Chart object:', chart);
-  console.log('Series object:', chart.series[seriesIdx]);
+  console.error("❌ Stroke not set! Method failed.");
+  console.log("Chart object:", chart);
+  console.log("Series object:", chart.series[seriesIdx]);
 }
 ```
 

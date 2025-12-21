@@ -647,9 +647,9 @@ export function createState(initialState, { batch = true } = {}) {
    * state.bindToDOM('user.name', '#nameInput');
    *
    * // Two-way binding with RAF update queuing
-   * state.bindToDOM('user.name', '#nameInput', { 
-   *   twoWay: true, 
-   *   selectiveUpdate: true 
+   * state.bindToDOM('user.name', '#nameInput', {
+   *   twoWay: true,
+   *   selectiveUpdate: true
    * });
    *
    * // Multiple bindings with shared RAF queue for coordinated updates
@@ -658,8 +658,14 @@ export function createState(initialState, { batch = true } = {}) {
    * state.bindToDOM('prop2', el2, { selectiveUpdate: { queue: updateQueue } });
    */
   proxy.bindToDOM = function (propertyPath, selectorOrElement, options = {}) {
-    const { twoWay = false, eventType, prop, attr, selectiveUpdate = false } = options;
-    
+    const {
+      twoWay = false,
+      eventType,
+      prop,
+      attr,
+      selectiveUpdate = false,
+    } = options;
+
     // Accept dot, array, or string path
     const pathArr = Array.isArray(propertyPath)
       ? propertyPath
@@ -729,7 +735,7 @@ export function createState(initialState, { batch = true } = {}) {
         // Try to use global RAF queue from domUpdateQueue utility
         // This is loaded on-demand to keep createState.js lightweight
         try {
-          if (typeof window !== 'undefined' && window._domUpdateQueue) {
+          if (typeof window !== "undefined" && window._domUpdateQueue) {
             updateQueue = window._domUpdateQueue;
           } else {
             console.warn(
@@ -756,9 +762,16 @@ export function createState(initialState, { batch = true } = {}) {
         change.path.every((k, i) => k === pathArr[i])
       ) {
         // Use RAF queue if selectiveUpdate is enabled
-        if (selectiveUpdate && updateQueue && updateQueue.isActive && updateQueue.isActive()) {
+        if (
+          selectiveUpdate &&
+          updateQueue &&
+          updateQueue.isActive &&
+          updateQueue.isActive()
+        ) {
           // Generate unique key for this binding (prevents duplicate updates to same element)
-          const dedupeKey = `${el.id || el.className || el.tagName}_${pathArr.join(".")}`;
+          const dedupeKey = `${
+            el.id || el.className || el.tagName
+          }_${pathArr.join(".")}`;
           updateQueue.queueUpdate({
             element: el,
             updateFn: updateDOM,

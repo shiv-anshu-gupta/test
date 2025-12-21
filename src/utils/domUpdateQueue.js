@@ -3,7 +3,7 @@
  * @description
  * RAF-based DOM update queuing system for batching rapid DOM updates.
  * Prevents layout thrashing by grouping updates and executing them on requestAnimationFrame.
- * 
+ *
  * Features:
  * - Batches DOM updates to single RAF frame
  * - Deduplicates updates to same element/property
@@ -11,24 +11,24 @@
  * - No memory leaks: Proper RAF cancellation on cleanup
  * - Supports multiple queues for different update types
  * - Lightweight and modular
- * 
+ *
  * Performance Impact:
  * - Without selectiveUpdate: N updates = N DOM reflows
  * - With selectiveUpdate: N updates = 1 reflow per RAF frame
  * - Typical speedup: 30x-100x for rapid updates
- * 
+ *
  * @example
  * import { createDOMUpdateQueue } from './utils/domUpdateQueue.js';
- * 
+ *
  * const queue = createDOMUpdateQueue();
- * 
+ *
  * // Queue updates
  * queue.queueUpdate({
  *   element: el,
  *   updateFn: () => { el.textContent = 'Updated'; },
  *   dedupeKey: 'el-textContent'
  * });
- * 
+ *
  * // All updates execute on next RAF frame
  * // Later updates with same dedupeKey replace earlier ones
  */
@@ -51,7 +51,9 @@ export function createDOMUpdateQueue() {
    */
   function queueUpdate({ element, updateFn, dedupeKey }) {
     if (isDestroyed) {
-      console.warn('[domUpdateQueue] Queue has been destroyed, ignoring update');
+      console.warn(
+        "[domUpdateQueue] Queue has been destroyed, ignoring update"
+      );
       return;
     }
 
@@ -82,7 +84,7 @@ export function createDOMUpdateQueue() {
         try {
           updateFn();
         } catch (error) {
-          console.error('[domUpdateQueue] Update function error:', error);
+          console.error("[domUpdateQueue] Update function error:", error);
           // Continue with remaining updates even if one fails
         }
       }

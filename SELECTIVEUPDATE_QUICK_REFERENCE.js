@@ -1,6 +1,6 @@
 /**
  * QUICK REFERENCE: selectiveUpdate Implementation
- * 
+ *
  * This file documents key implementation details for future reference
  */
 
@@ -48,22 +48,22 @@ MODIFIED FILES:
  */
 
 // Pattern 1: Initialize at app startup
-import { initGlobalDOMUpdateQueue } from './utils/domUpdateQueueInit.js';
+import { initGlobalDOMUpdateQueue } from "./utils/domUpdateQueueInit.js";
 initGlobalDOMUpdateQueue(); // Done in main.js
 
 // Pattern 2: Use with global queue (automatic)
-state.bindToDOM('prop', el, { 
-  selectiveUpdate: true  // Uses global queue automatically
+state.bindToDOM("prop", el, {
+  selectiveUpdate: true, // Uses global queue automatically
 });
 
 // Pattern 3: Use with custom queue (coordination)
-import { createDOMUpdateQueue } from './utils/domUpdateQueue.js';
+import { createDOMUpdateQueue } from "./utils/domUpdateQueue.js";
 const queue = createDOMUpdateQueue();
-state.bindToDOM('prop1', el1, { selectiveUpdate: { queue } });
-state.bindToDOM('prop2', el2, { selectiveUpdate: { queue } });
+state.bindToDOM("prop1", el1, { selectiveUpdate: { queue } });
+state.bindToDOM("prop2", el2, { selectiveUpdate: { queue } });
 
 // Pattern 4: Manual cleanup (if needed)
-import { cleanupGlobalDOMUpdateQueue } from './utils/domUpdateQueueInit.js';
+import { cleanupGlobalDOMUpdateQueue } from "./utils/domUpdateQueueInit.js";
 cleanupGlobalDOMUpdateQueue();
 
 /**

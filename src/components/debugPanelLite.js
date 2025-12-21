@@ -3,13 +3,13 @@ export const debugLite = {
   // ⚡ PERFORMANCE FIX: Disable debugLite in production to prevent UI freezes
   // Set to false to skip ALL DOM operations (fixes 500ms+ color update lag)
   _enabled: false, // Change to true to enable debug panel (WARNING: causes freezes!)
-  
+
   // filtering: if non-empty array, only tags that start with one of these prefixes will be shown
   _importantPrefixes: null,
   // throttle in ms to avoid spamming identical tags
   _throttleMs: 300,
   _lastTagTs: {},
-  
+
   /**
    * Safe wrapper that returns early if disabled
    * When _enabled = false, returns immediately without any DOM operations
@@ -19,7 +19,7 @@ export const debugLite = {
     if (!this._enabled) return; // ⏱️ INSTANT return, no DOM work - PERFORMANCE CRITICAL
     return this._logImpl(tag, obj);
   },
-  
+
   /**
    * Internal log implementation
    * Only called if _enabled = true
@@ -77,7 +77,7 @@ export const debugLite = {
       console.warn("debugLite.log failed", e);
     }
   },
-  
+
   init(root = document.body) {
     if (this._inited) return;
     if (!this._enabled) return; // Don't initialize DOM if disabled

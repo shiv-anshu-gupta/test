@@ -275,27 +275,27 @@ const channelIDMap = new Map();
  */
 function rebuildChannelIDMap() {
   channelIDMap.clear();
-  
+
   // Map analog channels
   const analogIDs = channelState.analog?.channelIDs || [];
   analogIDs.forEach((id, idx) => {
-    if (id) channelIDMap.set(id, { type: 'analog', idx });
+    if (id) channelIDMap.set(id, { type: "analog", idx });
   });
-  
+
   // Map digital channels
   const digitalIDs = channelState.digital?.channelIDs || [];
   digitalIDs.forEach((id, idx) => {
-    if (id) channelIDMap.set(id, { type: 'digital', idx });
+    if (id) channelIDMap.set(id, { type: "digital", idx });
   });
 }
 
 function findChannelByID(channelID) {
   if (!channelID) return null;
-  
+
   // ⚡ Fast O(1) lookup using map instead of O(n) indexOf
   const result = channelIDMap.get(channelID);
   if (result) return result;
-  
+
   // Fallback: rebuild map in case it's stale (safety net)
   rebuildChannelIDMap();
   return channelIDMap.get(channelID) || null;
@@ -1835,7 +1835,7 @@ async function handleLoadFiles() {
 
     // ⚡ Initialize fast lookup map for channel lookups (O(1) instead of O(n))
     rebuildChannelIDMap();
-    
+
     // ⚡ Rebuild map whenever channelIDs change (e.g., file load, reorder)
     try {
       channelState.analog?.subscribe?.(() => {
@@ -1845,7 +1845,7 @@ async function handleLoadFiles() {
         rebuildChannelIDMap();
       });
     } catch (e) {
-      console.warn('[main] Failed to set up channelID map rebuild:', e);
+      console.warn("[main] Failed to set up channelID map rebuild:", e);
     }
 
     // ⏱️ OPTIMIZATION: Defer subscription setup to avoid blocking UI
@@ -2423,7 +2423,7 @@ window.addEventListener("message", (ev) => {
     switched: 0,
     subscribers: 0,
     chartUpdate: 0,
-    total: 0
+    total: 0,
   };
 
   console.log(`[Performance] 📨 Message received from ChildWindow: ${type}`, {
@@ -3145,15 +3145,20 @@ window.addEventListener("message", (ev) => {
   // ⏱️ DIAGNOSTIC: Log detailed breakdown of where time was spent
   const msgEndTime = performance.now();
   const totalTime = msgEndTime - msgStartTime;
-  
+
   if (totalTime > 30) {
     console.warn(`[Performance] ⚠️ SLOW Message processing: ${type}`, {
       totalMs: totalTime.toFixed(2),
-      detail: '🐢 Check if: debugLite.log() is slow, subscribers are blocking, chart.redraw() is expensive',
+      detail:
+        "🐢 Check if: debugLite.log() is slow, subscribers are blocking, chart.redraw() is expensive",
       performance:
-        totalTime > 500 ? "🔴 VERY SLOW (FREEZE!)" : 
-        totalTime > 200 ? "🔴 SLOW" : 
-        totalTime > 100 ? "🟡 MEDIUM" : "🟡 OK",
+        totalTime > 500
+          ? "🔴 VERY SLOW (FREEZE!)"
+          : totalTime > 200
+          ? "🔴 SLOW"
+          : totalTime > 100
+          ? "🟡 MEDIUM"
+          : "🟡 OK",
     });
   } else if (totalTime > 10) {
     console.log(`[Performance] ✅ Message processing: ${type}`, {

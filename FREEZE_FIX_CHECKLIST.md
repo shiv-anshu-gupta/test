@@ -14,10 +14,12 @@
 ### 🚀 What You Need to Do
 
 #### Step 1: Reload Application (2 seconds)
+
 - [ ] Reload the app page in browser
 - [ ] This activates the fix automatically
 
 #### Step 2: Test Color Change (30 seconds)
+
 - [ ] Open Tabulator and change a channel color
 - [ ] Should feel **instant** (no freeze)
 - [ ] Open Developer Console (F12)
@@ -25,11 +27,13 @@
 - [ ] Should show **< 20ms**
 
 #### Step 3: Verify Timing (1 minute)
+
 - [ ] If timing < 20ms → **Freeze is FIXED** ✅
 - [ ] If timing > 50ms → Run diagnostic to find next bottleneck
 - [ ] If timing > 200ms → Likely full chart recreation, check setSeries()
 
 #### Step 4: If Still Slow - Use Diagnostics (5 minutes)
+
 - [ ] Open Console (F12)
 - [ ] Paste contents of `RUN_DIAGNOSTICS.js`
 - [ ] Run diagnostic
@@ -43,6 +47,7 @@
 ### Console Logs After Color Change
 
 **GOOD (Freeze Fixed):**
+
 ```
 [Performance] 📨 Message received from ChildWindow: callback_color
 [Performance] ✅ Message processing: callback_color { totalMs: "8.42" }
@@ -50,11 +55,13 @@
 ```
 
 **BAD (Still freezing):**
+
 ```
 [Performance] ⚠️ SLOW Message processing: callback_color { totalMs: "245.32" }
 ```
 
 **VERY BAD (Full recreation):**
+
 ```
 [Performance] 🐢 Color update SLOW: 500ms | [Redraw: 480ms]
 ```
@@ -63,12 +70,12 @@
 
 ## 🔍 Troubleshooting Quick Guide
 
-| Symptom | Time | Likely Cause | Fix |
-|---------|------|--------------|-----|
-| Instant color | <10ms | ✅ Working! | Enjoy! |
-| Slight lag | 10-30ms | Acceptable | Monitor |
-| Noticeable freeze | 50-200ms | redraw() slow | Profile in DevTools |
-| Bad freeze | 200ms+ | Full recreation | Check setSeries() |
+| Symptom           | Time     | Likely Cause    | Fix                 |
+| ----------------- | -------- | --------------- | ------------------- |
+| Instant color     | <10ms    | ✅ Working!     | Enjoy!              |
+| Slight lag        | 10-30ms  | Acceptable      | Monitor             |
+| Noticeable freeze | 50-200ms | redraw() slow   | Profile in DevTools |
+| Bad freeze        | 200ms+   | Full recreation | Check setSeries()   |
 
 ---
 
@@ -79,19 +86,15 @@ When troubleshooting, refer to:
 1. **FREEZE_FIX_COMPLETE.md** (this folder)
    - Technical summary
    - What changed and why
-   
 2. **FREEZE_DIAGNOSIS_GUIDE.md** (this folder)
    - Complete diagnostic manual
    - All possible root causes
    - How to identify each one
-   
 3. **QUICK_FREEZE_FIX.md** (this folder)
    - Fast start guide
    - Top 5 common fixes
-   
 4. **RUN_DIAGNOSTICS.js** (this folder)
    - Paste into console for automated checks
-   
 5. **src/components/debugPanelLite.js** (code)
    - Where the `_enabled` flag is
    - Easy enable/disable for debugging
@@ -134,7 +137,7 @@ Follow this decision tree:
 Is app still freezing?
 │
 ├─ YES, same as before (500ms+)
-│  └─ Did you reload the page? 
+│  └─ Did you reload the page?
 │     ├─ NO → Reload and test again
 │     └─ YES → Check if _enabled is still true
 │        ├─ YES → Set _enabled = false
@@ -161,6 +164,7 @@ If you're still experiencing issues:
 5. Follow the recommended fix
 
 Most likely outcomes:
+
 - **99% chance**: debugLite was the problem → FIXED ✅
 - **0.9% chance**: redraw() is expensive → Use DevTools Profile
 - **0.1% chance**: Something else → Requires deep analysis
