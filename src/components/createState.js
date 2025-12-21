@@ -638,10 +638,27 @@ export function createState(initialState, { batch = true } = {}) {
    *   - {string} [eventType]: Which event to listen for (default: "input" for text, "change" for checkbox/select)
    *   - {string} [prop]: Property of element to bind (e.g. "value", "textContent", "innerHTML")
    *   - {string} [attr]: Attribute of element to bind (e.g. "data-user", "title")
+   *   - {boolean} [selectiveUpdate=false]: If true, update only this element on RAF intervals instead of immediate updates
+   *   - {number} [rafInterval=0]: RAF batch interval (0 = batch all on same frame, >0 = max elements per frame)
    * @returns {Function} Call to unbind listeners
+   *
+   * @example
+   * // Basic one-way binding
+   * state.bindToDOM('user.name', '#display', { prop: 'textContent' });
+   *
+   * // Two-way binding with input
+   * state.bindToDOM('user.name', '#input', { twoWay: true });
+   *
+   * // Selective RAF updates (performance: only update this element on RAF, not immediately)
+   * state.bindToDOM('largeData', '#chart', { prop: 'innerHTML', selectiveUpdate: true });
+   *
+   * // Update multiple elements with batched RAF
+   * state.bindToDOM('counter', '#label1', { prop: 'textContent', selectiveUpdate: true, rafInterval: 2 });
+   * state.bindToDOM('counter', '#label2', { prop: 'textContent', selectiveUpdate: true, rafInterval: 2 });
+   * // Both will update on same RAF frame, 2 elements per batch
    */
   proxy.bindToDOM = function (propertyPath, selectorOrElement, options = {}) {
-    const { twoWay = false, eventType, prop, attr } = options;
+    const { twoWay = false, eventType, prop, attr, selectiveUpdate = false, rafInterval = 0 } = options;
     // Accept dot, array, or string path
     const pathArr = Array.isArray(propertyPath)
       ? propertyPath
@@ -701,6 +718,10 @@ export function createState(initialState, { batch = true } = {}) {
       }
     }
 
+    // --- Selective RAF updates queue ---
+    let rafPending = false;
+    let updateQueued = false;
+    
     updateDOM();
 
     // Only update if this specific property was changed
@@ -709,7 +730,22 @@ export function createState(initialState, { batch = true } = {}) {
         change.path.length === pathArr.length &&
         change.path.every((k, i) => k === pathArr[i])
       ) {
-        updateDOM();
+        if (selectiveUpdate) {
+          // Queue update for RAF instead of immediate
+          updateQueued = true;
+          if (!rafPending) {
+            rafPending = true;
+            requestAnimationFrame(() => {
+              if (updateQueued) {
+                updateDOM();
+                updateQueued = false;
+              }
+              rafPending = false;
+            });
+          }
+        } else {
+          updateDOM();
+        }
       }
     };
     proxy.subscribe(listener);
