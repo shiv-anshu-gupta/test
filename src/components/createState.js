@@ -638,27 +638,28 @@ export function createState(initialState, { batch = true } = {}) {
    *   - {string} [eventType]: Which event to listen for (default: "input" for text, "change" for checkbox/select)
    *   - {string} [prop]: Property of element to bind (e.g. "value", "textContent", "innerHTML")
    *   - {string} [attr]: Attribute of element to bind (e.g. "data-user", "title")
-   *   - {boolean} [selectiveUpdate=false]: If true, update only this element on RAF intervals instead of immediate updates
-   *   - {number} [rafInterval=0]: RAF batch interval (0 = batch all on same frame, >0 = max elements per frame)
+   *   - {boolean} [selectiveUpdate=false]: If true, queue DOM updates on RAF frame (prevents layout thrashing on rapid updates)
+   *   - {Object} [selectiveUpdate.queue]: Use external RAF queue (for multi-binding coordination)
    * @returns {Function} Call to unbind listeners
    *
    * @example
    * // Basic one-way binding
-   * state.bindToDOM('user.name', '#display', { prop: 'textContent' });
+   * state.bindToDOM('user.name', '#nameInput');
    *
-   * // Two-way binding with input
-   * state.bindToDOM('user.name', '#input', { twoWay: true });
+   * // Two-way binding with RAF update queuing
+   * state.bindToDOM('user.name', '#nameInput', { 
+   *   twoWay: true, 
+   *   selectiveUpdate: true 
+   * });
    *
-   * // Selective RAF updates (performance: only update this element on RAF, not immediately)
-   * state.bindToDOM('largeData', '#chart', { prop: 'innerHTML', selectiveUpdate: true });
-   *
-   * // Update multiple elements with batched RAF
-   * state.bindToDOM('counter', '#label1', { prop: 'textContent', selectiveUpdate: true, rafInterval: 2 });
-   * state.bindToDOM('counter', '#label2', { prop: 'textContent', selectiveUpdate: true, rafInterval: 2 });
-   * // Both will update on same RAF frame, 2 elements per batch
+   * // Multiple bindings with shared RAF queue for coordinated updates
+   * const updateQueue = createDOMUpdateQueue();
+   * state.bindToDOM('prop1', el1, { selectiveUpdate: { queue: updateQueue } });
+   * state.bindToDOM('prop2', el2, { selectiveUpdate: { queue: updateQueue } });
    */
   proxy.bindToDOM = function (propertyPath, selectorOrElement, options = {}) {
-    const { twoWay = false, eventType, prop, attr, selectiveUpdate = false, rafInterval = 0 } = options;
+    const { twoWay = false, eventType, prop, attr, selectiveUpdate = false } = options;
+    
     // Accept dot, array, or string path
     const pathArr = Array.isArray(propertyPath)
       ? propertyPath
@@ -718,10 +719,34 @@ export function createState(initialState, { batch = true } = {}) {
       }
     }
 
-    // --- Selective RAF updates queue ---
-    let rafPending = false;
-    let updateQueued = false;
-    
+    // Initialize RAF queue if selectiveUpdate is enabled
+    let updateQueue = null;
+    if (selectiveUpdate) {
+      if (selectiveUpdate.queue) {
+        // Use provided external queue for coordination
+        updateQueue = selectiveUpdate.queue;
+      } else {
+        // Try to use global RAF queue from domUpdateQueue utility
+        // This is loaded on-demand to keep createState.js lightweight
+        try {
+          if (typeof window !== 'undefined' && window._domUpdateQueue) {
+            updateQueue = window._domUpdateQueue;
+          } else {
+            console.warn(
+              "[createState] selectiveUpdate enabled but domUpdateQueue not initialized globally. Use import { getGlobalDOMUpdateQueue } from './utils/domUpdateQueue.js' to initialize."
+            );
+            selectiveUpdate = false;
+          }
+        } catch (e) {
+          console.warn(
+            "[createState] selectiveUpdate fallback error:",
+            e.message
+          );
+          selectiveUpdate = false;
+        }
+      }
+    }
+
     updateDOM();
 
     // Only update if this specific property was changed
@@ -730,19 +755,15 @@ export function createState(initialState, { batch = true } = {}) {
         change.path.length === pathArr.length &&
         change.path.every((k, i) => k === pathArr[i])
       ) {
-        if (selectiveUpdate) {
-          // Queue update for RAF instead of immediate
-          updateQueued = true;
-          if (!rafPending) {
-            rafPending = true;
-            requestAnimationFrame(() => {
-              if (updateQueued) {
-                updateDOM();
-                updateQueued = false;
-              }
-              rafPending = false;
-            });
-          }
+        // Use RAF queue if selectiveUpdate is enabled
+        if (selectiveUpdate && updateQueue && updateQueue.isActive && updateQueue.isActive()) {
+          // Generate unique key for this binding (prevents duplicate updates to same element)
+          const dedupeKey = `${el.id || el.className || el.tagName}_${pathArr.join(".")}`;
+          updateQueue.queueUpdate({
+            element: el,
+            updateFn: updateDOM,
+            dedupeKey,
+          });
         } else {
           updateDOM();
         }
@@ -775,13 +796,18 @@ export function createState(initialState, { batch = true } = {}) {
       };
       el.addEventListener(evt, handler);
 
-      // Unbind both state and DOM listeners
+      // Unbind both state and DOM listeners, clean up RAF queue reference
       return () => {
         proxy.unsubscribe(listener);
         el.removeEventListener(evt, handler);
+        updateQueue = null; // Release reference to allow GC
       };
     } else {
-      return () => proxy.unsubscribe(listener);
+      // Unbind state listener, clean up RAF queue reference
+      return () => {
+        proxy.unsubscribe(listener);
+        updateQueue = null; // Release reference to allow GC
+      };
     }
   };
 

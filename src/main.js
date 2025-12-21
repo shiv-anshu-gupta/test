@@ -56,8 +56,10 @@ import {
   toggleTheme,
   getCurrentTheme,
 } from "./utils/themeManager.js";
+import { initGlobalDOMUpdateQueue } from "./utils/domUpdateQueueInit.js";
 
-// Debug: Script loaded successfully
+// Initialize global DOM update queue for selectiveUpdate feature
+initGlobalDOMUpdateQueue();
 
 /**
  * @file main.js - Core application logic and parent-child window messaging
@@ -263,13 +265,40 @@ export const CALLBACK_TYPE = {
  * @see {@link updateChannelFieldByID} - Uses this function to locate channels
  * @see {@link deleteChannelByID} - Uses this function to locate channels
  */
+// ⚡ Fast lookup map for channelID -> {type, idx} (O(1) instead of O(n))
+// Updated whenever channelIDs change
+const channelIDMap = new Map();
+
+/**
+ * Rebuild the fast lookup map when channelIDs change
+ * Should be called after any change to channelState.analog/digital.channelIDs
+ */
+function rebuildChannelIDMap() {
+  channelIDMap.clear();
+  
+  // Map analog channels
+  const analogIDs = channelState.analog?.channelIDs || [];
+  analogIDs.forEach((id, idx) => {
+    if (id) channelIDMap.set(id, { type: 'analog', idx });
+  });
+  
+  // Map digital channels
+  const digitalIDs = channelState.digital?.channelIDs || [];
+  digitalIDs.forEach((id, idx) => {
+    if (id) channelIDMap.set(id, { type: 'digital', idx });
+  });
+}
+
 function findChannelByID(channelID) {
   if (!channelID) return null;
-  const aIdx = (channelState.analog.channelIDs || []).indexOf(channelID);
-  if (aIdx >= 0) return { type: "analog", idx: aIdx };
-  const dIdx = (channelState.digital.channelIDs || []).indexOf(channelID);
-  if (dIdx >= 0) return { type: "digital", idx: dIdx };
-  return null;
+  
+  // ⚡ Fast O(1) lookup using map instead of O(n) indexOf
+  const result = channelIDMap.get(channelID);
+  if (result) return result;
+  
+  // Fallback: rebuild map in case it's stale (safety net)
+  rebuildChannelIDMap();
+  return channelIDMap.get(channelID) || null;
 }
 /**
  * Update a specific field of a channel identified by its channelID
@@ -1804,6 +1833,21 @@ async function handleLoadFiles() {
     if (window._resizableGroup) window._resizableGroup.disconnect();
     window._resizableGroup = new ResizableGroup(".dragBar");
 
+    // ⚡ Initialize fast lookup map for channel lookups (O(1) instead of O(n))
+    rebuildChannelIDMap();
+    
+    // ⚡ Rebuild map whenever channelIDs change (e.g., file load, reorder)
+    try {
+      channelState.analog?.subscribe?.(() => {
+        rebuildChannelIDMap();
+      });
+      channelState.digital?.subscribe?.(() => {
+        rebuildChannelIDMap();
+      });
+    } catch (e) {
+      console.warn('[main] Failed to set up channelID map rebuild:', e);
+    }
+
     // ⏱️ OPTIMIZATION: Defer subscription setup to avoid blocking UI
     // subscribeChartUpdates sets up many listeners - do this in idle time
     if (window.requestIdleCallback) {
@@ -2372,8 +2416,18 @@ window.addEventListener("message", (ev) => {
   if (!msg || msg.source !== "ChildWindow") return;
   const { type, payload } = msg;
 
-  console.log(`[Performance] Message received from ChildWindow: ${type}`, {
-    timestamp: msgStartTime,
+  // ⏱️ DIAGNOSTIC: Track all phases of message processing
+  const timings = {
+    start: msgStartTime,
+    parsed: 0,
+    switched: 0,
+    subscribers: 0,
+    chartUpdate: 0,
+    total: 0
+  };
+
+  console.log(`[Performance] 📨 Message received from ChildWindow: ${type}`, {
+    timestamp: msgStartTime.toFixed(2),
   });
 
   try {
@@ -3088,14 +3142,23 @@ window.addEventListener("message", (ev) => {
     console.error("Error handling child message:", err);
   }
 
-  // Log total processing time
+  // ⏱️ DIAGNOSTIC: Log detailed breakdown of where time was spent
   const msgEndTime = performance.now();
   const totalTime = msgEndTime - msgStartTime;
-  console.log(`[Performance] Message processing complete: ${type}`, {
-    startTime: msgStartTime.toFixed(2),
-    endTime: msgEndTime.toFixed(2),
-    totalMs: totalTime.toFixed(2),
-    performance:
-      totalTime > 100 ? "🔴 SLOW" : totalTime > 50 ? "🟡 OK" : "🟢 FAST",
-  });
+  
+  if (totalTime > 30) {
+    console.warn(`[Performance] ⚠️ SLOW Message processing: ${type}`, {
+      totalMs: totalTime.toFixed(2),
+      detail: '🐢 Check if: debugLite.log() is slow, subscribers are blocking, chart.redraw() is expensive',
+      performance:
+        totalTime > 500 ? "🔴 VERY SLOW (FREEZE!)" : 
+        totalTime > 200 ? "🔴 SLOW" : 
+        totalTime > 100 ? "🟡 MEDIUM" : "🟡 OK",
+    });
+  } else if (totalTime > 10) {
+    console.log(`[Performance] ✅ Message processing: ${type}`, {
+      totalMs: totalTime.toFixed(2),
+      performance: "🟢 FAST",
+    });
+  }
 });

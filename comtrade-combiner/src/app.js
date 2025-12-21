@@ -5,13 +5,17 @@
 
 import ComtradeFileParser from "./utils/fileParser.js";
 import ComtradeCombiner from "./utils/combiner.js";
+import ReportGenerator from "./utils/reportGenerator.js";
+import ComtradeDataExporter from "./utils/dataExporter.js";
 
 class ComtradeComberApp {
   constructor() {
     this.selectedFiles = [];
     this.parsedData = [];
     this.groups = [];
+    this.report = null;
     this.initializeEventListeners();
+    this.initializeTabs();
   }
 
   initializeEventListeners() {
@@ -38,6 +42,36 @@ class ComtradeComberApp {
     // Modal close
     document.querySelector(".close").addEventListener("click", () => {
       this.closeModal();
+    });
+
+    // Download report button
+    const downloadBtn = document.getElementById("downloadReportBtn");
+    if (downloadBtn) {
+      downloadBtn.addEventListener("click", () => {
+        this.downloadReport();
+      });
+    }
+  }
+
+  initializeTabs() {
+    const tabButtons = document.querySelectorAll(".tab-button");
+    const tabContents = document.querySelectorAll(".tab-content");
+
+    tabButtons.forEach((button) => {
+      button.addEventListener("click", () => {
+        const tabName = button.getAttribute("data-tab");
+
+        // Remove active from all buttons and contents
+        tabButtons.forEach((btn) => btn.classList.remove("active"));
+        tabContents.forEach((content) => content.classList.remove("active"));
+
+        // Add active to clicked button and corresponding content
+        button.classList.add("active");
+        const targetTab = document.getElementById(`${tabName}-tab`);
+        if (targetTab) {
+          targetTab.classList.add("active");
+        }
+      });
     });
   }
 
@@ -97,6 +131,7 @@ class ComtradeComberApp {
         this.parsedData.push({
           ...cfgData,
           ...datData,
+          fileName: pair.cfg.name.replace(".cfg", ""),
         });
       }
 
@@ -115,6 +150,18 @@ class ComtradeComberApp {
       this.groups = ComtradeCombiner.groupByTimeWindow(
         this.parsedData,
         timeWindow
+      );
+
+      // Generate report
+      this.report = ReportGenerator.generateReport(
+        this.groups,
+        this.parsedData,
+        {
+          removeDuplicates,
+          removeSimilar,
+          similarityThreshold: threshold,
+          timeWindow,
+        }
       );
 
       // Display analysis results
@@ -173,7 +220,7 @@ class ComtradeComberApp {
 
     // Total statistics
     const totalChannels = this.parsedData.reduce(
-      (sum, f) => sum + f.channels.length,
+      (sum, f) => sum + (f.channels ? f.channels.length : 0),
       0
     );
     html += `
@@ -187,6 +234,9 @@ class ComtradeComberApp {
 
     // Display combine groups
     this.displayCombineGroups(removeDuplicates, removeSimilar, threshold);
+
+    // Display detailed report
+    this.displayDetailedReport();
   }
 
   displayCombineGroups(removeDuplicates, removeSimilar, threshold) {
@@ -230,6 +280,39 @@ class ComtradeComberApp {
     groupsDiv.innerHTML = html;
   }
 
+  displayDetailedReport() {
+    const reportDiv = document.getElementById("detailedReport");
+    const downloadBtn = document.getElementById("downloadReportBtn");
+
+    if (!this.report) {
+      reportDiv.innerHTML = '<p class="placeholder">No report generated</p>';
+      return;
+    }
+
+    const reportHTML = ReportGenerator.generateHTML(this.report);
+    reportDiv.innerHTML = reportHTML;
+
+    // Show download button
+    if (downloadBtn) {
+      downloadBtn.style.display = "block";
+    }
+  }
+
+  downloadReport() {
+    if (!this.report) return;
+
+    const metadata = ComtradeDataExporter.generateMetadata(this.report);
+    const jsonData = JSON.stringify(this.report, null, 2);
+
+    // Create a combined export with both metadata and full report
+    const timestamp = new Date().toISOString().slice(0, 10);
+    ComtradeDataExporter.downloadFile(
+      jsonData,
+      `comtrade_combination_report_${timestamp}.json`,
+      "application/json"
+    );
+  }
+
   async combineFiles() {
     const removeDuplicates =
       document.getElementById("removeDuplicates").checked;
@@ -242,78 +325,62 @@ class ComtradeComberApp {
 
     try {
       const combinedData = this.groups.map((group, idx) => {
-        return ComtradeCombiner.prepareCombinedFile(group, {
+        const combined = ComtradeCombiner.prepareCombinedFile(group, {
           removeDuplicates,
           removeSimilar,
           similarityThreshold: threshold,
         });
+
+        // Add group number for later reference
+        combined.groupNumber = idx + 1;
+        return combined;
       });
 
-      // Show export summary
-      this.showExportSummary(combinedData);
+      // Export files
+      combinedData.forEach((data) => {
+        try {
+          const exported = ComtradeDataExporter.exportGroup(
+            {
+              files: this.report.groups[data.groupNumber - 1].files.map(
+                (f) => ({
+                  fileName: f.name,
+                })
+              ),
+              startTime: new Date(
+                this.report.groups[data.groupNumber - 1].timeSpan.startTime
+              ),
+              groupNumber: data.groupNumber,
+            },
+            data.mergedChannels
+          );
 
-      this.updateStatus("✅ Ready to export! Check the modal for details.");
+          // Log export info
+          console.log(
+            `[combineFiles] Exported group ${data.groupNumber}:`,
+            exported.filename
+          );
+        } catch (err) {
+          console.warn(
+            `[combineFiles] Could not export CFG/DAT for group ${data.groupNumber}:`,
+            err.message
+          );
+        }
+      });
+
+      // Show success message
+      this.updateStatus(
+        `✅ Combination complete! ${combinedData.length} group(s) processed.`
+      );
+
+      // Switch to report tab
+      const reportTab = document.querySelector('[data-tab="report"]');
+      if (reportTab) {
+        reportTab.click();
+      }
     } catch (error) {
       this.updateStatus(`❌ Error: ${error.message}`);
       console.error(error);
     }
-  }
-
-  showExportSummary(combinedData) {
-    const modal = document.getElementById("detailsModal");
-    const title = document.getElementById("modalTitle");
-    const body = document.getElementById("modalBody");
-
-    title.textContent = "📦 Combined Files Summary";
-
-    let html = '<div style="max-height: 500px; overflow-y: auto;">';
-
-    combinedData.forEach((data, idx) => {
-      html += `
-        <div style="margin-bottom: 20px; padding: 12px; background: var(--bg-tertiary); border-radius: 6px;">
-          <h3 style="margin-bottom: 10px; color: var(--primary-color);">Combined File ${
-            idx + 1
-          }</h3>
-          <p><strong>Files:</strong> ${data.originalFiles.join(", ")}</p>
-          <p><strong>Start Time:</strong> ${new Date(
-            data.startTime
-          ).toLocaleString()}</p>
-          <p><strong>Time Span:</strong> ${data.timeSpan.toFixed(2)} seconds</p>
-          <p><strong>Original Channels:</strong> ${data.totalChannels}</p>
-          <p><strong>Duplicates Removed:</strong> ${data.duplicatesRemoved}</p>
-          <p><strong>Similar Removed:</strong> ${data.similarRemoved}</p>
-          <p><strong style="color: var(--success-color);">Final Channels:</strong> ${
-            data.finalChannelCount
-          }</p>
-          
-          <div style="margin-top: 10px;">
-            <strong>Merged Channels:</strong>
-            <ul style="margin-top: 5px; margin-left: 20px;">
-              ${data.mergedChannels
-                .slice(0, 5)
-                .map((ch) => `<li>${ch.name} (${ch.type})</li>`)
-                .join("")}
-              ${
-                data.mergedChannels.length > 5
-                  ? `<li>... and ${data.mergedChannels.length - 5} more</li>`
-                  : ""
-              }
-            </ul>
-          </div>
-        </div>
-      `;
-    });
-
-    html += `
-      <div style="margin-top: 20px; padding: 12px; background: rgba(16, 185, 129, 0.1); border-radius: 6px;">
-        <p><strong>Next Step:</strong> This is a preview of what will be combined.</p>
-        <p>Implement the actual file export/merge logic here.</p>
-        <p>Files would be created with merged data + new CFG/DAT pair.</p>
-      </div>
-    </div>`;
-
-    body.innerHTML = html;
-    modal.classList.add("show");
   }
 
   updateStatus(text) {
@@ -329,19 +396,30 @@ class ComtradeComberApp {
     this.selectedFiles = [];
     this.parsedData = [];
     this.groups = [];
+    this.report = null;
     document.getElementById("fileList").innerHTML =
       '<p class="placeholder">No files selected yet</p>';
     document.getElementById("analysisResults").innerHTML =
       '<p class="placeholder">Click "Analyze Files" to see results</p>';
     document.getElementById("combineGroups").innerHTML =
       '<p class="placeholder">Results will appear here</p>';
+    document.getElementById("detailedReport").innerHTML =
+      '<p class="placeholder">Generate report after combination</p>';
+    document.getElementById("previewChart").innerHTML =
+      '<p class="placeholder">Preview will appear after combining</p>';
     document.getElementById("combineBtn").disabled = true;
+    const downloadBtn = document.getElementById("downloadReportBtn");
+    if (downloadBtn) {
+      downloadBtn.style.display = "none";
+    }
     this.updateStatus("Ready");
+
+    // Switch to files tab
+    const filesTab = document.querySelector('[data-tab="files"]');
+    if (filesTab) {
+      filesTab.click();
+    }
   }
 }
 
-// Initialize app when DOM is ready
-document.addEventListener("DOMContentLoaded", () => {
-  window.app = new ComtradeComberApp();
-  console.log("COMTRADE File Combiner initialized");
-});
+const app = new ComtradeComberApp();

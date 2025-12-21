@@ -95,29 +95,79 @@
 
         <!-- Right Panel: Preview & Results -->
         <div class="panel preview-panel">
-          <h2>📊 Preview & Analysis</h2>
+          <h2>📊 Preview & Analysis Results</h2>
 
-          <!-- File List -->
-          <div class="section">
-            <h3>Uploaded Files</h3>
-            <div id="fileList" class="file-list">
-              <p class="placeholder">No files selected yet</p>
+          <!-- Tabs for different views -->
+          <div class="tabs">
+            <button class="tab-button active" data-tab="files">📁 Files</button>
+            <button class="tab-button" data-tab="analysis">📈 Analysis</button>
+            <button class="tab-button" data-tab="groups">🔗 Groups</button>
+            <button class="tab-button" data-tab="report">📋 Report</button>
+            <button class="tab-button" data-tab="preview">👁️ Preview</button>
+          </div>
+
+          <!-- File List Tab -->
+          <div class="tab-content active" id="files-tab">
+            <div class="section">
+              <h3>Uploaded Files</h3>
+              <div id="fileList" class="file-list">
+                <p class="placeholder">No files selected yet</p>
+              </div>
             </div>
           </div>
 
-          <!-- Analysis Results -->
-          <div class="section">
-            <h3>Analysis Results</h3>
-            <div id="analysisResults" class="analysis-results">
-              <p class="placeholder">Click "Analyze Files" to see results</p>
+          <!-- Analysis Results Tab -->
+          <div class="tab-content" id="analysis-tab">
+            <div class="section">
+              <h3>Analysis Results</h3>
+              <div id="analysisResults" class="analysis-results">
+                <p class="placeholder">Click "Analyze Files" to see results</p>
+              </div>
             </div>
           </div>
 
-          <!-- Combined Groups -->
-          <div class="section">
-            <h3>Combine Groups</h3>
-            <div id="combineGroups" class="combine-groups">
-              <p class="placeholder">Results will appear here</p>
+          <!-- Combined Groups Tab -->
+          <div class="tab-content" id="groups-tab">
+            <div class="section">
+              <h3>Combine Groups Preview</h3>
+              <div id="combineGroups" class="combine-groups">
+                <p class="placeholder">Results will appear here</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Report Tab -->
+          <div class="tab-content" id="report-tab">
+            <div class="section">
+              <h3>Combination Report</h3>
+              <div id="detailedReport" class="detailed-report">
+                <p class="placeholder">Generate report after combination</p>
+              </div>
+              <button
+                id="downloadReportBtn"
+                class="btn btn-secondary"
+                style="margin-top: 10px; display: none"
+              >
+                📥 Download Report (JSON)
+              </button>
+            </div>
+          </div>
+
+          <!-- Preview Tab -->
+          <div class="tab-content" id="preview-tab">
+            <div class="section">
+              <h3>Data Preview Chart</h3>
+              <div
+                id="previewChart"
+                class="preview-chart"
+                style="
+                  height: 300px;
+                  border: 1px solid var(--border-color);
+                  border-radius: 6px;
+                "
+              >
+                <p class="placeholder">Preview will appear after combining</p>
+              </div>
             </div>
           </div>
         </div>
