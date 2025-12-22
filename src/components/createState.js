@@ -1,38 +1,52 @@
 /**
- * createState.js
+ * @file createState.js
+ * @module createState
+ * @description
+ * High-performance, deeply reactive state management system for vanilla JavaScript applications.
+ * Provides observable state with path-based and selector-based subscriptions, batched updates,
+ * computed properties, middleware support, DOM binding capabilities, and full undo/redo history.
  *
- * High-performance, deeply reactive state management for vanilla JS apps.
+ * @example
+ * // Create reactive state
+ * const state = createState({ user: { name: "Alice", city: "Paris" } });
+ * state.user.name = "Bob"; // Triggers all subscribers
  *
- * Feature Set:
- * - Deep reactivity: Nested objects, arrays, and Maps are fully reactive using Proxies. Any change, no matter how deep, is detected and can trigger subscribers.
- * - Path-based subscriptions: Subscribe to all changes, a specific property, or all descendants of a path (string or array).
- * - Selector-based subscriptions: Subscribe to changes in derived/computed values using a selector function.
- * - Batching: State change notifications are batched by default for performance; can be disabled per state instance.
- * - Computed/derived properties: Define computed or derived values that update automatically when dependencies change, accessible as properties on the state.
- * - Middleware/interceptors: Intercept, transform, or log state changes before subscribers are notified.
- * - Error handling: Subscriber errors are caught and logged, so one bad subscriber does not break the system.
- * - Unsubscribe: Remove listeners for both global and path-specific subscriptions.
- * - Extensibility: Easily add persistence, devtools, or TypeScript support as needed.
+ * // Subscribe to changes
+ * state.subscribe(change => {
+ *   console.log("Changed:", change.path, change.newValue);
+ * });
  *
- * ---
+ * // Subscribe to specific path
+ * state.subscribe(change => {
+ *   console.log("User changed:", change.newValue);
+ * }, { path: "user" });
  *
- * The `change` object passed to subscribers has these properties:
- *   - path: Array of keys from root to the changed property (e.g. ['user','profile','city'])
- *   - newValue: The new value of the property after the change
- *   - oldValue: The previous value of the property before the change
- *   - prop: The property key that was changed (last element in path)
- *   - root: The root state proxy (entire state tree)
- *   - selectorValue (optional): The value returned by your selector function, if using selector-based subscription
+ * // Computed property
+ * state.computed("fullInfo", ["user.name", "user.city"], s => 
+ *   `${s.user.name} from ${s.user.city}`
+ * );
+ * console.log(state.fullInfo); // "Bob from Paris"
+ */
+
+/**
+ * @typedef {Object} ChangeObject
+ * @property {Array<string|number>} path - Array of keys from root to changed property (e.g., ['user', 'profile', 'city'])
+ * @property {*} newValue - The new value of the property after change
+ * @property {*} oldValue - The previous value of the property before change
+ * @property {string|number} prop - The property key that changed (last element in path)
+ * @property {Proxy} root - The root state proxy object (entire state tree)
+ * @property {*} [selectorValue] - Optional: value returned by selector function (selector-based subscriptions only)
  *
- * Example `change` object:
- *   {
- *     path: ['user', 'profile', 'city'],
- *     newValue: 'London',
- *     oldValue: 'Paris',
- *     prop: 'city',
- *     root: /* the root state proxy *\,
- *     selectorValue: 'AliceLondon' // only if using a selector
- *   }
+ * @example
+ * // Typical change object structure
+ * {
+ *   path: ['user', 'profile', 'city'],
+ *   newValue: 'London',
+ *   oldValue: 'Paris',
+ *   prop: 'city',
+ *   root: proxyObject,
+ *   selectorValue: 'AliceLondon' // only if using selector subscription
+ * }
  *
  * * ----------------------------------------------------------------------------
  * FUNCTION SIGNATURES:
@@ -203,6 +217,64 @@
  * - For primitive state (number, string, boolean), use state.value to get/set the value.
  */
 
+/**
+ * @typedef {Object} CreateStateOptions
+ * @property {boolean} [batch=true] - Enable batched notifications (updates grouped per animation frame)
+ */
+
+/**
+ * @typedef {Object} SubscribeOptions
+ * @property {string|Array<string>} [path] - Property path to subscribe to (dot-notation string or array)
+ * @property {boolean} [descendants=false] - If true, subscribe to all descendants of path
+ * @property {Function} [selector] - Function to derive a computed value from state (triggers only on value change)
+ */
+
+/**
+ * Creates a deeply reactive state object with comprehensive change tracking, subscriptions,
+ * computed properties, middleware support, and DOM binding capabilities.
+ *
+ * @function createState
+ * @param {Object|Array|string|number|boolean} initialState - Initial state value (object, array, or primitive)
+ * @param {CreateStateOptions} [options={}] - Configuration options
+ * @param {boolean} [options.batch=true] - Enable batched change notifications for performance
+ *
+ * @returns {Proxy} Reactive proxy with methods and properties:
+ *   - subscribe(fn, options): Subscribe to state changes
+ *   - unsubscribe(fn): Remove subscription
+ *   - computed(name, deps, fn): Define computed property
+ *   - derived(name, deps, fn): Alias for computed()
+ *   - use(middleware): Add middleware to intercept changes
+ *   - bindToDOM(path, selector, options): Bind state to DOM elements
+ *   - undoLast(): Revert to previous state
+ *   - redoLast(): Reapply undone changes
+ *   - getHistory(): Get change history array
+ *   - clearHistory(): Clear history
+ *   - suspendHistory(): Pause history recording
+ *   - resumeHistory(): Resume history recording
+ *   - withoutHistory(fn): Execute function without recording history
+ *
+ * @example
+ * // Object state - access properties directly
+ * const state = createState({ user: { name: "Alice", profile: { city: "Paris" } } });
+ * state.user.name = "Bob"; // Triggers subscribers
+ *
+ * @example
+ * // Primitive state - use .value property
+ * const count = createState(0);
+ * count.value = 1; // Triggers subscribers
+ *
+ * @example
+ * // Subscribe to specific path
+ * state.subscribe(change => {
+ *   console.log("User changed:", change.newValue);
+ * }, { path: "user" });
+ *
+ * @example
+ * // Computed properties
+ * state.computed("fullInfo", ["user.name", "user.city"], s => 
+ *   `${s.user.name} from ${s.user.city}`
+ * );
+ */
 export function createState(initialState, { batch = true } = {}) {
   const HISTORY_KEY = "__uplot_history__";
   let history = [];
