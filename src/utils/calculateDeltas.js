@@ -25,19 +25,9 @@ export function collectChartDeltas(
 
   // Defensive: Check if we have valid data
   if (!Array.isArray(verticalLinesX) || verticalLinesX.length < 1) {
-    console.log(
-      `[collectChartDeltas] No vertical lines (${
-        verticalLinesX ? verticalLinesX.length : 0
-      })`
-    );
     return deltaData;
   }
   if (!chart || !chart.data || !Array.isArray(chart.data[0])) {
-    console.log(`[collectChartDeltas] Invalid chart data`, {
-      hasChart: !!chart,
-      hasData: !!chart?.data,
-      hasTimeArr: !!chart?.data?.[0],
-    });
     return deltaData;
   }
 
@@ -45,9 +35,6 @@ export function collectChartDeltas(
   const seriesData = chart.data.slice(1); // All Y-series data
 
   if (!Array.isArray(seriesData) || seriesData.length === 0) {
-    console.log(
-      `[collectChartDeltas] No series data (${seriesData.length} series)`
-    );
     return deltaData;
   }
 

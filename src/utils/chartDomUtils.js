@@ -1,7 +1,6 @@
 // chartDomUtils.js
 // Small abstractions for chart container and uPlot chart setup
 import { createCustomElement } from "./helpers.js";
-import { fixChartAxisColors } from "../components/chartComponent.js";
 
 /**
  * Creates a chart parent container with a label, drag bar, and chart div.
@@ -139,17 +138,13 @@ export function initUPlotChart(opts, chartData, chartDiv, charts) {
   chart._seriesColors = opts.series.slice(1).map((s) => s.stroke);
 
   charts.push(chart);
-  // Fix axis text colors for dark theme - call twice with delay to ensure it works
-  fixChartAxisColors(chartDiv);
-  setTimeout(() => fixChartAxisColors(chartDiv), 100);
+
   const ro = new ResizeObserver((entries) => {
     for (let entry of entries) {
       chart.setSize({
         width: entry.contentRect.width,
         height: entry.contentRect.height,
       });
-      // Fix colors again after resize
-      setTimeout(() => fixChartAxisColors(chartDiv), 50);
     }
   });
   ro.observe(chartDiv);

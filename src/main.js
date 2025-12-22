@@ -2250,95 +2250,15 @@ function applyInitialStartDurations(channelState, dataState, charts) {
   });
 }
 
-// --- Reactive color updates ---
-let renderScheduled = false;
-let initialRenderDone = false;
+// ⚡ OPTIMIZATION NOTE: Removed old updateChartsSafely function
+// Color updates are now handled efficiently by the chartManager.js color subscriber
+// which performs in-place updates without full chart recreation
 
-function updateChartsSafely(change) {
-  if (renderScheduled) return;
-  renderScheduled = true;
-
-  requestAnimationFrame(() => {
-    renderScheduled = false;
-
-    // If first render
-    if (!initialRenderDone) {
-      renderComtradeCharts(
-        cfg,
-        data,
-        chartsContainer,
-        charts,
-        verticalLinesX,
-        createState,
-        calculateDeltas,
-        TIME_UNIT,
-        channelState
-      );
-      initialRenderDone = true;
-      return;
-    }
-
-    // Try to perform in-place updates
-    let handled = false;
-    if (change && Array.isArray(change.path) && change.path.length >= 2) {
-      const [type, prop, index] = change.path;
-      const newValue = change.newValue;
-
-      if ((type === "analog" || type === "digital") && charts) {
-        // Find the chart that contains this global channel index (grouped charts)
-        if (prop === "lineColors" && typeof index === "number") {
-          for (let ci = 0; ci < charts.length; ci++) {
-            const chart = charts[ci];
-            if (!chart || chart._type !== type) continue;
-            const mapping = chart._channelIndices;
-            if (Array.isArray(mapping)) {
-              const pos = mapping.indexOf(index);
-              if (pos >= 0) {
-                try {
-                  chart.setSeries(pos + 1, {
-                    stroke: newValue,
-                    points: { stroke: newValue },
-                  });
-                  handled = true;
-                  break;
-                } catch (err) {
-                  console.warn(
-                    "In-place series color update failed on chart, falling back to full render.",
-                    err
-                  );
-                  handled = false;
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-
-    // Full re-render if needed
-    if (!handled) {
-      renderComtradeCharts(
-        cfg,
-        data,
-        chartsContainer,
-        charts,
-        verticalLinesX,
-        createState,
-        calculateDeltas,
-        TIME_UNIT,
-        channelState
-      );
-    }
-  });
-}
-
-// Subscribe to color changes
-channelState.subscribe((change) => {
-  const [type, prop] = change.path;
-  if ((type === "analog" || type === "digital") && prop === "lineColors") {
-    updateChartsSafely(change);
-  }
-});
+// ⚡ OPTIMIZATION: Color updates are handled by the chartManager color subscriber
+// which does efficient in-place updates. Disable the old updateChartsSafely to avoid
+// full renders on color changes.
+// OLD CODE (disabled): channelState.subscribe for lineColors → updateChartsSafely
+// NEW PATH: lineColors change → chartManager color subscriber → in-place chart update
 
 // Debug: watch start/duration state changes and log via debugPanelLite so we can trace
 try {

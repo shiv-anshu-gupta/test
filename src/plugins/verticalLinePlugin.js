@@ -288,20 +288,13 @@ export default function verticalLinePlugin(
       draw: [
         (u) => {
           // This runs after all series are drawn
-          console.log("[verticalLinePlugin.draw] Hook invoked");
           // Defensive: ensure verticalLinesXState is available
           if (!verticalLinesXState) {
-            console.warn(
-              "[verticalLinePlugin] verticalLinesXState is undefined, skipping draw"
-            );
             return;
           }
 
           // Validate chart data exists
           if (!u.data || !u.data[0] || u.data[0].length === 0) {
-            console.warn(
-              "[verticalLinePlugin] Chart has no data, skipping draw"
-            );
             return;
           }
 

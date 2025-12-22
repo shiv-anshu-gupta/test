@@ -1,5 +1,5 @@
 // src/components/renderComtradeCharts.js
-import { createChartOptions, fixChartAxisColors } from "./chartComponent.js";
+import { createChartOptions } from "./chartComponent.js";
 import { createDragBar } from "./createDragBar.js";
 import { setupChartDragAndDrop } from "./setupChartDragAndDrop.js";
 import { renderAnalogCharts } from "./renderAnalogCharts.js";
@@ -80,20 +80,18 @@ export function renderComtradeCharts(
 
   const renderEndTime = performance.now();
   const totalTime = renderEndTime - renderStartTime;
-  console.log(
-    `[renderComtradeCharts] ✅ All ${
-      charts.length
-    } charts rendered in ${totalTime.toFixed(1)}ms`
-  );
+
+  // Only log if render took significant time (not a quick in-place update)
+  if (totalTime > 100) {
+    console.log(
+      `[renderComtradeCharts] ✅ All ${
+        charts.length
+      } charts rendered in ${totalTime.toFixed(1)}ms`
+    );
+  }
 
   if (charts.length > 0) {
     // Process deltas
-    console.log(
-      "[renderComtradeCharts] Processing deltas for",
-      charts.length,
-      "charts"
-    );
-
     (async () => {
       try {
         const { collectChartDeltas } = await import(

@@ -328,231 +328,40 @@ export function logScalesDiagnostics(opts, context = "") {
 }
 
 /**
- * Update chart grid and label colors - CSS-based approach
- * This works by injecting CSS into the SVG itself
- * @param {uPlot} chart - The uPlot chart instance
- * @param {string} axisColor - Text color for axis labels (hex code)
- * @param {string} gridColor - Grid line color (hex code)
- */
-export function updateChartColorsWithSetOpts(chart, axisColor, gridColor) {
-  // Validate chart instance
-  if (!chart) {
-    console.warn("[updateChartColorsWithSetOpts] ⚠️ Chart is null/undefined");
-    return;
-  }
-
-  // Use the SVG root directly
-  if (!chart.root) {
-    console.warn(
-      "[updateChartColorsWithSetOpts] ⚠️ Chart.root (SVG) is undefined"
-    );
-    console.log("[updateChartColorsWithSetOpts] Debug info:", {
-      chartKeys: Object.keys(chart).slice(0, 10),
-      hasData: !!chart.data,
-      dataLength: chart.data ? chart.data.length : 0,
-    });
-    return;
-  }
-
-  console.log(
-    `[updateChartColorsWithSetOpts] 📊 Updating SVG colors - text: ${axisColor}, grid: ${gridColor}`
-  );
-  console.log("[updateChartColorsWithSetOpts] chart.root:", {
-    tagName: chart.root.tagName,
-    hasQuerySelector: typeof chart.root.querySelectorAll === "function",
-  });
-
-  // Update SVG colors directly
-  updateSVGColors(chart.root, axisColor, gridColor);
-}
-
-/**
- * Update SVG colors directly by modifying attributes and styles
- * @param {SVGElement} svgElement - The SVG element containing the chart
- * @param {string} axisColor - Text color for axis labels
- * @param {string} gridColor - Grid line color
- */
-function updateSVGColors(svgElement, axisColor, gridColor) {
-  if (!svgElement) {
-    console.warn("[updateSVGColors] ⚠️ SVG element is null/undefined");
-    return;
-  }
-
-  // Handle case where svgElement might not have querySelectorAll (shouldn't happen, but be safe)
-  if (typeof svgElement.querySelectorAll !== "function") {
-    console.warn(
-      `[updateSVGColors] ⚠️ SVG element is not valid - type: ${typeof svgElement}, tag: ${
-        svgElement.tagName || "unknown"
-      }`
-    );
-    return;
-  }
-
-  try {
-    console.log(
-      `[updateSVGColors] 🎨 Starting SVG color update - SVG tag: ${svgElement.tagName}`
-    );
-
-    // Update ALL text elements (axis labels and numbers)
-    const textElements = svgElement.querySelectorAll("text");
-    console.log(`[updateSVGColors] Found ${textElements.length} text elements`);
-
-    textElements.forEach((textEl) => {
-      textEl.setAttribute("fill", axisColor);
-      textEl.style.fill = axisColor;
-      textEl.style.color = axisColor;
-    });
-
-    // Update ALL line elements (grid lines and axes)
-    const lineElements = svgElement.querySelectorAll("line");
-    console.log(`[updateSVGColors] Found ${lineElements.length} line elements`);
-
-    lineElements.forEach((lineEl) => {
-      lineEl.setAttribute("stroke", gridColor);
-      lineEl.style.stroke = gridColor;
-    });
-
-    // Update ALL path elements (sometimes grid lines are paths)
-    const pathElements = svgElement.querySelectorAll("path");
-    console.log(`[updateSVGColors] Found ${pathElements.length} path elements`);
-
-    pathElements.forEach((pathEl) => {
-      // Only update if it currently has a stroke attribute that looks like a grid color
-      if (pathEl.hasAttribute("stroke")) {
-        const stroke = pathEl.getAttribute("stroke");
-        // Update if it's a light/dark color typical for grids (not a series color)
-        if (stroke && stroke !== "none" && !stroke.startsWith("url")) {
-          pathEl.setAttribute("stroke", gridColor);
-          pathEl.style.stroke = gridColor;
-        }
-      }
-    });
-
-    // Also inject a style tag for any CSS-based elements
-    let styleTag = svgElement.querySelector("style[data-theme-colors]");
-    if (styleTag) {
-      styleTag.remove();
-    }
-
-    styleTag = document.createElement("style");
-    styleTag.setAttribute("data-theme-colors", "true");
-    styleTag.innerHTML = `
-      svg text { fill: ${axisColor} !important; color: ${axisColor} !important; }
-      svg line { stroke: ${gridColor} !important; }
-    `;
-    svgElement.insertBefore(styleTag, svgElement.firstChild);
-
-    console.log(
-      `[updateSVGColors] ✅ Updated ${textElements.length} text, ${lineElements.length} line, ${pathElements.length} path elements`
-    );
-  } catch (e) {
-    console.error("[updateSVGColors] ❌ Error updating SVG colors:", e);
-  }
-}
-
-/**
- * Backward compatibility wrapper for old fixChartAxisColors function
- * Maps to the new SVG update method
- * @deprecated Use updateAllChartAxisColors() instead
- * @param {HTMLElement} chartContainer - The chart container element
- */
-export function fixChartAxisColors(chartContainer) {
-  if (!chartContainer) return;
-
-  // Get current theme colors from CSS variables
-  const computedStyle = getComputedStyle(document.documentElement);
-  const axisColor =
-    computedStyle.getPropertyValue("--chart-text").trim() || "#ffffff";
-  const gridColor =
-    computedStyle.getPropertyValue("--chart-grid").trim() || "#404040";
-
-  console.log(
-    `[fixChartAxisColors] Updating container - text: ${axisColor}, grid: ${gridColor}`
-  );
-
-  // Find the SVG within the container
-  let svgElement = chartContainer;
-  if (chartContainer.tagName !== "svg") {
-    svgElement = chartContainer.querySelector("svg");
-    console.log(
-      `[fixChartAxisColors] Container is ${
-        chartContainer.tagName
-      }, searching for SVG: ${svgElement ? "✅ Found" : "❌ Not found"}`
-    );
-  }
-
-  if (svgElement) {
-    // Use the direct SVG update method
-    updateSVGColors(svgElement, axisColor, gridColor);
-  }
-}
-
-/**
- * Update all visible chart axes when theme changes
- * Forces chart redraw so axis colors read from CSS variables
- * @param {Array} chartsArray - Array of uPlot chart instances from main.js
+ * Update all chart colors when theme changes
+ * Redraws charts to re-evaluate axis color functions from CSS variables
+ * @param {Array} chartsArray - Array of uPlot chart instances
  */
 export function updateAllChartAxisColors(chartsArray = null) {
-  // Get theme colors from CSS variables
-  const computedStyle = getComputedStyle(document.documentElement);
-  const axisColor =
-    computedStyle.getPropertyValue("--chart-text").trim() || "#ffffff";
-  const gridColor =
-    computedStyle.getPropertyValue("--chart-grid").trim() || "#404040";
+  if (!chartsArray || !Array.isArray(chartsArray)) {
+    return;
+  }
 
   console.log(
-    `[updateAllChartAxisColors] 🎨 Updating all charts - text: ${axisColor}, grid: ${gridColor}`
+    `[updateAllChartAxisColors] 🎨 Redrawing ${chartsArray.length} charts for theme change`
   );
 
-  if (chartsArray && Array.isArray(chartsArray)) {
-    chartsArray.forEach((chart, index) => {
-      if (chart && typeof chart.redraw === "function") {
-        try {
-          console.log(
-            `[updateAllChartAxisColors] Chart ${index}: Calling redraw()`
-          );
-
-          // Force redraw - this re-evaluates color functions
-          chart.redraw();
-
-          console.log(`[updateAllChartAxisColors] Chart ${index}: ✅ Redrawn`);
-        } catch (err) {
-          console.error(
-            `[updateAllChartAxisColors] Chart ${index} redraw error:`,
-            err
-          );
-        }
-      } else {
-        console.warn(
-          `[updateAllChartAxisColors] Chart ${index}: No redraw method`
-        );
+  chartsArray.forEach((chart) => {
+    if (chart && typeof chart.redraw === "function") {
+      try {
+        // ✅ Redraw forces re-evaluation of stroke/grid.stroke functions
+        // These functions read from CSS variables, so theme changes are applied
+        chart.redraw();
+      } catch (err) {
+        console.error("[updateAllChartAxisColors] Redraw error:", err);
       }
-    });
-
-    console.log(
-      `[updateAllChartAxisColors] ✅ Completed - Redrawn ${chartsArray.length} charts`
-    );
-  } else {
-    console.log("[updateAllChartAxisColors] No charts array provided");
-  }
+    }
+  });
 }
 
 // Listen for theme changes and update chart colors
 if (typeof window !== "undefined") {
-  window.addEventListener("themeChanged", (e) => {
-    console.log("[chartComponent] 🎨 Theme changed event detected");
-    console.log(`[chartComponent] Theme detail:`, e.detail);
+  window.addEventListener("themeChanged", () => {
+    console.log("[chartComponent] 🎨 Theme changed, redrawing charts");
 
-    // Try to update with charts array first (if available in window)
+    // Update charts if available in window
     if (window.__charts && Array.isArray(window.__charts)) {
-      console.log("[chartComponent] Found charts array in window, updating...");
       updateAllChartAxisColors(window.__charts);
-    } else {
-      // Fallback to DOM discovery
-      console.log(
-        "[chartComponent] No charts array found, using DOM discovery..."
-      );
-      updateAllChartAxisColors();
     }
   });
 }

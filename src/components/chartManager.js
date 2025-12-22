@@ -79,7 +79,7 @@
  *   // Now, any changes to channelState or dataState will automatically update the charts.
  */
 
-import { createChartOptions, fixChartAxisColors } from "./chartComponent.js";
+import { createChartOptions } from "./chartComponent.js";
 // Use global uPlot if loaded via <script> in index.html
 const uPlot = window.uPlot;
 import { debugLite } from "./debugPanelLite.js";
@@ -560,9 +560,6 @@ export function subscribeChartUpdates(
         charts[idx] = chart;
         console.log(`[recreateChart] ✓ Created new uPlot instance`);
 
-        // Fix axis text colors for dark theme
-        fixChartAxisColors(container);
-
         // ⚡ Rebuild the fast lookup index since we added a new chart
         rebuildChannelToChartsIndex();
 
@@ -643,9 +640,49 @@ export function subscribeChartUpdates(
         const type = change.path && change.path[0];
         const globalIdx = change.path && change.path[2];
 
-        if (!type || !Number.isFinite(globalIdx)) {
-          console.warn("[color subscriber] Invalid path:", change.path);
+        // ✅ Handle both cases:
+        // 1. Single color change: path = ['analog', 'lineColors', 0], newValue = '#fff'
+        // 2. Whole array replace: path = ['analog', 'lineColors'], newValue = [...colors]
+        if (!type || (type !== "analog" && type !== "digital")) {
+          return; // Invalid type, silently ignore
+        }
+
+        // Case 2: Whole lineColors array was replaced
+        if (Array.isArray(change.newValue) && !Number.isFinite(globalIdx)) {
+          // Update all colors for this type
+          for (let ci = 0; ci < charts.length; ci++) {
+            const chart = charts[ci];
+            if (!chart || chart._type !== type) continue;
+
+            const mapping = chart._channelIndices || [];
+            for (let pos = 0; pos < mapping.length; pos++) {
+              const idx = mapping[pos];
+              const color = change.newValue[idx];
+              if (color) {
+                try {
+                  const seriesIdx = pos + 1;
+                  const strokeFn = () => color;
+                  chart.series[seriesIdx].stroke = strokeFn;
+                  if (chart.series[seriesIdx].points) {
+                    chart.series[seriesIdx].points.stroke = strokeFn;
+                  }
+                } catch (e) {
+                  // Ignore errors for individual series
+                }
+              }
+            }
+            try {
+              scheduleChartRedraw(chart);
+            } catch (e) {
+              // Ignore
+            }
+          }
           return;
+        }
+
+        // Case 1: Single color element was changed
+        if (!Number.isFinite(globalIdx)) {
+          return; // Not a single-element update, ignore
         }
 
         const newColor = change.newValue;
@@ -929,8 +966,79 @@ export function subscribeChartUpdates(
             }`
           );
 
-          // ⚡⚡ ULTRA-FAST PATH: Try SMART CHART MERGING (moves channels between existing charts)
+          // 🚀 SUPER-FAST PATH: If chart count hasn't changed, just reorder data
           const analogCharts = charts.filter((c) => c?._type === "analog");
+          if (
+            analogCharts.length === expectedGroupCount &&
+            expectedGroupCount > 0
+          ) {
+            console.log(
+              `[group subscriber] 🚀 SUPER-FAST PATH: Same chart count (${expectedGroupCount}), reordering data only`
+            );
+
+            try {
+              // Build new data arrays for each group
+              const groupData = new Map(); // groupId -> indices array
+              userGroups.forEach((groupId, channelIdx) => {
+                if (groupId < 0) return; // Skip unassigned
+                if (!groupData.has(groupId)) {
+                  groupData.set(groupId, []);
+                }
+                groupData.get(groupId).push(channelIdx);
+              });
+
+              // Update each chart with its group's data in the correct order
+              let chartIdx = 0;
+              for (const [groupId, channelIndices] of Array.from(
+                groupData.entries()
+              ).sort()) {
+                if (chartIdx >= analogCharts.length) break;
+
+                const chart = analogCharts[chartIdx];
+                const newChartData = [
+                  data.time,
+                  ...channelIndices.map((idx) => data.analogData[idx]),
+                ];
+
+                // Update chart data in-place (fast!)
+                if (typeof chart.setData === "function") {
+                  try {
+                    chart.setData(newChartData);
+                    chart._channelIndices = channelIndices.slice();
+                    chart.redraw();
+                    chartIdx++;
+                  } catch (e) {
+                    console.warn(
+                      `[group subscriber] setData failed for chart ${chartIdx}:`,
+                      e
+                    );
+                    throw e; // Fall back to merge
+                  }
+                }
+              }
+
+              // Rebuild the fast index since channels moved between charts
+              rebuildChannelToChartsIndex();
+
+              const superFastTime = performance.now() - rebuildStartTime;
+              console.log(
+                `[group subscriber] ✨ SUPER-FAST PATH complete: ${superFastTime.toFixed(
+                  0
+                )}ms (data reorder only)`
+              );
+
+              // ✅ Update previous groups for next change
+              previousGroups.analog = userGroups.slice();
+              isRebuildingFromGroup = false;
+              return;
+            } catch (e) {
+              console.log(
+                `[group subscriber] Super-fast path failed, trying smart merge...`
+              );
+            }
+          }
+
+          // ⚡⚡ ULTRA-FAST PATH: Try SMART CHART MERGING (moves channels between existing charts)
           if (analogCharts.length > 0 && previousGroups.analog.length > 0) {
             console.log(
               `[group subscriber] Comparing old groups to new groups...`,
@@ -1058,24 +1166,67 @@ export function subscribeChartUpdates(
             autoGroup
           );
 
-          // Also render digital if present
+          // Defer digital rendering to background thread so UI stays responsive
           if (
             cfg.digitalChannels &&
             cfg.digitalChannels.length > 0 &&
             data.digitalData &&
             data.digitalData.length > 0
           ) {
-            const { renderDigitalCharts: renderDigital } = await import(
-              "./renderDigitalCharts.js"
-            );
-            renderDigital(
-              cfg,
-              data,
-              chartsContainer,
-              charts,
-              verticalLinesX,
-              channelState
-            );
+            if (window.requestIdleCallback) {
+              // Low priority: render digital charts when browser is idle
+              window.requestIdleCallback(
+                async () => {
+                  try {
+                    const { renderDigitalCharts: renderDigital } = await import(
+                      "./renderDigitalCharts.js"
+                    );
+                    renderDigital(
+                      cfg,
+                      data,
+                      chartsContainer,
+                      charts,
+                      verticalLinesX,
+                      channelState
+                    );
+                    console.log(
+                      `[group subscriber] ✓ Digital charts deferred-rendered`
+                    );
+                  } catch (err) {
+                    console.error(
+                      `[group subscriber] ❌ Deferred digital render failed:`,
+                      err
+                    );
+                  }
+                },
+                { timeout: 3000 } // Render within 3 seconds max
+              );
+            } else {
+              // Fallback: use setTimeout for older browsers
+              setTimeout(async () => {
+                try {
+                  const { renderDigitalCharts: renderDigital } = await import(
+                    "./renderDigitalCharts.js"
+                  );
+                  renderDigital(
+                    cfg,
+                    data,
+                    chartsContainer,
+                    charts,
+                    verticalLinesX,
+                    channelState
+                  );
+                  console.log(
+                    `[group subscriber] ✓ Digital charts deferred-rendered (timeout)`
+                  );
+                } catch (err) {
+                  console.error(
+                    `[group subscriber] ❌ Deferred digital render failed:`,
+                    err
+                  );
+                }
+              }, 0);
+            }
           }
 
           console.log(`[group subscriber] ✓ Charts rendered: ${charts.length}`);
