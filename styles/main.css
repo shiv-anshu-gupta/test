@@ -33,6 +33,13 @@
   --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
   --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.1);
   --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.12);
+
+  /* Chart colors (uPlot axes, grid, text) */
+  --chart-text: #1e293b;       /* Axis labels and text - light theme */
+  --chart-grid: #cbd5e1;       /* Grid lines - light theme */
+  --chart-bg: #ffffff;         /* Chart background */
+  --chart-axis: #64748b;       /* Axis line color */
+}
 }
 
 /* === Reset & Base === */

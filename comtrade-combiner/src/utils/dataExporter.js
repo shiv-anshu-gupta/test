@@ -166,7 +166,34 @@ export class ComtradeDataExporter {
   static mergeGroupData(group, mergedChannels) {
     const mergedData = [];
 
-    // Simple concatenation strategy: combine time arrays and repeat data
+    console.log(
+      `[mergeGroupData] Starting merge for ${group.files.length} file(s)`,
+      {
+        fileCount: group.files.length,
+        mergedChannelCount: mergedChannels.length,
+        firstFileSampleCount: group.files[0]?.data?.length || 0,
+      }
+    );
+
+    // Simple case: single file - just copy data as-is
+    if (group.files.length === 1) {
+      const file = group.files[0];
+      console.log("[mergeGroupData] Single file merge - copying data directly");
+
+      if (file.data && file.data.length > 0) {
+        for (let i = 0; i < file.data.length; i++) {
+          mergedData.push({
+            time: file.times ? file.times[i] : i,
+            values: Array.isArray(file.data[i]) ? file.data[i] : [file.data[i]],
+          });
+        }
+      }
+
+      console.log(`[mergeGroupData] Merged ${mergedData.length} samples`);
+      return mergedData;
+    }
+
+    // Multiple files: need to map channels
     let totalSamples = 0;
     group.files.forEach((file) => {
       if (file.data) {
@@ -177,8 +204,15 @@ export class ComtradeDataExporter {
     // For each file in the group, map its data to merged channels
     let fileOffset = 0;
 
-    group.files.forEach((file) => {
-      if (!file.data || file.data.length === 0) return;
+    group.files.forEach((file, fileIdx) => {
+      if (!file.data || file.data.length === 0) {
+        console.warn(`[mergeGroupData] File ${fileIdx} has no data`);
+        return;
+      }
+
+      console.log(
+        `[mergeGroupData] Processing file ${fileIdx}: ${file.data.length} samples`
+      );
 
       const fileDataLength = file.data.length;
 
@@ -209,6 +243,9 @@ export class ComtradeDataExporter {
       fileOffset += fileDataLength;
     });
 
+    console.log(
+      `[mergeGroupData] Final merged data: ${mergedData.length} samples`
+    );
     return mergedData;
   }
 
@@ -221,20 +258,27 @@ export class ComtradeDataExporter {
   static createChannelMapping(file, mergedChannels) {
     const mapping = [];
 
-    if (!file.channels) {
+    // Get channels from file - could be file.channels or file.analogChannels/digitalChannels
+    const fileChannels = file.channels || [
+      ...(file.analogChannels || []),
+      ...(file.digitalChannels || []),
+    ];
+
+    if (!fileChannels || fileChannels.length === 0) {
+      // If no channels found, create a 1-to-1 mapping
+      for (let i = 0; i < mergedChannels.length; i++) {
+        mapping.push(i);
+      }
       return mapping;
     }
 
-    file.channels.forEach((fileChannel) => {
-      // Find this channel in merged channels
+    fileChannels.forEach((fileChannel) => {
+      // Find this channel in merged channels by name
       const mergedIdx = mergedChannels.findIndex(
-        (ch) =>
-          ch.name === fileChannel.name &&
-          ch.type === fileChannel.type &&
-          ch.unit === fileChannel.unit
+        (ch) => ch.name === fileChannel.name || ch.name === fileChannel // Sometimes fileChannel might be just a name string
       );
 
-      mapping.push(mergedIdx);
+      mapping.push(mergedIdx !== -1 ? mergedIdx : 0);
     });
 
     return mapping;

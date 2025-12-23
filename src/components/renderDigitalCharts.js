@@ -1,13 +1,11 @@
-import {
-  createChartOptions,
-  getMaxYAxesForAlignment,
-} from "./chartComponent.js";
+import { createChartOptions } from "./chartComponent.js";
 import { createDragBar } from "./createDragBar.js";
 import { createDigitalFillPlugin } from "../plugins/digitalFillPlugin.js";
 import { findChangedDigitalChannelIndices } from "../utils/digitalChannelUtils.js";
 import { createCustomElement } from "../utils/helpers.js";
 import { createChartContainer } from "../utils/chartDomUtils.js";
 import verticalLinePlugin from "../plugins/verticalLinePlugin.js";
+import { getMaxYAxes } from "../utils/maxYAxesStore.js";
 
 export function renderDigitalCharts(
   cfg,
@@ -16,10 +14,19 @@ export function renderDigitalCharts(
   charts,
   verticalLinesX,
   channelState
+  // ✅ REMOVED: globalMaxYAxes parameter - now reading from global store
 ) {
+  const renderStartTime = performance.now();
+  console.log("[renderDigitalCharts] 🟦 Starting digital chart rendering...");
+
   const DigChannelOffset = 3;
 
   const changedIndices = findChangedDigitalChannelIndices(data.digitalData);
+  console.log(
+    `[renderDigitalCharts] 📊 Found ${changedIndices.length} changed digital channels:`,
+    changedIndices
+  );
+
   const digitalIndicesToShow = changedIndices;
   // Keep originalIndex on displayed channel objects so mapping is stable
   const digitalChannelsToShow = digitalIndicesToShow.map((i) => ({
@@ -40,6 +47,13 @@ export function renderDigitalCharts(
 
   // Get digital channel names for display on left side
   const digitalYLabels = digitalIndicesToShow.map((i) => yLabels[i]);
+
+  console.log(
+    `[renderDigitalCharts] 📋 Channel labels: ${digitalYLabels.join(", ")}`
+  );
+  console.log(
+    `[renderDigitalCharts] 🎨 Line colors: [${displayedColors.join(", ")}]`
+  );
 
   // Create a pseudo-group for alignment calculation
   const digitalGroup = {
@@ -65,6 +79,8 @@ export function renderDigitalCharts(
     "Digital Channels"
   );
   chartsContainer.appendChild(parentDiv);
+  console.log(`[renderDigitalCharts] 🏗️ Chart container created`);
+
   //const verticalLinesXState = verticalLinesX;
   const digitalDataZeroOne = digitalDataToShow.map((arr) =>
     arr.map((v) => (v ? 1 : 0))
@@ -84,9 +100,13 @@ export function renderDigitalCharts(
     y: { min: yMin, max: yMax, auto: false },
   };
 
-  // Get max Y-axes for alignment (use 1 for digital since it's typically a single axis)
-  const maxYAxes = 1;
+  // ✅ Get global axis alignment from global store (default 1 for digital)
+  const maxYAxes = getMaxYAxes() || 1;
+  console.log(
+    `[renderDigitalCharts] ✅ Chart config: maxYAxes=${maxYAxes}, channels=${digitalChannelsToShow.length}, yMin=${yMin}, yMax=${yMax}`
+  );
 
+  const chartOptionsStartTime = performance.now();
   const opts = createChartOptions({
     title: "Digital Channels",
     yLabels,
@@ -102,26 +122,29 @@ export function renderDigitalCharts(
     autoScaleUnit: { x: true, y: false },
     maxYAxes: maxYAxes,
   });
-  opts.axes = [
-    opts.axes[0],
-    {
-      ...opts.axes[1],
-      grid: { show: true },
-      values: (u, vals) =>
-        vals.map((v) => {
-          for (let i = 0; i < digitalChannelsToShow.length; ++i) {
-            if (Math.abs(v - i * DigChannelOffset) < 0.5) return "0";
-            if (Math.abs(v - (i * DigChannelOffset + 1)) < 0.5) return "1";
-          }
-          return "";
-        }),
-      splits: digitalChannelsToShow.flatMap((_, i) => [
-        i * DigChannelOffset,
-        i * DigChannelOffset + 1,
-      ]),
-      range: [yMin, yMax],
-    },
-  ];
+
+  // ✅ Keep digital-specific formatting on first Y-axis, preserve additional axes for multi-axis sync
+  const firstAxis = {
+    ...opts.axes[1],
+    grid: { show: true },
+    values: (u, vals) =>
+      vals.map((v) => {
+        for (let i = 0; i < digitalChannelsToShow.length; ++i) {
+          if (Math.abs(v - i * DigChannelOffset) < 0.5) return "0";
+          if (Math.abs(v - (i * DigChannelOffset + 1)) < 0.5) return "1";
+        }
+        return "";
+      }),
+    splits: digitalChannelsToShow.flatMap((_, i) => [
+      i * DigChannelOffset,
+      i * DigChannelOffset + 1,
+    ]),
+    range: [yMin, yMax],
+  };
+
+  // Build axes array: [x-axis, first y-axis with digital formatting, ...additional axes]
+  opts.axes = [opts.axes[0], firstAxis, ...opts.axes.slice(2)];
+
   opts.series = [
     {},
     ...digitalChannelsToShow.map((ch, i) => {
@@ -160,7 +183,18 @@ export function renderDigitalCharts(
   );
   opts.plugins.push(createDigitalFillPlugin(digitalFillSignals, [yMin, yMax]));
   opts.plugins.push(verticalLinePlugin(verticalLinesX, () => charts));
+
+  const chartOptionsEndTime = performance.now();
+  console.log(
+    `[renderDigitalCharts] ⏱️ createChartOptions took ${(
+      chartOptionsEndTime - chartOptionsStartTime
+    ).toFixed(1)}ms`
+  );
+
+  const chartStartTime = performance.now();
   const chart = new uPlot(opts, chartData, chartDiv);
+  const chartEndTime = performance.now();
+
   chart._seriesColors = opts.series.slice(1).map((s) => s.stroke);
   charts.push(chart);
   try {
@@ -168,6 +202,14 @@ export function renderDigitalCharts(
     chart._channelIndices = digitalChannelsToShow.map((ch) => ch.originalIndex);
     chart._type = "digital";
   } catch (e) {}
+
+  console.log(
+    `[renderDigitalCharts] ✅ Digital chart created in ${(
+      chartEndTime - chartStartTime
+    ).toFixed(1)}ms with ${digitalChannelsToShow.length} channels`
+  );
+
+  const clickHandlerStartTime = performance.now();
 
   // Click handler to add/remove vertical lines
   chart.over.addEventListener("click", (e) => {
@@ -244,6 +286,14 @@ export function renderDigitalCharts(
     }
   });
 
+  const clickHandlerEndTime = performance.now();
+  console.log(
+    `[renderDigitalCharts] ⏱️ Click handler setup took ${(
+      clickHandlerEndTime - clickHandlerStartTime
+    ).toFixed(1)}ms`
+  );
+
+  const resizeObserverStartTime = performance.now();
   const ro = new ResizeObserver((entries) => {
     for (let entry of entries) {
       chart.setSize({
@@ -253,4 +303,17 @@ export function renderDigitalCharts(
     }
   });
   ro.observe(chartDiv);
+
+  const resizeObserverEndTime = performance.now();
+  console.log(
+    `[renderDigitalCharts] ⏱️ ResizeObserver.observe took ${(
+      resizeObserverEndTime - resizeObserverStartTime
+    ).toFixed(1)}ms`
+  );
+
+  const renderEndTime = performance.now();
+  const totalTime = renderEndTime - renderStartTime;
+  console.log(
+    `[renderDigitalCharts] ✓ Render complete in ${totalTime.toFixed(1)}ms`
+  );
 }

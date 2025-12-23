@@ -1,0 +1,851 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Y-Axis Management Module - Demo</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        padding: 20px;
+      }
+
+      .container {
+        max-width: 1400px;
+        margin: 0 auto;
+      }
+
+      h1 {
+        color: white;
+        margin-bottom: 30px;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+      }
+
+      .scenario-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(600px, 1fr));
+        gap: 20px;
+        margin-bottom: 30px;
+      }
+
+      .scenario {
+        background: white;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+      }
+
+      .scenario-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 15px 20px;
+        font-weight: bold;
+        font-size: 14px;
+      }
+
+      .scenario-content {
+        padding: 20px;
+      }
+
+      .chart-group {
+        margin-bottom: 20px;
+        padding-bottom: 20px;
+        border-bottom: 1px solid #eee;
+      }
+
+      .chart-group:last-child {
+        border-bottom: none;
+        margin-bottom: 0;
+        padding-bottom: 0;
+      }
+
+      .group-title {
+        font-size: 12px;
+        font-weight: bold;
+        color: #667eea;
+        margin-bottom: 8px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .chart-wrapper {
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        overflow: hidden;
+        background: #fafafa;
+        position: relative;
+        min-height: 150px;
+      }
+
+      .chart-container {
+        display: flex;
+        height: 150px;
+        padding: 10px;
+      }
+
+      .left-axes {
+        display: flex;
+        gap: 0;
+        margin-right: 10px;
+      }
+
+      .axis {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        padding: 8px 6px;
+        font-size: 10px;
+        font-weight: bold;
+        text-align: right;
+        border-right: 2px solid;
+        min-width: 40px;
+      }
+
+      .axis-1 {
+        border-right-color: #ff6b6b;
+        color: #ff6b6b;
+      }
+
+      .axis-2 {
+        border-right-color: #4ecdc4;
+        color: #4ecdc4;
+      }
+
+      .axis-label {
+        font-size: 8px;
+        margin-top: 3px;
+        font-weight: normal;
+      }
+
+      .plot-area {
+        flex: 1;
+        position: relative;
+        border-left: 2px solid #333;
+        border-bottom: 2px solid #333;
+      }
+
+      .grid {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+      }
+
+      .grid-h {
+        position: absolute;
+        width: 100%;
+        border-top: 1px solid #eee;
+      }
+
+      svg {
+        width: 100%;
+        height: 100%;
+      }
+
+      .channels-list {
+        font-size: 11px;
+        margin-top: 10px;
+        padding: 10px;
+        background: #f5f5f5;
+        border-radius: 3px;
+      }
+
+      .channel-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin: 4px 0;
+      }
+
+      .channel-dot {
+        width: 6px;
+        height: 2px;
+        border-radius: 1px;
+      }
+
+      .channel-type {
+        font-size: 9px;
+        color: #999;
+        margin-left: auto;
+      }
+
+      .axis-badge {
+        display: inline-block;
+        padding: 2px 5px;
+        border-radius: 2px;
+        font-size: 8px;
+        font-weight: bold;
+        margin-left: 5px;
+      }
+
+      .badge-1 {
+        background: rgba(255, 107, 107, 0.2);
+        color: #ff6b6b;
+      }
+
+      .badge-2 {
+        background: rgba(78, 205, 196, 0.2);
+        color: #4ecdc4;
+      }
+
+      .axis-config {
+        margin-top: 12px;
+        padding: 10px;
+        background: #e3f2fd;
+        border-left: 3px solid #2196f3;
+        border-radius: 3px;
+        font-size: 11px;
+      }
+
+      .config-title {
+        font-weight: bold;
+        color: #1976d2;
+        margin-bottom: 5px;
+      }
+
+      .config-item {
+        margin: 3px 0;
+        padding-left: 15px;
+      }
+
+      .config-item::before {
+        content: "▸ ";
+        margin-left: -12px;
+        margin-right: 5px;
+        color: #1976d2;
+      }
+
+      .decision {
+        margin-top: 12px;
+        padding: 10px;
+        border-radius: 3px;
+        font-size: 11px;
+        font-weight: bold;
+      }
+
+      .decision.dual {
+        background: #fff3cd;
+        border-left: 3px solid #ffc107;
+        color: #856404;
+      }
+
+      .decision.single {
+        background: #d4edda;
+        border-left: 3px solid #28a745;
+        color: #155724;
+      }
+
+      .decision.rebuild {
+        background: #f8d7da;
+        border-left: 3px solid #dc3545;
+        color: #721c24;
+      }
+
+      /* Three-column layout for module flow */
+      .module-flow {
+        background: white;
+        border-radius: 8px;
+        padding: 20px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        margin-top: 30px;
+      }
+
+      .flow-title {
+        font-size: 16px;
+        font-weight: bold;
+        color: #333;
+        margin-bottom: 20px;
+      }
+
+      .flow-steps {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+      }
+
+      .flow-step {
+        background: #f5f5f5;
+        border-left: 4px solid #667eea;
+        padding: 15px;
+        border-radius: 4px;
+      }
+
+      .step-number {
+        display: inline-block;
+        background: #667eea;
+        color: white;
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        text-align: center;
+        line-height: 24px;
+        font-weight: bold;
+        font-size: 12px;
+        margin-bottom: 10px;
+      }
+
+      .step-title {
+        font-weight: bold;
+        color: #333;
+        margin-bottom: 8px;
+        font-size: 13px;
+      }
+
+      .step-content {
+        font-size: 11px;
+        color: #666;
+        line-height: 1.4;
+      }
+
+      .code-block {
+        background: #2d2d2d;
+        color: #f8f8f2;
+        padding: 12px;
+        border-radius: 4px;
+        font-family: "Courier New", monospace;
+        font-size: 10px;
+        overflow-x: auto;
+        margin-top: 10px;
+        line-height: 1.3;
+      }
+
+      .keyword {
+        color: #ff79c6;
+      }
+      .function {
+        color: #8be9fd;
+      }
+      .string {
+        color: #f1fa8c;
+      }
+      .number {
+        color: #bd93f9;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>🎯 Y-Axis Management Module - Architecture & Demos</h1>
+
+      <div class="scenario-grid">
+        <!-- SCENARIO 1: Single Type Only -->
+        <div class="scenario">
+          <div class="scenario-header">
+            Scenario 1: Same Type Channels (All Voltage)
+          </div>
+          <div class="scenario-content">
+            <div class="chart-group">
+              <div class="group-title">📊 Group 1</div>
+              <div class="chart-wrapper">
+                <div class="chart-container">
+                  <div class="left-axes">
+                    <div class="axis axis-1">
+                      <div>400</div>
+                      <div>200</div>
+                      <div>0</div>
+                      <div class="axis-label">V</div>
+                    </div>
+                  </div>
+                  <div class="plot-area">
+                    <div class="grid">
+                      <div class="grid-h" style="top: 0%"></div>
+                      <div class="grid-h" style="top: 50%"></div>
+                      <div class="grid-h" style="top: 100%"></div>
+                    </div>
+                    <svg viewBox="0 0 300 150" preserveAspectRatio="none">
+                      <polyline
+                        points="0,75 100,50 200,80 300,60"
+                        fill="none"
+                        stroke="#FF6B6B"
+                        stroke-width="1.5"
+                      />
+                    </svg>
+                  </div>
+                </div>
+              </div>
+              <div class="channels-list">
+                <div class="channel-item">
+                  <div class="channel-dot" style="background: #ff6b6b"></div>
+                  <span>Voltage_Phase_A</span>
+                  <span class="channel-type">V</span>
+                  <span class="axis-badge badge-1">Axis 1</span>
+                </div>
+                <div class="channel-item">
+                  <div class="channel-dot" style="background: #ff9f43"></div>
+                  <span>Voltage_Phase_B</span>
+                  <span class="channel-type">V</span>
+                  <span class="axis-badge badge-1">Axis 1</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="axis-config">
+              <div class="config-title">✓ Analysis:</div>
+              <div class="config-item">Channel Types: Voltage only</div>
+              <div class="config-item">Different Families: 1</div>
+            </div>
+
+            <div class="decision single">
+              ✓ USE SINGLE AXIS<br />
+              Simple, clean visualization
+            </div>
+          </div>
+        </div>
+
+        <!-- SCENARIO 2: Voltage & Current (Same Family) -->
+        <div class="scenario">
+          <div class="scenario-header">
+            Scenario 2: Mixed Same-Family Types (V + A)
+          </div>
+          <div class="scenario-content">
+            <div class="chart-group">
+              <div class="group-title">📊 Group 1</div>
+              <div class="chart-wrapper">
+                <div class="chart-container">
+                  <div class="left-axes">
+                    <div class="axis axis-1">
+                      <div>400/2000</div>
+                      <div>200/1000</div>
+                      <div>0</div>
+                      <div class="axis-label">V/A</div>
+                    </div>
+                  </div>
+                  <div class="plot-area">
+                    <div class="grid">
+                      <div class="grid-h" style="top: 0%"></div>
+                      <div class="grid-h" style="top: 50%"></div>
+                      <div class="grid-h" style="top: 100%"></div>
+                    </div>
+                    <svg viewBox="0 0 300 150" preserveAspectRatio="none">
+                      <polyline
+                        points="0,75 100,50 200,80 300,60"
+                        fill="none"
+                        stroke="#FF6B6B"
+                        stroke-width="1.5"
+                      />
+                      <polyline
+                        points="0,85 100,70 200,90 300,75"
+                        fill="none"
+                        stroke="#FF9F43"
+                        stroke-width="1.5"
+                      />
+                    </svg>
+                  </div>
+                </div>
+              </div>
+              <div class="channels-list">
+                <div class="channel-item">
+                  <div class="channel-dot" style="background: #ff6b6b"></div>
+                  <span>Voltage_Phase_A</span>
+                  <span class="channel-type">V</span>
+                  <span class="axis-badge badge-1">Axis 1</span>
+                </div>
+                <div class="channel-item">
+                  <div class="channel-dot" style="background: #ff9f43"></div>
+                  <span>Current_Phase_A</span>
+                  <span class="channel-type">A</span>
+                  <span class="axis-badge badge-1">Axis 1</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="axis-config">
+              <div class="config-title">✓ Analysis:</div>
+              <div class="config-item">Channel Types: Voltage, Current</div>
+              <div class="config-item">Same Family: YES (both electrical)</div>
+            </div>
+
+            <div class="decision single">
+              ✓ USE SINGLE AXIS<br />
+              V and A share same scale family
+            </div>
+          </div>
+        </div>
+
+        <!-- SCENARIO 3: Voltage + Power (Different Families) -->
+        <div class="scenario">
+          <div class="scenario-header">
+            Scenario 3: Different-Family Types (V + W)
+          </div>
+          <div class="scenario-content">
+            <div class="chart-group">
+              <div class="group-title">📊 Group 1</div>
+              <div class="chart-wrapper">
+                <div class="chart-container">
+                  <div class="left-axes">
+                    <div class="axis axis-1">
+                      <div>400V</div>
+                      <div>200V</div>
+                      <div>0V</div>
+                      <div class="axis-label">V</div>
+                    </div>
+                    <div class="axis axis-2">
+                      <div>100MW</div>
+                      <div>50MW</div>
+                      <div>0MW</div>
+                      <div class="axis-label">W</div>
+                    </div>
+                  </div>
+                  <div class="plot-area">
+                    <div class="grid">
+                      <div class="grid-h" style="top: 0%"></div>
+                      <div class="grid-h" style="top: 50%"></div>
+                      <div class="grid-h" style="top: 100%"></div>
+                    </div>
+                    <svg viewBox="0 0 300 150" preserveAspectRatio="none">
+                      <polyline
+                        points="0,75 100,50 200,80 300,60"
+                        fill="none"
+                        stroke="#FF6B6B"
+                        stroke-width="1.5"
+                      />
+                      <polyline
+                        points="0,85 100,70 200,90 300,75"
+                        fill="none"
+                        stroke="#4ECDC4"
+                        stroke-width="1.5"
+                      />
+                    </svg>
+                  </div>
+                </div>
+              </div>
+              <div class="channels-list">
+                <div class="channel-item">
+                  <div class="channel-dot" style="background: #ff6b6b"></div>
+                  <span>Voltage_Phase_A</span>
+                  <span class="channel-type">V</span>
+                  <span class="axis-badge badge-1">Axis 1</span>
+                </div>
+                <div class="channel-item">
+                  <div class="channel-dot" style="background: #4ecdc4"></div>
+                  <span>Power_Total</span>
+                  <span class="channel-type">W</span>
+                  <span class="axis-badge badge-2">Axis 2</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="axis-config">
+              <div class="config-title">✓ Analysis:</div>
+              <div class="config-item">Channel Types: Voltage, Power</div>
+              <div class="config-item">Different Families: YES</div>
+            </div>
+
+            <div class="decision dual">
+              ⚠️ USE DUAL AXES<br />
+              Different scale families need separate axes
+            </div>
+          </div>
+        </div>
+
+        <!-- SCENARIO 4: All Mixed Types -->
+        <div class="scenario">
+          <div class="scenario-header">Scenario 4: All Channel Types Mixed</div>
+          <div class="scenario-content">
+            <div class="chart-group">
+              <div class="group-title">📊 Group 1</div>
+              <div class="chart-wrapper">
+                <div class="chart-container">
+                  <div class="left-axes">
+                    <div class="axis axis-1">
+                      <div>2000A/400V</div>
+                      <div>1000A/200V</div>
+                      <div>0</div>
+                      <div class="axis-label">V/A</div>
+                    </div>
+                    <div class="axis axis-2">
+                      <div>100MW/60Hz</div>
+                      <div>50MW/30Hz</div>
+                      <div>0</div>
+                      <div class="axis-label">W/Hz</div>
+                    </div>
+                  </div>
+                  <div class="plot-area">
+                    <div class="grid">
+                      <div class="grid-h" style="top: 0%"></div>
+                      <div class="grid-h" style="top: 50%"></div>
+                      <div class="grid-h" style="top: 100%"></div>
+                    </div>
+                    <svg viewBox="0 0 300 150" preserveAspectRatio="none">
+                      <polyline
+                        points="0,70 100,50 200,80 300,65"
+                        fill="none"
+                        stroke="#FF6B6B"
+                        stroke-width="1.5"
+                      />
+                      <polyline
+                        points="0,80 100,65 200,85 300,75"
+                        fill="none"
+                        stroke="#FF9F43"
+                        stroke-width="1.5"
+                      />
+                      <polyline
+                        points="0,90 100,75 200,90 300,80"
+                        fill="none"
+                        stroke="#4ECDC4"
+                        stroke-width="1.5"
+                      />
+                      <polyline
+                        points="0,100 100,85 200,95 300,90"
+                        fill="none"
+                        stroke="#A29BFE"
+                        stroke-width="1.5"
+                      />
+                    </svg>
+                  </div>
+                </div>
+              </div>
+              <div class="channels-list">
+                <div class="channel-item">
+                  <div class="channel-dot" style="background: #ff6b6b"></div>
+                  <span>Voltage_Phase_A</span>
+                  <span class="channel-type">V</span>
+                  <span class="axis-badge badge-1">Axis 1</span>
+                </div>
+                <div class="channel-item">
+                  <div class="channel-dot" style="background: #ff9f43"></div>
+                  <span>Current_Phase_A</span>
+                  <span class="channel-type">A</span>
+                  <span class="axis-badge badge-1">Axis 1</span>
+                </div>
+                <div class="channel-item">
+                  <div class="channel-dot" style="background: #4ecdc4"></div>
+                  <span>Power_Total</span>
+                  <span class="channel-type">W</span>
+                  <span class="axis-badge badge-2">Axis 2</span>
+                </div>
+                <div class="channel-item">
+                  <div class="channel-dot" style="background: #a29bfe"></div>
+                  <span>Frequency</span>
+                  <span class="channel-type">Hz</span>
+                  <span class="axis-badge badge-2">Axis 2</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="axis-config">
+              <div class="config-title">✓ Analysis:</div>
+              <div class="config-item">Channel Types: 4 different types</div>
+              <div class="config-item">
+                Families: V+A (axis 1), W+Hz (axis 2)
+              </div>
+            </div>
+
+            <div class="decision dual">
+              ⚠️ USE DUAL AXES<br />
+              Maximum flexibility for all types
+            </div>
+          </div>
+        </div>
+
+        <!-- SCENARIO 5: Type Change - Rebuild Required -->
+        <div class="scenario">
+          <div class="scenario-header">
+            Scenario 5: Type Change Detection (Rebuild)
+          </div>
+          <div class="scenario-content">
+            <div class="chart-group">
+              <div class="group-title">📊 BEFORE Merge</div>
+              <div class="chart-wrapper">
+                <div class="chart-container">
+                  <div class="left-axes">
+                    <div class="axis axis-1">
+                      <div>400</div>
+                      <div>200</div>
+                      <div>0</div>
+                      <div class="axis-label">V</div>
+                    </div>
+                  </div>
+                  <div class="plot-area">
+                    <svg viewBox="0 0 300 150" preserveAspectRatio="none">
+                      <polyline
+                        points="0,75 100,50 200,80 300,60"
+                        fill="none"
+                        stroke="#FF6B6B"
+                        stroke-width="1.5"
+                      />
+                    </svg>
+                  </div>
+                </div>
+              </div>
+              <div class="channels-list">
+                <div class="channel-item">
+                  <div class="channel-dot" style="background: #ff6b6b"></div>
+                  <span>Voltage_Phase_A</span>
+                  <span class="axis-badge badge-1">Axis 1</span>
+                </div>
+              </div>
+            </div>
+
+            <div
+              style="
+                text-align: center;
+                padding: 10px;
+                color: #667eea;
+                font-weight: bold;
+              "
+            >
+              ⬇️ User merges Power_Total to this group ⬇️
+            </div>
+
+            <div class="chart-group">
+              <div class="group-title">📊 AFTER Merge</div>
+              <div class="chart-wrapper">
+                <div class="chart-container">
+                  <div class="left-axes">
+                    <div class="axis axis-1">
+                      <div>400</div>
+                      <div>200</div>
+                      <div>0</div>
+                      <div class="axis-label">V</div>
+                    </div>
+                    <div class="axis axis-2">
+                      <div>100</div>
+                      <div>50</div>
+                      <div>0</div>
+                      <div class="axis-label">W</div>
+                    </div>
+                  </div>
+                  <div class="plot-area">
+                    <svg viewBox="0 0 300 150" preserveAspectRatio="none">
+                      <polyline
+                        points="0,75 100,50 200,80 300,60"
+                        fill="none"
+                        stroke="#FF6B6B"
+                        stroke-width="1.5"
+                      />
+                      <polyline
+                        points="0,85 100,70 200,90 300,75"
+                        fill="none"
+                        stroke="#4ECDC4"
+                        stroke-width="1.5"
+                      />
+                    </svg>
+                  </div>
+                </div>
+              </div>
+              <div class="channels-list">
+                <div class="channel-item">
+                  <div class="channel-dot" style="background: #ff6b6b"></div>
+                  <span>Voltage_Phase_A</span>
+                  <span class="axis-badge badge-1">Axis 1</span>
+                </div>
+                <div class="channel-item">
+                  <div class="channel-dot" style="background: #4ecdc4"></div>
+                  <span>Power_Total</span>
+                  <span class="axis-badge badge-2">Axis 2</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="decision rebuild">
+              🔄 AXIS COUNT CHANGED: 1 → 2<br />
+              FULL REBUILD REQUIRED (slow path)
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- MODULE FLOW ARCHITECTURE -->
+      <div class="module-flow">
+        <div class="flow-title">📋 AxisManager Module - Processing Flow</div>
+
+        <div class="flow-steps">
+          <div class="flow-step">
+            <div class="step-number">1</div>
+            <div class="step-title">Detect Channel Types</div>
+            <div class="step-content">
+              Scan all channels in cfg and data:
+              <div class="code-block">
+                <span class="function">detectChannelTypes</span>(cfg, data) {
+                <span class="keyword">return</span> { voltage:
+                <span class="number">5</span>, current:
+                <span class="number">3</span>, power:
+                <span class="number">2</span>, frequency:
+                <span class="number">0</span>
+                } }
+              </div>
+            </div>
+          </div>
+
+          <div class="flow-step">
+            <div class="step-number">2</div>
+            <div class="step-title">Check Axis Requirement</div>
+            <div class="step-content">
+              Determine if dual axes needed:
+              <div class="code-block">
+                <span class="function">shouldUseDualAxes</span>(types) {
+                <span class="keyword">return</span>
+                types.voltage || types.current && types.power || types.frequency
+                }
+              </div>
+            </div>
+          </div>
+
+          <div class="flow-step">
+            <div class="step-number">3</div>
+            <div class="step-title">Get Global Config</div>
+            <div class="step-content">
+              Create single configuration for ALL charts:
+              <div class="code-block">
+                axes: [ { side: -<span class="number">1</span>, label:
+                <span class="string">"V/A"</span> }, { side: -<span
+                  class="number"
+                  >1</span
+                >, label: <span class="string">"W/Hz"</span> } ]
+              </div>
+            </div>
+          </div>
+
+          <div class="flow-step">
+            <div class="step-number">4</div>
+            <div class="step-title">Map Each Channel</div>
+            <div class="step-content">
+              Assign channels to correct axes:
+              <div class="code-block">
+                Voltage → Axis 1 ✓ Current → Axis 1 ✓ Power → Axis 2 ✓ Frequency
+                → Axis 2 ✓
+              </div>
+            </div>
+          </div>
+
+          <div class="flow-step">
+            <div class="step-number">5</div>
+            <div class="step-title">Apply to All Charts</div>
+            <div class="step-content">
+              Apply same axis config to every chart:
+              <div class="code-block">
+                <span class="keyword">for</span> chart
+                <span class="keyword">of</span> charts {
+                <span class="function">applyAxisConfig</span>(config, chart) }
+              </div>
+            </div>
+          </div>
+
+          <div class="flow-step">
+            <div class="step-number">6</div>
+            <div class="step-title">Detect Rebuild Need</div>
+            <div class="step-content">
+              Check if axis count changed:
+              <div class="code-block">
+                oldAxes: <span class="number">1</span> newAxes:
+                <span class="number">2</span> changed:
+                <span class="keyword">true</span>
+                → Use SLOW PATH
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

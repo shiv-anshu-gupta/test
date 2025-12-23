@@ -9,6 +9,7 @@ import { destroyCharts } from "../utils/chartUtils.js";
 import { autoGroupChannels } from "../utils/autoGroupChannels.js";
 import { createDigitalFillPlugin } from "../plugins/digitalFillPlugin.js";
 import { unwrap, createState } from "./createState.js";
+import { analyzeGroupsAndPublishMaxYAxes } from "../utils/analyzeGroupsAndPublish.js";
 
 /**
  * Render COMTRADE charts in the container.
@@ -41,6 +42,13 @@ export function renderComtradeCharts(
 
   console.log("[renderComtradeCharts] Starting chart rendering...");
 
+  // ✅ Functional approach: Analyze groups and publish to global store
+  // This ensures consistent axis count across all displayed charts (analog + digital + computed)
+  analyzeGroupsAndPublishMaxYAxes(charts, channelState, cfg);
+  console.log(
+    `[renderComtradeCharts] 🔧 Global axis alignment published to store`
+  );
+
   // Phase 1: Render analog charts
   renderAnalogCharts(
     cfg,
@@ -52,7 +60,7 @@ export function renderComtradeCharts(
     autoGroupChannels
   );
 
-  // Phase 2: Render digital charts
+  // Phase 2: Render digital charts (they will read maxYAxes from global store)
   if (
     cfg.digitalChannels &&
     cfg.digitalChannels.length > 0 &&
@@ -66,6 +74,7 @@ export function renderComtradeCharts(
       charts,
       verticalLinesX,
       channelState
+      // ✅ REMOVED: globalMaxYAxes parameter - digital charts now read from global store
     );
   }
 

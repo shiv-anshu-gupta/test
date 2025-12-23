@@ -1,9 +1,7 @@
 // src/components/renderComputedChannels.js
-import {
-  createChartOptions,
-  getMaxYAxesForAlignment,
-} from "./chartComponent.js";
+import { createChartOptions } from "./chartComponent.js";
 import { createDragBar } from "./createDragBar.js";
+import { getMaxYAxes } from "../utils/maxYAxesStore.js";
 import {
   createTooltip,
   updateTooltip,
@@ -80,14 +78,25 @@ export function renderComputedChannels(
   verticalLinesX,
   channelState
 ) {
+  const renderStartTime = performance.now();
+  console.log(
+    "[renderComputedChannels] 🟪 Starting computed channels rendering..."
+  );
+
   const computedChannels =
     data?.computedData && Array.isArray(data.computedData)
       ? data.computedData
       : [];
 
   if (computedChannels.length === 0) {
+    console.log("[renderComputedChannels] ℹ️ No computed channels to render");
     return;
   }
+
+  console.log(
+    `[renderComputedChannels] 📊 Found ${computedChannels.length} computed channels:`,
+    computedChannels.map((ch) => ch.id)
+  );
 
   const groupYLabels = computedChannels.map((ch) => ch.id || "Computed");
   const colors = ["#FF6B6B", "#4ECDC4", "#45B7D1", "#FFA07A", "#98D8C8"];
@@ -111,6 +120,7 @@ export function renderComputedChannels(
   );
   parentDiv.setAttribute("data-chart-type", "computed");
   chartsContainer.appendChild(parentDiv);
+  console.log(`[renderComputedChannels] 🏗️ Chart container created`);
 
   // 📊 Replace the default chart-label with our computed channels labels showing equations
   const defaultLabelDiv = parentDiv.querySelector(".chart-label");
@@ -237,8 +247,12 @@ export function renderComputedChannels(
 
   const chartData = [timeArray, ...channelDataArrays];
 
-  // Get max Y-axes for alignment (use 1 for computed since it's typically a single axis)
-  const maxYAxes = 1;
+  // ✅ Get global axis alignment for consistent Y-axes across all charts
+  const maxYAxes = getMaxYAxes() || 1;
+
+  console.log(
+    `[renderComputedChannels] ✅ Chart config: maxYAxes=${maxYAxes}, channels=${computedChannels.length}`
+  );
 
   const opts = createChartOptions({
     title: "Computed Channels",
@@ -367,4 +381,12 @@ export function renderComputedChannels(
       }, 0);
     }
   });
+
+  const renderEndTime = performance.now();
+  const totalTime = renderEndTime - renderStartTime;
+  console.log(
+    `[renderComputedChannels] ✓ Render complete in ${totalTime.toFixed(
+      1
+    )}ms with ${computedChannels.length} channels`
+  );
 }

@@ -64,7 +64,15 @@ export function makeAxisValueFormatter(unit, initialScale = 1) {
 
     if (!Array.isArray(ticks) || ticks.length === 0) return [];
 
-    return ticks.map((v) => {
+    // ✅ OPTIMIZATION: Show fewer values to avoid cluttered chart
+    // Only show every 3rd tick or when tick count exceeds 5
+    let displayTicks = ticks;
+    if (ticks.length > 5) {
+      const step = Math.ceil(ticks.length / 5); // Show max 5-6 values
+      displayTicks = ticks.map((v, i) => (i % step === 0 ? v : null)).filter(v => v !== null);
+    }
+
+    return displayTicks.map((v) => {
       // Guard against null, undefined, NaN
       if (v == null || isNaN(v)) return "";
 

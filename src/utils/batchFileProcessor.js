@@ -10,8 +10,6 @@
  * - Automatic memory management
  */
 
-import { handleMultipleFiles } from "./multiFileHandler.js";
-
 /**
  * Parse and merge files with progress reporting
  * Does NOT trigger any chart recreation during parsing
@@ -27,6 +25,11 @@ export async function processFilesInBatches(
   onProgress = null
 ) {
   try {
+    // Import here to avoid circular dependencies
+    const { parseCFG, parseDAT } = await import(
+      "../components/comtradeUtils.js"
+    );
+
     // Phase 1: Validate input
     const files = Array.from(fileInput);
     if (files.length === 0) {
@@ -54,8 +57,95 @@ export async function processFilesInBatches(
       message: `Parsing files (0/${files.length})...`,
     });
 
-    // Call handleMultipleFiles which handles all parsing and merging
-    const result = await handleMultipleFiles(fileInput, TIME_UNIT);
+    // Read and parse files
+    const parsedFiles = [];
+    const filenames = [];
+
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+
+      // Skip DAT files - we'll read them when processing CFG
+      if (file.name.toLowerCase().endsWith(".dat")) {
+        continue;
+      }
+
+      // Only process CFG files
+      if (!file.name.toLowerCase().endsWith(".cfg")) {
+        continue;
+      }
+
+      // Read CFG file using FileReader
+      const cfgText = await readFileAsText(file);
+
+      // Parse CFG
+      const cfg = parseCFG(cfgText, TIME_UNIT);
+
+      // Find corresponding DAT file
+      const baseName = file.name.replace(/\.(cfg|dat)$/i, "");
+      const datFile = files.find(
+        (f) =>
+          f.name.toLowerCase().startsWith(baseName.toLowerCase()) &&
+          f.name.toLowerCase().endsWith(".dat")
+      );
+
+      if (!datFile) {
+        console.warn(
+          `[batchFileProcessor] No matching DAT file for ${file.name}`
+        );
+        continue;
+      }
+
+      // Read DAT file using FileReader
+      const datText = await readFileAsText(datFile);
+
+      // Parse DAT
+      const { time, analogData, digitalData } = parseDAT(
+        datText,
+        cfg,
+        "ASCII",
+        TIME_UNIT
+      );
+
+      parsedFiles.push({
+        cfg,
+        time,
+        analogData,
+        digitalData,
+        fileName: baseName,
+      });
+
+      filenames.push(baseName);
+
+      reportProgress(onProgress, {
+        phase: "parsing",
+        current: parsedFiles.length,
+        total: Math.ceil(files.length / 2), // Rough estimate (pairs)
+        message: `Parsing files (${parsedFiles.length} pair(s))...`,
+      });
+
+      // Yield to event loop
+      await yieldToEventLoop(10);
+    }
+
+    if (parsedFiles.length === 0) {
+      throw new Error("No valid CFG/DAT file pairs found");
+    }
+
+    // Merge parsed files if multiple
+    let cfg = parsedFiles[0].cfg;
+    let data;
+
+    if (parsedFiles.length === 1) {
+      // Single file - no merging needed
+      data = {
+        time: parsedFiles[0].time,
+        analogData: parsedFiles[0].analogData,
+        digitalData: parsedFiles[0].digitalData,
+      };
+    } else {
+      // Multiple files - merge by time
+      data = mergeFilesByTime(parsedFiles);
+    }
 
     console.log(
       "[batchFileProcessor] ✅ All files parsed and merged successfully"
@@ -64,15 +154,15 @@ export async function processFilesInBatches(
       phase: "complete",
       current: files.length,
       total: files.length,
-      message: `Ready to render (${result.fileCount} file(s))`,
+      message: `Ready to render (${parsedFiles.length} file(s))`,
     });
 
     return {
-      cfg: result.cfg,
-      data: result.data,
-      isMerged: result.isMerged,
-      fileCount: result.fileCount,
-      filenames: result.filenames,
+      cfg,
+      data,
+      isMerged: parsedFiles.length > 1,
+      fileCount: parsedFiles.length,
+      filenames,
       error: null,
     };
   } catch (err) {
@@ -93,6 +183,68 @@ export async function processFilesInBatches(
       error: err.message,
     };
   }
+}
+
+/**
+ * Merge multiple parsed files by time
+ * @private
+ */
+function mergeFilesByTime(parsedFiles) {
+  // Simple merge: concatenate data from all files
+  const mergedTime = [];
+  const mergedAnalogData = [];
+  const mergedDigitalData = [];
+
+  let timeOffset = 0;
+
+  parsedFiles.forEach((file, idx) => {
+    const timeDelta = idx === 0 ? 0 : timeOffset;
+
+    file.time.forEach((t) => {
+      mergedTime.push(t + timeDelta);
+    });
+
+    file.analogData.forEach((analogSample) => {
+      mergedAnalogData.push(analogSample);
+    });
+
+    file.digitalData.forEach((digitalSample) => {
+      mergedDigitalData.push(digitalSample);
+    });
+
+    // Update offset for next file
+    if (file.time.length > 0) {
+      timeOffset = mergedTime[mergedTime.length - 1];
+    }
+  });
+
+  return {
+    time: mergedTime,
+    analogData: mergedAnalogData,
+    digitalData: mergedDigitalData,
+  };
+}
+
+/**
+ * Read file as text using FileReader
+ * Ensures compatibility across all browsers
+ * @private
+ */
+function readFileAsText(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        resolve(e.target.result);
+      } catch (err) {
+        reject(err);
+      }
+    };
+    reader.onerror = () => {
+      reject(new Error(`Failed to read file: ${file.name}`));
+    };
+    reader.readAsText(file);
+  });
 }
 
 /**

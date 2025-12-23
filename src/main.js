@@ -4,7 +4,6 @@ import {
 } from "./components/chartComponent.js";
 import { parseCFG, parseDAT } from "./components/comtradeUtils.js";
 import { createState } from "./components/createState.js";
-import { handleMultipleFiles } from "./utils/multiFileHandler.js";
 import {
   processFilesInBatches,
   yieldToEventLoop,
@@ -57,6 +56,7 @@ import {
   getCurrentTheme,
 } from "./utils/themeManager.js";
 import { initGlobalDOMUpdateQueue } from "./utils/domUpdateQueueInit.js";
+import { openMergerWindow } from "./utils/mergerWindowLauncher.js";
 
 // Initialize global DOM update queue for selectiveUpdate feature
 initGlobalDOMUpdateQueue();
@@ -972,6 +972,354 @@ window.addEventListener("unhandledrejection", (ev) => {
 // --- Event Listeners ---
 loadBtn.addEventListener("click", handleLoadFiles);
 console.log("[main.js] loadBtn event listener attached");
+
+// Merge Multiple Files button
+const mergeMultipleFilesBtn = document.getElementById("mergeMultipleFilesBtn");
+if (mergeMultipleFilesBtn) {
+  mergeMultipleFilesBtn.addEventListener("click", () => {
+    console.log("[main.js] Opening COMTRADE File Merger...");
+    openMergerWindow();
+  });
+  console.log("[main.js] mergeMultipleFilesBtn event listener attached");
+}
+
+// Listen for merged files from the merger app
+window.addEventListener("mergedFilesReceived", async (event) => {
+  console.log(
+    "[main.js] 📦 Received merged files from merger app:",
+    event.detail
+  );
+
+  try {
+    const {
+      cfg: cfgData,
+      datContent,
+      filenames,
+      fileCount,
+      isMerged,
+    } = event.detail;
+
+    if (!cfgData || !datContent) {
+      showError(
+        "Invalid merged file data received from merger app.",
+        fixedResultsEl
+      );
+      return;
+    }
+
+    // Show loading indicator
+    fixedResultsEl.innerHTML =
+      '<div style="padding: 20px; text-align: center; color: var(--text-secondary);"><p>🔄 Loading merged files...</p><p style="font-size: 0.9rem; margin-top: 10px;">Processing merged COMTRADE data</p></div>';
+
+    console.log("[main.js] 📊 PHASE 1: Parsing merged data");
+
+    // Parse the merged CFG and DAT data
+    // cfgData is already parsed from the merger app
+    cfg = cfgData;
+
+    // Parse the DAT content
+    // The merger app should provide datContent as string or already parsed
+    // If it's a string, we need to parse it
+    let datData;
+    if (typeof datContent === "string") {
+      // Parse the DAT file - use the file type from CFG, default to ASCII
+      const fileType = cfg.ft || "ASCII";
+      console.log(`[main.js] Parsing merged DAT content as ${fileType} format`);
+      datData = parseDAT(datContent, cfg, fileType, TIME_UNIT);
+    } else {
+      datData = datContent;
+    }
+
+    data = {
+      ...datData,
+      time: datData.time || [],
+      analogData: datData.analogData || [],
+      digitalData: datData.digitalData || [],
+    };
+
+    if (!data.time || data.time.length === 0) {
+      showError("Failed to parse merged COMTRADE data.", fixedResultsEl);
+      return;
+    }
+
+    console.log("[main.js] 📊 PHASE 2: Initializing data state");
+
+    // Update global data state
+    dataState.analog = data.analogData;
+    dataState.digital = data.digitalData;
+
+    // Update UI with filenames
+    const filenameText = isMerged
+      ? `Merged: ${filenames.join(", ")}`
+      : `Loaded: ${filenames[0]}`;
+
+    cfgFileNameEl.textContent = filenameText;
+    datFileNameEl.textContent = isMerged
+      ? `(${fileCount} DAT files merged)`
+      : `DAT File: ${filenames[0]}.dat`;
+
+    const groups = autoGroupChannels(cfg.analogChannels);
+
+    // ===== UI HELPER CALLS (Light) =====
+    showFileInfo();
+    updateFileInfo(
+      filenames[0],
+      isMerged ? `${fileCount} files merged` : `${filenames[0]}.dat`
+    );
+    updateStatsCards({
+      sampleRate: cfg.sampleRate || 4800,
+      duration: cfg.duration || 2000,
+      analogChannels: cfg.analogChannels,
+      digitalChannels: cfg.digitalChannels,
+    });
+    toggleChartsVisibility(true);
+
+    console.log("[main.js] 🎨 PHASE 3: Channel state initialization");
+
+    // PHASE 3: Initialize channel state
+    if (channelState && channelState.suspendHistory)
+      channelState.suspendHistory();
+    try {
+      initializeChannelState(cfg, data);
+
+      // Populate group IDs from autoGroupChannels results
+      const analogGroupIds = new Array(cfg.analogChannels.length);
+      groups.forEach((group) => {
+        group.indices.forEach((channelIdx) => {
+          analogGroupIds[channelIdx] = group.groupId;
+        });
+      });
+      channelState.analog.groups = analogGroupIds;
+      console.log(
+        "[main.js] ✅ Populated analog group IDs from merged files:",
+        analogGroupIds
+      );
+    } finally {
+      if (channelState && channelState.resumeHistory)
+        channelState.resumeHistory();
+    }
+
+    // Yield to event loop
+    await yieldToEventLoop(50);
+
+    console.log("[main.js] 📈 PHASE 4: Chart rendering");
+
+    // PHASE 4: Render all charts
+    renderComtradeCharts(
+      cfg,
+      data,
+      chartsContainer,
+      charts,
+      verticalLinesX,
+      createState,
+      calculateDeltas,
+      TIME_UNIT,
+      channelState
+    );
+
+    // Yield to event loop
+    await yieldToEventLoop(50);
+
+    console.log("[main.js] 🎯 PHASE 5: Polar chart initialization");
+
+    // PHASE 5: Initialize Polar Chart
+    try {
+      console.log("[main.js] Creating PolarChart instance...");
+      polarChart = new PolarChart("polarChartContainer");
+      polarChart.init();
+
+      if (window.requestIdleCallback) {
+        window.requestIdleCallback(
+          () => {
+            try {
+              console.log("[PolarChart] Background: Updating phasor data...");
+              polarChart.updatePhasorAtTimeIndex(cfg, data, 0);
+              console.log("[PolarChart] ✅ Background phasor update complete");
+            } catch (err) {
+              console.error("[PolarChart] Background update failed:", err);
+            }
+          },
+          { timeout: 2000 }
+        );
+      } else {
+        requestAnimationFrame(() => {
+          setTimeout(() => {
+            try {
+              console.log("[PolarChart] Fallback: Updating phasor data...");
+              polarChart.updatePhasorAtTimeIndex(cfg, data, 0);
+            } catch (err) {
+              console.error("[PolarChart] Fallback update failed:", err);
+            }
+          }, 100);
+        });
+      }
+
+      console.log(
+        "[main.js] ✅ Polar chart instance created (rendering deferred)"
+      );
+    } catch (err) {
+      console.error(
+        "[main.js] ❌ Failed to initialize polar chart:",
+        err.message
+      );
+    }
+
+    // Yield to event loop
+    await yieldToEventLoop(50);
+
+    console.log("[main.js] 📟 PHASE 6: Computed channels");
+
+    // PHASE 6: Load persisted computed channels
+    const savedChannels = loadComputedChannelsFromStorage();
+    if (savedChannels.length > 0) {
+      if (!data.computedData) data.computedData = [];
+      for (const savedChannel of savedChannels) {
+        const exists = data.computedData.some(
+          (ch) => ch.equation === savedChannel.expression
+        );
+        if (!exists) {
+          data.computedData.push({
+            id: savedChannel.name,
+            equation: savedChannel.expression,
+            data: savedChannel.data,
+            index: data.computedData.length,
+          });
+        }
+      }
+      if (data.computedData.length > 0) {
+        const exportBtn = document.getElementById("exportComputedChannelBtn");
+        const csvBtn = document.getElementById("exportCSVBtn");
+        if (exportBtn) exportBtn.disabled = false;
+        if (csvBtn) csvBtn.disabled = false;
+        renderComputedChannels(
+          data,
+          chartsContainer,
+          charts,
+          verticalLinesX,
+          channelState
+        );
+      }
+    }
+    setupComputedChannelsListener();
+
+    // Yield to event loop
+    await yieldToEventLoop(50);
+
+    console.log("[main.js] 🔗 PHASE 7: Chart integrations");
+
+    // PHASE 7: Setup polar chart with vertical lines
+    if (polarChart) {
+      try {
+        setupPolarChartWithVerticalLines(
+          polarChart,
+          cfg,
+          data,
+          verticalLinesX,
+          charts
+        );
+        console.log("[main.js] ✅ Polar chart integrated");
+      } catch (err) {
+        console.error(
+          "[main.js] ❌ Polar chart integration failed:",
+          err.message
+        );
+      }
+    }
+
+    // PHASE 8: Final setup
+    try {
+      applyInitialStartDurations(channelState, dataState, charts);
+    } catch (e) {
+      console.debug("applyInitialStartDurations failed:", e);
+    }
+
+    try {
+      const maxDuration = data.time ? data.time[data.time.length - 1] : 1;
+      verticalLineControl = initVerticalLineControl({
+        dataState: dataState,
+        maxDuration: maxDuration,
+        onPositionChange: (value) => {
+          // Vertical line position changed
+        },
+      });
+    } catch (error) {
+      console.error(
+        "[main.js] Failed to initialize vertical line control:",
+        error
+      );
+    }
+
+    if (window._resizableGroup) window._resizableGroup.disconnect();
+    window._resizableGroup = new ResizableGroup(".dragBar");
+
+    // Initialize fast lookup map
+    rebuildChannelIDMap();
+
+    // Setup subscriptions
+    try {
+      channelState.analog?.subscribe?.(() => {
+        rebuildChannelIDMap();
+      });
+      channelState.digital?.subscribe?.(() => {
+        rebuildChannelIDMap();
+      });
+    } catch (e) {
+      console.warn("[main] Failed to set up channelID map rebuild:", e);
+    }
+
+    // Defer subscription setup
+    if (window.requestIdleCallback) {
+      window.requestIdleCallback(
+        () => {
+          console.log(
+            "[main.js] Background: Setting up chart subscriptions..."
+          );
+          subscribeChartUpdates(
+            channelState,
+            dataState,
+            charts,
+            chartsContainer,
+            verticalLinesX,
+            cfg,
+            data,
+            createState,
+            calculateDeltas,
+            TIME_UNIT
+          );
+          console.log("[main.js] ✅ Chart subscriptions ready");
+        },
+        { timeout: 2000 }
+      );
+    } else {
+      setTimeout(() => {
+        subscribeChartUpdates(
+          channelState,
+          dataState,
+          charts,
+          chartsContainer,
+          verticalLinesX,
+          cfg,
+          data,
+          createState,
+          calculateDeltas,
+          TIME_UNIT
+        );
+      }, 500);
+    }
+
+    console.log(
+      "[main.js] 🎉 COMPLETE - All merged files loaded and rendered successfully"
+    );
+    fixedResultsEl.innerHTML = "";
+  } catch (error) {
+    console.error("[main.js] ❌ Error processing merged files:", error.message);
+    showError(
+      "An error occurred while processing the merged COMTRADE files. Check the console for details.",
+      fixedResultsEl
+    );
+  }
+});
+console.log("[main.js] mergedFilesReceived event listener attached");
 
 // Sidebar Toggle Functionality
 const sidebar = document.getElementById("sidebar");

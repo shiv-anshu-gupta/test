@@ -168,25 +168,98 @@ export class ComtradeFileParser {
    * @param {File} datFile - The .dat file
    * @returns {Promise<Object>} Sample data info
    */
-  static async parseDAT(datFile) {
+  static async parseDAT(datFile, cfgData) {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
       reader.onload = (e) => {
         try {
-          const buffer = e.target.result;
+          let text;
+          if (e.target.result instanceof ArrayBuffer) {
+            // Binary data - try to decode as UTF-8 text
+            text = new TextDecoder().decode(e.target.result);
+          } else {
+            // Already text
+            text = e.target.result;
+          }
+
+          // Parse ASCII DAT format: sample_number,ch1,ch2,...,chN
+          const lines = text.split("\n").filter((line) => line.trim());
+          const data = [];
+          const times = [];
+
+          // Get info from CFG
+          const numAnalog = cfgData?.analogChannels?.length || 0;
+          const numDigital = cfgData?.digitalChannels?.length || 0;
+          const sampleRate = cfgData?.sampleRate || 50; // Hz
+          const timeDelta = 1 / sampleRate; // seconds between samples
+
+          console.log(
+            `[parseDAT] CFG info: ${numAnalog} analog + ${numDigital} digital channels, sample rate ${sampleRate}Hz`
+          );
+          console.log(
+            `[parseDAT] Parsing ${lines.length} lines from DAT file...`
+          );
+
+          // Parse each data line
+          lines.forEach((line, lineIdx) => {
+            const values = line.split(",").map((v) => {
+              const num = Number(v.trim());
+              return isNaN(num) ? 0 : num;
+            });
+
+            if (values.length > 0) {
+              const sampleNum = values[0]; // First value is sample number
+
+              // Extract analog values (indices 1 to numAnalog)
+              const analogValues = values.slice(1, numAnalog + 1);
+
+              // Extract digital values (if present)
+              const digitalValues = values.slice(
+                numAnalog + 1,
+                numAnalog + numDigital + 1
+              );
+
+              // Log first few samples to debug
+              if (lineIdx < 3) {
+                console.log(
+                  `[parseDAT] Sample ${sampleNum}: ${
+                    analogValues.length
+                  } analog values (first 5: ${analogValues
+                    .slice(0, 5)
+                    .join(",")}), ${digitalValues.length} digital values`
+                );
+              }
+
+              // Store combined data row
+              data.push([...analogValues, ...digitalValues]);
+
+              // Calculate time for this sample
+              const time = (sampleNum - 1) * timeDelta;
+              times.push(time);
+            }
+          });
+
+          console.log(
+            `[parseDAT] Parsed DAT file: ${lines.length} lines, ${data.length} samples`
+          );
 
           resolve({
+            data,
+            times,
+            analogData: data.map((row) => row.slice(0, numAnalog)),
+            digitalData: data.map((row) => row.slice(numAnalog)),
             fileName: datFile.name,
             fileSize: datFile.size,
-            isBinary: true,
-            byteLength: buffer.byteLength,
+            sampleCount: data.length,
+            contentLength: text.length,
           });
         } catch (error) {
+          console.error("[parseDAT] Error parsing DAT:", error);
           reject(new Error(`Failed to parse DAT: ${error.message}`));
         }
       };
       reader.onerror = () => reject(new Error("Failed to read DAT file"));
-      reader.readAsArrayBuffer(datFile);
+      reader.readAsText(datFile);
     });
   }
 

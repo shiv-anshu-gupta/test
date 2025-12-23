@@ -1,7 +1,4 @@
-import {
-  createChartOptions,
-  getMaxYAxesForAlignment,
-} from "./chartComponent.js";
+import { createChartOptions } from "./chartComponent.js";
 import { createDragBar } from "./createDragBar.js";
 import { createCustomElement } from "../utils/helpers.js";
 import {
@@ -14,6 +11,9 @@ import {
   initUPlotChart,
 } from "../utils/chartDomUtils.js";
 import verticalLinePlugin from "../plugins/verticalLinePlugin.js";
+import { calculateAxisCountForGroup } from "../utils/axisCalculator.js";
+import { getGlobalAxisAlignment } from "../utils/chartAxisAlignment.js";
+import { getMaxYAxes } from "../utils/maxYAxesStore.js";
 // import { deltaBoxPlugin } from "../plugins/deltaBoxPlugin.js"; // DISABLED: Using DeltaWindow popup instead
 
 export function renderAnalogCharts(
@@ -71,6 +71,9 @@ export function renderAnalogCharts(
       name,
       indices: idxs.slice(),
       ids: idxs.map((j) => channelIDs[j]),
+      axisCount: calculateAxisCountForGroup(
+        idxs.map((idx) => totalAnalog[idx])
+      ),
     }));
 
     // Auto-group any remaining channels and remap to global indices/ids
@@ -99,6 +102,9 @@ export function renderAnalogCharts(
           indices: globalIndices,
           ids: globalIndices.map((gi) => channelIDs[gi]),
           colors: ag.colors,
+          axisCount: calculateAxisCountForGroup(
+            globalIndices.map((idx) => totalAnalog[idx])
+          ),
         });
       });
     }
@@ -123,23 +129,20 @@ export function renderAnalogCharts(
       indices: (g.indices || []).slice(),
       ids: (g.indices || []).map((idx) => channelIDs[idx]),
       colors: g.colors,
+      axisCount: calculateAxisCountForGroup(
+        (g.indices || []).map((idx) => cfg.analogChannels[idx])
+      ),
     }));
   }
 
-  // Calculate max Y-axes for alignment across all groups
-  const maxYAxes = getMaxYAxesForAlignment(groups);
-  console.log(
-    "[renderAnalogCharts] Max Y-axes for alignment:",
-    maxYAxes,
-    "across",
-    groups.length,
-    "groups"
-  );
+  // ✅ Get global axis alignment from global store
+  // The store gets updated when group changes in chartManager
+  const globalMaxYAxes = getMaxYAxes();
 
   // ⏱️ TIMING: Start chart creation
   const chartsStartTime = performance.now();
   console.log(
-    `[renderAnalogCharts] 🔧 Starting chart creation for ${groups.length} groups...`
+    `[renderAnalogCharts] 🔧 Starting chart creation for ${groups.length} groups... maxYAxes=${globalMaxYAxes}`
   );
 
   // Render each group as a chart
@@ -220,16 +223,17 @@ export function renderAnalogCharts(
       getCharts: () => charts,
       yUnits: groupYUnits,
       axesScales: groupAxesScales,
-      singleYAxis: true,
-      maxYAxes: maxYAxes,
+      singleYAxis: false,
+      maxYAxes: globalMaxYAxes, // ✅ Use global axis alignment for all charts!
     });
 
-    console.log("[renderAnalogCharts] Chart options for group:", {
-      groupName: group.name,
-      yUnits: groupYUnits,
-      axesScales: groupAxesScales,
-      resolvedIndices: resolvedIndices,
-    });
+    console.log(
+      `[renderAnalogCharts] ✅ Chart config: group="${
+        group.name
+      }", globalMaxYAxes=${globalMaxYAxes}, channels=${
+        groupYLabels.length
+      }, yUnits=[${groupYUnits.join(", ")}]`
+    );
 
     opts.plugins = opts.plugins || [];
     opts.plugins = opts.plugins.filter(

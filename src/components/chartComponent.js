@@ -51,21 +51,13 @@ import { crosshairColors } from "../utils/constants.js";
 import autoUnitScalePlugin from "../plugins/autoUnitScalePlugin.js";
 import verticalLinePlugin from "../plugins/verticalLinePlugin.js";
 import horizontalZoomPanPlugin from "../plugins/horizontalZoomPanPlugin.js";
-
-/**
- * Calculate the maximum number of Y-axes needed across all chart groups
- * This ensures all charts have the same number of axes for alignment
- * @param {Array} groups - Array of channel groups (from autoGroupChannels)
- * @returns {number} Maximum number of Y-axes needed
- */
-export function getMaxYAxesForAlignment(groups) {
-  if (!groups || groups.length === 0) return 1;
-
-  // In single Y-axis mode, we just need 1 axis per chart
-  // But in multi-axis mode, find the group with most channels
-  const maxChannelsInGroup = Math.max(...groups.map((g) => g.indices.length));
-  return Math.max(1, maxChannelsInGroup); // At least 1 axis
-}
+import { getChannelType, getAxisForType } from "../utils/axisCalculator.js";
+import { buildCompleteAxesArray, getAxisCount } from "../utils/axisBuilder.js";
+import {
+  createSeriesDefinitions,
+  createYAxisScales,
+} from "../utils/seriesMapper.js";
+import { getGlobalAxisAlignment } from "../utils/chartAxisAlignment.js";
 
 /**
  * Generate complete uPlot chart options configuration.
@@ -166,13 +158,26 @@ export function createChartOptions({
   scales = {}, // Unified: scales[0] is x, rest are y
   select = { show: true },
   singleYAxis = true,
+  maxYAxes = 1, // ✅ NEW: Number of Y-axes to create
   autoScaleUnit = { x: true, y: true }, // NEW: default autoScaleUnit
 }) {
-  // Only verticalLinesX may be a createState object, others are plain values/arrays
   const verticalLinesXVal = unwrap(verticalLinesX);
 
-  // xScale is now always axesScales[0]
   const xScaleVal = axesScales[0] || 1;
+
+  const axisCount = getAxisCount(yLabels.length, maxYAxes, singleYAxis);
+
+  // ✅ DEBUG LOGGING
+  console.log("[createChartOptions] Creating chart with:", {
+    yLabelsCount: yLabels.length,
+    singleYAxis,
+    maxYAxes,
+    calculatedAxisCount: axisCount,
+  });
+
+  const yAxisScales = createYAxisScales(axisCount);
+
+  console.log("[createChartOptions] Created scales:", Object.keys(yAxisScales));
 
   return {
     title,
@@ -183,107 +188,28 @@ export function createChartOptions({
         ? scales
         : {
             x: { time: false, auto: true },
-            ...yLabels.reduce((acc, _, idx) => {
-              acc[`y${idx}`] = { auto: true };
-              return acc;
-            }, {}),
+            ...yAxisScales,
           },
     series: [
       {},
-      ...yLabels.map((label, idx) => ({
-        label,
-        stroke: lineColors[idx % lineColors.length],
-        width: 1,
-        scale: singleYAxis ? "y" : `y${idx}`,
-        points: {
-          size: 4,
-          fill: "white",
-          stroke: lineColors[idx % lineColors.length],
-        },
-      })),
+      ...createSeriesDefinitions({
+        yLabels,
+        lineColors,
+        yUnits,
+        singleYAxis,
+        maxYAxes,
+      }),
     ],
-    axes: [
-      {
-        scale: "x",
-        side: 2,
-        label: `${xLabel}(${xUnit || "sec"})`,
-        stroke: () => {
-          const style = getComputedStyle(document.documentElement);
-          return style.getPropertyValue("--chart-text").trim() || "#ffffff";
-        },
-        grid: {
-          show: true,
-          stroke: () => {
-            const style = getComputedStyle(document.documentElement);
-            return style.getPropertyValue("--chart-grid").trim() || "#404040";
-          },
-        },
-        values: (u, splits) =>
-          splits.map((v) => {
-            const scaled = v * (axesScales[0] || 1); // normalize tick value
-            return scaled.toFixed(3); // force 3 decimal places
-          }),
-      },
-      ...(singleYAxis
-        ? [
-            {
-              scale: "y",
-              side: 3,
-              label: (() => {
-                const unit = yUnits[0] || extractUnit(yLabels[0]);
-                const scaleVal = axesScales[1] || 1;
-                const siPrefix = getSiPrefix(scaleVal);
-                return unit ? `(${siPrefix}${unit})` : yLabels[0];
-              })(),
-              stroke: () => {
-                const style = getComputedStyle(document.documentElement);
-                return (
-                  style.getPropertyValue("--chart-text").trim() || "#ffffff"
-                );
-              },
-              grid: {
-                show: true,
-                stroke: () => {
-                  const style = getComputedStyle(document.documentElement);
-                  return (
-                    style.getPropertyValue("--chart-grid").trim() || "#404040"
-                  );
-                },
-              },
-              values: makeAxisValueFormatter(
-                yUnits[0] || extractUnit(yLabels[0]),
-                axesScales[1] || 1
-              ),
-            },
-          ]
-        : yLabels.map((label, idx) => {
-            const unit = yUnits[idx] || extractUnit(label);
-            const scaleVal = axesScales[idx + 1] || 1;
-            const siPrefix = getSiPrefix(scaleVal);
-            const labelWithUnit = unit ? `(${siPrefix}${unit})` : label;
-            return {
-              scale: `y${idx}`,
-              side: 3,
-              label: labelWithUnit,
-              stroke: () => {
-                const style = getComputedStyle(document.documentElement);
-                return (
-                  style.getPropertyValue("--chart-text").trim() || "#ffffff"
-                );
-              },
-              grid: {
-                show: idx === 0,
-                stroke: () => {
-                  const style = getComputedStyle(document.documentElement);
-                  return (
-                    style.getPropertyValue("--chart-grid").trim() || "#404040"
-                  );
-                },
-              },
-              values: makeAxisValueFormatter(unit, scaleVal),
-            };
-          })),
-    ],
+    axes: buildCompleteAxesArray({
+      xLabel,
+      xUnit,
+      xScale: xScaleVal,
+      yLabels,
+      yUnits,
+      axesScales,
+      singleYAxis,
+      maxYAxes,
+    }),
     cursor: {
       sync: { key: "globalAllSync", setSeries: true },
       x: true,

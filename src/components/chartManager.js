@@ -1,3 +1,8 @@
+import {
+  calculateAxisCountsForAllGroups,
+  didAxisCountChange,
+} from "../utils/axisCalculator.js";
+
 /**
  * @module chartManager
  * @description
@@ -14,6 +19,8 @@
  * - Handle amplitude inversion for selected channels
  * - Apply time-window filtering (start/duration)
  * - Manage vertical line overlays and delta calculations
+ * - Publish maxYAxes changes to global store for all charts to consume
+ * - Use analyzeGroupsAndPublishMaxYAxes() for functional group analysis
  *
  * Features:
  * - Automatic chart update on state mutation
@@ -23,12 +30,14 @@
  * - Deltastate-based change detection
  * - Fallback from in-place to full rebuild on errors
  * - Debug logging via debugPanelLite
+ * - Global axis alignment published to centralized store via functional approach
  *
  * Dependencies:
  * - chartComponent.js: createChartOptions factory
  * - renderComtradeCharts.js: Full chart reconstruction
  * - debugPanelLite.js: Console debug logging
  * - createState.js: Reactive state management
+ * - analyzeGroupsAndPublish.js: Pure function to analyze & publish axes
  *
  * @example
  * import { subscribeChartUpdates } from './components/chartManager.js';
@@ -45,7 +54,7 @@
  * // Now any changes trigger automatic updates:
  * channelState.analog.lineColors[0] = '#FF0000';  // Color change -> in-place update
  * channelState.analog.yLabels[0] = 'New Label';   // Label change -> in-place update
- * channelState.analog.groups[0] = 1;              // Group change -> full rebuild
+ * channelState.analog.groups[0] = 1;              // Group change -> full rebuild + publish axes to store
  */
 
 /**
@@ -204,6 +213,10 @@ export function subscribeChartUpdates(
 
   // Store PREVIOUS group state to detect changes (needed for smart merge)
   let previousGroups = { analog: [], digital: [] };
+
+  // ✅ NEW: Store previous axis counts to detect when rebuild is needed
+  // Format: { analog: [1, 2, 1], digital: [1, 1] } - one entry per group
+  let previousAxisCounts = { analog: [], digital: [] };
 
   // Store stroke functions to avoid recreating them on every color change
   // Cache key: `${type}-${globalIdx}` -> function
@@ -459,30 +472,67 @@ export function subscribeChartUpdates(
         }
       });
 
-      // ✅ STEP 5: Remove charts that are no longer needed
+      // ✅ STEP 5: Remove charts that are no longer needed (async destruction)
+      const chartsToRemove = [];
       Object.keys(currentStructure).forEach((groupId) => {
         if (!newGroupStructure[groupId]) {
           const chart = currentStructure[groupId].chart;
-          try {
-            chart.destroy();
-            const chartIdx = charts.indexOf(chart);
-            if (chartIdx >= 0) {
-              charts.splice(chartIdx, 1);
-              chartsRemoved++;
-              // ⚡ Rebuild index after removing a chart
-              rebuildChannelToChartsIndex();
-              console.log(
-                `[attemptSmartChartMerge] 🗑️ Removed empty chart for ${groupId}`
-              );
-            }
-          } catch (e) {
-            console.warn(
-              `[attemptSmartChartMerge] Failed to remove chart for ${groupId}:`,
-              e
-            );
-          }
+          chartsToRemove.push(chart);
         }
       });
+
+      // Batch remove charts asynchronously
+      if (chartsToRemove.length > 0) {
+        if (window.requestIdleCallback) {
+          window.requestIdleCallback(
+            () => {
+              chartsToRemove.forEach((chart) => {
+                try {
+                  chart.destroy();
+                  const chartIdx = charts.indexOf(chart);
+                  if (chartIdx >= 0) {
+                    charts.splice(chartIdx, 1);
+                    chartsRemoved++;
+                    rebuildChannelToChartsIndex();
+                    console.log(
+                      `[attemptSmartChartMerge] 🗑️ Removed empty chart (async)`
+                    );
+                  }
+                } catch (e) {
+                  console.warn(
+                    `[attemptSmartChartMerge] Failed to remove chart:`,
+                    e
+                  );
+                }
+              });
+            },
+            { timeout: 1000 }
+          );
+        } else {
+          // Fallback: batch in setTimeout
+          setTimeout(() => {
+            chartsToRemove.forEach((chart) => {
+              try {
+                chart.destroy();
+                const chartIdx = charts.indexOf(chart);
+                if (chartIdx >= 0) {
+                  charts.splice(chartIdx, 1);
+                  chartsRemoved++;
+                  rebuildChannelToChartsIndex();
+                  console.log(
+                    `[attemptSmartChartMerge] 🗑️ Removed empty chart (async)`
+                  );
+                }
+              } catch (e) {
+                console.warn(
+                  `[attemptSmartChartMerge] Failed to remove chart:`,
+                  e
+                );
+              }
+            });
+          }, 0);
+        }
+      }
 
       console.log(
         `[attemptSmartChartMerge] ✅ Success: Moved ${channelsMoved} channels, kept ${chartsKept} charts, removed ${chartsRemoved} empty charts`
@@ -942,7 +992,7 @@ export function subscribeChartUpdates(
         clearTimeout(groupChangeTimeout);
       }
 
-      // Debounce: wait 200ms to collect all group changes before rebuilding
+      // Debounce: wait 200ms to collect all group changes before processing
       groupChangeTimeout = setTimeout(async () => {
         const rebuildStartTime = performance.now();
         isRebuildingFromGroup = true;
@@ -950,15 +1000,173 @@ export function subscribeChartUpdates(
         try {
           console.log(`[group subscriber] 🔄 Processing group change...`);
 
-          // Import helper to calculate groups
-          const { autoGroupChannels: autoGroup } = await import(
-            "../utils/autoGroupChannels.js"
+          // ✅ FUNCTIONAL APPROACH: Analyze groups and publish maxYAxes to global store
+          // This single call handles all axis calculations reactively
+          const { analyzeGroupsAndPublishMaxYAxes } = await import(
+            "../utils/analyzeGroupsAndPublish.js"
+          );
+          const newMaxYAxes = analyzeGroupsAndPublishMaxYAxes(
+            charts,
+            channelState,
+            cfg
           );
 
-          // Get expected groups from state
+          // Get previous axes to detect if rebuild needed
+          const previousGlobalAxes = previousAxisCounts?.analog?.globalMax || 1;
+          const axisCountChanged = newMaxYAxes !== previousGlobalAxes;
+
+          console.log(
+            `[group subscriber] 📊 Axis count: old=${previousGlobalAxes}, new=${newMaxYAxes}, changed=${axisCountChanged}`
+          );
+
+          // Build currentGroups for state tracking
           const userGroups = channelState?.analog?.groups || [];
           const expectedGroupCount =
             Math.max(...userGroups.map((g) => (g === -1 ? 0 : g)), 0) + 1;
+
+          const { calculateAxisCountForGroup } = await import(
+            "../utils/axisCalculator.js"
+          );
+
+          const currentGroups = Array.from(
+            { length: expectedGroupCount },
+            (_, groupId) => {
+              const groupIndices = userGroups
+                .map((g, idx) => (g === groupId ? idx : -1))
+                .filter((idx) => idx >= 0);
+
+              return {
+                indices: groupIndices,
+                axisCount: calculateAxisCountForGroup(
+                  groupIndices.map((idx) => cfg?.analogChannels?.[idx] || {})
+                ),
+              };
+            }
+          );
+
+          // Only rebuild charts if axis count actually changed
+          if (axisCountChanged) {
+            console.log(
+              `[group subscriber] 🔥 Axis requirement changed -> FULL REBUILD`
+            );
+
+            // Import render functions
+            const { autoGroupChannels: autoGroup } = await import(
+              "../utils/autoGroupChannels.js"
+            );
+            const { renderAnalogCharts: renderAnalog } = await import(
+              "./renderAnalogCharts.js"
+            );
+
+            // Destroy all old analog charts immediately
+            const chartsToDestroy = charts.filter(
+              (c) => c && c._type === "analog"
+            );
+            chartsToDestroy.forEach((chart) => {
+              if (chart && typeof chart.destroy === "function") {
+                try {
+                  chart.destroy();
+                } catch (err) {
+                  console.warn(
+                    `[group subscriber] Failed to destroy chart:`,
+                    err
+                  );
+                }
+              }
+            });
+
+            // Remove destroyed charts from array
+            charts.length = charts.filter(
+              (c) => !c || c._type !== "analog"
+            ).length;
+
+            // Clear container
+            const chartsContainer =
+              document.querySelector(".charts-container") ||
+              document.querySelector("#charts");
+            if (chartsContainer) {
+              chartsContainer.innerHTML = "";
+            }
+
+            // Re-render with fresh axis calculation
+            renderAnalog(
+              cfg,
+              data,
+              chartsContainer,
+              charts,
+              verticalLinesX,
+              channelState,
+              autoGroup
+            );
+
+            // ✅ Render digital charts (they will read maxYAxes from global store)
+            if (
+              cfg.digitalChannels &&
+              cfg.digitalChannels.length > 0 &&
+              data.digitalData &&
+              data.digitalData.length > 0
+            ) {
+              try {
+                const { renderDigitalCharts: renderDigital } = await import(
+                  "./renderDigitalCharts.js"
+                );
+                renderDigital(
+                  cfg,
+                  data,
+                  chartsContainer,
+                  charts,
+                  verticalLinesX,
+                  channelState
+                  // ✅ REMOVED: currentGlobalAxes parameter - digital charts now read from global store
+                );
+                console.log(
+                  `[group subscriber] ✓ Digital charts rendered (reading maxYAxes from global store)`
+                );
+              } catch (err) {
+                console.error(
+                  `[group subscriber] ❌ Digital render failed:`,
+                  err
+                );
+              }
+            }
+
+            // ✅ Render computed channels
+            try {
+              const { renderComputedChannels: renderComputed } = await import(
+                "./renderComputedChannels.js"
+              );
+              renderComputed(
+                data,
+                chartsContainer,
+                charts,
+                verticalLinesX,
+                channelState
+              );
+              console.log(`[group subscriber] ✓ Computed channels rendered`);
+            } catch (err) {
+              console.warn(
+                `[group subscriber] ⚠️ Computed channels render optional:`,
+                err
+              );
+            }
+
+            // Update state
+            previousGroups.analog = userGroups.slice();
+            previousAxisCounts.analog = {
+              globalMax: newMaxYAxes,
+              perGroup: currentGroups.map((g) => g.axisCount),
+            };
+            isRebuildingFromGroup = false;
+
+            console.log(
+              `[group subscriber] ✅ All charts rebuilt - analog + digital + computed`
+            );
+            return; // ← CRITICAL: Exit early, skip all fast paths
+          } else {
+            console.log(
+              `[group subscriber] ✓ Axis counts unchanged: ${newMaxYAxes}`
+            );
+          }
 
           console.log(
             `[group subscriber] Expected groups: ${expectedGroupCount}, Current charts: ${
@@ -969,6 +1177,7 @@ export function subscribeChartUpdates(
           // 🚀 SUPER-FAST PATH: If chart count hasn't changed, just reorder data
           const analogCharts = charts.filter((c) => c?._type === "analog");
           if (
+            !axisCountChanged && // ⚠️ CRITICAL: Skip fast paths if axes changed
             analogCharts.length === expectedGroupCount &&
             expectedGroupCount > 0
           ) {
@@ -1027,8 +1236,12 @@ export function subscribeChartUpdates(
                 )}ms (data reorder only)`
               );
 
-              // ✅ Update previous groups for next change
+              // ✅ Update previous groups and axis counts for next change
               previousGroups.analog = userGroups.slice();
+              previousAxisCounts.analog = {
+                globalMax: newMaxYAxes,
+                perGroup: currentGroups.map((g) => g.axisCount),
+              };
               isRebuildingFromGroup = false;
               return;
             } catch (e) {
@@ -1039,7 +1252,12 @@ export function subscribeChartUpdates(
           }
 
           // ⚡⚡ ULTRA-FAST PATH: Try SMART CHART MERGING (moves channels between existing charts)
-          if (analogCharts.length > 0 && previousGroups.analog.length > 0) {
+          if (
+            !axisCountChanged &&
+            analogCharts.length > 0 &&
+            previousGroups.analog.length > 0
+          ) {
+            // ⚠️ Skip if axes changed
             console.log(
               `[group subscriber] Comparing old groups to new groups...`,
               `Old: ${previousGroups.analog
@@ -1067,8 +1285,12 @@ export function subscribeChartUpdates(
                 `[group subscriber] Summary: Merged ${mergeResult.channelsMoved} channels, Kept ${mergeResult.chartsKept} charts, Removed ${mergeResult.chartsRemoved} empty charts`
               );
 
-              // ✅ Update previous groups for next change
+              // ✅ Update previous groups and axis counts for next change
               previousGroups.analog = userGroups.slice();
+              previousAxisCounts.analog = {
+                globalMax: newMaxYAxes,
+                perGroup: currentGroups.map((g) => g.axisCount),
+              };
 
               isRebuildingFromGroup = false;
               return;
@@ -1079,7 +1301,11 @@ export function subscribeChartUpdates(
           }
 
           // ⚡ OPTIMIZATION: Try to REUSE charts instead of recreating
-          if (canReuseCharts("analog", expectedGroupCount)) {
+          if (
+            !axisCountChanged &&
+            canReuseCharts("analog", expectedGroupCount)
+          ) {
+            // ⚠️ Skip if axes changed
             console.log(
               `[group subscriber] ⚡ FAST PATH: Reusing ${expectedGroupCount} analog charts (skipping recreation)`
             );
@@ -1135,8 +1361,12 @@ export function subscribeChartUpdates(
               );
             }
 
-            // ✅ Update previous groups for next change
+            // ✅ Update previous groups and axis counts for next change
             previousGroups.analog = userGroups.slice();
+            previousAxisCounts.analog = {
+              globalMax: newMaxYAxes,
+              perGroup: currentGroups.map((g) => g.axisCount),
+            };
 
             isRebuildingFromGroup = false;
             return;
@@ -1145,6 +1375,34 @@ export function subscribeChartUpdates(
           // ❌ SLOW PATH: Charts structure changed, need full rebuild
           console.log(
             `[group subscriber] 🔄 Chart count changed, using SLOW PATH (full rebuild)...`
+          );
+
+          // ⚡ CRITICAL: Destroy all old charts IMMEDIATELY (synchronous)
+          const destroyStartTime = performance.now();
+          const chartsToDestroy = charts.slice(); // Copy array
+
+          // Destroy all charts immediately (don't batch - it causes 22 second freeze!)
+          for (let i = 0; i < chartsToDestroy.length; i++) {
+            try {
+              if (
+                chartsToDestroy[i] &&
+                typeof chartsToDestroy[i].destroy === "function"
+              ) {
+                chartsToDestroy[i].destroy();
+              }
+            } catch (e) {
+              console.warn(
+                `[group subscriber] Failed to destroy chart[${i}]:`,
+                e
+              );
+            }
+          }
+
+          const destroyTime = performance.now() - destroyStartTime;
+          console.log(
+            `[group subscriber] ✓ Destroyed ${
+              chartsToDestroy.length
+            } old charts in ${destroyTime.toFixed(0)}ms`
           );
 
           // Clear old charts
@@ -1166,66 +1424,34 @@ export function subscribeChartUpdates(
             autoGroup
           );
 
-          // Defer digital rendering to background thread so UI stays responsive
+          // ✅ Render digital charts IMMEDIATELY in parallel (no freeze!)
           if (
             cfg.digitalChannels &&
             cfg.digitalChannels.length > 0 &&
             data.digitalData &&
             data.digitalData.length > 0
           ) {
-            if (window.requestIdleCallback) {
-              // Low priority: render digital charts when browser is idle
-              window.requestIdleCallback(
-                async () => {
-                  try {
-                    const { renderDigitalCharts: renderDigital } = await import(
-                      "./renderDigitalCharts.js"
-                    );
-                    renderDigital(
-                      cfg,
-                      data,
-                      chartsContainer,
-                      charts,
-                      verticalLinesX,
-                      channelState
-                    );
-                    console.log(
-                      `[group subscriber] ✓ Digital charts deferred-rendered`
-                    );
-                  } catch (err) {
-                    console.error(
-                      `[group subscriber] ❌ Deferred digital render failed:`,
-                      err
-                    );
-                  }
-                },
-                { timeout: 3000 } // Render within 3 seconds max
+            try {
+              const { renderDigitalCharts: renderDigital } = await import(
+                "./renderDigitalCharts.js"
               );
-            } else {
-              // Fallback: use setTimeout for older browsers
-              setTimeout(async () => {
-                try {
-                  const { renderDigitalCharts: renderDigital } = await import(
-                    "./renderDigitalCharts.js"
-                  );
-                  renderDigital(
-                    cfg,
-                    data,
-                    chartsContainer,
-                    charts,
-                    verticalLinesX,
-                    channelState
-                  );
-                  console.log(
-                    `[group subscriber] ✓ Digital charts deferred-rendered (timeout)`
-                  );
-                } catch (err) {
-                  console.error(
-                    `[group subscriber] ❌ Deferred digital render failed:`,
-                    err
-                  );
-                }
-              }, 0);
+              renderDigital(
+                cfg,
+                data,
+                chartsContainer,
+                charts,
+                verticalLinesX,
+                channelState
+                // ✅ REMOVED: currentGlobalAxes parameter - digital charts now read from global store
+              );
+              console.log(
+                `[group subscriber] ✓ Digital charts rendered (reading maxYAxes from global store)`
+              );
+            } catch (err) {
+              console.error(
+                `[group subscriber] ❌ Digital render failed:`,
+                err
+              );
             }
           }
 
@@ -1244,8 +1470,12 @@ export function subscribeChartUpdates(
             );
           }
 
-          // ✅ Update previous groups for next change
+          // ✅ Update previous groups and axis counts for next change
           previousGroups.analog = userGroups.slice();
+          previousAxisCounts.analog = {
+            globalMax: newMaxYAxes,
+            perGroup: currentGroups.map((g) => g.axisCount),
+          };
         } catch (err) {
           console.error(
             `[group subscriber] ❌ Group change processing failed:`,

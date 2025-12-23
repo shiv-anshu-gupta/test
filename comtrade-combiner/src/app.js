@@ -16,6 +16,27 @@ class ComtradeComberApp {
     this.report = null;
     this.initializeEventListeners();
     this.initializeTabs();
+
+    // Notify main app that merger app is ready (if opened from main app)
+    if (window.opener && !window.opener.closed) {
+      try {
+        window.opener.postMessage(
+          {
+            source: "MergerApp",
+            type: "merger_ready",
+            payload: {
+              message: "COMTRADE File Merger is ready",
+            },
+          },
+          "*"
+        );
+        console.log(
+          "[ComtradeComberApp] Notified main app that merger is ready"
+        );
+      } catch (err) {
+        console.warn("[ComtradeComberApp] Could not notify main app:", err);
+      }
+    }
   }
 
   initializeEventListeners() {
@@ -126,7 +147,7 @@ class ComtradeComberApp {
     try {
       for (const pair of pairs) {
         const cfgData = await ComtradeFileParser.parseCFG(pair.cfg);
-        const datData = await ComtradeFileParser.parseDAT(pair.dat);
+        const datData = await ComtradeFileParser.parseDAT(pair.dat, cfgData);
 
         this.parsedData.push({
           ...cfgData,
@@ -336,29 +357,52 @@ class ComtradeComberApp {
         return combined;
       });
 
-      // Export files
+      // Export files and prepare data to send back to main app
+      const filesToSendBack = [];
+
       combinedData.forEach((data) => {
         try {
+          // Use the original group object with full parsed data (not the report summary)
+          const fullGroup = this.groups[data.groupNumber - 1];
+
+          console.log(
+            `[combineFiles] Processing group ${data.groupNumber}:`,
+            `Files: ${fullGroup.files.length}`,
+            `Merged channels: ${data.mergedChannels.length}`
+          );
+
+          console.log(
+            `[combineFiles] Group ${data.groupNumber} file details:`,
+            fullGroup.files.map((f, i) => ({
+              index: i,
+              name: f.fileName,
+              hasData: !!f.data,
+              dataLength: f.data?.length || 0,
+              hasTimes: !!f.times,
+              timesLength: f.times?.length || 0,
+            }))
+          );
+
           const exported = ComtradeDataExporter.exportGroup(
-            {
-              files: this.report.groups[data.groupNumber - 1].files.map(
-                (f) => ({
-                  fileName: f.name,
-                })
-              ),
-              startTime: new Date(
-                this.report.groups[data.groupNumber - 1].timeSpan.startTime
-              ),
-              groupNumber: data.groupNumber,
-            },
+            fullGroup,
             data.mergedChannels
           );
 
-          // Log export info
-          console.log(
-            `[combineFiles] Exported group ${data.groupNumber}:`,
-            exported.filename
-          );
+          // Log export info with more details
+          console.log(`[combineFiles] Exported group ${data.groupNumber}:`, {
+            filename: exported.filename,
+            cfgLength: exported.cfgContent?.length || 0,
+            datLength: exported.datContent?.length || 0,
+          });
+
+          // Store CFG and DAT content for sending back to main app
+          filesToSendBack.push({
+            cfgFilename: exported.cfgFilename,
+            cfgContent: exported.cfgContent,
+            datFilename: exported.datFilename,
+            datContent: exported.datContent,
+            groupNumber: data.groupNumber,
+          });
         } catch (err) {
           console.warn(
             `[combineFiles] Could not export CFG/DAT for group ${data.groupNumber}:`,
@@ -372,6 +416,87 @@ class ComtradeComberApp {
         `✅ Combination complete! ${combinedData.length} group(s) processed.`
       );
 
+      // If this window was opened by the main app, send merged files back
+      if (window.opener && !window.opener.closed) {
+        try {
+          console.log(
+            "[combineFiles] Sending merged files back to main app..."
+          );
+
+          // Send the first merged group back to the main app
+          if (filesToSendBack.length > 0) {
+            const firstFile = filesToSendBack[0];
+
+            console.log(
+              "[combineFiles] Preparing payload with datContent length:",
+              firstFile.datContent?.length || 0
+            );
+
+            // Parse the CFG content to create a structured object
+            const cfgLines = firstFile.cfgContent.split("\n");
+            const cfgData = this.parseCFGContent(cfgLines);
+
+            console.log("[combineFiles] DEBUG - cfgData generated:", {
+              hasStationName: !!cfgData?.stationName,
+              hasChannels: !!cfgData?.channels,
+              channelCount: cfgData?.channels?.length || 0,
+            });
+
+            console.log("[combineFiles] DEBUG - firstFile.datContent:", {
+              exists: !!firstFile.datContent,
+              length: firstFile.datContent?.length || 0,
+              startsWith: firstFile.datContent?.substring(0, 50),
+            });
+
+            const payload = {
+              cfg: cfgData,
+              datContent: firstFile.datContent || "",
+              filenames: this.parsedData.map((f) => f.fileName),
+              fileCount: this.parsedData.length,
+              mergedGroups: combinedData.length,
+              groupFiles: filesToSendBack,
+            };
+
+            console.log("[combineFiles] Payload created:", {
+              hasCfg: !!payload.cfg,
+              cfgKeys: Object.keys(payload.cfg || {}),
+              datContentLength: payload.datContent.length,
+              filenames: payload.filenames.length,
+            });
+
+            window.opener.postMessage(
+              {
+                source: "MergerApp",
+                type: "merged_files_ready",
+                payload: payload,
+              },
+              "*"
+            );
+
+            console.log(
+              "[combineFiles] Merged files sent to main app successfully"
+            );
+          } else {
+            console.warn("[combineFiles] No files to send back!");
+          }
+        } catch (sendError) {
+          console.error(
+            "[combineFiles] Error sending merged files:",
+            sendError
+          );
+          window.opener?.postMessage(
+            {
+              source: "MergerApp",
+              type: "merger_error",
+              payload: {
+                message: `Error sending merged files: ${sendError.message}`,
+              },
+            },
+            "*"
+          );
+        }
+      }
+
       // Switch to report tab
       const reportTab = document.querySelector('[data-tab="report"]');
       if (reportTab) {
@@ -380,7 +505,110 @@ class ComtradeComberApp {
     } catch (error) {
       this.updateStatus(`❌ Error: ${error.message}`);
       console.error(error);
+
+      // Send error back to main app
+      if (window.opener && !window.opener.closed) {
+        try {
+          window.opener.postMessage(
+            {
+              source: "MergerApp",
+              type: "merger_error",
+              payload: {
+                message: `Merge error: ${error.message}`,
+              },
+            },
+            "*"
+          );
+        } catch (sendError) {
+          console.error(
+            "[combineFiles] Error sending error message:",
+            sendError
+          );
+        }
+      }
     }
+  }
+
+  /**
+   * Parse CFG content string into a structured object
+   * Extracts station, device, channels, and sampling information
+   */
+  parseCFGContent(cfgLines) {
+    const cfg = {
+      stationName: "",
+      deviceName: "",
+      version: "2013",
+      analogChannels: [],
+      digitalChannels: [],
+      frequency: 50,
+      sampleRate: 50,
+    };
+
+    try {
+      // Line 1: MID (station, device, version)
+      if (cfgLines[0]) {
+        const [station, device, version] = cfgLines[0].split(",");
+        cfg.stationName = station?.trim() || "";
+        cfg.deviceName = device?.trim() || "";
+        cfg.version = version?.trim() || "2013";
+      }
+
+      // Line 2: n_A, n_D (number of analog and digital channels)
+      if (cfgLines[1]) {
+        const [nA, nD] = cfgLines[1].split(",");
+        cfg.numAnalog = parseInt(nA?.trim()) || 0;
+        cfg.numDigital = parseInt(nD?.trim()) || 0;
+      }
+
+      // Parse analog channels (lines 3 to 2+numAnalog)
+      let lineIdx = 2;
+      for (let i = 0; i < cfg.numAnalog && lineIdx < cfgLines.length; i++) {
+        const parts = cfgLines[lineIdx].split(",");
+        if (parts.length >= 2) {
+          cfg.analogChannels.push({
+            index: i + 1,
+            name: parts[1]?.trim() || `Analog${i + 1}`,
+            unit: parts[5]?.trim() || "N/A",
+            scale: parseFloat(parts[6]) || 1,
+            offset: parseFloat(parts[7]) || 0,
+          });
+        }
+        lineIdx++;
+      }
+
+      // Parse digital channels
+      for (let i = 0; i < cfg.numDigital && lineIdx < cfgLines.length; i++) {
+        const parts = cfgLines[lineIdx].split(",");
+        if (parts.length >= 2) {
+          cfg.digitalChannels.push({
+            index: cfg.numAnalog + i + 1,
+            name: parts[1]?.trim() || `Digital${i + 1}`,
+          });
+        }
+        lineIdx++;
+      }
+
+      // Parse frequency (sample rate)
+      if (lineIdx < cfgLines.length) {
+        cfg.frequency = parseInt(cfgLines[lineIdx]?.trim()) || 50;
+        cfg.sampleRate = cfg.frequency;
+      }
+
+      // Find and parse file type (ASCII or BINARY) - usually near the end
+      // Look through remaining lines for file type
+      const fileTypeValue = cfgLines.find(
+        (line) =>
+          line?.trim()?.toUpperCase() === "ASCII" ||
+          line?.trim()?.toUpperCase() === "BINARY"
+      );
+      cfg.ft = fileTypeValue?.trim()?.toUpperCase() || "ASCII";
+
+      console.log("[parseCFGContent] Parsed CFG:", cfg);
+    } catch (parseError) {
+      console.warn("[parseCFGContent] Error parsing CFG content:", parseError);
+    }
+
+    return cfg;
   }
 
   updateStatus(text) {

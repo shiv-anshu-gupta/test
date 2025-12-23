@@ -22,7 +22,7 @@
  * }, { path: "user" });
  *
  * // Computed property
- * state.computed("fullInfo", ["user.name", "user.city"], s => 
+ * state.computed("fullInfo", ["user.name", "user.city"], s =>
  *   `${s.user.name} from ${s.user.city}`
  * );
  * console.log(state.fullInfo); // "Bob from Paris"
@@ -271,7 +271,7 @@
  *
  * @example
  * // Computed properties
- * state.computed("fullInfo", ["user.name", "user.city"], s => 
+ * state.computed("fullInfo", ["user.name", "user.city"], s =>
  *   `${s.user.name} from ${s.user.city}`
  * );
  */
