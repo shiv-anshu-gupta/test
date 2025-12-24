@@ -2560,8 +2560,10 @@ function setupComputedChannelsListener() {
       csvBtn.disabled = false;
     }
 
-    if (!data || !data.time) {
-      console.error("[Main] Data not available for computed channel rendering");
+    // ✅ FIXED: Don't require data.time, just check if data exists
+    // The computed channel is created independently of base data
+    if (!data) {
+      console.error("[Main] Data object not available for computed channel rendering");
       return;
     }
 
@@ -3381,7 +3383,7 @@ window.addEventListener("message", (ev) => {
                 );
                 break;
 
-              case "complete":
+              case "complete": {
                 // ✅ Evaluation finished successfully
                 const endTime = performance.now();
                 const elapsedMs = (endTime - startTime).toFixed(2);
@@ -3393,27 +3395,88 @@ window.addEventListener("message", (ev) => {
                 // ✅ Convert ArrayBuffer back to array
                 const results = Array.from(new Float64Array(resultsBuffer));
 
-                // ✅ Add computed channel directly to dataState (simplified)
-                dataState.analog = [...dataState.analog, results];
+                // Generate channel name
+                const channelName = `computed_${Date.now()}`;
 
-                // ✅ Update channelState with new channel metadata
-                const channelLabel = `${expression.substring(0, 20)}...`;
-                channelState.analog.yLabels = [
-                  ...channelState.analog.yLabels,
-                  channelLabel,
-                ];
-                channelState.analog.yUnits = [
-                  ...channelState.analog.yUnits,
-                  unit || "",
-                ];
-                channelState.analog.lineColors = [
-                  ...(channelState.analog.lineColors || []),
-                  "#FF6B6B",
-                ];
+                // Calculate statistics
+                const validResults = results.filter(
+                  (v) => isFinite(v) && v !== 0
+                );
+                const stats = {
+                  min: Math.min(...validResults),
+                  max: Math.max(...validResults),
+                  mean:
+                    validResults.reduce((a, b) => a + b, 0) /
+                    validResults.length,
+                  count: results.length,
+                  validCount: validResults.length,
+                };
+
+                console.log("[main.js] 📊 Statistics:", stats);
+
+                // ✅ Create complete channel data object
+                const channelData = {
+                  id: channelName,
+                  name: channelName,
+                  equation: expression,
+                  mathJsExpression: mathJsExpr,
+                  data: results, // ← renderComputedChannels expects 'data' field
+                  results: results, // ← Keep both for compatibility
+                  stats: stats,
+                  unit: unit || "",
+                  sampleCount: results.length,
+                  createdAt: Date.now(),
+                  index: window.globalData?.computedData?.length || 0,
+                };
+
+                // ✅ Save to window.globalData
+                if (!window.globalData.computedData) {
+                  window.globalData.computedData = [];
+                }
+                window.globalData.computedData.push(channelData);
+
+                // ✅ Save to cfg
+                if (!cfgData.computedChannels) {
+                  cfgData.computedChannels = [];
+                }
+                cfgData.computedChannels.push({
+                  id: channelName,
+                  name: channelName,
+                  equation: expression,
+                  mathJsExpression: mathJsExpr,
+                  unit: unit || "",
+                  group: "Computed",
+                  index: window.globalData.computedData.length - 1,
+                });
+
+                // ✅ Update computed channels state
+                const computedChannelsState = getComputedChannelsState();
+                if (computedChannelsState?.addChannel) {
+                  computedChannelsState.addChannel(
+                    channelName,
+                    channelData,
+                    "parent"
+                  );
+                }
+
+                // ✅ CRITICAL: Dispatch event to trigger chart rendering
+                window.dispatchEvent(
+                  new CustomEvent("computedChannelSaved", {
+                    detail: {
+                      channelId: channelName,
+                      channelName: channelName,
+                      equation: expression,
+                      samples: results.length,
+                      unit: unit || "",
+                      stats: stats,
+                      fullData: channelData, // ← This triggers chart rendering
+                    },
+                  })
+                );
 
                 console.log(
-                  "[main.js] ✅ Computed channel added:",
-                  channelLabel
+                  "[main.js] ✅ Dispatched computedChannelSaved event for:",
+                  channelName
                 );
 
                 // ✅ Notify child window of success
@@ -3429,8 +3492,10 @@ window.addEventListener("message", (ev) => {
                         type: "computedChannelEvaluated",
                         payload: {
                           success: true,
+                          channelName: channelName,
                           samples: resultCount,
                           unit: unit,
+                          stats: stats,
                           elapsedMs: elapsedMs,
                         },
                       },
@@ -3443,8 +3508,11 @@ window.addEventListener("message", (ev) => {
 
                 // ✅ Clean up worker
                 worker.terminate();
-                console.log("[main.js] Worker terminated");
+                console.log(
+                  "[main.js] ✅ Worker terminated, chart should render now"
+                );
                 break;
+              }
 
               case "error":
                 // ❌ Evaluation failed
