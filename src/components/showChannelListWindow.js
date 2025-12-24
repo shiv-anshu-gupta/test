@@ -106,27 +106,30 @@ export function showChannelListWindow(
   try {
     win.globalCfg = cfg;
     win.globalData = data;
-    
+
     // Also create a serialized data object with analog and digital arrays for expression evaluation
-    if (data && typeof data === 'object') {
+    if (data && typeof data === "object") {
       win.__dataArrays = {
         analogData: data.analog || data.analogData || [],
         digitalData: data.digital || data.digitalData || [],
         TIME_UNIT: data.TIME_UNIT,
-        TIME_DATA: data.TIME_DATA || data.time || data.t || []
+        TIME_DATA: data.TIME_DATA || data.time || data.t || [],
       };
-      console.log('[showChannelListWindow] Bound data arrays to child window:', {
-        analogCount: win.__dataArrays.analogData.length,
-        digitalCount: win.__dataArrays.digitalData.length
-      });
+      console.log(
+        "[showChannelListWindow] Bound data arrays to child window:",
+        {
+          analogCount: win.__dataArrays.analogData.length,
+          digitalCount: win.__dataArrays.digitalData.length,
+        }
+      );
     }
-    
+
     // Also bind the computed channels state for reactive updates
     if (typeof window !== "undefined" && window.__computedChannelsState) {
       win.__computedChannelsState = window.__computedChannelsState;
     }
   } catch (e) {
-    console.warn('[showChannelListWindow] Failed to bind globals:', e);
+    console.warn("[showChannelListWindow] Failed to bind globals:", e);
   }
 
   // Add Math.js - needed for expression evaluation in ChannelList
@@ -306,7 +309,9 @@ export function showChannelListWindow(
 
     if (source === "MainApp" && type === "theme_change") {
       const { theme, colors } = payload;
-      console.log(`[ChannelListWindow] Received theme change from parent: ${theme}`);
+      console.log(
+        `[ChannelListWindow] Received theme change from parent: ${theme}`
+      );
 
       // Apply theme colors to CSS variables
       const root = win.document.documentElement.style;
@@ -324,16 +329,22 @@ export function showChannelListWindow(
   // Request current theme from parent on load
   if (window.opener && !window.opener.closed) {
     try {
-      window.opener.postMessage({
-        source: "ChildApp",
-        type: "theme_request",
-        payload: {
-          windowType: "channelList",
-          timestamp: Date.now(),
+      window.opener.postMessage(
+        {
+          source: "ChildApp",
+          type: "theme_request",
+          payload: {
+            windowType: "channelList",
+            timestamp: Date.now(),
+          },
         },
-      }, "*");
+        "*"
+      );
     } catch (err) {
-      console.warn("[ChannelListWindow] Could not request theme from parent:", err);
+      console.warn(
+        "[ChannelListWindow] Could not request theme from parent:",
+        err
+      );
     }
   }
 

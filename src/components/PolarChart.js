@@ -226,7 +226,9 @@ export class PolarChart {
     // ✅ OPTIMIZATION: Limit to first 12 phasors to prevent freeze
     const MAX_PHASORS = 12;
     if (phasorData.length > MAX_PHASORS) {
-      console.warn(`[PolarChart] Too many phasors (${phasorData.length}), limiting to ${MAX_PHASORS}`);
+      console.warn(
+        `[PolarChart] Too many phasors (${phasorData.length}), limiting to ${MAX_PHASORS}`
+      );
       phasorData = phasorData.slice(0, MAX_PHASORS);
     }
 
@@ -244,7 +246,8 @@ export class PolarChart {
     }
     console.log("[PolarChart] Container found:", this.container.id);
     // Just clear and show waiting message, don't render mock data
-    this.container.innerHTML = '<div style="padding: 20px; text-align: center; color: var(--text-secondary);">Waiting for data...</div>';
+    this.container.innerHTML =
+      '<div style="padding: 20px; text-align: center; color: var(--text-secondary);">Waiting for data...</div>';
     console.log("[PolarChart] init() complete - ready for real data");
   }
 

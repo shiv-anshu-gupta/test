@@ -1,9 +1,9 @@
 /**
  * Computed Channels State Management
- * 
+ *
  * This module provides a reactive state for managing computed channels
  * similar to how cfg and data states work.
- * 
+ *
  * Features:
  * - Centralized state for all computed channels
  * - Reactive updates across parent and child windows
@@ -12,7 +12,7 @@
  * - Broadcast changes between windows
  */
 
-import { createState } from '../components/createState.js';
+import { createState } from "../components/createState.js";
 
 let globalComputedChannelsState = null;
 
@@ -30,31 +30,31 @@ export function initComputedChannelsState(initialChannels = {}) {
   const state = createState({
     channels: initialChannels,
     lastUpdated: Date.now(),
-    updateSource: 'init' // 'init', 'local', 'parent', 'child'
+    updateSource: "init", // 'init', 'local', 'parent', 'child'
   });
 
   // Expose methods for updating and broadcasting
   const stateWithMethods = {
     ...state,
-    
+
     /**
      * Add or update a computed channel
      * @param {string} channelName - The channel name (e.g., 'computed_0')
      * @param {Object} channelData - The channel data {data, results, unit, ...}
      * @param {string} source - Source of update ('local', 'parent', 'child')
      */
-    addChannel(channelName, channelData, source = 'local') {
+    addChannel(channelName, channelData, source = "local") {
       // Update the reactive state directly (createState returns a proxy)
       state.channels = {
         ...state.channels,
-        [channelName]: channelData
+        [channelName]: channelData,
       };
       state.lastUpdated = Date.now();
       state.updateSource = source;
 
       // Broadcast to other windows if this is a local update
-      if (source === 'local') {
-        broadcastComputedChannelChange('add', channelName, channelData);
+      if (source === "local") {
+        broadcastComputedChannelChange("add", channelName, channelData);
       }
     },
 
@@ -63,16 +63,16 @@ export function initComputedChannelsState(initialChannels = {}) {
      * @param {string} channelName - The channel name to delete
      * @param {string} source - Source of update
      */
-    deleteChannel(channelName, source = 'local') {
+    deleteChannel(channelName, source = "local") {
       const newChannels = { ...state.channels };
       delete newChannels[channelName];
-      
+
       state.channels = newChannels;
       state.lastUpdated = Date.now();
       state.updateSource = source;
 
-      if (source === 'local') {
-        broadcastComputedChannelChange('delete', channelName);
+      if (source === "local") {
+        broadcastComputedChannelChange("delete", channelName);
       }
     },
 
@@ -81,16 +81,16 @@ export function initComputedChannelsState(initialChannels = {}) {
      * @param {Object} updatedChannels - Object of channels to update/add
      * @param {string} source - Source of update
      */
-    updateChannels(updatedChannels, source = 'local') {
+    updateChannels(updatedChannels, source = "local") {
       state.channels = {
         ...state.channels,
-        ...updatedChannels
+        ...updatedChannels,
       };
       state.lastUpdated = Date.now();
       state.updateSource = source;
 
-      if (source === 'local') {
-        broadcastComputedChannelChange('update', null, updatedChannels);
+      if (source === "local") {
+        broadcastComputedChannelChange("update", null, updatedChannels);
       }
     },
 
@@ -131,22 +131,22 @@ export function initComputedChannelsState(initialChannels = {}) {
         if (!newState || !oldState) {
           return;
         }
-        
+
         if (newState.channels !== oldState.channels) {
           callback({
             channels: newState.channels,
             lastUpdated: newState.lastUpdated,
-            source: newState.updateSource
+            source: newState.updateSource,
           });
         }
       });
-    }
+    },
   };
 
   globalComputedChannelsState = stateWithMethods;
 
   // Make available globally for child windows
-  if (typeof window !== 'undefined') {
+  if (typeof window !== "undefined") {
     window.__computedChannelsState = stateWithMethods;
   }
 
@@ -173,18 +173,18 @@ export function getComputedChannelsState() {
 function broadcastComputedChannelChange(action, channelName, data) {
   // Send to child ChannelList window
   try {
-    const channelListWindow = window.open('', 'ChannelListWindow');
+    const channelListWindow = window.open("", "ChannelListWindow");
     if (channelListWindow && !channelListWindow.closed) {
       channelListWindow.postMessage(
         {
-          source: 'ComputedChannelsState',
-          type: 'computedChannelChanged',
+          source: "ComputedChannelsState",
+          type: "computedChannelChanged",
           action,
           channelName,
           data,
-          timestamp: Date.now()
+          timestamp: Date.now(),
         },
-        '*'
+        "*"
       );
     }
   } catch (e) {
@@ -193,18 +193,18 @@ function broadcastComputedChannelChange(action, channelName, data) {
 
   // Send to merger window if it exists
   try {
-    const mergerWindow = window.open('', 'MergerWindow');
+    const mergerWindow = window.open("", "MergerWindow");
     if (mergerWindow && !mergerWindow.closed) {
       mergerWindow.postMessage(
         {
-          source: 'ComputedChannelsState',
-          type: 'computedChannelChanged',
+          source: "ComputedChannelsState",
+          type: "computedChannelChanged",
           action,
           channelName,
           data,
-          timestamp: Date.now()
+          timestamp: Date.now(),
         },
-        '*'
+        "*"
       );
     }
   } catch (e) {
@@ -218,22 +218,24 @@ function broadcastComputedChannelChange(action, channelName, data) {
  */
 export function listenForComputedChannelChanges(callback) {
   const handleMessage = (event) => {
-    if (event.data.source === 'ComputedChannelsState' && 
-        event.data.type === 'computedChannelChanged') {
+    if (
+      event.data.source === "ComputedChannelsState" &&
+      event.data.type === "computedChannelChanged"
+    ) {
       callback({
         action: event.data.action,
         channelName: event.data.channelName,
         data: event.data.data,
-        timestamp: event.data.timestamp
+        timestamp: event.data.timestamp,
       });
     }
   };
 
-  window.addEventListener('message', handleMessage);
-  
+  window.addEventListener("message", handleMessage);
+
   // Return unsubscribe function
   return () => {
-    window.removeEventListener('message', handleMessage);
+    window.removeEventListener("message", handleMessage);
   };
 }
 
@@ -247,13 +249,13 @@ export function syncComputedChannelsWithParent() {
       const parentState = window.opener.__computedChannelsState;
       if (parentState) {
         const childState = initComputedChannelsState(parentState.getChannels());
-        
+
         // Listen for parent changes
         listenForComputedChannelChanges(({ action, channelName, data }) => {
-          if (action === 'add' || action === 'update') {
-            childState.addChannel(channelName, data, 'parent');
-          } else if (action === 'delete') {
-            childState.deleteChannel(channelName, 'parent');
+          if (action === "add" || action === "update") {
+            childState.addChannel(channelName, data, "parent");
+          } else if (action === "delete") {
+            childState.deleteChannel(channelName, "parent");
           }
         });
 
@@ -261,7 +263,7 @@ export function syncComputedChannelsWithParent() {
       }
     }
   } catch (e) {
-    console.warn('Failed to sync computed channels with parent:', e);
+    console.warn("Failed to sync computed channels with parent:", e);
   }
 
   return initComputedChannelsState({});

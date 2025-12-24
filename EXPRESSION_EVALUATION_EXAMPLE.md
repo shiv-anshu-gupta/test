@@ -3,6 +3,7 @@
 ## Real-World Example with Actual Numbers
 
 ### Step 1: User Input (MathLive Editor)
+
 ```
 \sqrt{I_{A}^2+I_{B}^2+I_{C}^2}
 ```
@@ -10,6 +11,7 @@
 ---
 
 ### Step 2: LaTeX → Math.js Conversion
+
 ```
 Original:   \sqrt{I_{A}^2+I_{B}^2+I_{C}^2}
              ↓
@@ -17,6 +19,7 @@ Converted:  sqrt(IA^2+IB^2+IC^2)
 ```
 
 **Transformation steps:**
+
 1. `I_{A}` → `IA` (remove subscript notation)
 2. `I_{B}` → `IB` (remove subscript notation)
 3. `I_{C}` → `IC` (remove subscript notation)
@@ -215,10 +218,12 @@ Substitute into expression and evaluate.
 **The pipeline does 3 key transformations:**
 
 1. **LaTeX → Math.js** (Format conversion)
+
    - Input: `\sqrt{I_{A}^2+I_{B}^2+I_{C}^2}`
    - Output: `sqrt(IA^2+IB^2+IC^2)`
 
 2. **Lookup channel values** (Data retrieval)
+
    - IA → analogData[0]
    - IB → analogData[1]
    - IC → analogData[2]

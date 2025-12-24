@@ -4,22 +4,24 @@
  * Runs in separate thread to avoid blocking UI
  */
 
-importScripts('https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.11.0/math.min.js');
+importScripts(
+  "https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.11.0/math.min.js"
+);
 
-self.onmessage = function(e) {
+self.onmessage = function (e) {
   const {
     mathJsExpr,
-    analogBuffers,   // ✅ ArrayBuffers instead of arrays
-    digitalBuffers,  // ✅ ArrayBuffers instead of arrays
+    analogBuffers, // ✅ ArrayBuffers instead of arrays
+    digitalBuffers, // ✅ ArrayBuffers instead of arrays
     analogChannels,
     digitalChannels,
     sampleCount,
     analogCount,
-    digitalCount
+    digitalCount,
   } = e.data;
 
   try {
-    console.log('[Worker] Starting evaluation of', sampleCount, 'samples...');
+    console.log("[Worker] Starting evaluation of", sampleCount, "samples...");
 
     // ✅ Convert ArrayBuffers back to typed arrays
     const analogArray = [];
@@ -83,32 +85,34 @@ self.onmessage = function(e) {
       // Report progress periodically
       if (i - lastProgressReport >= PROGRESS_INTERVAL) {
         self.postMessage({
-          type: 'progress',
+          type: "progress",
           processed: i,
           total: sampleCount,
-          percent: Math.round((i / sampleCount) * 100)
+          percent: Math.round((i / sampleCount) * 100),
         });
         lastProgressReport = i;
       }
     }
 
-    console.log('[Worker] Evaluation complete');
+    console.log("[Worker] Evaluation complete");
 
     // ✅ Transfer results back using ArrayBuffer (zero-copy)
     const resultsBuffer = results.buffer;
 
-    self.postMessage({
-      type: 'complete',
-      resultsBuffer: resultsBuffer,
-      sampleCount: sampleCount
-    }, [resultsBuffer]); // ✅ Transfer ownership back to main thread
-
+    self.postMessage(
+      {
+        type: "complete",
+        resultsBuffer: resultsBuffer,
+        sampleCount: sampleCount,
+      },
+      [resultsBuffer]
+    ); // ✅ Transfer ownership back to main thread
   } catch (error) {
-    console.error('[Worker] Error:', error);
+    console.error("[Worker] Error:", error);
     self.postMessage({
-      type: 'error',
+      type: "error",
       message: error.message,
-      stack: error.stack
+      stack: error.stack,
     });
   }
 };

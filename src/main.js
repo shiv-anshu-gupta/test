@@ -1096,7 +1096,7 @@ window.addEventListener("mergedFilesReceived", async (event) => {
     // Parse the merged CFG and DAT data
     // cfgData is already parsed from the merger app
     cfg = cfgData;
-    
+
     // ✅ Make cfg globally accessible for computed channel evaluation (like temp repo)
     window.globalCfg = cfg;
 
@@ -1216,7 +1216,9 @@ window.addEventListener("mergedFilesReceived", async (event) => {
         polarChart.init();
         console.log("[main.js] ✅ PolarChart instance created");
       } else {
-        console.log("[main.js] ⏭️ PolarChart already exists, skipping creation");
+        console.log(
+          "[main.js] ⏭️ PolarChart already exists, skipping creation"
+        );
       }
 
       if (window.requestIdleCallback) {
@@ -1852,22 +1854,25 @@ try {
   if (computedChannelsState && computedChannelsState.onChannelsChanged) {
     computedChannelsState.onChannelsChanged(({ channels, source }) => {
       try {
-        console.log('[main.js] Computed channels updated:', { source, channelCount: Object.keys(channels || {}).length });
-        
+        console.log("[main.js] Computed channels updated:", {
+          source,
+          channelCount: Object.keys(channels || {}).length,
+        });
+
         // Only re-render if the change came from the child window or parent
-        if (source !== 'init' && channels) {
+        if (source !== "init" && channels) {
           // Re-render computed channels on the chart
-          if (typeof renderComputedChannels === 'function') {
+          if (typeof renderComputedChannels === "function") {
             renderComputedChannels(charts, channelState, channels);
           }
         }
       } catch (e) {
-        console.error('[main.js] Error handling computed channels update:', e);
+        console.error("[main.js] Error handling computed channels update:", e);
       }
     });
   }
 } catch (e) {
-  console.warn('[main.js] Failed to setup computed channels listener:', e);
+  console.warn("[main.js] Failed to setup computed channels listener:", e);
 }
 
 const themeToggleBtn = document.getElementById("themeToggleBtn");
@@ -2170,7 +2175,9 @@ async function handleLoadFiles() {
         polarChart.init(); // This just clears container
         console.log("[handleLoadFiles] ✅ PolarChart instance created");
       } else {
-        console.log("[handleLoadFiles] ⏭️ PolarChart already exists, skipping creation");
+        console.log(
+          "[handleLoadFiles] ⏭️ PolarChart already exists, skipping creation"
+        );
       }
 
       // Defer the expensive updatePhasorAtTimeIndex to avoid blocking
@@ -3266,42 +3273,55 @@ window.addEventListener("message", (ev) => {
         try {
           const { expression, unit } = payload || {};
           if (!expression) {
-            console.warn('[main.js] No expression provided for computed channel');
+            console.warn(
+              "[main.js] No expression provided for computed channel"
+            );
             break;
           }
 
-          console.log('[main.js] 📨 Received computed channel expression from child:', expression);
+          console.log(
+            "[main.js] 📨 Received computed channel expression from child:",
+            expression
+          );
 
           // ✅ STEP 1: Get global cfg and data (like working temp repo)
-          const cfgData = window.globalCfg || (window.opener && window.opener.globalCfg);
-          const dataObj = window.globalData || (window.opener && window.opener.globalData);
+          const cfgData =
+            window.globalCfg || (window.opener && window.opener.globalCfg);
+          const dataObj =
+            window.globalData || (window.opener && window.opener.globalData);
 
           if (!cfgData || !dataObj) {
-            console.error('[main.js] ❌ Global cfg/data not available', {
+            console.error("[main.js] ❌ Global cfg/data not available", {
               hasGlobalCfg: !!window.globalCfg,
-              hasGlobalData: !!window.globalData
+              hasGlobalData: !!window.globalData,
             });
             break;
           }
 
           // ✅ STEP 2: Convert LaTeX to math.js compatible format
           const mathJsExpr = convertLatexToMathJs(expression);
-          console.log('[main.js] 📝 Expression conversion:', {
+          console.log("[main.js] 📝 Expression conversion:", {
             original: expression,
-            converted: mathJsExpr
+            converted: mathJsExpr,
           });
 
           // ✅ STEP 3: Get data arrays
-          const analogArray = Array.isArray(dataObj?.analogData) ? dataObj.analogData : [];
-          const digitalArray = Array.isArray(dataObj?.digitalData) ? dataObj.digitalData : [];
+          const analogArray = Array.isArray(dataObj?.analogData)
+            ? dataObj.analogData
+            : [];
+          const digitalArray = Array.isArray(dataObj?.digitalData)
+            ? dataObj.digitalData
+            : [];
           const sampleCount = analogArray?.[0]?.length || 0;
 
           if (!sampleCount) {
-            console.error('[main.js] ❌ No analog samples available');
+            console.error("[main.js] ❌ No analog samples available");
             break;
           }
 
-          console.log(`[main.js] ⚡ Starting Web Worker evaluation (${sampleCount} samples)...`);
+          console.log(
+            `[main.js] ⚡ Starting Web Worker evaluation (${sampleCount} samples)...`
+          );
 
           // ✅ Convert arrays to ArrayBuffers (transferable objects - zero-copy)
           const analogBuffers = [];
@@ -3321,38 +3341,54 @@ window.addEventListener("message", (ev) => {
           }
 
           // ✅ Serialize channel metadata (only plain data, no proxies)
-          const analogChannelsMeta = (cfgData?.analogChannels || []).map(ch => ({
-            id: ch.id,
-            ph: ch.ph,
-            units: ch.units
-          }));
+          const analogChannelsMeta = (cfgData?.analogChannels || []).map(
+            (ch) => ({
+              id: ch.id,
+              ph: ch.ph,
+              units: ch.units,
+            })
+          );
 
-          const digitalChannelsMeta = (cfgData?.digitalChannels || []).map(ch => ({
-            id: ch.id,
-            ph: ch.ph,
-            units: ch.units
-          }));
+          const digitalChannelsMeta = (cfgData?.digitalChannels || []).map(
+            (ch) => ({
+              id: ch.id,
+              ph: ch.ph,
+              units: ch.units,
+            })
+          );
 
           // ✅ STEP 4: Create Web Worker to avoid UI freeze
-          const worker = new Worker('./src/workers/computedChannelWorker.js');
+          const worker = new Worker("./src/workers/computedChannelWorker.js");
           const startTime = performance.now();
 
           // Listen for messages from worker
-          worker.onmessage = function(e) {
-            const { type, processed, total, percent, resultsBuffer, sampleCount: resultCount, message } = e.data;
+          worker.onmessage = function (e) {
+            const {
+              type,
+              processed,
+              total,
+              percent,
+              resultsBuffer,
+              sampleCount: resultCount,
+              message,
+            } = e.data;
 
             switch (type) {
-              case 'progress':
+              case "progress":
                 // 📊 Real-time progress updates
-                console.log(`[Worker] 📊 Progress: ${percent}% (${processed}/${total})`);
+                console.log(
+                  `[Worker] 📊 Progress: ${percent}% (${processed}/${total})`
+                );
                 break;
 
-              case 'complete':
+              case "complete":
                 // ✅ Evaluation finished successfully
                 const endTime = performance.now();
                 const elapsedMs = (endTime - startTime).toFixed(2);
 
-                console.log(`[main.js] ✅ Worker completed in ${elapsedMs}ms (${resultCount} samples)`);
+                console.log(
+                  `[main.js] ✅ Worker completed in ${elapsedMs}ms (${resultCount} samples)`
+                );
 
                 // ✅ Convert ArrayBuffer back to array
                 const results = Array.from(new Float64Array(resultsBuffer));
@@ -3362,61 +3398,82 @@ window.addEventListener("message", (ev) => {
 
                 // ✅ Update channelState with new channel metadata
                 const channelLabel = `${expression.substring(0, 20)}...`;
-                channelState.analog.yLabels = [...channelState.analog.yLabels, channelLabel];
-                channelState.analog.yUnits = [...channelState.analog.yUnits, unit || ''];
-                channelState.analog.lineColors = [...(channelState.analog.lineColors || []), '#FF6B6B'];
+                channelState.analog.yLabels = [
+                  ...channelState.analog.yLabels,
+                  channelLabel,
+                ];
+                channelState.analog.yUnits = [
+                  ...channelState.analog.yUnits,
+                  unit || "",
+                ];
+                channelState.analog.lineColors = [
+                  ...(channelState.analog.lineColors || []),
+                  "#FF6B6B",
+                ];
 
-                console.log('[main.js] ✅ Computed channel added:', channelLabel);
+                console.log(
+                  "[main.js] ✅ Computed channel added:",
+                  channelLabel
+                );
 
                 // ✅ Notify child window of success
                 try {
-                  const channelListWindow = window.open('', 'ChannelListWindow');
+                  const channelListWindow = window.open(
+                    "",
+                    "ChannelListWindow"
+                  );
                   if (channelListWindow && !channelListWindow.closed) {
                     channelListWindow.postMessage(
                       {
-                        source: 'ParentWindow',
-                        type: 'computedChannelEvaluated',
+                        source: "ParentWindow",
+                        type: "computedChannelEvaluated",
                         payload: {
                           success: true,
                           samples: resultCount,
                           unit: unit,
-                          elapsedMs: elapsedMs
-                        }
+                          elapsedMs: elapsedMs,
+                        },
                       },
-                      '*'
+                      "*"
                     );
                   }
                 } catch (e) {
-                  console.warn('[main.js] Failed to notify child window:', e);
+                  console.warn("[main.js] Failed to notify child window:", e);
                 }
 
                 // ✅ Clean up worker
                 worker.terminate();
-                console.log('[main.js] Worker terminated');
+                console.log("[main.js] Worker terminated");
                 break;
 
-              case 'error':
+              case "error":
                 // ❌ Evaluation failed
-                console.error('[Worker] ❌ Error:', message);
+                console.error("[Worker] ❌ Error:", message);
 
                 // Notify child window
                 try {
-                  const channelListWindow = window.open('', 'ChannelListWindow');
+                  const channelListWindow = window.open(
+                    "",
+                    "ChannelListWindow"
+                  );
                   if (channelListWindow && !channelListWindow.closed) {
                     channelListWindow.postMessage(
                       {
-                        source: 'ParentWindow',
-                        type: 'computedChannelEvaluated',
+                        source: "ParentWindow",
+                        type: "computedChannelEvaluated",
                         payload: {
                           success: false,
-                          error: message
-                        }
+                          error: message,
+                        },
                       },
-                      '*'
+                      "*"
                     );
                   }
                 } catch (e) {
-                  console.warn('[main.js] Failed to notify child window of error:', e);
+                  console.warn(
+                    "[main.js] Failed to notify child window of error:",
+                    e
+                  );
                 }
 
                 worker.terminate();
@@ -3425,27 +3482,29 @@ window.addEventListener("message", (ev) => {
           };
 
           // Handle worker errors
-          worker.onerror = function(error) {
-            console.error('[Worker] ❌ Worker error:', error);
+          worker.onerror = function (error) {
+            console.error("[Worker] ❌ Worker error:", error);
             worker.terminate();
           };
 
           // ✅ Send data to worker using transferable objects (zero-copy)
-          worker.postMessage({
-            mathJsExpr: mathJsExpr,
-            analogBuffers: analogBuffers,
-            digitalBuffers: digitalBuffers,
-            analogChannels: analogChannelsMeta,
-            digitalChannels: digitalChannelsMeta,
-            sampleCount: sampleCount,
-            analogCount: analogArray.length,
-            digitalCount: digitalArray.length
-          }, transferableObjects); // ✅ Transfer ownership (zero-copy)
+          worker.postMessage(
+            {
+              mathJsExpr: mathJsExpr,
+              analogBuffers: analogBuffers,
+              digitalBuffers: digitalBuffers,
+              analogChannels: analogChannelsMeta,
+              digitalChannels: digitalChannelsMeta,
+              sampleCount: sampleCount,
+              analogCount: analogArray.length,
+              digitalCount: digitalArray.length,
+            },
+            transferableObjects
+          ); // ✅ Transfer ownership (zero-copy)
 
-          console.log('[main.js] ✅ Data transferred to worker (zero-copy)');
-
+          console.log("[main.js] ✅ Data transferred to worker (zero-copy)");
         } catch (e) {
-          console.error('[main.js] ❌ Error in evaluateComputedChannel:', e);
+          console.error("[main.js] ❌ Error in evaluateComputedChannel:", e);
         }
         break;
       }

@@ -3,7 +3,11 @@
  * Tests the global theme state and cross-window communication
  */
 
-import { initGlobalThemeState, toggleGlobalTheme, getGlobalThemeState } from "../src/utils/globalThemeState.js";
+import {
+  initGlobalThemeState,
+  toggleGlobalTheme,
+  getGlobalThemeState,
+} from "../src/utils/globalThemeState.js";
 
 // Test global theme state initialization
 console.log("=== Testing Global Theme State ===");

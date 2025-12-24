@@ -114,18 +114,26 @@ function broadcastThemeChange(themeName) {
   const mergerWindow = getMergerWindow();
   if (mergerWindow && !mergerWindow.closed) {
     try {
-      mergerWindow.postMessage({
-        source: "MainApp",
-        type: "theme_change",
-        payload: {
-          theme: themeName,
-          colors: THEMES[themeName],
-          timestamp: Date.now(),
+      mergerWindow.postMessage(
+        {
+          source: "MainApp",
+          type: "theme_change",
+          payload: {
+            theme: themeName,
+            colors: THEMES[themeName],
+            timestamp: Date.now(),
+          },
         },
-      }, "*");
-      console.log(`[globalThemeState] Broadcasted theme change to merger window: ${themeName}`);
+        "*"
+      );
+      console.log(
+        `[globalThemeState] Broadcasted theme change to merger window: ${themeName}`
+      );
     } catch (err) {
-      console.warn("[globalThemeState] Could not broadcast to merger window:", err);
+      console.warn(
+        "[globalThemeState] Could not broadcast to merger window:",
+        err
+      );
     }
   }
 
@@ -133,18 +141,26 @@ function broadcastThemeChange(themeName) {
   const channelListWindow = getChannelListWindow();
   if (channelListWindow && !channelListWindow.closed) {
     try {
-      channelListWindow.postMessage({
-        source: "MainApp",
-        type: "theme_change",
-        payload: {
-          theme: themeName,
-          colors: THEMES[themeName],
-          timestamp: Date.now(),
+      channelListWindow.postMessage(
+        {
+          source: "MainApp",
+          type: "theme_change",
+          payload: {
+            theme: themeName,
+            colors: THEMES[themeName],
+            timestamp: Date.now(),
+          },
         },
-      }, "*");
-      console.log(`[globalThemeState] Broadcasted theme change to ChannelList window: ${themeName}`);
+        "*"
+      );
+      console.log(
+        `[globalThemeState] Broadcasted theme change to ChannelList window: ${themeName}`
+      );
     } catch (err) {
-      console.warn("[globalThemeState] Could not broadcast to ChannelList window:", err);
+      console.warn(
+        "[globalThemeState] Could not broadcast to ChannelList window:",
+        err
+      );
     }
   }
 
@@ -170,7 +186,9 @@ export function listenForParentThemeChanges() {
 
     if (source === "MainApp" && type === "theme_change") {
       const { theme, colors } = payload;
-      console.log(`[globalThemeState] Received theme change from parent: ${theme}`);
+      console.log(
+        `[globalThemeState] Received theme change from parent: ${theme}`
+      );
 
       // Apply theme in child window
       applyThemeInChildWindow(theme, colors);
@@ -190,16 +208,24 @@ function requestThemeFromParent() {
   if (!window.opener || window.opener.closed) return;
 
   try {
-    window.opener.postMessage({
-      source: "ChildApp",
-      type: "theme_request",
-      payload: {
-        windowType: window.location.pathname.includes("merger") ? "merger" : "unknown",
-        timestamp: Date.now(),
+    window.opener.postMessage(
+      {
+        source: "ChildApp",
+        type: "theme_request",
+        payload: {
+          windowType: window.location.pathname.includes("merger")
+            ? "merger"
+            : "unknown",
+          timestamp: Date.now(),
+        },
       },
-    }, "*");
+      "*"
+    );
   } catch (err) {
-    console.warn("[globalThemeState] Could not request theme from parent:", err);
+    console.warn(
+      "[globalThemeState] Could not request theme from parent:",
+      err
+    );
   }
 }
 
@@ -219,7 +245,7 @@ function applyThemeInChildWindow(themeName, colors) {
   // Dispatch custom event for child window components
   window.dispatchEvent(
     new CustomEvent("themeChanged", {
-      detail: { theme: themeName, fromParent: true }
+      detail: { theme: themeName, fromParent: true },
     })
   );
 
@@ -240,16 +266,21 @@ export function listenForChildThemeRequests() {
       const colors = THEMES[currentTheme];
 
       try {
-        event.source.postMessage({
-          source: "MainApp",
-          type: "theme_change",
-          payload: {
-            theme: currentTheme,
-            colors,
-            timestamp: Date.now(),
+        event.source.postMessage(
+          {
+            source: "MainApp",
+            type: "theme_change",
+            payload: {
+              theme: currentTheme,
+              colors,
+              timestamp: Date.now(),
+            },
           },
-        }, "*");
-        console.log(`[globalThemeState] Sent current theme to child: ${currentTheme}`);
+          "*"
+        );
+        console.log(
+          `[globalThemeState] Sent current theme to child: ${currentTheme}`
+        );
       } catch (err) {
         console.warn("[globalThemeState] Could not send theme to child:", err);
       }

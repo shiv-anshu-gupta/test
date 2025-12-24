@@ -68,7 +68,9 @@ function listenForParentThemeChanges() {
 
     if (source === "MainApp" && type === "theme_change") {
       const { theme, colors } = payload;
-      console.log(`[childThemeManager] Received theme change from parent: ${theme}`);
+      console.log(
+        `[childThemeManager] Received theme change from parent: ${theme}`
+      );
 
       // Apply theme in child window
       applyTheme(theme, colors);
@@ -88,16 +90,22 @@ function requestThemeFromParent() {
   if (!window.opener || window.opener.closed) return;
 
   try {
-    window.opener.postMessage({
-      source: "ChildApp",
-      type: "theme_request",
-      payload: {
-        windowType: "merger",
-        timestamp: Date.now(),
+    window.opener.postMessage(
+      {
+        source: "ChildApp",
+        type: "theme_request",
+        payload: {
+          windowType: "merger",
+          timestamp: Date.now(),
+        },
       },
-    }, "*");
+      "*"
+    );
   } catch (err) {
-    console.warn("[childThemeManager] Could not request theme from parent:", err);
+    console.warn(
+      "[childThemeManager] Could not request theme from parent:",
+      err
+    );
   }
 }
 
@@ -129,8 +137,8 @@ export function applyTheme(themeName, customColors = null) {
       detail: {
         theme: themeName,
         fromParent: !!customColors,
-        colors
-      }
+        colors,
+      },
     })
   );
 

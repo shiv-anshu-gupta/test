@@ -138,11 +138,11 @@ export function renderDigitalCharts(
 
   // ✅ Keep digital-specific formatting on first Y-axis, preserve additional axes for multi-axis sync
   const firstAxis = {
-    ...opts.axes[1],  // Preserve original axis properties
-    scale: "y",       // Ensure correct scale
-    side: 3,          // Left side
-    show: true,       // Ensure axis is visible
-    size: 60,         // Reserve space for axis
+    ...opts.axes[1], // Preserve original axis properties
+    scale: "y", // Ensure correct scale
+    side: 3, // Left side
+    show: true, // Ensure axis is visible
+    size: 60, // Reserve space for axis
     stroke: "#d1d5db", // Visible stroke
     label: "Digital States", // Add label for clarity
     grid: { show: true },
