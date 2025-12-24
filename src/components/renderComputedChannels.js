@@ -117,9 +117,10 @@ export function renderComputedChannels(
     "chart-container",
     groupYLabels,
     groupLineColors,
-    "Computed Channels"
+    "Computed Channels",
+    "",
+    "computed"
   );
-  parentDiv.setAttribute("data-chart-type", "computed");
   chartsContainer.appendChild(parentDiv);
   console.log(`[renderComputedChannels] 🏗️ Chart container created`);
 

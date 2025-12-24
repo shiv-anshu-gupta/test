@@ -205,7 +205,8 @@ export function renderAnalogCharts(
       groupYLabels,
       groupLineColors,
       "Analog Channels",
-      groupId
+      groupId,
+      "analog"
     );
     chartsContainer.appendChild(parentDiv);
 

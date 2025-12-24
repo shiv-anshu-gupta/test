@@ -10,6 +10,7 @@ import { createCustomElement } from "./helpers.js";
  * @param {Array} colors - Optional array of colors for each channel.
  * @param {string} typeLabel - Optional channel type label (e.g., "Analog Channels", "Digital Channels").
  * @param {string} groupId - Optional group ID to display once below type label (e.g., "G0", "G1"). Shows at group level, not per-channel.
+ * @param {string} chartType - Chart type for data attribute ("analog", "digital", "computed").
  * @returns {{ parentDiv: HTMLElement, chartDiv: HTMLElement }}
  */
 export function createChartContainer(
@@ -18,9 +19,15 @@ export function createChartContainer(
   label = "",
   colors = [],
   typeLabel = "",
-  groupId = ""
+  groupId = "",
+  chartType = ""
 ) {
   const parentDiv = createCustomElement("div", "chart-parent-container");
+
+  // ✅ FIX: Set data-chart-type attribute for selective DOM clearing
+  if (chartType) {
+    parentDiv.setAttribute("data-chart-type", chartType);
+  }
 
   // Add label on left side if provided
   if (label) {

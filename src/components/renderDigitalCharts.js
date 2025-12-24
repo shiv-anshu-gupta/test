@@ -77,7 +77,9 @@ export function renderDigitalCharts(
     "chart-container",
     digitalYLabels,
     displayedColors,
-    "Digital Channels"
+    "Digital Channels",
+    "",
+    "digital"
   );
   chartsContainer.appendChild(parentDiv);
   console.log(`[renderDigitalCharts] 🏗️ Chart container created`);

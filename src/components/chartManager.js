@@ -1075,17 +1075,24 @@ export function subscribeChartUpdates(
               }
             });
 
-            // Remove destroyed charts from array
-            charts.length = charts.filter(
-              (c) => !c || c._type !== "analog"
-            ).length;
+            // ✅ FIX: Properly remove destroyed charts from array
+            const remainingCharts = charts.filter(
+              (c) => c && c._type !== "analog"
+            );
+            charts.length = 0;
+            charts.push(...remainingCharts);
 
-            // Clear container
+            // ✅ FIX: Selective DOM clearing - only remove analog chart containers
             const chartsContainer =
               document.querySelector(".charts-container") ||
               document.querySelector("#charts");
             if (chartsContainer) {
-              chartsContainer.innerHTML = "";
+              // Only remove analog chart containers, keep digital charts intact
+              Array.from(chartsContainer.children).forEach((child) => {
+                if (child.querySelector('[data-chart-type="analog"]')) {
+                  child.remove();
+                }
+              });
             }
 
             // Re-render with fresh axis calculation
@@ -1099,35 +1106,44 @@ export function subscribeChartUpdates(
               autoGroup
             );
 
-            // ✅ Render digital charts (they will read maxYAxes from global store)
-            if (
-              cfg.digitalChannels &&
-              cfg.digitalChannels.length > 0 &&
-              data.digitalData &&
-              data.digitalData.length > 0
-            ) {
-              try {
-                const { renderDigitalCharts: renderDigital } = await import(
-                  "./renderDigitalCharts.js"
-                );
-                renderDigital(
-                  cfg,
-                  data,
-                  chartsContainer,
-                  charts,
-                  verticalLinesX,
-                  channelState
-                  // ✅ REMOVED: currentGlobalAxes parameter - digital charts now read from global store
-                );
-                console.log(
-                  `[group subscriber] ✓ Digital charts rendered (reading maxYAxes from global store)`
-                );
-              } catch (err) {
-                console.error(
-                  `[group subscriber] ❌ Digital render failed:`,
-                  err
-                );
+            // ✅ OPTIMIZATION: Only rebuild digital charts if axis count changed OR digital chart doesn't exist
+            const digitalChartExists = charts.some(
+              (c) => c && c._type === "digital"
+            );
+            if (axisCountChanged || !digitalChartExists) {
+              if (
+                cfg.digitalChannels &&
+                cfg.digitalChannels.length > 0 &&
+                data.digitalData &&
+                data.digitalData.length > 0
+              ) {
+                try {
+                  const { renderDigitalCharts: renderDigital } = await import(
+                    "./renderDigitalCharts.js"
+                  );
+                  renderDigital(
+                    cfg,
+                    data,
+                    chartsContainer,
+                    charts,
+                    verticalLinesX,
+                    channelState
+                    // ✅ REMOVED: currentGlobalAxes parameter - digital charts now read from global store
+                  );
+                  console.log(
+                    `[group subscriber] ✓ Digital charts rendered (axis changed: ${axisCountChanged}, existed: ${digitalChartExists})`
+                  );
+                } catch (err) {
+                  console.error(
+                    `[group subscriber] ❌ Digital render failed:`,
+                    err
+                  );
+                }
               }
+            } else {
+              console.log(
+                `[group subscriber] ⏭️ Skipping digital chart rebuild (axis unchanged, chart exists)`
+              );
             }
 
             // ✅ Render computed channels
