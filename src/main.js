@@ -4,10 +4,7 @@ import {
 } from "./components/chartComponent.js";
 import { parseCFG, parseDAT } from "./components/comtradeUtils.js";
 import { createState } from "./components/createState.js";
-import {
-  processFilesInBatches,
-  yieldToEventLoop,
-} from "./utils/batchFileProcessor.js";
+import { yieldToEventLoop } from "./utils/batchFileProcessor.js";
 import {
   calculateDeltas,
   collectChartDeltas,
@@ -60,6 +57,28 @@ import { openMergerWindow } from "./utils/mergerWindowLauncher.js";
 
 // Initialize global DOM update queue for selectiveUpdate feature
 initGlobalDOMUpdateQueue();
+
+/**
+ * Simple file reader utility for loading text files
+ * @param {File} file - File object to read
+ * @returns {Promise<string>} File content as text
+ */
+function readFileAsText(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        resolve(e.target.result);
+      } catch (err) {
+        reject(err);
+      }
+    };
+    reader.onerror = () => {
+      reject(new Error(`Failed to read file: ${file.name}`));
+    };
+    reader.readAsText(file);
+  });
+}
 
 /**
  * @file main.js - Core application logic and parent-child window messaging
@@ -1928,35 +1947,44 @@ async function handleLoadFiles() {
   try {
     // Show loading indicator
     fixedResultsEl.innerHTML =
-      '<div style="padding: 20px; text-align: center; color: var(--text-secondary);"><p>🔄 Loading and parsing files...</p><p style="font-size: 0.9rem; margin-top: 10px;">Please wait, processing ' +
-      cfgFileInput.files.length +
-      " file(s)</p></div>";
+      '<div style="padding: 20px; text-align: center; color: var(--text-secondary);"><p>🔄 Loading and parsing files...</p><p style="font-size: 0.9rem; margin-top: 10px;">Please wait, processing file</p></div>';
 
-    console.log("[handleLoadFiles] 📂 PHASE 1: Parsing files in batch mode");
+    console.log("[handleLoadFiles] 📂 PHASE 1: Parsing single file pair");
 
-    // PHASE 1: Parse and merge files WITHOUT rendering anything
-    // This prevents multiple chart recreation cycles
-    const result = await processFilesInBatches(
-      cfgFileInput.files,
-      TIME_UNIT,
-      (progress) => {
-        // Debug: Progress tracking disabled
-      }
+    // PHASE 1: Parse single CFG/DAT file pair (simple approach)
+    const files = Array.from(cfgFileInput.files);
+
+    // Find the first CFG file
+    const cfgFile = files.find((file) =>
+      file.name.toLowerCase().endsWith(".cfg")
     );
-
-    if (result.error) {
-      showError(`File processing failed: ${result.error}`, fixedResultsEl);
-      return;
+    if (!cfgFile) {
+      throw new Error("No CFG file found. Please select a .cfg file.");
     }
 
-    // Assign to global variables
-    cfg = result.cfg;
-    data = result.data;
+    // Find matching DAT file
+    const baseName = cfgFile.name.replace(/\.(cfg|dat)$/i, "");
+    const datFile = files.find(
+      (f) =>
+        f.name.toLowerCase().startsWith(baseName.toLowerCase()) &&
+        f.name.toLowerCase().endsWith(".dat")
+    );
 
-    // Merge information - debug logs disabled
+    if (!datFile) {
+      throw new Error(`No matching DAT file found for ${cfgFile.name}`);
+    }
+
+    // Read and parse CFG file
+    const cfgText = await readFileAsText(cfgFile);
+    const cfg = parseCFG(cfgText, TIME_UNIT);
+
+    // Read and parse DAT file
+    const datText = await readFileAsText(datFile);
+    const data = parseDAT(datText, cfg, "ASCII", TIME_UNIT);
+
+    // Basic validation
     if (!data.time || data.time.length === 0) {
-      showError("Failed to parse COMTRADE data.", fixedResultsEl);
-      return;
+      throw new Error("Failed to parse COMTRADE data.");
     }
 
     console.log("[handleLoadFiles] 📊 PHASE 2: Initializing data state");
@@ -1965,26 +1993,16 @@ async function handleLoadFiles() {
     dataState.analog = data.analogData;
     dataState.digital = data.digitalData;
 
-    // Update UI with filenames
-    const filenameText = result.isMerged
-      ? `Merged: ${result.filenames.join(", ")}`
-      : `Loaded: ${result.filenames[0]}`;
-
+    // Update UI with filename
+    const filenameText = cfgFile.name.replace(".cfg", "");
     cfgFileNameEl.textContent = filenameText;
-    datFileNameEl.textContent = result.isMerged
-      ? `(${result.fileCount} DAT files)`
-      : `DAT File: ${result.filenames[0]}.dat`;
+    datFileNameEl.textContent = `DAT File: ${datFile.name}`;
 
     const groups = autoGroupChannels(cfg.analogChannels);
 
     // ===== UI HELPER CALLS (Light) =====
     showFileInfo();
-    updateFileInfo(
-      result.filenames[0],
-      result.isMerged
-        ? `${result.fileCount} files`
-        : `${result.filenames[0]}.dat`
-    );
+    updateFileInfo(filenameText, datFile.name);
     updateStatsCards({
       sampleRate: cfg.sampleRate || 4800,
       duration: cfg.duration || 2000,
@@ -2020,12 +2038,9 @@ async function handleLoadFiles() {
         channelState.resumeHistory();
     }
 
-    // Yield to event loop to let browser process other tasks
-    await yieldToEventLoop(50);
+    console.log("[handleLoadFiles] 📈 PHASE 4: Chart rendering");
 
-    console.log("[handleLoadFiles] 📈 PHASE 4: Chart rendering (single batch)");
-
-    // PHASE 4: Render all charts in ONE cycle (not multiple times)
+    // PHASE 4: Render all charts
     renderComtradeCharts(
       cfg,
       data,
@@ -2038,23 +2053,15 @@ async function handleLoadFiles() {
       channelState
     );
 
-    // Yield to event loop
-    await yieldToEventLoop(50);
+    console.log("[handleLoadFiles] 🎯 PHASE 5: Polar chart initialization");
 
-    console.log(
-      "[handleLoadFiles] 🎯 PHASE 5: Polar chart initialization (deferred)"
-    );
-
-    // PHASE 5: Initialize Polar Chart WITH DEFERRED RENDERING
-    // ✅ Strategy: Create instance immediately, but defer SVG rendering to next idle frame
-    // This unblocks the UI thread so user can interact with charts immediately
+    // PHASE 5: Initialize Polar Chart
     try {
       console.log("[handleLoadFiles] Creating PolarChart instance...");
       polarChart = new PolarChart("polarChartContainer");
       polarChart.init(); // This just clears container
 
-      // ⏱️ Defer the expensive updatePhasorAtTimeIndex to avoid blocking
-      // Use requestIdleCallback for low-priority background task
+      // Defer the expensive updatePhasorAtTimeIndex to avoid blocking
       if (window.requestIdleCallback) {
         window.requestIdleCallback(
           () => {
@@ -2093,9 +2100,6 @@ async function handleLoadFiles() {
       );
     }
 
-    // Yield to event loop
-    await yieldToEventLoop(50);
-
     console.log("[handleLoadFiles] 📟 PHASE 6: Computed channels");
 
     // PHASE 6: Load persisted computed channels
@@ -2130,9 +2134,6 @@ async function handleLoadFiles() {
       }
     }
     setupComputedChannelsListener();
-
-    // Yield to event loop
-    await yieldToEventLoop(50);
 
     console.log("[handleLoadFiles] 🔗 PHASE 7: Chart integrations");
 
@@ -2181,10 +2182,10 @@ async function handleLoadFiles() {
     if (window._resizableGroup) window._resizableGroup.disconnect();
     window._resizableGroup = new ResizableGroup(".dragBar");
 
-    // ⚡ Initialize fast lookup map for channel lookups (O(1) instead of O(n))
+    // Initialize fast lookup map
     rebuildChannelIDMap();
 
-    // ⚡ Rebuild map whenever channelIDs change (e.g., file load, reorder)
+    // Setup subscriptions
     try {
       channelState.analog?.subscribe?.(() => {
         rebuildChannelIDMap();
@@ -2196,8 +2197,7 @@ async function handleLoadFiles() {
       console.warn("[main] Failed to set up channelID map rebuild:", e);
     }
 
-    // ⏱️ OPTIMIZATION: Defer subscription setup to avoid blocking UI
-    // subscribeChartUpdates sets up many listeners - do this in idle time
+    // Defer subscription setup
     if (window.requestIdleCallback) {
       window.requestIdleCallback(
         () => {
@@ -2239,7 +2239,7 @@ async function handleLoadFiles() {
     }
 
     console.log(
-      "[handleLoadFiles] 🎉 COMPLETE - All files loaded and rendered successfully"
+      "[handleLoadFiles] 🎉 COMPLETE - File loaded and rendered successfully"
     );
     fixedResultsEl.innerHTML = "";
   } catch (error) {

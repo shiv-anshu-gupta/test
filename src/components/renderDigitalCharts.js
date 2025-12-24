@@ -6,6 +6,7 @@ import { createCustomElement } from "../utils/helpers.js";
 import { createChartContainer } from "../utils/chartDomUtils.js";
 import verticalLinePlugin from "../plugins/verticalLinePlugin.js";
 import { getMaxYAxes } from "../utils/maxYAxesStore.js";
+import { attachListenerWithCleanup } from "../utils/eventListenerManager.js";
 
 export function renderDigitalCharts(
   cfg,
@@ -212,7 +213,7 @@ export function renderDigitalCharts(
   const clickHandlerStartTime = performance.now();
 
   // Click handler to add/remove vertical lines
-  chart.over.addEventListener("click", (e) => {
+  const clickHandler = (e) => {
     if (!chart.scales || !chart.scales.x) return;
 
     const xVal = chart.posToVal(e.offsetX, "x");
@@ -284,7 +285,10 @@ export function renderDigitalCharts(
         charts.forEach((c) => c.redraw());
       }, 0);
     }
-  });
+  };
+
+  // ✅ Attach click handler with cleanup tracking
+  attachListenerWithCleanup(chart.over, "click", clickHandler, chart);
 
   const clickHandlerEndTime = performance.now();
   console.log(

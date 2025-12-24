@@ -476,6 +476,14 @@
       </div>
     </div>
     
-    <script src="src/main.js" type="module"></script>
+    <!-- ✅ Cache-buster: Add timestamp to prevent stale cached files -->
+    <script>
+      // Add cache-buster to module import
+      const timestamp = new Date().getTime();
+      const mainScript = document.createElement('script');
+      mainScript.type = 'module';
+      mainScript.src = `src/main.js?v=${timestamp}`;
+      document.body.appendChild(mainScript);
+    </script>
   </body>
 </html>

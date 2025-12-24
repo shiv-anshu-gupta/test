@@ -167,17 +167,26 @@ export function createChartOptions({
 
   const axisCount = getAxisCount(yLabels.length, maxYAxes, singleYAxis);
 
-  // ✅ DEBUG LOGGING
-  console.log("[createChartOptions] Creating chart with:", {
-    yLabelsCount: yLabels.length,
-    singleYAxis,
-    maxYAxes,
-    calculatedAxisCount: axisCount,
-  });
+  // ✅ PERFORMANCE: Only log in debug mode
+  const debugMode =
+    typeof localStorage !== "undefined" && localStorage.getItem("DEBUG_CHARTS");
+  if (debugMode) {
+    console.log("[createChartOptions] Creating chart with:", {
+      yLabelsCount: yLabels.length,
+      singleYAxis,
+      maxYAxes,
+      calculatedAxisCount: axisCount,
+    });
+  }
 
   const yAxisScales = createYAxisScales(axisCount);
 
-  console.log("[createChartOptions] Created scales:", Object.keys(yAxisScales));
+  if (debugMode) {
+    console.log(
+      "[createChartOptions] Created scales:",
+      Object.keys(yAxisScales)
+    );
+  }
 
   return {
     title,

@@ -1,0 +1,228 @@
+<!-- Quick Cache Buster - Just open this file in your browser -->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Quick Cache Buster</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+      }
+
+      .container {
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        max-width: 500px;
+        padding: 40px;
+        text-align: center;
+      }
+
+      h1 {
+        color: #333;
+        margin-bottom: 10px;
+        font-size: 28px;
+      }
+
+      .emoji {
+        font-size: 48px;
+        margin-bottom: 20px;
+        display: block;
+      }
+
+      .subtitle {
+        color: #666;
+        margin-bottom: 30px;
+        font-size: 16px;
+      }
+
+      .action-buttons {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        margin-bottom: 20px;
+      }
+
+      button {
+        padding: 14px 24px;
+        font-size: 16px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+      }
+
+      .btn-primary {
+        background: #667eea;
+        color: white;
+      }
+
+      .btn-primary:hover {
+        background: #5568d3;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+      }
+
+      .btn-secondary {
+        background: #f0f0f0;
+        color: #333;
+      }
+
+      .btn-secondary:hover {
+        background: #e0e0e0;
+        transform: translateY(-2px);
+      }
+
+      .keyboard-shortcuts {
+        background: #f9f9f9;
+        border-left: 4px solid #667eea;
+        padding: 20px;
+        text-align: left;
+        border-radius: 8px;
+        margin-top: 30px;
+      }
+
+      .keyboard-shortcuts h3 {
+        color: #333;
+        margin-bottom: 12px;
+        font-size: 14px;
+      }
+
+      .shortcut {
+        display: flex;
+        justify-content: space-between;
+        padding: 8px 0;
+        border-bottom: 1px solid #eee;
+        color: #666;
+        font-size: 14px;
+      }
+
+      .shortcut:last-child {
+        border-bottom: none;
+      }
+
+      code {
+        background: white;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-family: "Monaco", monospace;
+        font-weight: 600;
+        color: #667eea;
+      }
+
+      .success-message {
+        display: none;
+        background: #d4edda;
+        color: #155724;
+        padding: 12px;
+        border-radius: 8px;
+        margin-top: 20px;
+        border-left: 4px solid #28a745;
+      }
+
+      .icon {
+        font-size: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <span class="emoji">🔄</span>
+      <h1>Cache Buster</h1>
+      <p class="subtitle">
+        Clear your browser cache and reload the COMTRADE Viewer
+      </p>
+
+      <div class="action-buttons">
+        <button class="btn-primary" onclick="hardRefresh()">
+          <span class="icon">⚡</span>
+          Hard Refresh Now
+        </button>
+        <button class="btn-secondary" onclick="clearAndNotify()">
+          <span class="icon">🗑️</span>
+          Clear All Cache
+        </button>
+        <button class="btn-secondary" onclick="goToViewer()">
+          <span class="icon">📊</span>
+          Go to COMTRADE Viewer
+        </button>
+      </div>
+
+      <div class="keyboard-shortcuts">
+        <h3>⌨️ Keyboard Shortcuts (Faster)</h3>
+        <div class="shortcut">
+          <span>Windows/Linux:</span>
+          <code>Ctrl + Shift + R</code>
+        </div>
+        <div class="shortcut">
+          <span>Mac:</span>
+          <code>Cmd + Shift + R</code>
+        </div>
+      </div>
+
+      <div id="successMessage" class="success-message">
+        ✅ Cache cleared! Redirecting to COMTRADE Viewer...
+      </div>
+    </div>
+
+    <script>
+      function hardRefresh() {
+        // Hard refresh - clears cache for this page
+        location.reload(true);
+      }
+
+      function clearAndNotify() {
+        // Show success message
+        document.getElementById("successMessage").style.display = "block";
+
+        // Clear localStorage
+        if (localStorage) {
+          localStorage.clear();
+        }
+
+        // Clear sessionStorage
+        if (sessionStorage) {
+          sessionStorage.clear();
+        }
+
+        // Redirect after 2 seconds
+        setTimeout(() => {
+          location.href = "./index.html";
+        }, 2000);
+      }
+
+      function goToViewer() {
+        location.href = "./index.html";
+      }
+
+      // Show helpful message on load
+      console.log(
+        "%c🔄 Cache Buster Page",
+        "font-size: 16px; color: #667eea; font-weight: bold;"
+      );
+      console.log(
+        "%cPress Ctrl+Shift+R (or Cmd+Shift+R on Mac) to hard refresh!",
+        "font-size: 14px; color: #666;"
+      );
+    </script>
+  </body>
+</html>

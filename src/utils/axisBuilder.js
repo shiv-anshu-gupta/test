@@ -122,16 +122,10 @@ export function createSingleAxisDefinition({
     scale: "y",
     side: 3,
     label: labelWithUnit,
-    stroke: () => {
-      const style = getComputedStyle(document.documentElement);
-      return style.getPropertyValue("--chart-text").trim() || "#ffffff";
-    },
+    stroke: "#d1d5db",
     grid: {
       show: true,
-      stroke: () => {
-        const style = getComputedStyle(document.documentElement);
-        return style.getPropertyValue("--chart-grid").trim() || "#404040";
-      },
+      stroke: "#374151",
       width: 1,
     },
 
@@ -212,14 +206,18 @@ export function createMultiAxisDefinition({
   const axes = [];
   const finalAxisCount = maxYAxes !== undefined ? maxYAxes : axisCount;
 
-  // ✅ DEBUG LOGGING
-  console.log("[createMultiAxisDefinition] Called with:", {
-    yLabelsCount: yLabels.length,
-    yUnits,
-    axisCount,
-    maxYAxes,
-    finalAxisCount,
-  });
+  // ✅ PERFORMANCE: Only log in debug mode
+  const debugMode =
+    typeof localStorage !== "undefined" && localStorage.getItem("DEBUG_CHARTS");
+  if (debugMode) {
+    console.log("[createMultiAxisDefinition] Called with:", {
+      yLabelsCount: yLabels.length,
+      yUnits,
+      axisCount,
+      maxYAxes,
+      finalAxisCount,
+    });
+  }
 
   // ✅ SPECIAL CASE: If maxYAxes=1, force all channels to use axis 0
   // This prevents current/power/frequency channels from mapping to non-existent axis 1
@@ -228,9 +226,11 @@ export function createMultiAxisDefinition({
   if (finalAxisCount === 1) {
     // Force all to axis 0
     usedAxes.add(0);
-    console.log(
-      `[createMultiAxisDefinition] maxYAxes=1: Forcing all channels to axis 0`
-    );
+    if (debugMode) {
+      console.log(
+        `[createMultiAxisDefinition] maxYAxes=1: Forcing all channels to axis 0`
+      );
+    }
   } else {
     // Multi-axis mode: detect which axes are actually used
     yLabels.forEach((label, idx) => {
@@ -238,20 +238,26 @@ export function createMultiAxisDefinition({
       const type = getChannelType(unit);
       const axisIdx = getAxisForType(type) - 1; // 0-based (voltage→0, current→1)
       usedAxes.add(axisIdx);
-      console.log(
-        `  Channel ${idx}: unit="${unit}", type="${type}", axisIdx=${axisIdx}`
-      );
+      if (debugMode) {
+        console.log(
+          `  Channel ${idx}: unit="${unit}", type="${type}", axisIdx=${axisIdx}`
+        );
+      }
     });
   }
 
-  console.log(
-    `[createMultiAxisDefinition] Creating ${finalAxisCount} axes, ` +
-      `${usedAxes.size} used: [${Array.from(usedAxes).join(", ")}]`
-  );
+  if (debugMode) {
+    console.log(
+      `[createMultiAxisDefinition] Creating ${finalAxisCount} axes, ` +
+        `${usedAxes.size} used: [${Array.from(usedAxes).join(", ")}]`
+    );
+  }
 
   for (let i = 0; i < finalAxisCount; i++) {
     const isUsedAxis = usedAxes.has(i);
-    console.log(`  Creating axis ${i}: used=${isUsedAxis}`);
+    if (debugMode) {
+      console.log(`  Creating axis ${i}: used=${isUsedAxis}`);
+    }
 
     // Get representative channel for this axis
     let representativeUnit;
@@ -286,17 +292,10 @@ export function createMultiAxisDefinition({
       label: isUsedAxis ? labelWithUnit : "", // Empty label for unused axes
       show: true, // ✅ CRITICAL: Always show to reserve space (even if unused)
       size: 60, // Fixed width for alignment
-      stroke: () => {
-        if (!isUsedAxis) return "transparent"; // Hide stroke for unused axes
-        const style = getComputedStyle(document.documentElement);
-        return style.getPropertyValue("--chart-text").trim() || "#ffffff";
-      },
+      stroke: isUsedAxis ? "#d1d5db" : "transparent",
       grid: {
         show: isUsedAxis && i === 0, // Only first USED axis shows grid
-        stroke: () => {
-          const style = getComputedStyle(document.documentElement);
-          return style.getPropertyValue("--chart-grid").trim() || "#404040";
-        },
+        stroke: "#374151",
       },
       // ✅ NEW: Hide ticks and gap for unused axes
       ticks: {
@@ -419,16 +418,10 @@ export function buildCompleteAxesArray({
     scale: "x",
     side: 2,
     label: `${xLabel}(${xUnit || "sec"})`,
-    stroke: () => {
-      const style = getComputedStyle(document.documentElement);
-      return style.getPropertyValue("--chart-text").trim() || "#ffffff";
-    },
+    stroke: "#d1d5db",
     grid: {
       show: true,
-      stroke: () => {
-        const style = getComputedStyle(document.documentElement);
-        return style.getPropertyValue("--chart-grid").trim() || "#404040";
-      },
+      stroke: "#374151",
     },
     values: (u, splits) =>
       splits.map((v) => {

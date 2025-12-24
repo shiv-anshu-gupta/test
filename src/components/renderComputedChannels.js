@@ -12,6 +12,7 @@ import {
   initUPlotChart,
 } from "../utils/chartDomUtils.js";
 import verticalLinePlugin from "../plugins/verticalLinePlugin.js";
+import { attachListenerWithCleanup } from "../utils/eventListenerManager.js";
 // import { deltaBoxPlugin } from "../plugins/deltaBoxPlugin.js"; // DISABLED: Using DeltaWindow popup instead
 import { createComputedChannelsLabels } from "./ComputedChannelsLabel.js";
 
@@ -282,7 +283,9 @@ export function renderComputedChannels(
   chart._type = "computed";
 
   const tooltip = createTooltip();
-  chart.over.addEventListener("mousemove", (e) => {
+
+  // ✅ Create handler and store for cleanup
+  const mousemoveHandler = (e) => {
     const idx = chart.posToIdx(e.offsetX);
     if (idx >= 0 && idx < chart.data[0].length) {
       const time = chart.data[0][idx];
@@ -304,11 +307,14 @@ export function renderComputedChannels(
         `<b>t:</b> ${time.toFixed(2)}<br>${values}`
       );
     }
-  });
-  chart.over.addEventListener("mouseleave", hideTooltip);
+  };
+
+  // ✅ Attach and track listeners
+  attachListenerWithCleanup(chart.over, "mousemove", mousemoveHandler, chart);
+  attachListenerWithCleanup(chart.over, "mouseleave", hideTooltip, chart);
 
   // Click handler to add/remove vertical lines
-  chart.over.addEventListener("click", (e) => {
+  const clickHandler = (e) => {
     if (!chart.scales || !chart.scales.x) return;
 
     const xVal = chart.posToVal(e.offsetX, "x");
@@ -380,7 +386,10 @@ export function renderComputedChannels(
         charts.forEach((c) => c.redraw());
       }, 0);
     }
-  });
+  };
+
+  // ✅ Attach click handler with cleanup tracking
+  attachListenerWithCleanup(chart.over, "click", clickHandler, chart);
 
   const renderEndTime = performance.now();
   const totalTime = renderEndTime - renderStartTime;

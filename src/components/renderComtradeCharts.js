@@ -35,9 +35,10 @@ export function renderComtradeCharts(
 ) {
   const renderStartTime = performance.now();
 
-  charts.length = 0; // <-- Clear the array at the start!
+  // ✅ CRITICAL FIX: Properly destroy old charts BEFORE clearing array
+  // This disconnects ResizeObservers, removes event listeners, and prevents memory leaks
+  destroyCharts(charts);
   chartsContainer.innerHTML = "";
-  //destroyCharts(charts);
   setupChartDragAndDrop(chartsContainer);
 
   console.log("[renderComtradeCharts] Starting chart rendering...");

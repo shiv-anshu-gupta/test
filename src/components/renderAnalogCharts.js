@@ -14,6 +14,7 @@ import verticalLinePlugin from "../plugins/verticalLinePlugin.js";
 import { calculateAxisCountForGroup } from "../utils/axisCalculator.js";
 import { getGlobalAxisAlignment } from "../utils/chartAxisAlignment.js";
 import { getMaxYAxes } from "../utils/maxYAxesStore.js";
+import { attachListenerWithCleanup } from "../utils/eventListenerManager.js";
 // import { deltaBoxPlugin } from "../plugins/deltaBoxPlugin.js"; // DISABLED: Using DeltaWindow popup instead
 
 export function renderAnalogCharts(
@@ -252,7 +253,9 @@ export function renderAnalogCharts(
 
     // tooltip
     const tooltip = createTooltip();
-    chart.over.addEventListener("mousemove", (e) => {
+
+    // ✅ Create handlers and store for cleanup
+    const mousemoveHandler = (e) => {
       const idx = chart.posToIdx(e.offsetX);
       if (idx >= 0 && idx < chart.data[0].length) {
         const time = chart.data[0][idx];
@@ -282,11 +285,14 @@ export function renderAnalogCharts(
           `<b>t:</b> ${time.toFixed(2)}<br>${values}`
         );
       }
-    });
-    chart.over.addEventListener("mouseleave", hideTooltip);
+    };
+
+    // ✅ Attach and track listeners
+    attachListenerWithCleanup(chart.over, "mousemove", mousemoveHandler, chart);
+    attachListenerWithCleanup(chart.over, "mouseleave", hideTooltip, chart);
 
     // Click handler to add/remove vertical lines
-    chart.over.addEventListener("click", (e) => {
+    const clickHandler = (e) => {
       if (!chart.scales || !chart.scales.x) return;
 
       const xVal = chart.posToVal(e.offsetX, "x");
@@ -360,7 +366,10 @@ export function renderAnalogCharts(
           charts.forEach((c) => c.redraw());
         }, 0);
       }
-    });
+    };
+
+    // ✅ Attach click handler with cleanup tracking
+    attachListenerWithCleanup(chart.over, "click", clickHandler, chart);
 
     // ⏱️ Log time for this group
     const groupEndTime = performance.now();

@@ -121,12 +121,15 @@ export function createSeriesDefinitions({
   singleYAxis = true,
   maxYAxes,
 }) {
-  // ✅ DEBUG LOGGING
-  console.log("[createSeriesDefinitions] Called with:", {
-    yLabelsCount: yLabels.length,
-    singleYAxis,
-    maxYAxes,
-  });
+  // ✅ PERFORMANCE: Only log in debug mode (check localStorage)
+  const debugMode =
+    typeof localStorage !== "undefined" && localStorage.getItem("DEBUG_CHARTS");
+  if (debugMode && yLabels.length > 0) {
+    console.log(
+      `[createSeriesDefinitions] Mapping ${yLabels.length} series: ` +
+        `singleYAxis=${singleYAxis}, maxYAxes=${maxYAxes}`
+    );
+  }
 
   // First series (index 0) is X-axis, so data series start at index 1
   // Return array of Y-series configs
@@ -138,26 +141,19 @@ export function createSeriesDefinitions({
     // This prevents current/power/frequency from mapping to non-existent y1
     if (maxYAxes === 1) {
       seriesAxisIdx = 0;
-      console.log(`  Series ${idx} "${label}": maxYAxes=1, forcing to axis 0`);
     } else if (singleYAxis) {
       seriesAxisIdx = 0;
-      console.log(`  Series ${idx} "${label}": singleYAxis=true, using axis 0`);
     } else if (maxYAxes !== undefined) {
       // Multi-axis mode: map by channel type
       const unit = yUnits[idx] || extractUnit(label);
       const type = getChannelType(unit);
       seriesAxisIdx = getAxisForType(type) - 1; // Convert from 1-based to 0-based
-      console.log(
-        `  Series ${idx} "${label}": unit="${unit}", type="${type}", axisIdx=${seriesAxisIdx}`
-      );
     } else {
       // Natural mapping
       seriesAxisIdx = idx;
-      console.log(`  Series ${idx} "${label}": natural mapping to axis ${idx}`);
     }
 
     const scaleKey = singleYAxis ? "y" : `y${seriesAxisIdx}`;
-    console.log(`    → Series ${idx} will use scale: "${scaleKey}"`);
 
     return {
       label,

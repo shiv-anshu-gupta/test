@@ -183,7 +183,11 @@ export function initUPlotChart(opts, chartData, chartDiv, charts) {
   chart._seriesColors = opts.series.slice(1).map((s) => s.stroke);
   charts.push(chart);
 
+  // ✅ Store ResizeObserver reference for cleanup on chart destruction
   const ro = new ResizeObserver((entries) => {
+    // ✅ Guard against destroyed charts
+    if (!chart || !chart.root || !chart.root.parentElement) return;
+
     for (let entry of entries) {
       chart.setSize({
         width: entry.contentRect.width,
@@ -192,6 +196,9 @@ export function initUPlotChart(opts, chartData, chartDiv, charts) {
     }
   });
   ro.observe(chartDiv);
+
+  // ✅ CRITICAL: Store observer reference so it can be disconnected later
+  chart._resizeObserver = ro;
 
   return chart;
 }

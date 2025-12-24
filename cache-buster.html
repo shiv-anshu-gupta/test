@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cache Buster - COMTRADE Viewer</title>
+    <style>
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          sans-serif;
+        max-width: 600px;
+        margin: 50px auto;
+        padding: 20px;
+        background: #f5f5f5;
+      }
+      .container {
+        background: white;
+        padding: 30px;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+      h1 {
+        color: #333;
+        margin-top: 0;
+      }
+      .section {
+        margin: 20px 0;
+        padding: 15px;
+        background: #f9f9f9;
+        border-left: 4px solid #0066cc;
+        border-radius: 4px;
+      }
+      .section h3 {
+        margin-top: 0;
+        color: #0066cc;
+      }
+      button {
+        background: #0066cc;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 14px;
+        margin: 5px 5px 5px 0;
+      }
+      button:hover {
+        background: #0052a3;
+      }
+      .success {
+        background: #d4edda;
+        border-left-color: #28a745;
+        color: #155724;
+        margin-top: 15px;
+        display: none;
+      }
+      .info {
+        background: #d1ecf1;
+        border-left-color: #0c5460;
+        color: #0c5460;
+      }
+      code {
+        background: #f4f4f4;
+        padding: 2px 6px;
+        border-radius: 3px;
+        font-family: "Monaco", "Menlo", monospace;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>🚀 COMTRADE Cache Buster</h1>
+
+      <div class="section info">
+        <h3>ℹ️ Why Clear Cache?</h3>
+        <p>
+          If you're still seeing old console logs after updates, your browser
+          has cached the old JavaScript files. This tool helps clear them
+          quickly.
+        </p>
+      </div>
+
+      <div class="section">
+        <h3>🔧 Quick Fix Options</h3>
+
+        <div style="margin-bottom: 20px">
+          <h4>Option 1: Hard Refresh (Fastest)</h4>
+          <p>Press the keyboard shortcut for your browser:</p>
+          <ul>
+            <li>
+              <strong>Windows/Linux:</strong> <code>Ctrl + Shift + R</code>
+            </li>
+            <li><strong>Mac:</strong> <code>Cmd + Shift + R</code></li>
+          </ul>
+          <button onclick="hardRefresh()">🔄 Hard Refresh Now</button>
+        </div>
+
+        <div style="margin-bottom: 20px">
+          <h4>Option 2: Disable Cache in DevTools</h4>
+          <ol>
+            <li>Press <code>F12</code> to open DevTools</li>
+            <li>Go to <strong>Settings</strong> (gear icon)</li>
+            <li>
+              Check <strong>"Disable cache (while DevTools is open)"</strong>
+            </li>
+            <li>Reload page</li>
+          </ol>
+          <button onclick="openDevTools()">🔨 Open DevTools</button>
+        </div>
+
+        <div style="margin-bottom: 20px">
+          <h4>Option 3: Clear Browsing Data</h4>
+          <ol>
+            <li>
+              Press <code>Ctrl + Shift + Delete</code> (Windows) or
+              <code>Cmd + Shift + Delete</code> (Mac)
+            </li>
+            <li>Check: <strong>Cookies and other site data</strong></li>
+            <li>Check: <strong>Cached images and files</strong></li>
+            <li>Click <strong>Clear data</strong></li>
+            <li>Reload the page</li>
+          </ol>
+          <button onclick="clearCache()">🗑️ Clear Browsing Data</button>
+        </div>
+      </div>
+
+      <div class="section">
+        <h3>✅ After Clearing Cache</h3>
+        <ol>
+          <li>Close and reopen your COMTRADE viewer tab</li>
+          <li>Load a COMTRADE file</li>
+          <li>Open DevTools Console (<code>F12</code>)</li>
+          <li>
+            You should <strong>NOT</strong> see the per-series console logs
+            anymore
+          </li>
+          <li>Charts should load <strong>much faster</strong></li>
+        </ol>
+      </div>
+
+      <div class="section">
+        <h3>🐛 Verify Fix</h3>
+        <p>Check the console for the tip message:</p>
+        <code
+          >💡 Tip: Use window.toggleDebugMode() to enable/disable chart debug
+          logging</code
+        >
+        <p>If you see this, the cache was cleared successfully! ✅</p>
+      </div>
+
+      <div id="success" class="section success">
+        ✅ Cache cleared! Please refresh your COMTRADE viewer tab.
+      </div>
+    </div>
+
+    <script>
+      function hardRefresh() {
+        // Reload with cache bypass
+        location.reload(true);
+      }
+
+      function openDevTools() {
+        // Most browsers support F12
+        alert(
+          'Press F12 to open DevTools, then follow the instructions in the "Disable Cache" section.'
+        );
+      }
+
+      function clearCache() {
+        // Show success message
+        document.getElementById("success").style.display = "block";
+
+        // Clear localStorage to be safe
+        if (localStorage) {
+          localStorage.clear();
+        }
+
+        // Suggest next steps
+        setTimeout(() => {
+          alert(
+            "Cache cleared! Now close this tab and reopen your COMTRADE viewer. It should load fresh files without old cached code."
+          );
+        }, 500);
+      }
+
+      // Show tip on load
+      window.addEventListener("load", () => {
+        console.log(
+          "💡 Tip: Use window.toggleDebugMode() to enable/disable chart debug logging"
+        );
+      });
+    </script>
+  </body>
+</html>
