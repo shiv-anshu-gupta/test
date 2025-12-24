@@ -44,14 +44,13 @@ export function initComputedChannelsState(initialChannels = {}) {
      * @param {string} source - Source of update ('local', 'parent', 'child')
      */
     addChannel(channelName, channelData, source = 'local') {
-      state.set({
-        channels: {
-          ...state.channels,
-          [channelName]: channelData
-        },
-        lastUpdated: Date.now(),
-        updateSource: source
-      });
+      // Update the reactive state directly (createState returns a proxy)
+      state.channels = {
+        ...state.channels,
+        [channelName]: channelData
+      };
+      state.lastUpdated = Date.now();
+      state.updateSource = source;
 
       // Broadcast to other windows if this is a local update
       if (source === 'local') {
@@ -68,11 +67,9 @@ export function initComputedChannelsState(initialChannels = {}) {
       const newChannels = { ...state.channels };
       delete newChannels[channelName];
       
-      state.set({
-        channels: newChannels,
-        lastUpdated: Date.now(),
-        updateSource: source
-      });
+      state.channels = newChannels;
+      state.lastUpdated = Date.now();
+      state.updateSource = source;
 
       if (source === 'local') {
         broadcastComputedChannelChange('delete', channelName);
@@ -85,14 +82,12 @@ export function initComputedChannelsState(initialChannels = {}) {
      * @param {string} source - Source of update
      */
     updateChannels(updatedChannels, source = 'local') {
-      state.set({
-        channels: {
-          ...state.channels,
-          ...updatedChannels
-        },
-        lastUpdated: Date.now(),
-        updateSource: source
-      });
+      state.channels = {
+        ...state.channels,
+        ...updatedChannels
+      };
+      state.lastUpdated = Date.now();
+      state.updateSource = source;
 
       if (source === 'local') {
         broadcastComputedChannelChange('update', null, updatedChannels);

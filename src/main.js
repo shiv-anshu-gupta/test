@@ -1096,6 +1096,9 @@ window.addEventListener("mergedFilesReceived", async (event) => {
     // Parse the merged CFG and DAT data
     // cfgData is already parsed from the merger app
     cfg = cfgData;
+    
+    // ✅ Make cfg globally accessible for computed channel evaluation (like temp repo)
+    window.globalCfg = cfg;
 
     // Parse the DAT content
     // The merger app should provide datContent as string or already parsed
@@ -1116,6 +1119,9 @@ window.addEventListener("mergedFilesReceived", async (event) => {
       analogData: datData.analogData || [],
       digitalData: datData.digitalData || [],
     };
+
+    // ✅ Make data globally accessible for computed channel evaluation (like temp repo)
+    window.globalData = data;
 
     if (!data.time || data.time.length === 0) {
       showError("Failed to parse merged COMTRADE data.", fixedResultsEl);
@@ -2078,6 +2084,10 @@ async function handleLoadFiles() {
     // Read and parse DAT file
     const datText = await readFileAsText(datFile);
     const data = parseDAT(datText, cfg, "ASCII", TIME_UNIT);
+
+    // ✅ Make cfg and data globally accessible (like temp repo)
+    window.globalCfg = cfg;
+    window.globalData = data;
 
     // Basic validation
     if (!data.time || data.time.length === 0) {
@@ -3260,144 +3270,182 @@ window.addEventListener("message", (ev) => {
             break;
           }
 
-          console.log('[main.js] Received computed channel expression from child:', expression);
+          console.log('[main.js] 📨 Received computed channel expression from child:', expression);
 
-          // ✅ Convert LaTeX to math.js compatible format
-          // Example: \sqrt{I_{A}^2+I_{B}^2+I_{C}^2} → sqrt(IA^2+IB^2+IC^2)
+          // ✅ STEP 1: Get global cfg and data (like working temp repo)
+          const cfgData = window.globalCfg || (window.opener && window.opener.globalCfg);
+          const dataObj = window.globalData || (window.opener && window.opener.globalData);
+
+          if (!cfgData || !dataObj) {
+            console.error('[main.js] ❌ Global cfg/data not available', {
+              hasGlobalCfg: !!window.globalCfg,
+              hasGlobalData: !!window.globalData
+            });
+            break;
+          }
+
+          // ✅ STEP 2: Convert LaTeX to math.js compatible format
           const mathJsExpr = convertLatexToMathJs(expression);
           console.log('[main.js] 📝 Expression conversion:', {
             original: expression,
-            converted: mathJsExpr,
-            steps: [
-              'I_{A} → IA (subscript removal)',
-              '\\sqrt{ → sqrt( (function conversion)',
-              '^{2} → ^2 (power notation)'
-            ]
+            converted: mathJsExpr
           });
 
-          // ✅ Use the actual global data object which has the sample arrays
-          const analogArray = data?.analogData || data?.analog || [];
-          const digitalArray = data?.digitalData || data?.digital || [];
-
-          console.log('[main.js] 📊 Data structure check:', {
-            hasData: !!data,
-            hasAnalogData: !!data?.analogData,
-            analogChannelCount: analogArray.length,
-            digitalChannelCount: digitalArray.length,
-            firstAnalogSampleCount: analogArray?.[0]?.length || 0
-          });
-
+          // ✅ STEP 3: Get data arrays
+          const analogArray = Array.isArray(dataObj?.analogData) ? dataObj.analogData : [];
+          const digitalArray = Array.isArray(dataObj?.digitalData) ? dataObj.digitalData : [];
           const sampleCount = analogArray?.[0]?.length || 0;
+
           if (!sampleCount) {
-            console.error('[main.js] ❌ No analog samples available for expression evaluation', {
-              analogArrayLength: analogArray.length,
-              firstAnalogLength: analogArray?.[0]?.length,
-              hasData: !!data,
-              hasAnalogData: !!data?.analogData
-            });
+            console.error('[main.js] ❌ No analog samples available');
             break;
           }
 
-          console.log('[main.js] ✅ Found', analogArray.length, 'analog channels with', sampleCount, 'samples');
+          console.log(`[main.js] ⚡ Starting Web Worker evaluation (${sampleCount} samples)...`);
 
-          // Compile and evaluate expression using math.js
-          const compiled = window.math?.compile?.(mathJsExpr);
-          
-          if (!compiled) {
-            console.error('[main.js] Math.js not available or failed to compile expression');
-            break;
+          // ✅ Convert arrays to ArrayBuffers (transferable objects - zero-copy)
+          const analogBuffers = [];
+          const transferableObjects = [];
+
+          for (let i = 0; i < analogArray.length; i++) {
+            const buffer = new Float64Array(analogArray[i]).buffer;
+            analogBuffers.push(buffer);
+            transferableObjects.push(buffer);
           }
 
-          // Evaluate expression over all samples
-          const results = [];
-          for (let i = 0; i < sampleCount; i++) {
-            const scope = {};
-
-            // Map analog channels by index and by name
-            analogArray.forEach((ch, idx) => {
-              scope[`a${idx}`] = ch?.[i] ?? 0;
-            });
-            cfg?.analogChannels?.forEach((chCfg, idx) => {
-              if (chCfg.id) {
-                scope[chCfg.id] = analogArray[idx]?.[i] ?? 0;
-              }
-            });
-
-            // Map digital channels
-            digitalArray.forEach((ch, idx) => {
-              scope[`d${idx}`] = ch?.[i] ?? 0;
-            });
-            cfg?.digitalChannels?.forEach((chCfg, idx) => {
-              if (chCfg.id) {
-                scope[chCfg.id] = digitalArray[idx]?.[i] ?? 0;
-              }
-            });
-
-            try {
-              results.push(compiled.evaluate(scope));
-            } catch (e) {
-              results.push(0);
-            }
+          const digitalBuffers = [];
+          for (let i = 0; i < digitalArray.length; i++) {
+            const buffer = new Float64Array(digitalArray[i]).buffer;
+            digitalBuffers.push(buffer);
+            transferableObjects.push(buffer);
           }
 
-          const computedData = {
-            results: results,
-            expression: mathJsExpr,
-            sampleCount: sampleCount
-          };
+          // ✅ Serialize channel metadata (only plain data, no proxies)
+          const analogChannelsMeta = (cfgData?.analogChannels || []).map(ch => ({
+            id: ch.id,
+            ph: ch.ph,
+            units: ch.units
+          }));
 
-          // Get channel name
-          const savedInfo = {
-            name: `computed_${Date.now()}`,
-            samples: results.length
-          };
+          const digitalChannelsMeta = (cfgData?.digitalChannels || []).map(ch => ({
+            id: ch.id,
+            ph: ch.ph,
+            units: ch.units
+          }));
 
-          // ✅ Update computed channels state with the evaluated data
-          const computedChannelsState = getComputedChannelsState();
-          if (computedChannelsState && computedChannelsState.addChannel) {
-            computedChannelsState.addChannel(
-              savedInfo.name,
-              {
-                ...computedData,
-                expression: expression,
-                unit: unit || '',
-                name: savedInfo.name,
-                samples: savedInfo.samples,
-                createdAt: Date.now()
-              },
-              'parent' // Mark as coming from parent (evaluated here)
-            );
-            
-            console.log('[main.js] ✅ Computed channel added to state:', {
-              name: savedInfo.name,
-              samples: savedInfo.samples,
-              unit
-            });
-          }
+          // ✅ STEP 4: Create Web Worker to avoid UI freeze
+          const worker = new Worker('./src/workers/computedChannelWorker.js');
+          const startTime = performance.now();
 
-          // Notify child window of success
-          try {
-            const channelListWindow = window.open('', 'ChannelListWindow');
-            if (channelListWindow && !channelListWindow.closed) {
-              channelListWindow.postMessage(
-                {
-                  source: 'ParentWindow',
-                  type: 'computedChannelEvaluated',
-                  payload: {
-                    success: true,
-                    channelName: savedInfo.name,
-                    samples: savedInfo.samples,
-                    unit: unit
+          // Listen for messages from worker
+          worker.onmessage = function(e) {
+            const { type, processed, total, percent, resultsBuffer, sampleCount: resultCount, message } = e.data;
+
+            switch (type) {
+              case 'progress':
+                // 📊 Real-time progress updates
+                console.log(`[Worker] 📊 Progress: ${percent}% (${processed}/${total})`);
+                break;
+
+              case 'complete':
+                // ✅ Evaluation finished successfully
+                const endTime = performance.now();
+                const elapsedMs = (endTime - startTime).toFixed(2);
+
+                console.log(`[main.js] ✅ Worker completed in ${elapsedMs}ms (${resultCount} samples)`);
+
+                // ✅ Convert ArrayBuffer back to array
+                const results = Array.from(new Float64Array(resultsBuffer));
+
+                // ✅ Add computed channel directly to dataState (simplified)
+                dataState.analog = [...dataState.analog, results];
+
+                // ✅ Update channelState with new channel metadata
+                const channelLabel = `${expression.substring(0, 20)}...`;
+                channelState.analog.yLabels = [...channelState.analog.yLabels, channelLabel];
+                channelState.analog.yUnits = [...channelState.analog.yUnits, unit || ''];
+                channelState.analog.lineColors = [...(channelState.analog.lineColors || []), '#FF6B6B'];
+
+                console.log('[main.js] ✅ Computed channel added:', channelLabel);
+
+                // ✅ Notify child window of success
+                try {
+                  const channelListWindow = window.open('', 'ChannelListWindow');
+                  if (channelListWindow && !channelListWindow.closed) {
+                    channelListWindow.postMessage(
+                      {
+                        source: 'ParentWindow',
+                        type: 'computedChannelEvaluated',
+                        payload: {
+                          success: true,
+                          samples: resultCount,
+                          unit: unit,
+                          elapsedMs: elapsedMs
+                        }
+                      },
+                      '*'
+                    );
                   }
-                },
-                '*'
-              );
+                } catch (e) {
+                  console.warn('[main.js] Failed to notify child window:', e);
+                }
+
+                // ✅ Clean up worker
+                worker.terminate();
+                console.log('[main.js] Worker terminated');
+                break;
+
+              case 'error':
+                // ❌ Evaluation failed
+                console.error('[Worker] ❌ Error:', message);
+
+                // Notify child window
+                try {
+                  const channelListWindow = window.open('', 'ChannelListWindow');
+                  if (channelListWindow && !channelListWindow.closed) {
+                    channelListWindow.postMessage(
+                      {
+                        source: 'ParentWindow',
+                        type: 'computedChannelEvaluated',
+                        payload: {
+                          success: false,
+                          error: message
+                        }
+                      },
+                      '*'
+                    );
+                  }
+                } catch (e) {
+                  console.warn('[main.js] Failed to notify child window of error:', e);
+                }
+
+                worker.terminate();
+                break;
             }
-          } catch (e) {
-            console.warn('[main.js] Failed to notify child window:', e);
-          }
+          };
+
+          // Handle worker errors
+          worker.onerror = function(error) {
+            console.error('[Worker] ❌ Worker error:', error);
+            worker.terminate();
+          };
+
+          // ✅ Send data to worker using transferable objects (zero-copy)
+          worker.postMessage({
+            mathJsExpr: mathJsExpr,
+            analogBuffers: analogBuffers,
+            digitalBuffers: digitalBuffers,
+            analogChannels: analogChannelsMeta,
+            digitalChannels: digitalChannelsMeta,
+            sampleCount: sampleCount,
+            analogCount: analogArray.length,
+            digitalCount: digitalArray.length
+          }, transferableObjects); // ✅ Transfer ownership (zero-copy)
+
+          console.log('[main.js] ✅ Data transferred to worker (zero-copy)');
+
         } catch (e) {
-          console.error('[main.js] Error in evaluateComputedChannel:', e);
+          console.error('[main.js] ❌ Error in evaluateComputedChannel:', e);
         }
         break;
       }
