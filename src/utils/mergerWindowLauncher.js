@@ -26,6 +26,15 @@ let mergerWindow = null;
 let mergerWindowInterval = null;
 
 /**
+ * Get reference to the merger window (for theme broadcasting)
+ * @function getMergerWindow
+ * @returns {Window|null} Reference to merger window or null
+ */
+export function getMergerWindow() {
+  return mergerWindow;
+}
+
+/**
  * Open the COMTRADE File Merger application in a separate window
  * Sets up communication bridge for receiving merged file data
  *

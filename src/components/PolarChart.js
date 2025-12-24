@@ -9,6 +9,10 @@ export class PolarChart {
     this.container = document.getElementById(containerId);
     this.chart = null;
     this.mockData = this.generateMockPhasorData();
+
+    // ✅ NEW: Debounce rapid updates to prevent UI freezing
+    this.renderTimeout = null;
+    this.isRendering = false;
   }
 
   /**
@@ -218,11 +222,19 @@ export class PolarChart {
       phasorData.length,
       "phasors"
     );
+
+    // ✅ OPTIMIZATION: Limit to first 12 phasors to prevent freeze
+    const MAX_PHASORS = 12;
+    if (phasorData.length > MAX_PHASORS) {
+      console.warn(`[PolarChart] Too many phasors (${phasorData.length}), limiting to ${MAX_PHASORS}`);
+      phasorData = phasorData.slice(0, MAX_PHASORS);
+    }
+
     return phasorData;
   }
 
   /**
-   * Initialize and render the polar chart with mock data
+   * Initialize the polar chart container (don't render yet)
    */
   init() {
     console.log("[PolarChart] init() called");
@@ -231,8 +243,9 @@ export class PolarChart {
       return;
     }
     console.log("[PolarChart] Container found:", this.container.id);
-    this.renderSVGPolarChart();
-    console.log("[PolarChart] init() complete");
+    // Just clear and show waiting message, don't render mock data
+    this.container.innerHTML = '<div style="padding: 20px; text-align: center; color: var(--text-secondary);">Waiting for data...</div>';
+    console.log("[PolarChart] init() complete - ready for real data");
   }
 
   /**
@@ -298,7 +311,7 @@ export class PolarChart {
     bgCircle.setAttribute("opacity", "0.3");
     fragment.appendChild(bgCircle);
 
-    // Draw grid circles
+    // Draw grid circles (batch them)
     for (let i = 0.2; i <= 1; i += 0.2) {
       const gridCircle = document.createElementNS(
         "http://www.w3.org/2000/svg",
@@ -311,10 +324,10 @@ export class PolarChart {
       gridCircle.setAttribute("stroke", "#cbd5e1");
       gridCircle.setAttribute("stroke-width", "0.5");
       gridCircle.setAttribute("opacity", "0.2");
-      svg.appendChild(gridCircle);
+      fragment.appendChild(gridCircle);
     }
 
-    // Draw axis lines (0°, 90°, 180°, 270°)
+    // Draw axis lines and labels (batch them)
     const angles = [0, 90, 180, 270];
     angles.forEach((angle) => {
       const rad = (angle * Math.PI) / 180;
@@ -332,7 +345,7 @@ export class PolarChart {
       line.setAttribute("stroke", "#cbd5e1");
       line.setAttribute("stroke-width", "0.5");
       line.setAttribute("opacity", "0.3");
-      svg.appendChild(line);
+      fragment.appendChild(line);
 
       // Add degree labels
       const labelRad = (angle * Math.PI) / 180;
@@ -350,7 +363,7 @@ export class PolarChart {
       text.setAttribute("font-size", "10");
       text.setAttribute("fill", "#64748b");
       text.textContent = angle + "°";
-      svg.appendChild(text);
+      fragment.appendChild(text);
     });
 
     // First pass: Find max magnitude for automatic scaling
@@ -390,7 +403,7 @@ export class PolarChart {
       line.setAttribute("stroke", phasor.color);
       line.setAttribute("stroke-width", "2");
       line.setAttribute("stroke-linecap", "round");
-      svg.appendChild(line);
+      fragment.appendChild(line);
 
       // Draw arrow head
       const arrowSize = 8;
@@ -409,7 +422,7 @@ export class PolarChart {
         `${x2},${y2} ${arrowX1},${arrowY1} ${arrowX2},${arrowY2}`
       );
       arrow.setAttribute("fill", phasor.color);
-      svg.appendChild(arrow);
+      fragment.appendChild(arrow);
 
       // Draw label dot at tip
       const dot = document.createElementNS(
@@ -422,7 +435,7 @@ export class PolarChart {
       dot.setAttribute("fill", phasor.color);
       dot.setAttribute("stroke", "white");
       dot.setAttribute("stroke-width", "1");
-      svg.appendChild(dot);
+      fragment.appendChild(dot);
 
       // Add label
       const labelX = x2 + 15 * Math.cos(rad);
@@ -440,7 +453,7 @@ export class PolarChart {
       text.setAttribute("font-weight", "bold");
       text.setAttribute("fill", phasor.color);
       text.textContent = String(phasor.label); // Ensure label is converted to string
-      svg.appendChild(text);
+      fragment.appendChild(text);
     });
 
     // Draw center point
@@ -452,7 +465,7 @@ export class PolarChart {
     centerDot.setAttribute("cy", centerY);
     centerDot.setAttribute("r", "3");
     centerDot.setAttribute("fill", "#64748b");
-    svg.appendChild(centerDot);
+    fragment.appendChild(centerDot);
 
     // Add title
     const title = document.createElementNS(
@@ -466,7 +479,7 @@ export class PolarChart {
     title.setAttribute("font-weight", "bold");
     title.setAttribute("fill", "#1e293b");
     title.textContent = "Phasor Diagram";
-    svg.appendChild(title);
+    fragment.appendChild(title);
 
     // Add magnitude scale legend at bottom
     const scaleX = 15;
@@ -480,7 +493,10 @@ export class PolarChart {
     maxScaleLabel.setAttribute("font-size", "9");
     maxScaleLabel.setAttribute("fill", "#64748b");
     maxScaleLabel.textContent = `Max: ${maxMagnitude.toFixed(1)}`;
-    svg.appendChild(maxScaleLabel);
+    fragment.appendChild(maxScaleLabel);
+
+    // ✅ Append all elements to SVG in one batch operation
+    svg.appendChild(fragment);
 
     // Append SVG to container (single DOM operation for best performance)
     this.container.appendChild(svg);
@@ -510,7 +526,30 @@ export class PolarChart {
       "phasors"
     );
     this.mockData = phasorData;
-    this.renderSVGPolarChart();
+    this.renderSVGPolarChartDebounced(); // ✅ Use debounced version
+  }
+
+  /**
+   * ✅ NEW: Debounced render method to prevent UI freezing from rapid updates
+   */
+  renderSVGPolarChartDebounced() {
+    if (this.renderTimeout) {
+      clearTimeout(this.renderTimeout);
+    }
+
+    if (this.isRendering) {
+      console.log("[PolarChart] Skipping render (already rendering)");
+      return;
+    }
+
+    this.renderTimeout = setTimeout(() => {
+      this.isRendering = true;
+      try {
+        this.renderSVGPolarChart();
+      } finally {
+        this.isRendering = false;
+      }
+    }, 100); // 100ms debounce
   }
 
   /**

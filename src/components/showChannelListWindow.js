@@ -63,6 +63,7 @@
 
 import { createChannelList } from "./ChannelList.js";
 import { autoGroupChannels } from "../utils/autoGroupChannels.js";
+import { THEMES } from "../utils/themeManager.js";
 
 /**
  * Open a Channel List popup and initialize the child UI.
@@ -105,8 +106,27 @@ export function showChannelListWindow(
   try {
     win.globalCfg = cfg;
     win.globalData = data;
+    
+    // Also create a serialized data object with analog and digital arrays for expression evaluation
+    if (data && typeof data === 'object') {
+      win.__dataArrays = {
+        analogData: data.analog || data.analogData || [],
+        digitalData: data.digital || data.digitalData || [],
+        TIME_UNIT: data.TIME_UNIT,
+        TIME_DATA: data.TIME_DATA || data.time || data.t || []
+      };
+      console.log('[showChannelListWindow] Bound data arrays to child window:', {
+        analogCount: win.__dataArrays.analogData.length,
+        digitalCount: win.__dataArrays.digitalData.length
+      });
+    }
+    
+    // Also bind the computed channels state for reactive updates
+    if (typeof window !== "undefined" && window.__computedChannelsState) {
+      win.__computedChannelsState = window.__computedChannelsState;
+    }
   } catch (e) {
-    /* ignore */
+    console.warn('[showChannelListWindow] Failed to bind globals:', e);
   }
 
   // Add Math.js - needed for expression evaluation in ChannelList
@@ -201,29 +221,121 @@ export function showChannelListWindow(
   // `;
 
   win.document.body.innerHTML = `
-  <div id="channel-table" class="w-auto flex flex-col gap-4 rounded-md h-auto p-2 md:p-4">
+  <div id="channel-table" class="w-auto flex flex-col gap-4 rounded-md h-auto p-2 md:p-4 theme-bg">
     <div id="button-bar" class="flex flex-wrap gap-2 m-2 md:m-3">
-      <select id="group-select" class="border rounded px-2 py-1 text-sm">
+      <select id="group-select" class="border rounded px-2 py-1 text-sm theme-border theme-bg" style="color: var(--chart-text);">
         <option value="Analog">Analog</option>
         <option value="Digital">Digital</option>
       </select>
-      <button id="add-row" class="bg-green-500 hover:bg-green-600 text-white text-sm px-3 py-1 rounded">
+      <button id="add-row" class="theme-btn-success text-sm px-3 py-1 rounded">
         Add Blank Row
       </button>
-      <button id="history-undo" class="bg-green-500 hover:bg-green-600 text-white text-sm px-3 py-1 rounded">Undo Edit</button>
-      <button id="history-redo" class="bg-green-500 hover:bg-green-600 text-white text-sm px-3 py-1 rounded">Redo Edit</button>
-      <button id="download-pdf" class="bg-green-500 hover:bg-green-600 text-white text-sm px-3 py-1 rounded">Download PDF</button>
+      <button id="history-undo" class="theme-btn-primary text-sm px-3 py-1 rounded">Undo Edit</button>
+      <button id="history-redo" class="theme-btn-primary text-sm px-3 py-1 rounded">Redo Edit</button>
+      <button id="download-pdf" class="theme-btn-primary text-sm px-3 py-1 rounded">Download PDF</button>
     </div>
-    <div id="channel-root" class="w-auto overflow-y-auto border border-gray-300 rounded-lg shadow-md bg-white"></div>
+    <div id="channel-root" class="w-auto overflow-y-auto border theme-border rounded-lg shadow-md" style="background-color: var(--chart-background);"></div>
   </div>
   `;
 
-  // Optional: additional custom styles
-  const style = win.document.createElement("style");
-  style.textContent = `
-    body { font-family: sans-serif; }
+  // Add custom CSS with theme variables
+  const themeStyle = win.document.createElement("style");
+  themeStyle.textContent = `
+    :root {
+      --bg-primary: #f5f5f5;
+      --bg-secondary: #ffffff;
+      --bg-tertiary: #f0f0f0;
+      --bg-sidebar: #ffffff;
+      --text-primary: #1a1a1a;
+      --text-secondary: #666666;
+      --text-muted: #999999;
+      --border-color: #e0e0e0;
+      --chart-bg: #ffffff;
+      --chart-text: #1a1a1a;
+      --chart-grid: #e0e0e0;
+      --chart-axis: #666666;
+    }
+
+    /* Theme-aware button styles */
+    .theme-btn-primary {
+      background-color: var(--bg-secondary);
+      color: var(--text-primary);
+      border: 1px solid var(--border-color);
+    }
+    .theme-btn-primary:hover {
+      background-color: var(--bg-tertiary);
+    }
+
+    .theme-btn-success {
+      background-color: #d4edda;
+      color: #155724;
+      border: 1px solid #155724;
+    }
+    .theme-btn-success:hover {
+      background-color: #155724;
+      color: #d4edda;
+    }
+
+    .theme-btn-danger {
+      background-color: #f8d7da;
+      color: #721c24;
+      border: 1px solid #721c24;
+    }
+    .theme-btn-danger:hover {
+      background-color: #721c24;
+      color: #f8d7da;
+    }
+
+    /* Theme-aware background and text */
+    .theme-bg {
+      background-color: var(--chart-bg);
+      color: var(--chart-text);
+    }
+    .theme-border {
+      border-color: var(--border-color);
+    }
   `;
-  win.document.head.appendChild(style);
+  win.document.head.appendChild(themeStyle);
+
+  // Add theme synchronization listener
+  win.addEventListener("message", (event) => {
+    // Only accept messages from parent window
+    if (event.source !== window.opener) return;
+
+    const { source, type, payload } = event.data || {};
+
+    if (source === "MainApp" && type === "theme_change") {
+      const { theme, colors } = payload;
+      console.log(`[ChannelListWindow] Received theme change from parent: ${theme}`);
+
+      // Apply theme colors to CSS variables
+      const root = win.document.documentElement.style;
+      Object.entries(colors).forEach(([key, value]) => {
+        root.setProperty(key, value);
+      });
+
+      // Save to localStorage for persistence
+      win.localStorage.setItem("comtrade-theme", theme);
+
+      console.log(`[ChannelListWindow] Applied theme: ${theme}`);
+    }
+  });
+
+  // Request current theme from parent on load
+  if (window.opener && !window.opener.closed) {
+    try {
+      window.opener.postMessage({
+        source: "ChildApp",
+        type: "theme_request",
+        payload: {
+          windowType: "channelList",
+          timestamp: Date.now(),
+        },
+      }, "*");
+    } catch (err) {
+      console.warn("[ChannelListWindow] Could not request theme from parent:", err);
+    }
+  }
 
   function setupChannelList() {
     // Build analog channel objects and compute group names using autoGroupChannels

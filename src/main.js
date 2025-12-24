@@ -53,6 +53,16 @@ import {
 } from "./utils/themeManager.js";
 import { initGlobalDOMUpdateQueue } from "./utils/domUpdateQueueInit.js";
 import { openMergerWindow } from "./utils/mergerWindowLauncher.js";
+import {
+  initGlobalThemeState,
+  toggleGlobalTheme,
+  listenForChildThemeRequests,
+} from "./utils/globalThemeState.js";
+import {
+  initComputedChannelsState,
+  getComputedChannelsState,
+  listenForComputedChannelChanges,
+} from "./utils/computedChannelsState.js";
 
 // Initialize global DOM update queue for selectiveUpdate feature
 initGlobalDOMUpdateQueue();
@@ -77,6 +87,58 @@ function readFileAsText(file) {
     };
     reader.readAsText(file);
   });
+}
+
+/**
+ * Convert LaTeX expression to math.js compatible format
+ * Example: \sqrt{I_{A}^2+I_{B}^2+I_{C}^2} → sqrt(IA^2+IB^2+IC^2)
+ * @param {string} latex - LaTeX expression from MathLive editor
+ * @returns {string} math.js compatible expression
+ */
+function convertLatexToMathJs(latex) {
+  if (!latex) return "";
+
+  let expr = latex.trim();
+
+  // Convert subscripts: I_{A} → IA, I_{B} → IB, etc.
+  expr = expr.replace(/([A-Za-z])_\{([A-Za-z0-9]+)\}/g, "$1$2");
+
+  // Convert sqrt: \sqrt{x} → sqrt(x)
+  expr = expr.replace(/\\sqrt\{([^}]+)\}/g, "sqrt($1)");
+
+  // Convert fractions: \frac{a}{b} → (a)/(b)
+  expr = expr.replace(/\\frac\{([^}]+)\}\{([^}]+)\}/g, "($1)/($2)");
+
+  // Convert functions: \operatorname{func} → func
+  expr = expr.replace(
+    /\\operatorname\{RMS\}\s*\\left\(\s*([^)]+)\s*\\right\)/gi,
+    "sqrt(mean(($1)^2))"
+  );
+  expr = expr.replace(
+    /\\operatorname\{AVG\}\s*\\left\(\s*([^)]+)\s*\\right\)/gi,
+    "mean($1)"
+  );
+  expr = expr.replace(/\\operatorname\{([^}]+)\}/g, "$1");
+
+  // Convert operators
+  expr = expr.replace(/\\cdot/g, "*");
+  expr = expr.replace(/\\times/g, "*");
+
+  // Convert absolute value: \left\lvert a \right\rvert → abs(a)
+  expr = expr.replace(/\\left\\lvert\s*([^\\]*)\s*\\right\\rvert/g, "abs($1)");
+
+  // Convert parentheses
+  expr = expr.replace(/\\left\(/g, "(");
+  expr = expr.replace(/\\right\)/g, ")");
+
+  // Convert power: ^{n} → ^(n) for math.js compatibility
+  expr = expr.replace(/\^\{([^}]+)\}/g, "^($1)");
+
+  // Remove remaining LaTeX artifacts
+  expr = expr.replace(/\\[a-zA-Z]+/g, ""); // Remove remaining commands
+  expr = expr.replace(/[\{\}]/g, ""); // Remove braces
+
+  return expr.trim();
 }
 
 /**
@@ -1143,8 +1205,13 @@ window.addEventListener("mergedFilesReceived", async (event) => {
     // PHASE 5: Initialize Polar Chart
     try {
       console.log("[main.js] Creating PolarChart instance...");
-      polarChart = new PolarChart("polarChartContainer");
-      polarChart.init();
+      if (!polarChart) {
+        polarChart = new PolarChart("polarChartContainer");
+        polarChart.init();
+        console.log("[main.js] ✅ PolarChart instance created");
+      } else {
+        console.log("[main.js] ⏭️ PolarChart already exists, skipping creation");
+      }
 
       if (window.requestIdleCallback) {
         window.requestIdleCallback(
@@ -1765,14 +1832,45 @@ document.addEventListener("keydown", (e) => {
 });
 
 // === Theme Toggle ===
-initTheme();
+// Initialize global theme state and listen for child window requests
+initGlobalThemeState();
+listenForChildThemeRequests();
+
+// === Computed Channels State ===
+// Initialize global computed channels state for reactive updates
+initComputedChannelsState({});
+
+// Listen for computed channel changes and re-render charts
+try {
+  const computedChannelsState = getComputedChannelsState();
+  if (computedChannelsState && computedChannelsState.onChannelsChanged) {
+    computedChannelsState.onChannelsChanged(({ channels, source }) => {
+      try {
+        console.log('[main.js] Computed channels updated:', { source, channelCount: Object.keys(channels || {}).length });
+        
+        // Only re-render if the change came from the child window or parent
+        if (source !== 'init' && channels) {
+          // Re-render computed channels on the chart
+          if (typeof renderComputedChannels === 'function') {
+            renderComputedChannels(charts, channelState, channels);
+          }
+        }
+      } catch (e) {
+        console.error('[main.js] Error handling computed channels update:', e);
+      }
+    });
+  }
+} catch (e) {
+  console.warn('[main.js] Failed to setup computed channels listener:', e);
+}
+
 const themeToggleBtn = document.getElementById("themeToggleBtn");
 const themeIcon = document.getElementById("themeIcon");
 const themeName = document.getElementById("themeName");
 
 if (themeToggleBtn) {
   themeToggleBtn.addEventListener("click", () => {
-    const newTheme = toggleTheme();
+    const newTheme = toggleGlobalTheme();
     updateThemeButton(newTheme);
     console.log(`[main.js] Theme switched to: ${newTheme}`);
 
@@ -2057,8 +2155,13 @@ async function handleLoadFiles() {
     // PHASE 5: Initialize Polar Chart
     try {
       console.log("[handleLoadFiles] Creating PolarChart instance...");
-      polarChart = new PolarChart("polarChartContainer");
-      polarChart.init(); // This just clears container
+      if (!polarChart) {
+        polarChart = new PolarChart("polarChartContainer");
+        polarChart.init(); // This just clears container
+        console.log("[handleLoadFiles] ✅ PolarChart instance created");
+      } else {
+        console.log("[handleLoadFiles] ⏭️ PolarChart already exists, skipping creation");
+      }
 
       // Defer the expensive updatePhasorAtTimeIndex to avoid blocking
       if (window.requestIdleCallback) {
@@ -3145,6 +3248,156 @@ window.addEventListener("message", (ev) => {
               channelState.digital.groups[idx] = newGroup;
             }
           }
+        }
+        break;
+      }
+      // ✅ NEW: Handle computed channel evaluation from child window
+      case "evaluateComputedChannel": {
+        try {
+          const { expression, unit } = payload || {};
+          if (!expression) {
+            console.warn('[main.js] No expression provided for computed channel');
+            break;
+          }
+
+          console.log('[main.js] Received computed channel expression from child:', expression);
+
+          // ✅ Convert LaTeX to math.js compatible format
+          // Example: \sqrt{I_{A}^2+I_{B}^2+I_{C}^2} → sqrt(IA^2+IB^2+IC^2)
+          const mathJsExpr = convertLatexToMathJs(expression);
+          console.log('[main.js] 📝 Expression conversion:', {
+            original: expression,
+            converted: mathJsExpr,
+            steps: [
+              'I_{A} → IA (subscript removal)',
+              '\\sqrt{ → sqrt( (function conversion)',
+              '^{2} → ^2 (power notation)'
+            ]
+          });
+
+          // ✅ Use the actual global data object which has the sample arrays
+          const analogArray = data?.analogData || data?.analog || [];
+          const digitalArray = data?.digitalData || data?.digital || [];
+
+          console.log('[main.js] 📊 Data structure check:', {
+            hasData: !!data,
+            hasAnalogData: !!data?.analogData,
+            analogChannelCount: analogArray.length,
+            digitalChannelCount: digitalArray.length,
+            firstAnalogSampleCount: analogArray?.[0]?.length || 0
+          });
+
+          const sampleCount = analogArray?.[0]?.length || 0;
+          if (!sampleCount) {
+            console.error('[main.js] ❌ No analog samples available for expression evaluation', {
+              analogArrayLength: analogArray.length,
+              firstAnalogLength: analogArray?.[0]?.length,
+              hasData: !!data,
+              hasAnalogData: !!data?.analogData
+            });
+            break;
+          }
+
+          console.log('[main.js] ✅ Found', analogArray.length, 'analog channels with', sampleCount, 'samples');
+
+          // Compile and evaluate expression using math.js
+          const compiled = window.math?.compile?.(mathJsExpr);
+          
+          if (!compiled) {
+            console.error('[main.js] Math.js not available or failed to compile expression');
+            break;
+          }
+
+          // Evaluate expression over all samples
+          const results = [];
+          for (let i = 0; i < sampleCount; i++) {
+            const scope = {};
+
+            // Map analog channels by index and by name
+            analogArray.forEach((ch, idx) => {
+              scope[`a${idx}`] = ch?.[i] ?? 0;
+            });
+            cfg?.analogChannels?.forEach((chCfg, idx) => {
+              if (chCfg.id) {
+                scope[chCfg.id] = analogArray[idx]?.[i] ?? 0;
+              }
+            });
+
+            // Map digital channels
+            digitalArray.forEach((ch, idx) => {
+              scope[`d${idx}`] = ch?.[i] ?? 0;
+            });
+            cfg?.digitalChannels?.forEach((chCfg, idx) => {
+              if (chCfg.id) {
+                scope[chCfg.id] = digitalArray[idx]?.[i] ?? 0;
+              }
+            });
+
+            try {
+              results.push(compiled.evaluate(scope));
+            } catch (e) {
+              results.push(0);
+            }
+          }
+
+          const computedData = {
+            results: results,
+            expression: mathJsExpr,
+            sampleCount: sampleCount
+          };
+
+          // Get channel name
+          const savedInfo = {
+            name: `computed_${Date.now()}`,
+            samples: results.length
+          };
+
+          // ✅ Update computed channels state with the evaluated data
+          const computedChannelsState = getComputedChannelsState();
+          if (computedChannelsState && computedChannelsState.addChannel) {
+            computedChannelsState.addChannel(
+              savedInfo.name,
+              {
+                ...computedData,
+                expression: expression,
+                unit: unit || '',
+                name: savedInfo.name,
+                samples: savedInfo.samples,
+                createdAt: Date.now()
+              },
+              'parent' // Mark as coming from parent (evaluated here)
+            );
+            
+            console.log('[main.js] ✅ Computed channel added to state:', {
+              name: savedInfo.name,
+              samples: savedInfo.samples,
+              unit
+            });
+          }
+
+          // Notify child window of success
+          try {
+            const channelListWindow = window.open('', 'ChannelListWindow');
+            if (channelListWindow && !channelListWindow.closed) {
+              channelListWindow.postMessage(
+                {
+                  source: 'ParentWindow',
+                  type: 'computedChannelEvaluated',
+                  payload: {
+                    success: true,
+                    channelName: savedInfo.name,
+                    samples: savedInfo.samples,
+                    unit: unit
+                  }
+                },
+                '*'
+              );
+            }
+          } catch (e) {
+            console.warn('[main.js] Failed to notify child window:', e);
+          }
+        } catch (e) {
+          console.error('[main.js] Error in evaluateComputedChannel:', e);
         }
         break;
       }

@@ -51,6 +51,7 @@ import { crosshairColors } from "../utils/constants.js";
 import autoUnitScalePlugin from "../plugins/autoUnitScalePlugin.js";
 import verticalLinePlugin from "../plugins/verticalLinePlugin.js";
 import horizontalZoomPanPlugin from "../plugins/horizontalZoomPanPlugin.js";
+import { axisLinesPlugin } from "../plugins/axisLinesPlugin.js";
 import { getChannelType, getAxisForType } from "../utils/axisCalculator.js";
 import { buildCompleteAxesArray, getAxisCount } from "../utils/axisBuilder.js";
 import {
@@ -231,6 +232,7 @@ export function createChartOptions({
       }),
       horizontalZoomPanPlugin("globalSync", getCharts),
       verticalLinePlugin(verticalLinesX, getCharts), // verticalLinePlugin intentionally NOT added here; must be added last in the caller after any other plugins
+      axisLinesPlugin(), // ✅ Draw Y-axis lines at chart edges
     ],
     legend: {
       show: false, // Hides the legend at the bottom

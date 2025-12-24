@@ -1451,3 +1451,32 @@ input[type="file"] {
     font-size: 12px;
   }
 }
+
+/* ========================================
+   Y-AXES VISUAL FIX - Draw Axis Lines
+   ======================================== */
+
+/* Draw vertical lines for Y-axes at chart left edge */
+.uplot {
+  position: relative;
+}
+
+/* Y-axis lines drawn by axisLinesPlugin */
+.uplot .y-axis-line {
+  stroke: var(--chart-axis, #64748b) !important;
+  stroke-width: 1.5 !important;
+  pointer-events: none;
+}
+
+/* Ensure grid lines are visible */
+.uplot .u-grid {
+  stroke: var(--chart-grid, #cbd5e1) !important;
+  stroke-width: 0.5 !important;
+  opacity: 0.5;
+}
+
+/* Target actual axis elements if uPlot creates them */
+.uplot .u-axis {
+  stroke: var(--chart-axis, #64748b) !important;
+  stroke-width: 1.5 !important;
+}

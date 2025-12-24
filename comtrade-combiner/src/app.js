@@ -7,6 +7,7 @@ import ComtradeFileParser from "./utils/fileParser.js";
 import ComtradeCombiner from "./utils/combiner.js";
 import ReportGenerator from "./utils/reportGenerator.js";
 import ComtradeDataExporter from "./utils/dataExporter.js";
+import { initChildThemeManager } from "./utils/childThemeManager.js";
 
 class ComtradeComberApp {
   constructor() {
@@ -16,6 +17,9 @@ class ComtradeComberApp {
     this.report = null;
     this.initializeEventListeners();
     this.initializeTabs();
+
+    // Initialize theme synchronization with parent window
+    initChildThemeManager();
 
     // Notify main app that merger app is ready (if opened from main app)
     if (window.opener && !window.opener.closed) {

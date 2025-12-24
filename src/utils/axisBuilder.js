@@ -108,6 +108,22 @@ import { getChannelType, getAxisForType } from "./axisCalculator.js";
  * });
  * // Returns: { scale: "y", label: "(kA)", ... }
  */
+
+/**
+ * Helper function to get theme-aware colors from CSS variables
+ * @returns {Object} Color values from current theme
+ */
+function getThemeColors() {
+  const root = document.documentElement;
+  const computedStyle = getComputedStyle(root);
+
+  return {
+    axisStroke: computedStyle.getPropertyValue('--chart-axis').trim() || '#64748b',
+    gridStroke: computedStyle.getPropertyValue('--chart-grid').trim() || '#cbd5e1',
+    textColor: computedStyle.getPropertyValue('--chart-text').trim() || '#1e293b',
+  };
+}
+
 export function createSingleAxisDefinition({
   yLabels,
   yUnits,
@@ -122,10 +138,10 @@ export function createSingleAxisDefinition({
     scale: "y",
     side: 3,
     label: labelWithUnit,
-    stroke: "#d1d5db",
+    stroke: () => getThemeColors().axisStroke,
     grid: {
       show: true,
-      stroke: "#374151",
+      stroke: () => getThemeColors().gridStroke,
       width: 1,
     },
 
@@ -292,10 +308,11 @@ export function createMultiAxisDefinition({
       label: isUsedAxis ? labelWithUnit : "", // Empty label for unused axes
       show: true, // ✅ CRITICAL: Always show to reserve space (even if unused)
       size: 60, // Fixed width for alignment
-      stroke: isUsedAxis ? "#d1d5db" : "transparent",
+      stroke: () => isUsedAxis ? getThemeColors().axisStroke : 'transparent',
       grid: {
-        show: isUsedAxis && i === 0, // Only first USED axis shows grid
-        stroke: "#374151",
+        show: isUsedAxis, // ✅ SHOW ON ALL USED AXES
+        stroke: () => getThemeColors().gridStroke,
+        width: i === 0 ? 1 : 0.5, // First axis thicker, others lighter
       },
       // ✅ NEW: Hide ticks and gap for unused axes
       ticks: {
@@ -418,10 +435,10 @@ export function buildCompleteAxesArray({
     scale: "x",
     side: 2,
     label: `${xLabel}(${xUnit || "sec"})`,
-    stroke: "#d1d5db",
+    stroke: () => getThemeColors().gridStroke, // Lighter for X-axis
     grid: {
       show: true,
-      stroke: "#374151",
+      stroke: () => getThemeColors().gridStroke,
     },
     values: (u, splits) =>
       splits.map((v) => {

@@ -3,7 +3,7 @@
  * Handles light/dark theme switching for the entire application
  */
 
-const THEMES = {
+export const THEMES = {
   light: {
     // Primary colors
     "--bg-primary": "#f5f5f5",

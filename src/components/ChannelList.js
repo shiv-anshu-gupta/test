@@ -914,16 +914,25 @@ function convertLatexToMathJs(latex) {
  * @param {Window} win - Window object (popup window)
  * @returns {Object|null} Computed channel data or null if error
  */
-function evaluateAndSaveComputedChannel(latexExpression, doc, win) {
+function evaluateAndSaveComputedChannel(latexExpression, doc, win, cfg = null, data = null) {
   try {
-    // Get global cfg and data from popup window
-    const cfg = win.globalCfg || (win.opener && win.opener.globalCfg);
-    const data = win.globalData || (win.opener && win.opener.globalData);
+    // Get global cfg and data - use passed params first, then try window properties
+    let finalCfg = cfg || win?.globalCfg || window?.globalCfg || (win?.opener && win.opener.globalCfg) || (window?.opener && window.opener.globalCfg);
+    let finalData = data || win?.globalData || window?.globalData || (win?.opener && win.opener.globalData) || (window?.opener && window.opener.globalData);
 
-    if (!cfg || !data) {
-      console.error("Global cfg/data not available in popup window");
+    if (!finalCfg || !finalData) {
+      console.error("Global cfg/data not available in popup window", {
+        passedCfg: !!cfg,
+        passedData: !!data,
+        winGlobalCfg: !!win?.globalCfg,
+        windowGlobalCfg: !!window?.globalCfg,
+        openerCfg: !!(win?.opener?.globalCfg || window?.opener?.globalCfg)
+      });
       return null;
     }
+
+    cfg = finalCfg;
+    data = finalData;
 
     // Convert LaTeX to math.js format
     const mathJsExpr = convertLatexToMathJs(latexExpression);
@@ -938,22 +947,44 @@ function evaluateAndSaveComputedChannel(latexExpression, doc, win) {
       throw new Error("Math.js not available. Please include mathjs CDN.");
     }
 
-    // Get data arrays
-    const analogArray = Array.isArray(data?.analogData)
+    // Get data arrays - try multiple sources for data
+    let analogArray = Array.isArray(data?.analogData)
       ? data.analogData
       : Array.isArray(data?.analog)
       ? data.analog
       : [];
-    const digitalArray = Array.isArray(data?.digitalData)
+    
+    let digitalArray = Array.isArray(data?.digitalData)
       ? data.digitalData
       : Array.isArray(data?.digital)
       ? data.digital
       : [];
 
+    // If data arrays are empty, try alternative sources
+    if ((!analogArray || analogArray.length === 0)) {
+      // Try __dataArrays object (set in showChannelListWindow)
+      if (win?.__dataArrays?.analogData) {
+        analogArray = win.__dataArrays.analogData;
+        digitalArray = win.__dataArrays.digitalData || [];
+        console.log('[ComputedChannel] Got data arrays from __dataArrays');
+      }
+      // Try parent window's channelState
+      else if (win?.opener?.channelState) {
+        try {
+          const parentChannelState = win.opener.channelState;
+          analogArray = parentChannelState.analog || [];
+          digitalArray = parentChannelState.digital || [];
+          console.log('[ComputedChannel] Got data arrays from parent channelState');
+        } catch (e) {
+          console.warn('[ComputedChannel] Failed to get data from parent:', e);
+        }
+      }
+    }
+
     const sampleCount = analogArray?.[0]?.length || 0;
     if (!sampleCount) {
       throw new Error(
-        "No analog samples available. Cannot create computed channel."
+        `No analog samples available. Cannot create computed channel. analogArray.length: ${analogArray?.length}, sampleCount: ${sampleCount}`
       );
     }
 
@@ -1145,11 +1176,17 @@ function saveComputedChannelToGlobals(computedChannelData, channelName, win) {
  * @param {Object} cell - Tabulator cell object
  * @param {Document} doc - Document object
  * @param {Window} win - Window object
+ * @param {Array} availableChannels - Array of available channels with {label, latex} properties
+ * @param {Object} row - Current row data
+ * @param {Object} cfg - COMTRADE config object
+ * @param {Object} data - COMTRADE data object
  */
-function openMathLiveEditor(cell, doc, win) {
+function openMathLiveEditor(cell, doc, win, availableChannels = [], row = {}, cfg = {}, data = {}) {
   const currentValue = cell.getValue() || "";
+  const currentUnit = row.unit || "";
 
-  const channels = [
+  // Use provided channels or fall back to defaults
+  const channels = availableChannels.length > 0 ? availableChannels : [
     { label: "IA", latex: "I_{A}" },
     { label: "IB", latex: "I_{B}" },
     { label: "IC", latex: "I_{C}" },
@@ -1236,13 +1273,25 @@ function openMathLiveEditor(cell, doc, win) {
   modal.innerHTML = `
     <h3 style="margin:0 0 16px 0;font-size:18px;font-weight:600;color:#333;">Edit Channel Expression</h3>
     
-    ${createButtonsHTML(channels, "Channels")}
+    <div style="margin-bottom:16px;">
+      <label style="display:block;margin-bottom:8px;font-weight:500;color:#555;">Available Channels:</label>
+      <select id="channel-dropdown" style="width:100%;padding:8px;border:1px solid #ccc;border-radius:4px;font-size:14px;">
+        <option value="">-- Select a channel to insert --</option>
+        ${channels.map(ch => `<option value="${ch.latex.replace(/"/g, "&quot;")}">${ch.label}</option>`).join("")}
+      </select>
+    </div>
+    
     ${createButtonsHTML(operators, "Operators")}
     ${createButtonsHTML(functions, "Functions")}
     
     <div style="margin-bottom:16px;">
       <label style="display:block;margin-bottom:8px;font-weight:500;color:#555;">Math Expression:</label>
       <math-field id="math-editor" virtual-keyboard-mode="manual" style="width:100%;padding:8px;border:1px solid #ccc;border-radius:4px;font-size:16px;--keyboard-zindex:10001;"></math-field>
+    </div>
+    
+    <div style="margin-bottom:16px;">
+      <label style="display:block;margin-bottom:8px;font-weight:500;color:#555;">Unit (for new computed channel):</label>
+      <input type="text" id="channel-unit" placeholder="e.g., Amps, Volts, Hz" value="${currentUnit}" style="width:100%;padding:8px;border:1px solid #ccc;border-radius:4px;font-size:14px;box-sizing:border-box;">
     </div>
     
     <div style="display:flex;gap:8px;justify-content:flex-end;">
@@ -1254,6 +1303,14 @@ function openMathLiveEditor(cell, doc, win) {
 
   overlay.appendChild(modal);
   doc.body.appendChild(overlay);
+
+  // Make cfg and data available to popup window for evaluateAndSaveComputedChannel
+  try {
+    win.globalCfg = cfg;
+    win.globalData = data;
+  } catch (e) {
+    // ignore cross-window property assignment issues
+  }
 
   setTimeout(() => {
     const mathField = doc.getElementById("math-editor");
@@ -1269,6 +1326,18 @@ function openMathLiveEditor(cell, doc, win) {
           mathField.focus();
         });
       });
+
+      // Add channel dropdown listener
+      const channelDropdown = doc.getElementById("channel-dropdown");
+      if (channelDropdown) {
+        channelDropdown.addEventListener("change", (e) => {
+          if (e.target.value) {
+            mathField.executeCommand(["insert", e.target.value]);
+            mathField.focus();
+            e.target.value = ""; // Reset dropdown after insertion
+          }
+        });
+      }
 
       mathField.focus();
     }
@@ -1291,6 +1360,8 @@ function openMathLiveEditor(cell, doc, win) {
       if (!mathField) return;
 
       const expression = mathField.value.trim();
+      const unit = (doc.getElementById("channel-unit")?.value || "").trim();
+
       if (!expression) {
         showStatus("⚠️ Please enter an expression", true);
         mathField.focus();
@@ -1298,35 +1369,44 @@ function openMathLiveEditor(cell, doc, win) {
       }
 
       try {
-        // Evaluate the expression and create computed channel
-        showStatus("⏳ Evaluating expression...");
-        const computedData = evaluateAndSaveComputedChannel(
-          expression,
-          doc,
-          win
-        );
+        // ✅ NEW: Send expression to parent window for evaluation
+        // Parent has the actual data and can evaluate the expression
+        showStatus("⏳ Sending expression to parent for evaluation...");
+        
+        if (win.opener && !win.opener.closed) {
+          // Send expression to parent for evaluation
+          win.opener.postMessage(
+            {
+              source: 'ChildWindow',
+              type: 'evaluateComputedChannel',
+              payload: {
+                expression: expression,
+                unit: unit,
+                timestamp: Date.now()
+              }
+            },
+            '*'
+          );
 
-        if (!computedData) {
-          showStatus("❌ Failed to evaluate expression", true);
-          return;
+          showStatus(
+            `✅ Expression sent to parent for evaluation${unit ? ` (${unit})` : ""}`
+          );
+
+          // Close modal after a short delay
+          setTimeout(() => {
+            try {
+              if (doc.body.contains(overlay)) {
+                doc.body.removeChild(overlay);
+              }
+            } catch (e) {
+              // Ignore removal errors
+            }
+          }, 800);
+        } else {
+          showStatus("❌ Parent window not accessible", true);
         }
-
-        // Save to globals and get the channel name
-        const savedInfo = saveComputedChannelToGlobals(computedData, null, win);
-        showStatus(
-          `✅ Created channel "${savedInfo.name}" with ${savedInfo.samples} samples`
-        );
-
-        // Pass the computed channel name (not the expression) to the cell setValue callback
-        // This will trigger the row creation with the correct channel name
-        cell.setValue(savedInfo.name);
-
-        // Close modal after a short delay
-        setTimeout(() => {
-          doc.body.removeChild(overlay);
-        }, 600);
       } catch (error) {
-        console.error("[MathLiveEditor] Error creating channel:", error);
+        console.error("[MathLiveEditor] Error sending expression:", error);
         showStatus(`❌ Error: ${error.message}`, true);
       }
     });
@@ -1628,12 +1708,18 @@ export function createChannelList(
   onChannelUpdate,
   TabulatorInstance,
   ownerDocument,
-  attachToElement
+  attachToElement,
+  data = null
 ) {
   // Use provided document (popup) or fallback to current document
   const doc =
     ownerDocument ||
     (typeof document !== "undefined" ? document : window.document);
+
+  // If data not provided, try to get from window globals (set by showChannelListWindow)
+  if (!data && typeof window !== "undefined") {
+    data = window.globalData || (window.opener && window.opener.globalData) || {};
+  }
 
   // Create container for the table in the correct document
   const container = doc.createElement("div");
@@ -1732,7 +1818,53 @@ export function createChannelList(
       title: "Channel Name (Unit)",
       field: "name",
       headerFilter: "input",
-      editor: "input",
+      editor: (cell) => {
+        // For Computed channels, show dropdown of available channels
+        const rowData = cell.getRow().getData();
+        if (rowData.type === "Computed") {
+          // Create a select element for channel selection
+          const select = doc.createElement("select");
+          select.style.cssText = "width:100%;padding:8px;border:1px solid #ccc;border-radius:4px;";
+          
+          // Add default option
+          const defaultOption = doc.createElement("option");
+          defaultOption.value = "";
+          defaultOption.textContent = "-- Select available channel --";
+          select.appendChild(defaultOption);
+          
+          // Add analog channels
+          (cfg.analogChannels || []).forEach((ch, idx) => {
+            const option = doc.createElement("option");
+            option.value = ch.id || `Analog ${idx + 1}`;
+            option.textContent = `${ch.id || `Analog ${idx + 1}`} (${ch.unit || 'N/A'})`;
+            select.appendChild(option);
+          });
+          
+          // Add digital channels
+          (cfg.digitalChannels || []).forEach((ch, idx) => {
+            const option = doc.createElement("option");
+            option.value = ch.id || `Digital ${idx + 1}`;
+            option.textContent = `${ch.id || `Digital ${idx + 1}`} (${ch.unit || 'N/A'})`;
+            select.appendChild(option);
+          });
+          
+          select.addEventListener("change", (e) => {
+            cell.setValue(e.target.value);
+          });
+          
+          return select;
+        } else {
+          // For Analog/Digital channels, use simple text input
+          const input = doc.createElement("input");
+          input.type = "text";
+          input.value = cell.getValue() || "";
+          input.style.cssText = "width:100%;padding:8px;border:1px solid #ccc;border-radius:4px;";
+          input.addEventListener("blur", () => {
+            cell.setValue(input.value);
+          });
+          return input;
+        }
+      },
       resizable: true,
       formatter: (cell) => {
         const value = cell.getValue();
@@ -1743,7 +1875,24 @@ export function createChannelList(
         // Open MathLive editor only for Computed channels
         const rowData = cell.getRow().getData();
         if (rowData.type === "Computed") {
-          openMathLiveEditor(cell, doc, doc.defaultView || window);
+          // Get all available channels for dropdown
+          const analogChannels = (cfg.analogChannels || []).map((ch, idx) => {
+            const label = ch.id || `Analog ${idx + 1}`;
+            return {
+              label,
+              latex: label // Use actual channel name as LaTeX
+            };
+          });
+          const digitalChannels = (cfg.digitalChannels || []).map((ch, idx) => {
+            const label = ch.id || `Digital ${idx + 1}`;
+            return {
+              label,
+              latex: label // Use actual channel name as LaTeX
+            };
+          });
+          const allChannels = [...analogChannels, ...digitalChannels];
+          
+          openMathLiveEditor(cell, doc, doc.defaultView || window, allChannels, rowData, cfg, data);
         }
       },
     },
@@ -1813,7 +1962,7 @@ export function createChannelList(
       title: "Delete",
       field: "delete",
       formatter: () =>
-        `<button class="bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded transition duration-150">Delete</button>`,
+        `<button class="theme-btn-danger px-2 py-1 rounded transition duration-150">Delete</button>`,
       hozAlign: "center",
       cellClick: (e, cell) => cell.getRow().delete(),
     },
@@ -2219,15 +2368,12 @@ export function createChannelList(
       addRowBtn.addEventListener("click", () => {
         const groupType = (groupSelect && groupSelect.value) || "Analog";
         try {
-          // Create a temporary cell object that will be used by the expression editor
-          // When user saves the expression, the setValue callback will create the actual row
+          // ✅ Create a temporary cell object that will be used by the expression editor
+          // This cell is NOT in the table - it's just a placeholder for the editor
           const tempCell = {
             getValue: () => "",
             setValue: (channelName) => {
-              // After user saves expression, NOW create the actual row with the computed channel name
-              // channelName will be something like "computed_0", "computed_1", etc.
-
-              // Get sequential ID for computed channels
+              // After user saves expression, CREATE the actual row with the computed channel name
               const computedRows = table
                 .getRows()
                 .filter((r) => r.getData().type === "Computed");
@@ -2246,13 +2392,14 @@ export function createChannelList(
                 invert: false,
               };
 
-              // Create the row with the computed channel name
+              // Add row to table - this WILL trigger rowAdded event and postMessage
               table.addRow(newRow, true);
             },
           };
 
-          // Open the expression editor with the temporary cell
-          openMathLiveEditor(tempCell, doc, doc.defaultView || window);
+          // Open the expression editor with the temporary cell (NOT added to table yet)
+          // We pass cfg and data directly so evaluation works
+          openMathLiveEditor(tempCell, doc, doc.defaultView || window, [], {}, cfg, data);
         } catch (e) {
           console.warn("add-row failed:", e);
         }

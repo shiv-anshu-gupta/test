@@ -1058,13 +1058,40 @@ export function subscribeChartUpdates(
               "./renderAnalogCharts.js"
             );
 
+            // ✅ DEBUG: Log current state before changes
+            console.log(`[group subscriber] 📊 BEFORE changes: `, {
+              totalCharts: charts.length,
+              analogCharts: charts.filter(c => c?._type === "analog").length,
+              digitalCharts: charts.filter(c => c?._type === "digital").length,
+              computedCharts: charts.filter(c => c?._type === "computed").length,
+              domContainers: {
+                total: chartsContainer?.children.length,
+                analog: Array.from(chartsContainer?.children || []).filter(c => c.getAttribute("data-chart-type") === "analog").length,
+                digital: Array.from(chartsContainer?.children || []).filter(c => c.getAttribute("data-chart-type") === "digital").length,
+              }
+            });
+
             // Destroy all old analog charts immediately
             const chartsToDestroy = charts.filter(
               (c) => c && c._type === "analog"
             );
+
+            // ✅ FIX: ALSO destroy digital charts when axes change
+            if (axisCountChanged) {
+              const digitalChartsToDestroy = charts.filter((c) => c && c._type === "digital");
+              chartsToDestroy.push(...digitalChartsToDestroy);
+              console.log(`[group subscriber] 🔥 Axis count changed → Destroying ${digitalChartsToDestroy.length} digital charts too`);
+            }
+
             chartsToDestroy.forEach((chart) => {
               if (chart && typeof chart.destroy === "function") {
                 try {
+                  // ✅ Disconnect ResizeObserver
+                  if (chart._resizeObserver) {
+                    chart._resizeObserver.disconnect();
+                    chart._resizeObserver = null;
+                  }
+
                   chart.destroy();
                 } catch (err) {
                   console.warn(
@@ -1075,22 +1102,34 @@ export function subscribeChartUpdates(
               }
             });
 
-            // ✅ FIX: Properly remove destroyed charts from array
+            // ✅ FIX: Remove destroyed charts from array (both analog AND digital if axes changed)
+            const typesToRemove = axisCountChanged ? ["analog", "digital"] : ["analog"];
             const remainingCharts = charts.filter(
-              (c) => c && c._type !== "analog"
+              (c) => c && !typesToRemove.includes(c._type)
             );
             charts.length = 0;
             charts.push(...remainingCharts);
 
-            // ✅ FIX: Selective DOM clearing - only remove analog chart containers
+            console.log(`[group subscriber] ✓ Removed ${chartsToDestroy.length} charts from array. Remaining: ${charts.length}`);
+
+            // ✅ FIX: Remove DOM containers for destroyed chart types
             const chartsContainer =
               document.querySelector(".charts-container") ||
               document.querySelector("#charts");
             if (chartsContainer) {
-              // Only remove analog chart containers, keep digital charts intact
               Array.from(chartsContainer.children).forEach((child) => {
-                if (child.getAttribute("data-chart-type") === "analog") {
+                const chartType = child.getAttribute("data-chart-type");
+
+                // Remove analog containers always
+                if (chartType === "analog") {
                   child.remove();
+                  return;
+                }
+
+                // Remove digital containers ONLY if axes changed
+                if (axisCountChanged && chartType === "digital") {
+                  child.remove();
+                  console.log(`[group subscriber] ✓ Removed digital container (axis count changed)`);
                 }
               });
             }
@@ -1106,45 +1145,56 @@ export function subscribeChartUpdates(
               autoGroup
             );
 
-            // ✅ OPTIMIZATION: Only rebuild digital charts if axis count changed OR digital chart doesn't exist
+            // ✅ FIX: Always render digital charts if they should exist
+            // (either axes changed OR digital chart was removed)
             const digitalChartExists = charts.some(
               (c) => c && c._type === "digital"
             );
-            if (axisCountChanged || !digitalChartExists) {
-              if (
-                cfg.digitalChannels &&
-                cfg.digitalChannels.length > 0 &&
-                data.digitalData &&
-                data.digitalData.length > 0
-              ) {
-                try {
-                  const { renderDigitalCharts: renderDigital } = await import(
-                    "./renderDigitalCharts.js"
-                  );
-                  renderDigital(
-                    cfg,
-                    data,
-                    chartsContainer,
-                    charts,
-                    verticalLinesX,
-                    channelState
-                    // ✅ REMOVED: currentGlobalAxes parameter - digital charts now read from global store
-                  );
-                  console.log(
-                    `[group subscriber] ✓ Digital charts rendered (axis changed: ${axisCountChanged}, existed: ${digitalChartExists})`
-                  );
-                } catch (err) {
-                  console.error(
-                    `[group subscriber] ❌ Digital render failed:`,
-                    err
-                  );
-                }
+            const shouldRenderDigital = !digitalChartExists &&  // Digital chart doesn't exist
+              cfg.digitalChannels &&
+              cfg.digitalChannels.length > 0 &&
+              data.digitalData &&
+              data.digitalData.length > 0;
+
+            if (shouldRenderDigital) {
+              try {
+                const { renderDigitalCharts: renderDigital } = await import(
+                  "./renderDigitalCharts.js"
+                );
+                renderDigital(
+                  cfg,
+                  data,
+                  chartsContainer,
+                  charts,
+                  verticalLinesX,
+                  channelState
+                  // ✅ REMOVED: currentGlobalAxes parameter - digital charts now read from global store
+                );
+                console.log(
+                  `[group subscriber] ✓ Digital charts rendered (axis changed: ${axisCountChanged})`
+                );
+              } catch (err) {
+                console.error(
+                  `[group subscriber] ❌ Digital render failed:`,
+                  err
+                );
               }
             } else {
-              console.log(
-                `[group subscriber] ⏭️ Skipping digital chart rebuild (axis unchanged, chart exists)`
-              );
+              console.log(`[group subscriber] ⏭️ Skipping digital chart (exists: ${digitalChartExists}, shouldRender: ${shouldRenderDigital})`);
             }
+
+            // ✅ DEBUG: Log state after changes
+            console.log(`[group subscriber] 📊 AFTER changes:`, {
+              totalCharts: charts.length,
+              analogCharts: charts.filter(c => c?._type === "analog").length,
+              digitalCharts: charts.filter(c => c?._type === "digital").length,
+              computedCharts: charts.filter(c => c?._type === "computed").length,
+              domContainers: {
+                total: chartsContainer?.children.length,
+                analog: Array.from(chartsContainer?.children || []).filter(c => c.getAttribute("data-chart-type") === "analog").length,
+                digital: Array.from(chartsContainer?.children || []).filter(c => c.getAttribute("data-chart-type") === "digital").length,
+              }
+            });
 
             // ✅ Render computed channels
             try {

@@ -126,10 +126,28 @@ export function renderDigitalCharts(
     maxYAxes: maxYAxes,
   });
 
+  // ✅ DEBUG: Log Y-Axes Configuration
+  console.log(`[renderDigitalCharts] 📏 Y-Axes Configuration:`, {
+    maxYAxes,
+    optsAxesLength: opts.axes?.length,
+    firstAxisExists: !!opts.axes?.[1],
+    additionalAxes: opts.axes?.slice(2).length,
+    digitalChannelsCount: digitalChannelsToShow.length,
+    originalAxes: opts.axes,
+  });
+
   // ✅ Keep digital-specific formatting on first Y-axis, preserve additional axes for multi-axis sync
   const firstAxis = {
-    ...opts.axes[1],
+    ...opts.axes[1],  // Preserve original axis properties
+    scale: "y",       // Ensure correct scale
+    side: 3,          // Left side
+    show: true,       // Ensure axis is visible
+    size: 60,         // Reserve space for axis
+    stroke: "#d1d5db", // Visible stroke
+    label: "Digital States", // Add label for clarity
     grid: { show: true },
+    ticks: { show: true, size: 10 },
+    gap: 5,
     values: (u, vals) =>
       vals.map((v) => {
         for (let i = 0; i < digitalChannelsToShow.length; ++i) {
@@ -142,11 +160,18 @@ export function renderDigitalCharts(
       i * DigChannelOffset,
       i * DigChannelOffset + 1,
     ]),
-    range: [yMin, yMax],
+    // Remove range - let scale handle it
   };
+
+  console.log(`[renderDigitalCharts] 📏 First Axis Configuration:`, {
+    originalAxis: opts.axes[1],
+    modifiedAxis: firstAxis,
+  });
 
   // Build axes array: [x-axis, first y-axis with digital formatting, ...additional axes]
   opts.axes = [opts.axes[0], firstAxis, ...opts.axes.slice(2)];
+
+  console.log(`[renderDigitalCharts] 📏 Final Axes Array:`, opts.axes);
 
   opts.series = [
     {},
