@@ -1089,7 +1089,7 @@ export function subscribeChartUpdates(
             if (chartsContainer) {
               // Only remove analog chart containers, keep digital charts intact
               Array.from(chartsContainer.children).forEach((child) => {
-                if (child.querySelector('[data-chart-type="analog"]')) {
+                if (child.getAttribute("data-chart-type") === "analog") {
                   child.remove();
                 }
               });
