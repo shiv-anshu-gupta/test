@@ -4,7 +4,6 @@ import {
 } from "./components/chartComponent.js";
 import { parseCFG, parseDAT } from "./components/comtradeUtils.js";
 import { createState } from "./components/createState.js";
-import { yieldToEventLoop } from "./utils/batchFileProcessor.js";
 import {
   calculateDeltas,
   collectChartDeltas,
@@ -1119,7 +1118,7 @@ window.addEventListener("mergedFilesReceived", async (event) => {
     }
 
     // Yield to event loop
-    await yieldToEventLoop(50);
+    await new Promise((resolve) => setTimeout(resolve, 50));
 
     console.log("[main.js] 📈 PHASE 4: Chart rendering");
 
@@ -1137,7 +1136,7 @@ window.addEventListener("mergedFilesReceived", async (event) => {
     );
 
     // Yield to event loop
-    await yieldToEventLoop(50);
+    await new Promise((resolve) => setTimeout(resolve, 50));
 
     console.log("[main.js] 🎯 PHASE 5: Polar chart initialization");
 
@@ -1184,7 +1183,7 @@ window.addEventListener("mergedFilesReceived", async (event) => {
     }
 
     // Yield to event loop
-    await yieldToEventLoop(50);
+    await new Promise((resolve) => setTimeout(resolve, 50));
 
     console.log("[main.js] 📟 PHASE 6: Computed channels");
 
@@ -1222,7 +1221,7 @@ window.addEventListener("mergedFilesReceived", async (event) => {
     setupComputedChannelsListener();
 
     // Yield to event loop
-    await yieldToEventLoop(50);
+    await new Promise((resolve) => setTimeout(resolve, 50));
 
     console.log("[main.js] 🔗 PHASE 7: Chart integrations");
 
