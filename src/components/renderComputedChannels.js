@@ -2,6 +2,7 @@
 import { createChartOptions } from "./chartComponent.js";
 import { createDragBar } from "./createDragBar.js";
 import { getMaxYAxes } from "../utils/maxYAxesStore.js";
+import { renderLatex } from "../utils/mathJaxLoader.js"; // ✅ NEW: Lazy-load MathJax
 import {
   createTooltip,
   updateTooltip,
@@ -224,16 +225,11 @@ export function renderComputedChannels(
       defaultLabelDiv.appendChild(channelContainer);
     });
 
-    // Trigger MathJax rendering asynchronously (don't block main thread)
-    if (window.MathJax?.typesetPromise) {
-      // Use microtask (Promise) instead of macrotask (setTimeout) for faster execution
-      Promise.resolve().then(() => {
-        const mathjaxStartTime = performance.now();
-        window.MathJax.typesetPromise([defaultLabelDiv]).catch(() => {});
-        const mathjaxTime = performance.now() - mathjaxStartTime;
-        console.log(`[renderComputedChannels] ⏱️ MathJax rendering: ${mathjaxTime.toFixed(2)}ms`);
-      });
-    }
+    // ✅ NEW: Use lazy-loaded MathJax instead of inline check
+    // MathJax loads automatically on first use, then caches for subsequent calls
+    renderLatex(defaultLabelDiv).catch((err) => {
+      console.warn("[renderComputedChannels] ⚠️ MathJax render failed:", err);
+    });
   }
   const labelTime = performance.now() - labelStartTime;
   console.log(`[renderComputedChannels] ⏱️ Label setup: ${labelTime.toFixed(2)}ms`);
