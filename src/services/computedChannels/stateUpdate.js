@@ -1,6 +1,8 @@
 // File: src/services/computedChannels/stateUpdate.js
 // Single Responsibility: Update application state
 
+import { getComputedChannelsState } from "../../utils/computedChannelsState.js";
+
 /**
  * Save channel to global data
  */

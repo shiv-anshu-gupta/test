@@ -34,6 +34,7 @@ import {
   buildWorkerErrorHandler,
   sendTaskToWorker,
 } from "./workerManagement.js";
+import { convertLatexToMathJs } from "./expressionConversion.js";
 
 /**
  * Main orchestrator: Handles computed channel evaluation end-to-end

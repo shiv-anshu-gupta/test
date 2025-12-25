@@ -185,15 +185,18 @@ function handleMergedFilesReady(payload) {
     console.log("[mergerWindowLauncher] Payload structure:", {
       hasCfg: !!payload?.cfg,
       cfgType: typeof payload?.cfg,
+      hasData: !!payload?.data,
+      dataType: typeof payload?.data,
       hasDatContent: !!payload?.datContent,
       datContentType: typeof payload?.datContent,
       datContentLength: payload?.datContent?.length || 0,
       keys: Object.keys(payload || {}),
     });
 
-    if (!payload || !payload.cfg || !payload.datContent) {
+    // Handle both NEW structure (cfg+data) and OLD structure (cfg+datContent)
+    if (!payload || !payload.cfg || (!payload.data && !payload.datContent)) {
       console.error(
-        "[mergerWindowLauncher] Invalid payload - missing cfg or datContent",
+        "[mergerWindowLauncher] Invalid payload - missing cfg or (data/datContent)",
         {
           payload: payload
             ? {
@@ -213,10 +216,12 @@ function handleMergedFilesReady(payload) {
     const event = new CustomEvent("mergedFilesReceived", {
       detail: {
         cfg: payload.cfg,
-        datContent: payload.datContent,
+        data: payload.data, // NEW: Already-parsed data
+        datContent: payload.datContent, // OLD: Raw text (for backwards compatibility)
         filenames: payload.filenames || ["merged_file"],
         fileCount: payload.fileCount || 1,
         isMerged: true, // Mark as merged for statistics
+        isMergedFromCombiner: payload.isMergedFromCombiner,
       },
     });
 

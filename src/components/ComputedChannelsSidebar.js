@@ -223,8 +223,14 @@ function createChannelItem(channel) {
       justify-content: center;
     `;
 
+    // Extract just the formula part (after the '=' sign) using regex for cleaner display
+    const formulaMatch = channel.equation.match(/=\s*(.+)$/);
+    const formulaOnly = formulaMatch
+      ? formulaMatch[1].trim()
+      : channel.equation;
+
     // Format equation for LaTeX display
-    const latexEquation = formatEquationForLatex(channel.equation);
+    const latexEquation = formatEquationForLatex(formulaOnly);
     equationContainer.innerHTML = `$$${latexEquation}$$`;
 
     item.appendChild(equationContainer);

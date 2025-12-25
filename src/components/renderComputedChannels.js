@@ -208,6 +208,12 @@ export function renderComputedChannels(
 
       // LaTeX equation
       if (channel.equation) {
+        // Extract just the formula part (after the '=' sign) using regex for cleaner display
+        const formulaMatch = channel.equation.match(/=\s*(.+)$/);
+        const formulaOnly = formulaMatch
+          ? formulaMatch[1].trim()
+          : channel.equation;
+
         const eqDiv = document.createElement("div");
         eqDiv.style.cssText = `
           width: 100%;
@@ -221,7 +227,7 @@ export function renderComputedChannels(
           max-width: 280px;
         `;
 
-        const latexEquation = formatEquationForLatex(channel.equation);
+        const latexEquation = formatEquationForLatex(formulaOnly);
         eqDiv.innerHTML = `$$${latexEquation}$$`;
         channelContainer.appendChild(eqDiv);
       }
@@ -229,11 +235,17 @@ export function renderComputedChannels(
       defaultLabelDiv.appendChild(channelContainer);
     });
 
-    // ✅ NEW: Use lazy-loaded MathJax instead of inline check
+    // ✅ NEW: Use lazy-loaded MathJax with increased delay to ensure DOM is settled
     // MathJax loads automatically on first use, then caches for subsequent calls
-    renderLatex(defaultLabelDiv).catch((err) => {
-      console.warn("[renderComputedChannels] ⚠️ MathJax render failed:", err);
-    });
+    // Increased timeout to 200ms to ensure MathJax is fully initialized
+    setTimeout(() => {
+      console.log(
+        "[renderComputedChannels] 📐 Calling renderLatex for equation display"
+      );
+      renderLatex(defaultLabelDiv).catch((err) => {
+        console.warn("[renderComputedChannels] ⚠️ MathJax render failed:", err);
+      });
+    }, 200);
   }
   const labelTime = performance.now() - labelStartTime;
   console.log(

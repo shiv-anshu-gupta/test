@@ -119,7 +119,10 @@ export class ReportGenerator {
         channels: f.channels ? f.channels.length : 0,
       })),
       timeSpan: {
-        startTime: (group.startTime instanceof Date ? group.startTime : new Date(group.startTime)).toISOString(),
+        startTime: (group.startTime instanceof Date
+          ? group.startTime
+          : new Date(group.startTime)
+        ).toISOString(),
         duration: `${group.timeSpan.toFixed(3)}s`,
         seconds: group.timeSpan,
       },

@@ -24,7 +24,9 @@ export class ComtradeFileParser {
           const text = e.target.result;
           // Use same parsing as main viewer - don't filter empty lines!
           const rows = text.split(/\r?\n/);
-          const cells = rows.map((row) => row.split(",").map((cell) => cell.trim()));
+          const cells = rows.map((row) =>
+            row.split(",").map((cell) => cell.trim())
+          );
 
           console.log("[parseCFG] 📋 Raw CFG structure:", {
             fileName: cfgFile.name,
@@ -116,7 +118,7 @@ export class ComtradeFileParser {
           // Find sampling rates, start time, and other metadata
           // Based on main viewer pattern: these come after the channel definitions
           const channelDefsEndRow = 2 + numAnalog + numDigital;
-          
+
           let sampleRate = 4800;
           let totalSamples = 0;
           let timestamp = new Date();

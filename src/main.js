@@ -903,8 +903,10 @@ function deleteChannelByID(channelID) {
  */
 async function processCombinedDataFromMerger(cfgText, datText) {
   try {
-    console.log("[processCombinedDataFromMerger] 🔄 Starting combined data processing...");
-    
+    console.log(
+      "[processCombinedDataFromMerger] 🔄 Starting combined data processing..."
+    );
+
     // PHASE 1: Parse CFG and DAT files
     console.log("[processCombinedDataFromMerger] 📝 Parsing CFG and DAT...");
     const cfg = parseCFG(cfgText, TIME_UNIT);
@@ -928,7 +930,9 @@ async function processCombinedDataFromMerger(cfgText, datText) {
       throw new Error("Failed to parse combined COMTRADE data.");
     }
 
-    console.log("[processCombinedDataFromMerger] 📊 PHASE 2: Updating UI state");
+    console.log(
+      "[processCombinedDataFromMerger] 📊 PHASE 2: Updating UI state"
+    );
 
     // PHASE 2: Update global data state
     dataState.analog = data.analogData;
@@ -953,7 +957,9 @@ async function processCombinedDataFromMerger(cfgText, datText) {
     });
     toggleChartsVisibility(true);
 
-    console.log("[processCombinedDataFromMerger] 🎨 PHASE 3: Channel state initialization");
+    console.log(
+      "[processCombinedDataFromMerger] 🎨 PHASE 3: Channel state initialization"
+    );
 
     // PHASE 3: Initialize channel state
     if (channelState && channelState.suspendHistory)
@@ -992,7 +998,9 @@ async function processCombinedDataFromMerger(cfgText, datText) {
       channelState
     );
 
-    console.log("[processCombinedDataFromMerger] 🎯 PHASE 5: Polar chart initialization");
+    console.log(
+      "[processCombinedDataFromMerger] 🎯 PHASE 5: Polar chart initialization"
+    );
 
     // PHASE 5: Initialize Polar Chart
     try {
@@ -1007,9 +1015,14 @@ async function processCombinedDataFromMerger(cfgText, datText) {
           () => {
             try {
               polarChart.updatePhasorAtTimeIndex(cfg, data, 0);
-              console.log("[processCombinedDataFromMerger] ✅ Phasor data updated");
+              console.log(
+                "[processCombinedDataFromMerger] ✅ Phasor data updated"
+              );
             } catch (err) {
-              console.error("[processCombinedDataFromMerger] Phasor update failed:", err);
+              console.error(
+                "[processCombinedDataFromMerger] Phasor update failed:",
+                err
+              );
             }
           },
           { timeout: 2000 }
@@ -1020,16 +1033,24 @@ async function processCombinedDataFromMerger(cfgText, datText) {
             try {
               polarChart.updatePhasorAtTimeIndex(cfg, data, 0);
             } catch (err) {
-              console.error("[processCombinedDataFromMerger] Phasor update failed:", err);
+              console.error(
+                "[processCombinedDataFromMerger] Phasor update failed:",
+                err
+              );
             }
           }, 100);
         });
       }
     } catch (err) {
-      console.error("[processCombinedDataFromMerger] Polar chart failed:", err.message);
+      console.error(
+        "[processCombinedDataFromMerger] Polar chart failed:",
+        err.message
+      );
     }
 
-    console.log("[processCombinedDataFromMerger] 📟 PHASE 6: Computed channels");
+    console.log(
+      "[processCombinedDataFromMerger] 📟 PHASE 6: Computed channels"
+    );
 
     // PHASE 6: Load persisted computed channels
     const savedChannels = loadComputedChannelsFromStorage();
@@ -1063,12 +1084,14 @@ async function processCombinedDataFromMerger(cfgText, datText) {
       }
     }
 
-    console.log("[processCombinedDataFromMerger] ✅ Combined data processing complete!");
-    
-    if (fixedResultsEl) {
-      fixedResultsEl.innerHTML = '<div style="padding: 20px; text-align: center; color: green;">✅ Combined data loaded successfully!</div>';
-    }
+    console.log(
+      "[processCombinedDataFromMerger] ✅ Combined data processing complete!"
+    );
 
+    if (fixedResultsEl) {
+      fixedResultsEl.innerHTML =
+        '<div style="padding: 20px; text-align: center; color: green;">✅ Combined data loaded successfully!</div>';
+    }
   } catch (error) {
     console.error("[processCombinedDataFromMerger] ❌ Error:", error);
     const fixedResultsEl = document.getElementById("fixedResults");
@@ -1253,15 +1276,19 @@ window.addEventListener("mergedFilesReceived", async (event) => {
   );
 
   try {
+    // Handle BOTH old and new data structures for backwards compatibility
     const {
       cfg: cfgData,
-      datContent,
+      data: parsedData, // NEW: Already parsed data from combiner
+      datContent, // OLD: Raw DAT text for backwards compatibility
       filenames,
       fileCount,
       isMerged,
+      isMergedFromCombiner,
     } = event.detail;
 
-    if (!cfgData || !datContent) {
+    // Validate we have either the new structure (cfg+data) or old structure (cfgData+datContent)
+    if (!cfgData || (!parsedData && !datContent)) {
       showError(
         "Invalid merged file data received from merger app.",
         fixedResultsEl
@@ -1273,21 +1300,23 @@ window.addEventListener("mergedFilesReceived", async (event) => {
     fixedResultsEl.innerHTML =
       '<div style="padding: 20px; text-align: center; color: var(--text-secondary);"><p>🔄 Loading merged files...</p><p style="font-size: 0.9rem; margin-top: 10px;">Processing merged COMTRADE data</p></div>';
 
-    console.log("[main.js] 📊 PHASE 1: Parsing merged data");
+    console.log("[main.js] 📊 PHASE 1: Processing merged data");
 
     // Parse the merged CFG and DAT data
-    // cfgData is already parsed from the merger app
     cfg = cfgData;
 
     // ✅ Make cfg globally accessible for computed channel evaluation (like temp repo)
     window.globalCfg = cfg;
 
-    // Parse the DAT content
-    // The merger app should provide datContent as string or already parsed
-    // If it's a string, we need to parse it
+    // Use already-parsed data if available (NEW path from combiner)
+    // Otherwise parse raw text (OLD path for backwards compatibility)
     let datData;
-    if (typeof datContent === "string") {
-      // Parse the DAT file - use the file type from CFG, default to ASCII
+    if (parsedData) {
+      // NEW: Data is already parsed by combiner using parent's parseCFG/parseDAT
+      console.log(`[main.js] ✅ Using pre-parsed data from combiner`);
+      datData = parsedData;
+    } else if (typeof datContent === "string") {
+      // OLD: Parse raw text content
       const fileType = cfg.ft || "ASCII";
       console.log(`[main.js] Parsing merged DAT content as ${fileType} format`);
       datData = parseDAT(datContent, cfg, fileType, TIME_UNIT);
@@ -3044,10 +3073,10 @@ try {
 window.addEventListener("message", (ev) => {
   const msgStartTime = performance.now();
   const msg = ev && ev.data;
-  
+
   // Listen for messages from child windows (ChannelList, Merger app)
   if (!msg || msg.source !== "ChildWindow") return;
-  
+
   const { type, payload } = msg;
 
   // ⏱️ DIAGNOSTIC: Track all phases of message processing
@@ -3077,23 +3106,36 @@ window.addEventListener("message", (ev) => {
       // ✅ Handle merged files from merger app
       case "merged_files_ready": {
         console.log("[main.js] 📦 Received merged files from merger app");
-        const { cfg, datContent, filenames, fileCount } = payload || {};
-        if (cfg && datContent) {
-          console.log("[main.js] ✅ Processing merged file data (cfg object + datContent string)");
+        const { cfg, data, filenames, fileCount, isMergedFromCombiner } =
+          payload || {};
+
+        if (cfg && data) {
+          console.log("[main.js] ✅ Processing merged file data from combiner");
+
+          // ✅ Data is ALREADY PARSED by combiner (using parent's parseCFG/parseDAT)
+          // Just use it directly!
           window.globalCfg = cfg;
-          const datData = parseDAT(datContent, cfg, cfg.ft || "ASCII", TIME_UNIT);
-          window.globalData = datData;
-          
+          window.globalData = data;
+
+          console.log("[main.js] ✅ Global data set:", {
+            analogChannels: cfg.analogChannels?.length || 0,
+            digitalChannels: cfg.digitalChannels?.length || 0,
+            samples: data.time?.length || 0,
+          });
+
           // Trigger event for mergedFilesReceived listener
-          window.dispatchEvent(new CustomEvent("mergedFilesReceived", {
-            detail: {
-              cfg: cfg,
-              datContent: datContent,
-              filenames: filenames || [],
-              fileCount: fileCount || 1,
-              isMerged: true
-            }
-          }));
+          window.dispatchEvent(
+            new CustomEvent("mergedFilesReceived", {
+              detail: {
+                cfg: cfg,
+                data: data,
+                filenames: filenames || [],
+                fileCount: fileCount || 1,
+                isMerged: true,
+                isMergedFromCombiner: isMergedFromCombiner,
+              },
+            })
+          );
         }
         break;
       }
