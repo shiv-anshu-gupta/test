@@ -146,7 +146,10 @@ export function renderComputedChannels(
 
   // Create drag bar for computed channels group
   const dragBar = createDragBar(
-    { indices: Array.from({ length: computedChannels.length }, (_, i) => i), name: "Computed Channels" },
+    {
+      indices: Array.from({ length: computedChannels.length }, (_, i) => i),
+      name: "Computed Channels",
+    },
     {},
     channelState
   );
@@ -193,7 +196,9 @@ export function renderComputedChannels(
   const chartTime = performance.now() - chartStartTime;
 
   console.log(
-    `[renderComputedChannels] ⏱️ uPlot chart creation: ${chartTime.toFixed(2)}ms`
+    `[renderComputedChannels] ⏱️ uPlot chart creation: ${chartTime.toFixed(
+      2
+    )}ms`
   );
 
   // Tag chart with metadata (matching analog/digital pattern)
@@ -201,7 +206,9 @@ export function renderComputedChannels(
   chart._computedIds = computedChannels.map((ch) => ch.id);
   chart._type = "computed";
 
-  console.log(`[renderComputedChannels] ✅ Chart created with ${computedChannels.length} series`);
+  console.log(
+    `[renderComputedChannels] ✅ Chart created with ${computedChannels.length} series`
+  );
 
   // Create tooltip
   const tooltip = createTooltip();
@@ -232,12 +239,7 @@ export function renderComputedChannels(
   };
 
   // Attach listeners with cleanup
-  attachListenerWithCleanup(
-    chart.over,
-    "mousemove",
-    mousemoveHandler,
-    chart
-  );
+  attachListenerWithCleanup(chart.over, "mousemove", mousemoveHandler, chart);
   attachListenerWithCleanup(chart.over, "mouseleave", hideTooltip, chart);
 
   // Click handler for vertical lines
@@ -245,7 +247,8 @@ export function renderComputedChannels(
     if (!chart.scales || !chart.scales.x) return;
 
     const xVal = chart.posToVal(e.offsetX, "x");
-    const currentLines = verticalLinesX.asArray?.() || verticalLinesX.value || [];
+    const currentLines =
+      verticalLinesX.asArray?.() || verticalLinesX.value || [];
 
     // Check if clicking near existing line
     const xRange = chart.scales.x.max - chart.scales.x.min;
@@ -264,7 +267,9 @@ export function renderComputedChannels(
       // Auto-trigger delta calculation
       setTimeout(async () => {
         try {
-          const { getPolarChart, getCfg, getData, deltaWindow } = await import("../main.js");
+          const { getPolarChart, getCfg, getData, deltaWindow } = await import(
+            "../main.js"
+          );
           const polarChart = getPolarChart();
           const cfgData = getCfg();
           const dataObj = getData();
@@ -408,8 +413,8 @@ export function renderComputedChannels(
   const renderEndTime = performance.now();
   const totalTime = renderEndTime - renderStartTime;
   console.log(
-    `[renderComputedChannels] ✅ Render complete: Single chart with ${computedChannels.length} series created in ${totalTime.toFixed(
-      1
-    )}ms`
+    `[renderComputedChannels] ✅ Render complete: Single chart with ${
+      computedChannels.length
+    } series created in ${totalTime.toFixed(1)}ms`
   );
 }

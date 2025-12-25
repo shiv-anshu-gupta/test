@@ -192,7 +192,9 @@ export function renderComputedChannels(
       opts.plugins = opts.plugins.filter(
         (p) => !(p && p.id === "verticalLinePlugin")
       );
-      opts.plugins.push(verticalLinePlugin(verticalLinesX, () => chartsComputed));
+      opts.plugins.push(
+        verticalLinePlugin(verticalLinesX, () => chartsComputed)
+      );
 
       // Create uPlot chart instance
       const chart = initUPlotChart(opts, chartData, chartDiv, chartsComputed);
@@ -240,7 +242,8 @@ export function renderComputedChannels(
         if (!chart.scales || !chart.scales.x) return;
 
         const xVal = chart.posToVal(e.offsetX, "x");
-        const currentLines = verticalLinesX.asArray?.() || verticalLinesX.value || [];
+        const currentLines =
+          verticalLinesX.asArray?.() || verticalLinesX.value || [];
 
         // Check if clicking near existing line
         const xRange = chart.scales.x.max - chart.scales.x.min;
@@ -251,7 +254,9 @@ export function renderComputedChannels(
 
         if (existingIdx >= 0) {
           // Remove line
-          verticalLinesX.value = currentLines.filter((_, i) => i !== existingIdx);
+          verticalLinesX.value = currentLines.filter(
+            (_, i) => i !== existingIdx
+          );
         } else {
           // Add new line
           verticalLinesX.value = [...currentLines, xVal];
@@ -259,7 +264,8 @@ export function renderComputedChannels(
           // Auto-trigger delta calculation
           setTimeout(async () => {
             try {
-              const { getPolarChart, getCfg, getData, deltaWindow } = await import("../main.js");
+              const { getPolarChart, getCfg, getData, deltaWindow } =
+                await import("../main.js");
               const polarChart = getPolarChart();
               const cfgData = getCfg();
               const dataObj = getData();
@@ -324,7 +330,10 @@ export function renderComputedChannels(
           // Render LaTeX
           setTimeout(() => {
             renderLatex(labelDiv).catch((err) => {
-              console.warn("[renderComputedChannels] ⚠️ MathJax render failed:", err);
+              console.warn(
+                "[renderComputedChannels] ⚠️ MathJax render failed:",
+                err
+              );
             });
           }, 200);
         }
@@ -332,9 +341,9 @@ export function renderComputedChannels(
 
       const chartTime = performance.now() - chartStartTime;
       console.log(
-        `[renderComputedChannels] ✓ Chart "${channel.id}" created in ${chartTime.toFixed(
-          1
-        )}ms`
+        `[renderComputedChannels] ✓ Chart "${
+          channel.id
+        }" created in ${chartTime.toFixed(1)}ms`
       );
     } catch (error) {
       console.error(
@@ -347,8 +356,8 @@ export function renderComputedChannels(
   const renderEndTime = performance.now();
   const totalTime = renderEndTime - renderStartTime;
   console.log(
-    `[renderComputedChannels] ✅ Render complete: ${computedChannels.length} charts created in ${totalTime.toFixed(
-      1
-    )}ms`
+    `[renderComputedChannels] ✅ Render complete: ${
+      computedChannels.length
+    } charts created in ${totalTime.toFixed(1)}ms`
   );
 }

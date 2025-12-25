@@ -2406,7 +2406,9 @@ async function handleLoadFiles() {
       requestAnimationFrame(() => {
         requestAnimationFrame(() => {
           try {
-            console.log("[PolarChart] 🎨 Deferred: Updating phasor visualization...");
+            console.log(
+              "[PolarChart] 🎨 Deferred: Updating phasor visualization..."
+            );
             polarChart.updatePhasorAtTimeIndex(cfg, data, 0);
             console.log("[PolarChart] ✅ Phasor visualization complete");
           } catch (err) {
@@ -2839,7 +2841,7 @@ function setupComputedChannelsListener() {
 
       // ✅ Clear old computed charts for fresh render
       const removeStartTime = performance.now();
-      
+
       // Destroy old chart instances
       chartsComputed.forEach((chart) => {
         try {
@@ -2848,7 +2850,7 @@ function setupComputedChannelsListener() {
       });
       chartsComputed = [];
       window.__chartsComputed = chartsComputed;
-      
+
       // Remove old computed chart containers from DOM
       const oldComputedContainers = chartsContainer.querySelectorAll(
         '[data-chart-type="computed"]'
@@ -2856,7 +2858,7 @@ function setupComputedChannelsListener() {
       oldComputedContainers.forEach((container) => {
         container.remove();
       });
-      
+
       const removeTime = performance.now() - removeStartTime;
       console.log(`[Main] ⏱️ Chart cleanup: ${removeTime.toFixed(2)}ms`);
 
@@ -2867,12 +2869,12 @@ function setupComputedChannelsListener() {
           "[Main] Rendering computed channels...",
           data.computedData?.length || 0
         );
-        
+
         // ✅ Pass chartsComputed array to renderComputedChannels (one chart per channel)
         renderComputedChannels(
           data,
           chartsContainer,
-          chartsComputed,  // ← Pass chartsComputed array
+          chartsComputed, // ← Pass chartsComputed array
           verticalLinesX,
           channelState
         );

@@ -33,11 +33,11 @@ export class PolarChartCanvas {
     this.canvas = document.createElement("canvas");
     this.canvas.style.display = "block";
     this.canvas.style.margin = "0 auto";
-    
+
     // Set size
     const width = this.container.clientWidth || 300;
     const height = this.container.clientHeight || 300;
-    
+
     this.canvas.width = width;
     this.canvas.height = height;
 
@@ -83,7 +83,7 @@ export class PolarChartCanvas {
 
     cfg.analogChannels.forEach((ch, idx) => {
       const name = ch.name || ch.ch || `Ch${idx}`;
-      
+
       // Extract phase letter (A, B, C, N, G)
       const phaseMatch = name.match(/[ABCNG]/i);
       const phase = phaseMatch ? phaseMatch[0].toUpperCase() : null;
@@ -113,7 +113,7 @@ export class PolarChartCanvas {
 
     // Convert to phasor angles (120° apart for A, B, C)
     const phaseAngles = { A: 0, B: 240, C: 120, N: 0, G: 0 };
-    
+
     Object.values(phaseChannels).forEach((ch) => {
       phasors.push({
         label: ch.name,
@@ -176,7 +176,9 @@ export class PolarChartCanvas {
     const radius = Math.min(width, height) / 2 - 40;
 
     // ✅ Clear canvas
-    ctx.fillStyle = getComputedStyle(this.container).getPropertyValue("--bg-primary") || "#ffffff";
+    ctx.fillStyle =
+      getComputedStyle(this.container).getPropertyValue("--bg-primary") ||
+      "#ffffff";
     ctx.fillRect(0, 0, width, height);
 
     // ✅ Draw background circle
@@ -294,9 +296,12 @@ export class PolarChartCanvas {
 
     const endTime = performance.now();
     const renderTime = endTime - startTime;
-    
-    if (renderTime > 16) { // 16ms = 60fps
-      console.log(`[PolarChartCanvas] ⏱️ Canvas render: ${renderTime.toFixed(1)}ms`);
+
+    if (renderTime > 16) {
+      // 16ms = 60fps
+      console.log(
+        `[PolarChartCanvas] ⏱️ Canvas render: ${renderTime.toFixed(1)}ms`
+      );
     }
   }
 
