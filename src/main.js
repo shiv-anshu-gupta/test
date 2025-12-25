@@ -2560,11 +2560,18 @@ function setupComputedChannelsListener() {
       csvBtn.disabled = false;
     }
 
-    // ✅ FIXED: Don't require data.time, just check if data exists
-    // The computed channel is created independently of base data
+    // ✅ FIXED: Initialize data object if it doesn't exist
+    // Computed channels can be created independently of base data
     if (!data) {
-      console.error("[Main] Data object not available for computed channel rendering");
-      return;
+      console.log(
+        "[Main] Initializing data object for computed channel rendering"
+      );
+      data = {
+        computedData: [],
+        time: null, // ← Don't initialize as empty array, use null so synthetic time is generated
+        analogData: [],
+        digitalData: [],
+      };
     }
 
     // Process event data
@@ -3358,6 +3365,30 @@ window.addEventListener("message", (ev) => {
               units: ch.units,
             })
           );
+
+          console.log("[main.js] 📋 Channel metadata being sent to Worker: ", {
+            analogChannels: analogChannelsMeta,
+            digitalChannels: digitalChannelsMeta,
+            analogCount: analogArray.length,
+            digitalCount: digitalArray.length,
+          });
+
+          // 🔍 DEBUG: Log actual channel data from cfgData
+          console.log("[main.js] 🔍 Available channels in cfgData:", {
+            analogIds: cfgData?.analogChannels?.map((ch) => ch.id) || [],
+            digitalIds:
+              cfgData?.digitalChannels?.slice(0, 5).map((ch) => ch.id) || [],
+            analogCount: cfgData?.analogChannels?.length || 0,
+            digitalCount: cfgData?.digitalChannels?.length || 0,
+          });
+
+          // 🔍 DEBUG: Sample first analog channel values at index 0
+          console.log("[main.js] 🔍 Sample values at sample[0]:", {
+            IA: analogArray[0]?.[0],
+            IB: analogArray[1]?.[0],
+            IC: analogArray[2]?.[0],
+            expression: mathJsExpr,
+          });
 
           // ✅ STEP 4: Create Web Worker to avoid UI freeze
           const worker = new Worker("./src/workers/computedChannelWorker.js");

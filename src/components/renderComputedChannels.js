@@ -236,18 +236,49 @@ export function renderComputedChannels(
   });
 
   let timeArray = data.time;
-  if (!Array.isArray(data.time)) {
-    if (data.time?.data && Array.isArray(data.time.data)) {
+  if (!Array.isArray(data.time) || data.time.length === 0) {
+    console.log(`[renderComputedChannels] 🔍 Time array check:`, {
+      dataTimeExists: !!data.time,
+      dataTimeIsArray: Array.isArray(data.time),
+      dataTimeLength: data.time?.length || 0,
+    });
+
+    if (
+      data.time?.data &&
+      Array.isArray(data.time.data) &&
+      data.time.data.length > 0
+    ) {
+      console.log("[renderComputedChannels] Using data.time.data");
       timeArray = data.time.data;
-    } else if (data.timeArray && Array.isArray(data.timeArray)) {
+    } else if (
+      data.timeArray &&
+      Array.isArray(data.timeArray) &&
+      data.timeArray.length > 0
+    ) {
+      console.log("[renderComputedChannels] Using data.timeArray");
       timeArray = data.timeArray;
     } else {
-      console.error("[renderComputedChannels] Time array not found");
-      return;
+      // ✅ FIXED: Generate synthetic time array for computed-only channels
+      // If no COMTRADE file loaded, use sample count from first computed channel
+      const sampleCount = channelDataArrays[0]?.length || 62464;
+      console.log(
+        `[renderComputedChannels] ✅ Generating synthetic time array (${sampleCount} samples)`
+      );
+      timeArray = Array.from({ length: sampleCount }, (_, i) => i * 0.01); // 10ms per sample
     }
   }
 
   const chartData = [timeArray, ...channelDataArrays];
+
+  // 🔍 DEBUG: Log chart data structure
+  console.log(`[renderComputedChannels] 🔍 Chart data structure:`, {
+    timeArrayLength: timeArray.length,
+    channelDataArraysCount: channelDataArrays.length,
+    channelDataArraysLengths: channelDataArrays.map((arr) => arr.length),
+    chartDataLength: chartData.length,
+    chartData0Sample: timeArray.slice(0, 5),
+    chartData1Sample: channelDataArrays[0]?.slice(0, 5),
+  });
 
   // ✅ Get global axis alignment for consistent Y-axes across all charts
   const maxYAxes = getMaxYAxes() || 1;
@@ -282,6 +313,16 @@ export function renderComputedChannels(
   chart._computed = true;
   chart._computedIds = computedChannels.map((ch) => ch.id);
   chart._type = "computed";
+
+  // 🔍 DEBUG: Log chart configuration
+  console.log(`[renderComputedChannels] 🔍 Chart created:`, {
+    seriesCount: chart.series.length,
+    dataLength: chart.data.length,
+    dataLengths: chart.data.map((d) => d.length),
+    seriesLabels: chart.series.map((s) => s.label),
+    seriesScales: chart.series.map((s) => s.scale),
+    scales: Object.keys(chart.scales),
+  });
 
   const tooltip = createTooltip();
 

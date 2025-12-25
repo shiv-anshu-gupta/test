@@ -22,6 +22,9 @@ self.onmessage = function (e) {
 
   try {
     console.log("[Worker] Starting evaluation of", sampleCount, "samples...");
+    console.log("[Worker] Expression:", mathJsExpr);
+    console.log("[Worker] Analog channels:", analogChannels);
+    console.log("[Worker] Digital channels:", digitalChannels);
 
     // ✅ Convert ArrayBuffers back to typed arrays
     const analogArray = [];
@@ -33,6 +36,9 @@ self.onmessage = function (e) {
     for (let i = 0; i < digitalCount; i++) {
       digitalArray.push(new Float64Array(digitalBuffers[i]));
     }
+
+    console.log("[Worker] Loaded analog channels:", analogArray.length);
+    console.log("[Worker] Loaded digital channels:", digitalArray.length);
 
     // Compile expression once (not in loop)
     const compiled = self.math.compile(mathJsExpr);
@@ -73,12 +79,21 @@ self.onmessage = function (e) {
         }
       }
 
+      // 🔍 Debug first iteration scope
+      if (i === 0) {
+        console.log("[Worker] Sample 0 scope keys:", Object.keys(scope));
+        console.log("[Worker] Sample 0 scope values:", scope);
+      }
+
       // Evaluate expression
       try {
         const value = compiled.evaluate(scope);
         const numValue = Number(value);
         results[i] = isFinite(numValue) ? numValue : 0;
       } catch (evalError) {
+        if (i === 0) {
+          console.error("[Worker] Evaluation error at sample 0:", evalError);
+        }
         results[i] = 0;
       }
 
@@ -95,6 +110,10 @@ self.onmessage = function (e) {
     }
 
     console.log("[Worker] Evaluation complete");
+    console.log(
+      "[Worker] Result sample [0-5]:",
+      Array.from(results.slice(0, 5))
+    );
 
     // ✅ Transfer results back using ArrayBuffer (zero-copy)
     const resultsBuffer = results.buffer;
