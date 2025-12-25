@@ -2548,6 +2548,7 @@ function initializeChannelState(cfg, data) {
 function setupComputedChannelsListener() {
   // ✅ OPTIMIZATION: Debounce rapid computed channel events (300ms delay)
   const handleComputedChannelSaved = debounce((event) => {
+    const listenerStartTime = performance.now();
     console.log("[Main] Processing computed channel saved event");
 
     // ✅ Enable export buttons when computed channel is saved
@@ -2576,6 +2577,7 @@ function setupComputedChannelsListener() {
 
     // Process event data
     if (event.detail.fullData) {
+      const eventProcessStart = performance.now();
       if (!data.computedData) data.computedData = [];
 
       // Check if it already exists
@@ -2606,11 +2608,17 @@ function setupComputedChannelsListener() {
         // Save to localStorage for persistence
         saveComputedChannelsToStorage(data.computedData);
       }
+      const eventProcessTime = performance.now() - eventProcessStart;
+      console.log(`[Main] ⏱️ Event data processing: ${eventProcessTime.toFixed(2)}ms`);
     }
 
     // ✅ OPTIMIZATION: Use requestAnimationFrame to defer chart rendering
     // This prevents blocking user interactions while charts are being created
+    const rafStartTime = performance.now();
     requestAnimationFrame(() => {
+      const rafExecStart = performance.now();
+      console.log(`[Main] ⏱️ requestAnimationFrame wait: ${(rafExecStart - rafStartTime).toFixed(2)}ms`);
+
       const chartsContainer = document.getElementById("charts");
       if (!chartsContainer) {
         console.error("[Main] Charts container not found");
@@ -2618,6 +2626,7 @@ function setupComputedChannelsListener() {
       }
 
       // Check if computed chart already exists
+      const removeStartTime = performance.now();
       const existingComputedChartDiv = chartsContainer.querySelector(
         '[data-chart-type="computed"]'
       );
@@ -2631,9 +2640,12 @@ function setupComputedChannelsListener() {
           charts.splice(chartIndex, 1);
         }
       }
+      const removeTime = performance.now() - removeStartTime;
+      console.log(`[Main] ⏱️ Remove old chart: ${removeTime.toFixed(2)}ms`);
 
       // Create/recreate the computed chart with all current computed channels
       try {
+        const renderStartTime = performance.now();
         console.log(
           "[Main] Rendering computed channels...",
           data.computedData?.length || 0
@@ -2645,22 +2657,41 @@ function setupComputedChannelsListener() {
           verticalLinesX,
           channelState
         );
+        const renderTime = performance.now() - renderStartTime;
+        console.log(`[Main] ⏱️ renderComputedChannels function: ${renderTime.toFixed(2)}ms`);
 
         // Scroll to the new chart
+        const scrollStartTime = performance.now();
         const newComputedChart = chartsContainer.querySelector(
           '[data-chart-type="computed"]'
         );
         if (newComputedChart) {
+          // ✅ FIXED: Use 'auto' instead of 'smooth' to avoid multi-second animation
+          // 'smooth' uses requestAnimationFrame loops causing 3+ second freeze
           newComputedChart.scrollIntoView({
-            behavior: "smooth",
+            behavior: "auto", // ← Changed from 'smooth' to prevent freeze
             block: "nearest",
           });
         }
+        const scrollTime = performance.now() - scrollStartTime;
+        console.log(`[Main] ⏱️ Scroll into view: ${scrollTime.toFixed(2)}ms`);
       } catch (error) {
         console.error("[Main] Error rendering computed channels:", error);
       }
+      
+      const totalRafTime = performance.now() - rafExecStart;
+      console.log(`[Main] ⏱️ Total requestAnimationFrame work: ${totalRafTime.toFixed(2)}ms`);
+      
+      // Schedule a check after RAF to see if anything else is running
+      requestAnimationFrame(() => {
+        const afterRafTime = performance.now() - listenerStartTime;
+        console.log(`[Main] ⏱️ After RAF callback: ${afterRafTime.toFixed(2)}ms (this captures any hanging async work)`);
+      });
     });
-  }, 300); // 300ms debounce delay
+
+    const totalListenerTime = performance.now() - listenerStartTime;
+    console.log(`[Main] ⏱️ Total listener execution (sync part): ${totalListenerTime.toFixed(2)}ms`);
+  }, 0); // ✅ CHANGED: No debounce delay - process immediately instead of waiting 300ms
 
   window.addEventListener("computedChannelSaved", handleComputedChannelSaved);
 }

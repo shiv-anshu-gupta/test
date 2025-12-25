@@ -112,6 +112,7 @@ export function renderComputedChannels(
     channelState
   );
 
+  const containerStartTime = performance.now();
   const { parentDiv, chartDiv } = createChartContainer(
     dragBar,
     "chart-container",
@@ -121,10 +122,14 @@ export function renderComputedChannels(
     "",
     "computed"
   );
+  const containerTime = performance.now() - containerStartTime;
+  console.log(`[renderComputedChannels] ⏱️ createChartContainer: ${containerTime.toFixed(2)}ms`);
+
   chartsContainer.appendChild(parentDiv);
   console.log(`[renderComputedChannels] 🏗️ Chart container created`);
 
   // 📊 Replace the default chart-label with our computed channels labels showing equations
+  const labelStartTime = performance.now();
   const defaultLabelDiv = parentDiv.querySelector(".chart-label");
   if (defaultLabelDiv && computedChannels.length > 0) {
     // Clear default labels
@@ -219,13 +224,20 @@ export function renderComputedChannels(
       defaultLabelDiv.appendChild(channelContainer);
     });
 
-    // Trigger MathJax rendering
-    setTimeout(() => {
-      if (window.MathJax?.typesetPromise) {
+    // Trigger MathJax rendering asynchronously (don't block main thread)
+    if (window.MathJax?.typesetPromise) {
+      // Use microtask (Promise) instead of macrotask (setTimeout) for faster execution
+      Promise.resolve().then(() => {
+        const mathjaxStartTime = performance.now();
         window.MathJax.typesetPromise([defaultLabelDiv]).catch(() => {});
-      }
-    }, 100);
+        const mathjaxTime = performance.now() - mathjaxStartTime;
+        console.log(`[renderComputedChannels] ⏱️ MathJax rendering: ${mathjaxTime.toFixed(2)}ms`);
+      });
+    }
   }
+  const labelTime = performance.now() - labelStartTime;
+  console.log(`[renderComputedChannels] ⏱️ Label setup: ${labelTime.toFixed(2)}ms`);
+
 
   // ✅ OPTIMIZATION: Data already scaled during save, no runtime scaling needed
   const channelDataArrays = computedChannels.map((ch) => {
@@ -308,7 +320,10 @@ export function renderComputedChannels(
   opts.plugins.push(verticalLinePlugin(verticalLinesX, () => charts));
   // opts.plugins.push(deltaBoxPlugin()); // DISABLED: Using DeltaWindow popup instead
 
+  const uplotStartTime = performance.now();
   const chart = initUPlotChart(opts, chartData, chartDiv, charts);
+  const uplotTime = performance.now() - uplotStartTime;
+  console.log(`[renderComputedChannels] ⏱️ uPlot chart creation: ${uplotTime.toFixed(2)}ms`);
 
   chart._computed = true;
   chart._computedIds = computedChannels.map((ch) => ch.id);
