@@ -41,13 +41,30 @@ import {
  */
 export const handleComputedChannelEvaluation = async (payload) => {
   try {
-    // 1️⃣ VALIDATE INPUT
+    // 1️⃣ VALIDATE INPUT & EXTRACT CHANNEL NAME
     const validation1 = validateExpressionPayload(payload);
     if (!validation1.valid) {
       console.warn("[ComputedChannel]", validation1.error);
       return;
     }
     const { expression, unit } = payload;
+    const { channelName, mathExpression } = validation1; // ← Extract from validator
+
+    console.log(
+      "[ComputedChannel] � Step 1 - Validation & Extraction complete:",
+      {
+        expression: expression,
+        extractedChannelName: channelName,
+        mathExpression: mathExpression,
+        unit: unit,
+      }
+    );
+
+    console.log("[ComputedChannel] �📛 Channel name extracted:", {
+      provided: channelName,
+      equation: expression,
+      fallbackExpression: mathExpression,
+    });
 
     // 2️⃣ VALIDATE DATA AVAILABILITY
     const cfgData =
@@ -138,7 +155,8 @@ export const handleComputedChannelEvaluation = async (payload) => {
         expression,
         mathJsExpr,
         unit,
-        stats
+        stats,
+        channelName // ← NEW: Pass extracted channel name
       );
 
       // Update state

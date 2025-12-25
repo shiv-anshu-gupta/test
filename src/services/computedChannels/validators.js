@@ -1,8 +1,11 @@
 // File: src/services/computedChannels/validators.js
 // Single Responsibility: Validate inputs
 
+import { processEquationInput } from "../../utils/channelNameExtractor.js";
+
 /**
  * Validate expression payload from MathLive editor
+ * Also extracts channel name if provided in format: "name = expression"
  */
 export const validateExpressionPayload = (payload) => {
   const { expression, unit } = payload || {};
@@ -14,7 +17,43 @@ export const validateExpressionPayload = (payload) => {
     };
   }
 
-  return { valid: true };
+  console.log("[Validator] 🔍 validateExpressionPayload - Raw input:", {
+    expression,
+    unit,
+  });
+
+  // ✅ NEW: Process equation to extract channel name and math expression
+  const processed = processEquationInput(expression);
+
+  console.log("[Validator] 📦 processEquationInput result:", {
+    valid: processed.valid,
+    channelName: processed.channelName,
+    mathExpression: processed.mathExpression,
+    error: processed.error,
+  });
+
+  if (!processed.valid) {
+    console.warn("[Validator] ⚠️ Name validation failed:", processed.error);
+    return {
+      valid: false,
+      error: processed.error,
+      channelName: null,
+      mathExpression: processed.mathExpression,
+    };
+  }
+
+  console.log("[Validator] ✅ Validation passed, returning:", {
+    valid: true,
+    channelName: processed.channelName,
+    mathExpression: processed.mathExpression,
+  });
+
+  return {
+    valid: true,
+    channelName: processed.channelName,
+    mathExpression: processed.mathExpression,
+    unit: unit,
+  };
 };
 
 /**

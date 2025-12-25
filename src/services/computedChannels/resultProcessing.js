@@ -34,23 +34,51 @@ export const calculateStatistics = (results) => {
 };
 
 /**
- * Generate unique channel name
+ * Generate unique channel name (or use provided name)
+ * If channelName provided, use it; otherwise generate timestamp-based name
  */
-export const generateChannelName = () => {
-  return `computed_${Date.now()}`;
+export const generateChannelName = (customChannelName = null) => {
+  if (
+    customChannelName &&
+    typeof customChannelName === "string" &&
+    customChannelName.trim()
+  ) {
+    const finalName = customChannelName.trim();
+    console.log("[resultProcessing] ✅ Using custom channel name:", finalName);
+    return finalName;
+  }
+
+  const timestampName = `computed_${Date.now()}`;
+  console.log(
+    "[resultProcessing] ⏱️ No custom name, using timestamp:",
+    timestampName
+  );
+  return timestampName;
 };
 
 /**
  * Build channel data object from results
+ * Now accepts custom channel name from equation
  */
 export const buildChannelData = (
   results,
   expression,
   mathJsExpr,
   unit,
-  stats
+  stats,
+  customChannelName = null // ← NEW: Optional custom channel name
 ) => {
-  const channelName = generateChannelName();
+  console.log("[resultProcessing] 🏗️ buildChannelData called with:", {
+    customChannelName: customChannelName,
+    expression: expression,
+    mathJsExpr: mathJsExpr,
+    hasResults: !!results,
+    resultCount: results?.length,
+  });
+
+  const channelName = generateChannelName(customChannelName);
+
+  console.log("[resultProcessing] 📝 Final channel name:", channelName);
 
   return {
     id: channelName,

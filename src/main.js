@@ -15,6 +15,7 @@ import { handleVerticalLineShortcuts } from "./components/handleVerticalLineShor
 import { showError } from "./components/showError.js";
 import { renderComtradeCharts } from "./components/renderComtradeCharts.js";
 import { renderComputedChannels } from "./components/renderComputedChannels.js";
+import { handleComputedChannelEvaluation } from "./services/computedChannels/index.js";
 import { ResizableGroup } from "./components/ResizableGroup.js";
 import { showChannelListWindow } from "./components/showChannelListWindow.js";
 import { createChannelList } from "./components/ChannelList.js";
@@ -894,6 +895,187 @@ function deleteChannelByID(channelID) {
   }
 
   return true;
+}
+
+/**
+ * Process combined CFG and DAT data from child merger app
+ * Parses the combined files and loads them into the main app
+ */
+async function processCombinedDataFromMerger(cfgText, datText) {
+  try {
+    console.log("[processCombinedDataFromMerger] 🔄 Starting combined data processing...");
+    
+    // PHASE 1: Parse CFG and DAT files
+    console.log("[processCombinedDataFromMerger] 📝 Parsing CFG and DAT...");
+    const cfg = parseCFG(cfgText, TIME_UNIT);
+    const data = parseDAT(datText, cfg, "ASCII", TIME_UNIT);
+
+    // Store globally
+    window.globalCfg = cfg;
+    window.globalData = data;
+
+    console.log("[processCombinedDataFromMerger] ✅ Parsing complete");
+
+    // Show loading indicator
+    const fixedResultsEl = document.getElementById("fixedResults");
+    if (fixedResultsEl) {
+      fixedResultsEl.innerHTML =
+        '<div style="padding: 20px; text-align: center; color: var(--text-secondary);"><p>🔄 Loading combined data...</p></div>';
+    }
+
+    // Validation
+    if (!data.time || data.time.length === 0) {
+      throw new Error("Failed to parse combined COMTRADE data.");
+    }
+
+    console.log("[processCombinedDataFromMerger] 📊 PHASE 2: Updating UI state");
+
+    // PHASE 2: Update global data state
+    dataState.analog = data.analogData;
+    dataState.digital = data.digitalData;
+
+    // Update UI with filename
+    const cfgFileNameEl = document.getElementById("cfgFileName");
+    const datFileNameEl = document.getElementById("datFileName");
+    if (cfgFileNameEl) cfgFileNameEl.textContent = "Combined Data (Merged)";
+    if (datFileNameEl) datFileNameEl.textContent = "Combined Data (Merged)";
+
+    const groups = autoGroupChannels(cfg.analogChannels);
+
+    // UI helper calls
+    showFileInfo();
+    updateFileInfo("Combined Data (Merged)", "Combined Data (Merged)");
+    updateStatsCards({
+      sampleRate: cfg.sampleRate || 4800,
+      duration: cfg.duration || 2000,
+      analogChannels: cfg.analogChannels,
+      digitalChannels: cfg.digitalChannels,
+    });
+    toggleChartsVisibility(true);
+
+    console.log("[processCombinedDataFromMerger] 🎨 PHASE 3: Channel state initialization");
+
+    // PHASE 3: Initialize channel state
+    if (channelState && channelState.suspendHistory)
+      channelState.suspendHistory();
+    try {
+      initializeChannelState(cfg, data);
+
+      // Populate group IDs
+      const analogGroupIds = new Array(cfg.analogChannels.length);
+      groups.forEach((group) => {
+        group.indices.forEach((channelIdx) => {
+          analogGroupIds[channelIdx] = group.groupId;
+        });
+      });
+      channelState.analog.groups = analogGroupIds;
+      console.log(
+        "[processCombinedDataFromMerger] ✅ Populated analog group IDs"
+      );
+    } finally {
+      if (channelState && channelState.resumeHistory)
+        channelState.resumeHistory();
+    }
+
+    console.log("[processCombinedDataFromMerger] 📈 PHASE 4: Chart rendering");
+
+    // PHASE 4: Render all charts
+    renderComtradeCharts(
+      cfg,
+      data,
+      chartsContainer,
+      charts,
+      verticalLinesX,
+      createState,
+      calculateDeltas,
+      TIME_UNIT,
+      channelState
+    );
+
+    console.log("[processCombinedDataFromMerger] 🎯 PHASE 5: Polar chart initialization");
+
+    // PHASE 5: Initialize Polar Chart
+    try {
+      if (!polarChart) {
+        polarChart = new PolarChart("polarChartContainer");
+        polarChart.init();
+        console.log("[processCombinedDataFromMerger] ✅ PolarChart created");
+      }
+
+      if (window.requestIdleCallback) {
+        window.requestIdleCallback(
+          () => {
+            try {
+              polarChart.updatePhasorAtTimeIndex(cfg, data, 0);
+              console.log("[processCombinedDataFromMerger] ✅ Phasor data updated");
+            } catch (err) {
+              console.error("[processCombinedDataFromMerger] Phasor update failed:", err);
+            }
+          },
+          { timeout: 2000 }
+        );
+      } else {
+        requestAnimationFrame(() => {
+          setTimeout(() => {
+            try {
+              polarChart.updatePhasorAtTimeIndex(cfg, data, 0);
+            } catch (err) {
+              console.error("[processCombinedDataFromMerger] Phasor update failed:", err);
+            }
+          }, 100);
+        });
+      }
+    } catch (err) {
+      console.error("[processCombinedDataFromMerger] Polar chart failed:", err.message);
+    }
+
+    console.log("[processCombinedDataFromMerger] 📟 PHASE 6: Computed channels");
+
+    // PHASE 6: Load persisted computed channels
+    const savedChannels = loadComputedChannelsFromStorage();
+    if (savedChannels.length > 0) {
+      if (!data.computedData) data.computedData = [];
+      for (const savedChannel of savedChannels) {
+        const exists = data.computedData.some(
+          (ch) => ch.equation === savedChannel.expression
+        );
+        if (!exists) {
+          data.computedData.push({
+            id: savedChannel.name,
+            equation: savedChannel.expression,
+            data: savedChannel.data,
+            index: data.computedData.length,
+          });
+        }
+      }
+      if (data.computedData.length > 0) {
+        renderComputedChannels(
+          data,
+          chartsContainer,
+          charts,
+          verticalLinesX,
+          subscribeChartUpdates,
+          createState,
+          calculateDeltas,
+          TIME_UNIT,
+          channelState
+        );
+      }
+    }
+
+    console.log("[processCombinedDataFromMerger] ✅ Combined data processing complete!");
+    
+    if (fixedResultsEl) {
+      fixedResultsEl.innerHTML = '<div style="padding: 20px; text-align: center; color: green;">✅ Combined data loaded successfully!</div>';
+    }
+
+  } catch (error) {
+    console.error("[processCombinedDataFromMerger] ❌ Error:", error);
+    const fixedResultsEl = document.getElementById("fixedResults");
+    if (fixedResultsEl) {
+      fixedResultsEl.innerHTML = `<div style="padding: 20px; text-align: center; color: red;">❌ Error loading combined data: ${error.message}</div>`;
+    }
+  }
 }
 
 // Channel state for analog/digital
@@ -2862,7 +3044,10 @@ try {
 window.addEventListener("message", (ev) => {
   const msgStartTime = performance.now();
   const msg = ev && ev.data;
+  
+  // Listen for messages from child windows (ChannelList, Merger app)
   if (!msg || msg.source !== "ChildWindow") return;
+  
   const { type, payload } = msg;
 
   // ⏱️ DIAGNOSTIC: Track all phases of message processing
@@ -2875,7 +3060,7 @@ window.addEventListener("message", (ev) => {
     total: 0,
   };
 
-  console.log(`[Performance] 📨 Message received from ChildWindow: ${type}`, {
+  console.log(`[Performance] 📨 Message received: ${type}`, {
     timestamp: msgStartTime.toFixed(2),
   });
 
@@ -2889,6 +3074,30 @@ window.addEventListener("message", (ev) => {
   } catch (e) {}
   try {
     switch (type) {
+      // ✅ Handle merged files from merger app
+      case "merged_files_ready": {
+        console.log("[main.js] 📦 Received merged files from merger app");
+        const { cfg, datContent, filenames, fileCount } = payload || {};
+        if (cfg && datContent) {
+          console.log("[main.js] ✅ Processing merged file data (cfg object + datContent string)");
+          window.globalCfg = cfg;
+          const datData = parseDAT(datContent, cfg, cfg.ft || "ASCII", TIME_UNIT);
+          window.globalData = datData;
+          
+          // Trigger event for mergedFilesReceived listener
+          window.dispatchEvent(new CustomEvent("mergedFilesReceived", {
+            detail: {
+              cfg: cfg,
+              datContent: datContent,
+              filenames: filenames || [],
+              fileCount: fileCount || 1,
+              isMerged: true
+            }
+          }));
+        }
+        break;
+      }
+
       // Backwards-compat: ChannelList historically sent generic 'callback_update' messages
       // for many editable fields. If we receive that, inspect payload.field and route to
       // the dedicated handlers (e.g., group) so parent updates channelState correctly.
@@ -3333,6 +3542,8 @@ window.addEventListener("message", (ev) => {
       // ✅ NEW: Handle computed channel evaluation from child window
       case "evaluateComputedChannel": {
         try {
+          // ✅ REFACTORED: Use new modular orchestrator instead of monolithic case block
+
           const { expression, unit } = payload || {};
           if (!expression) {
             console.warn(
@@ -3346,315 +3557,26 @@ window.addEventListener("message", (ev) => {
             expression
           );
 
-          // ✅ STEP 1: Get global cfg and data (like working temp repo)
-          const cfgData =
-            window.globalCfg || (window.opener && window.opener.globalCfg);
-          const dataObj =
-            window.globalData || (window.opener && window.opener.globalData);
-
-          if (!cfgData || !dataObj) {
-            console.error("[main.js] ❌ Global cfg/data not available", {
-              hasGlobalCfg: !!window.globalCfg,
-              hasGlobalData: !!window.globalData,
-            });
-            break;
-          }
-
-          // ✅ STEP 2: Convert LaTeX to math.js compatible format
+          // Convert LaTeX to math.js format
           const mathJsExpr = convertLatexToMathJs(expression);
           console.log("[main.js] 📝 Expression conversion:", {
             original: expression,
             converted: mathJsExpr,
           });
 
-          // ✅ STEP 3: Get data arrays
-          const analogArray = Array.isArray(dataObj?.analogData)
-            ? dataObj.analogData
-            : [];
-          const digitalArray = Array.isArray(dataObj?.digitalData)
-            ? dataObj.digitalData
-            : [];
-          const sampleCount = analogArray?.[0]?.length || 0;
-
-          if (!sampleCount) {
-            console.error("[main.js] ❌ No analog samples available");
-            break;
+          // ✅ Delegate to new orchestrator with ORIGINAL expression
+          // (so it can extract channel name from "c1=sqrt(...)" format)
+          if (typeof handleComputedChannelEvaluation === "function") {
+            console.log("[main.js] 🎯 Delegating to new orchestrator...");
+            handleComputedChannelEvaluation({
+              expression: expression, // Pass ORIGINAL for channel name extraction
+              unit: unit,
+            });
+          } else {
+            console.error(
+              "[main.js] ❌ Orchestrator not available - handleComputedChannelEvaluation not found"
+            );
           }
-
-          console.log(
-            `[main.js] ⚡ Starting Web Worker evaluation (${sampleCount} samples)...`
-          );
-
-          // ✅ Convert arrays to ArrayBuffers (transferable objects - zero-copy)
-          const analogBuffers = [];
-          const transferableObjects = [];
-
-          for (let i = 0; i < analogArray.length; i++) {
-            const buffer = new Float64Array(analogArray[i]).buffer;
-            analogBuffers.push(buffer);
-            transferableObjects.push(buffer);
-          }
-
-          const digitalBuffers = [];
-          for (let i = 0; i < digitalArray.length; i++) {
-            const buffer = new Float64Array(digitalArray[i]).buffer;
-            digitalBuffers.push(buffer);
-            transferableObjects.push(buffer);
-          }
-
-          // ✅ Serialize channel metadata (only plain data, no proxies)
-          const analogChannelsMeta = (cfgData?.analogChannels || []).map(
-            (ch) => ({
-              id: ch.id,
-              ph: ch.ph,
-              units: ch.units,
-            })
-          );
-
-          const digitalChannelsMeta = (cfgData?.digitalChannels || []).map(
-            (ch) => ({
-              id: ch.id,
-              ph: ch.ph,
-              units: ch.units,
-            })
-          );
-
-          console.log("[main.js] 📋 Channel metadata being sent to Worker: ", {
-            analogChannels: analogChannelsMeta,
-            digitalChannels: digitalChannelsMeta,
-            analogCount: analogArray.length,
-            digitalCount: digitalArray.length,
-          });
-
-          // 🔍 DEBUG: Log actual channel data from cfgData
-          console.log("[main.js] 🔍 Available channels in cfgData:", {
-            analogIds: cfgData?.analogChannels?.map((ch) => ch.id) || [],
-            digitalIds:
-              cfgData?.digitalChannels?.slice(0, 5).map((ch) => ch.id) || [],
-            analogCount: cfgData?.analogChannels?.length || 0,
-            digitalCount: cfgData?.digitalChannels?.length || 0,
-          });
-
-          // 🔍 DEBUG: Sample first analog channel values at index 0
-          console.log("[main.js] 🔍 Sample values at sample[0]:", {
-            IA: analogArray[0]?.[0],
-            IB: analogArray[1]?.[0],
-            IC: analogArray[2]?.[0],
-            expression: mathJsExpr,
-          });
-
-          // ✅ STEP 4: Create Web Worker to avoid UI freeze
-          const worker = new Worker("./src/workers/computedChannelWorker.js");
-          const startTime = performance.now();
-
-          // Listen for messages from worker
-          worker.onmessage = function (e) {
-            const {
-              type,
-              processed,
-              total,
-              percent,
-              resultsBuffer,
-              sampleCount: resultCount,
-              message,
-            } = e.data;
-
-            switch (type) {
-              case "progress":
-                // 📊 Real-time progress updates
-                console.log(
-                  `[Worker] 📊 Progress: ${percent}% (${processed}/${total})`
-                );
-                break;
-
-              case "complete": {
-                // ✅ Evaluation finished successfully
-                const endTime = performance.now();
-                const elapsedMs = (endTime - startTime).toFixed(2);
-
-                console.log(
-                  `[main.js] ✅ Worker completed in ${elapsedMs}ms (${resultCount} samples)`
-                );
-
-                // ✅ Convert ArrayBuffer back to array
-                const results = Array.from(new Float64Array(resultsBuffer));
-
-                // Generate channel name
-                const channelName = `computed_${Date.now()}`;
-
-                // Calculate statistics
-                const validResults = results.filter(
-                  (v) => isFinite(v) && v !== 0
-                );
-                const stats = {
-                  min: Math.min(...validResults),
-                  max: Math.max(...validResults),
-                  mean:
-                    validResults.reduce((a, b) => a + b, 0) /
-                    validResults.length,
-                  count: results.length,
-                  validCount: validResults.length,
-                };
-
-                console.log("[main.js] 📊 Statistics:", stats);
-
-                // ✅ Create complete channel data object
-                const channelData = {
-                  id: channelName,
-                  name: channelName,
-                  equation: expression,
-                  mathJsExpression: mathJsExpr,
-                  data: results, // ← renderComputedChannels expects 'data' field
-                  results: results, // ← Keep both for compatibility
-                  stats: stats,
-                  unit: unit || "",
-                  sampleCount: results.length,
-                  createdAt: Date.now(),
-                  index: window.globalData?.computedData?.length || 0,
-                };
-
-                // ✅ Save to window.globalData
-                if (!window.globalData.computedData) {
-                  window.globalData.computedData = [];
-                }
-                window.globalData.computedData.push(channelData);
-
-                // ✅ Save to cfg
-                if (!cfgData.computedChannels) {
-                  cfgData.computedChannels = [];
-                }
-                cfgData.computedChannels.push({
-                  id: channelName,
-                  name: channelName,
-                  equation: expression,
-                  mathJsExpression: mathJsExpr,
-                  unit: unit || "",
-                  group: "Computed",
-                  index: window.globalData.computedData.length - 1,
-                });
-
-                // ✅ Update computed channels state
-                const computedChannelsState = getComputedChannelsState();
-                if (computedChannelsState?.addChannel) {
-                  computedChannelsState.addChannel(
-                    channelName,
-                    channelData,
-                    "parent"
-                  );
-                }
-
-                // ✅ CRITICAL: Dispatch event to trigger chart rendering
-                window.dispatchEvent(
-                  new CustomEvent("computedChannelSaved", {
-                    detail: {
-                      channelId: channelName,
-                      channelName: channelName,
-                      equation: expression,
-                      samples: results.length,
-                      unit: unit || "",
-                      stats: stats,
-                      fullData: channelData, // ← This triggers chart rendering
-                    },
-                  })
-                );
-
-                console.log(
-                  "[main.js] ✅ Dispatched computedChannelSaved event for:",
-                  channelName
-                );
-
-                // ✅ Notify child window of success
-                try {
-                  const channelListWindow = window.open(
-                    "",
-                    "ChannelListWindow"
-                  );
-                  if (channelListWindow && !channelListWindow.closed) {
-                    channelListWindow.postMessage(
-                      {
-                        source: "ParentWindow",
-                        type: "computedChannelEvaluated",
-                        payload: {
-                          success: true,
-                          channelName: channelName,
-                          samples: resultCount,
-                          unit: unit,
-                          stats: stats,
-                          elapsedMs: elapsedMs,
-                        },
-                      },
-                      "*"
-                    );
-                  }
-                } catch (e) {
-                  console.warn("[main.js] Failed to notify child window:", e);
-                }
-
-                // ✅ Clean up worker
-                worker.terminate();
-                console.log(
-                  "[main.js] ✅ Worker terminated, chart should render now"
-                );
-                break;
-              }
-
-              case "error":
-                // ❌ Evaluation failed
-                console.error("[Worker] ❌ Error:", message);
-
-                // Notify child window
-                try {
-                  const channelListWindow = window.open(
-                    "",
-                    "ChannelListWindow"
-                  );
-                  if (channelListWindow && !channelListWindow.closed) {
-                    channelListWindow.postMessage(
-                      {
-                        source: "ParentWindow",
-                        type: "computedChannelEvaluated",
-                        payload: {
-                          success: false,
-                          error: message,
-                        },
-                      },
-                      "*"
-                    );
-                  }
-                } catch (e) {
-                  console.warn(
-                    "[main.js] Failed to notify child window of error:",
-                    e
-                  );
-                }
-
-                worker.terminate();
-                break;
-            }
-          };
-
-          // Handle worker errors
-          worker.onerror = function (error) {
-            console.error("[Worker] ❌ Worker error:", error);
-            worker.terminate();
-          };
-
-          // ✅ Send data to worker using transferable objects (zero-copy)
-          worker.postMessage(
-            {
-              mathJsExpr: mathJsExpr,
-              analogBuffers: analogBuffers,
-              digitalBuffers: digitalBuffers,
-              analogChannels: analogChannelsMeta,
-              digitalChannels: digitalChannelsMeta,
-              sampleCount: sampleCount,
-              analogCount: analogArray.length,
-              digitalCount: digitalArray.length,
-            },
-            transferableObjects
-          ); // ✅ Transfer ownership (zero-copy)
-
-          console.log("[main.js] ✅ Data transferred to worker (zero-copy)");
         } catch (e) {
           console.error("[main.js] ❌ Error in evaluateComputedChannel:", e);
         }

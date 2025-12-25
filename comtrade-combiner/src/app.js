@@ -7,7 +7,10 @@ import ComtradeFileParser from "./utils/fileParser.js";
 import ComtradeCombiner from "./utils/combiner.js";
 import ReportGenerator from "./utils/reportGenerator.js";
 import ComtradeDataExporter from "./utils/dataExporter.js";
+import { parseCFG, parseDAT } from "/src/components/comtradeUtils.js";
 import { initChildThemeManager } from "./utils/childThemeManager.js";
+
+const TIME_UNIT = "microseconds";
 
 class ComtradeComberApp {
   constructor() {
@@ -41,6 +44,20 @@ class ComtradeComberApp {
         console.warn("[ComtradeComberApp] Could not notify main app:", err);
       }
     }
+  }
+
+  /**
+   * Read file as text - same approach as main viewer
+   * @param {File} file - File to read
+   * @returns {Promise<string>} File content as text
+   */
+  readFileAsText(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = (e) => resolve(e.target.result);
+      reader.onerror = () => reject(new Error(`Failed to read ${file.name}`));
+      reader.readAsText(file);
+    });
   }
 
   initializeEventListeners() {
@@ -138,7 +155,12 @@ class ComtradeComberApp {
   }
 
   async analyzeFiles() {
+    console.log("[analyzeFiles] 🚀 Starting analysis...");
+    
+    // Use the same pair matching logic
     const pairs = ComtradeFileParser.matchFilePairs(this.selectedFiles);
+
+    console.log("[analyzeFiles] Found file pairs:", pairs.length);
 
     if (pairs.length === 0) {
       this.updateStatus("❌ No matching file pairs found");
@@ -150,14 +172,42 @@ class ComtradeComberApp {
 
     try {
       for (const pair of pairs) {
-        const cfgData = await ComtradeFileParser.parseCFG(pair.cfg);
-        const datData = await ComtradeFileParser.parseDAT(pair.dat, cfgData);
+        try {
+          console.log(`[analyzeFiles] Reading files:`, pair.cfg.name, pair.dat.name);
+          
+          // Read CFG file as TEXT
+          const cfgText = await this.readFileAsText(pair.cfg);
+          console.log(`[analyzeFiles] CFG text length:`, cfgText.length);
+          
+          const cfg = parseCFG(cfgText, TIME_UNIT);
+          console.log(`[analyzeFiles] ✅ CFG parsed:`, cfg.stationName, cfg.analogChannels?.length, cfg.digitalChannels?.length);
 
-        this.parsedData.push({
-          ...cfgData,
-          ...datData,
-          fileName: pair.cfg.name.replace(".cfg", ""),
-        });
+          // Read DAT file as TEXT
+          const datText = await this.readFileAsText(pair.dat);
+          console.log(`[analyzeFiles] DAT text length:`, datText.length);
+          
+          const datData = parseDAT(datText, cfg, cfg.ft || "ASCII", TIME_UNIT);
+          console.log(`[analyzeFiles] ✅ DAT parsed:`, datData.time?.length, "samples");
+
+          console.log(`[analyzeFiles] ✅ Parsed file pair:`, {
+            cfgName: pair.cfg.name,
+            analogChannels: cfg.analogChannels?.length || 0,
+            digitalChannels: cfg.digitalChannels?.length || 0,
+            samples: datData.time?.length || 0,
+          });
+
+          // ✅ Store EXACTLY as parent app does
+          // The parseDAT output is already correct - don't modify it
+          this.parsedData.push({
+            fileName: pair.cfg.name.replace(".cfg", ""),
+            cfg: cfg,
+            data: datData,
+          });
+        } catch (pairError) {
+          console.error(`[analyzeFiles] ❌ Error parsing pair ${pair.cfg.name}:`, pairError);
+          this.updateStatus(`❌ Error parsing ${pair.cfg.name}: ${pairError.message}`);
+          throw pairError;
+        }
       }
 
       // Get settings
@@ -171,26 +221,19 @@ class ComtradeComberApp {
         document.getElementById("similarityThreshold").value
       );
 
+      console.log("[analyzeFiles] Settings loaded:", { timeWindow, removeDuplicates, removeSimilar, threshold });
+
       // Group by time window
       this.groups = ComtradeCombiner.groupByTimeWindow(
         this.parsedData,
         timeWindow
       );
 
-      // Generate report
-      this.report = ReportGenerator.generateReport(
-        this.groups,
-        this.parsedData,
-        {
-          removeDuplicates,
-          removeSimilar,
-          similarityThreshold: threshold,
-          timeWindow,
-        }
-      );
+      console.log("[analyzeFiles] Groups created:", this.groups.length);
 
-      // Display analysis results
-      this.displayAnalysisResults(removeDuplicates, removeSimilar, threshold);
+      // ✅ SKIP REPORT GENERATION - Go directly to combine
+      // this.report = ReportGenerator.generateReport(...)
+      // this.displayAnalysisResults(...)
 
       // Enable combine button
       if (this.groups.length > 0) {
@@ -198,9 +241,10 @@ class ComtradeComberApp {
       }
 
       this.updateStatus(
-        `✅ Analysis complete: ${this.groups.length} combine group(s) found`
+        `✅ Analysis complete: ${this.groups.length} group(s) ready to combine. Click "Combine & Export" button.`
       );
     } catch (error) {
+      console.error("[analyzeFiles] ❌ Analysis error:", error);
       this.updateStatus(`❌ Error: ${error.message}`);
       console.error(error);
     }
@@ -380,10 +424,23 @@ class ComtradeComberApp {
             fullGroup.files.map((f, i) => ({
               index: i,
               name: f.fileName,
+              hasChannels: !!f.channels,
+              channelCount: f.channels?.length || 0,
+              channelNames: f.channels?.map(ch => `${ch.name}(${ch.type})`) || [],
               hasData: !!f.data,
               dataLength: f.data?.length || 0,
               hasTimes: !!f.times,
               timesLength: f.times?.length || 0,
+            }))
+          );
+
+          console.log(
+            `[combineFiles] Merged channels details:`,
+            data.mergedChannels.map((ch) => ({
+              name: ch.name,
+              type: ch.type,
+              unit: ch.unit || 'N/A',
+              source: ch.source,
             }))
           );
 
@@ -440,10 +497,26 @@ class ComtradeComberApp {
             const cfgLines = firstFile.cfgContent.split("\n");
             const cfgData = this.parseCFGContent(cfgLines);
 
+            console.log("[combineFiles] DEBUG - cfgLines parsed:", {
+              totalLines: cfgLines.length,
+              firstLine: cfgLines[0],
+              secondLine: cfgLines[1],
+            });
+
             console.log("[combineFiles] DEBUG - cfgData generated:", {
               hasStationName: !!cfgData?.stationName,
+              stationName: cfgData?.stationName,
               hasChannels: !!cfgData?.channels,
               channelCount: cfgData?.channels?.length || 0,
+              numAnalog: cfgData?.numAnalog || 0,
+              numDigital: cfgData?.numDigital || 0,
+              analogChannels: cfgData?.analogChannels?.length || 0,
+              digitalChannels: cfgData?.digitalChannels?.length || 0,
+            });
+
+            console.log("[combineFiles] DEBUG - cfgContent structure:", {
+              cfgContentLength: firstFile.cfgContent?.length || 0,
+              firstChars: firstFile.cfgContent?.substring(0, 200),
             });
 
             console.log("[combineFiles] DEBUG - firstFile.datContent:", {
@@ -452,6 +525,9 @@ class ComtradeComberApp {
               startsWith: firstFile.datContent?.substring(0, 50),
             });
 
+            // ✅ Send combined files to parent with consistent "ChildWindow" source
+            console.log("[combineFiles] 📤 Sending combined files to parent...");
+            
             const payload = {
               cfg: cfgData,
               datContent: firstFile.datContent || "",
@@ -468,9 +544,10 @@ class ComtradeComberApp {
               filenames: payload.filenames.length,
             });
 
+            // Single unified postMessage with consistent "ChildWindow" source
             window.opener.postMessage(
               {
-                source: "MergerApp",
+                source: "ChildWindow",
                 type: "merged_files_ready",
                 payload: payload,
               },
@@ -478,7 +555,7 @@ class ComtradeComberApp {
             );
 
             console.log(
-              "[combineFiles] Merged files sent to main app successfully"
+              "[combineFiles] ✅ Merged files sent to main app successfully"
             );
           } else {
             console.warn("[combineFiles] No files to send back!");

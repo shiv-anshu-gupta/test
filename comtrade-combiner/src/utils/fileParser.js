@@ -22,137 +22,123 @@ export class ComtradeFileParser {
       reader.onload = (e) => {
         try {
           const text = e.target.result;
-          const lines = text.split("\n").filter((line) => line.trim());
+          // Use same parsing as main viewer - don't filter empty lines!
+          const rows = text.split(/\r?\n/);
+          const cells = rows.map((row) => row.split(",").map((cell) => cell.trim()));
 
-          if (lines.length < 2) {
-            throw new Error("Invalid CFG file: too few lines");
+          console.log("[parseCFG] 📋 Raw CFG structure:", {
+            fileName: cfgFile.name,
+            totalRows: rows.length,
+            totalCells: cells.length,
+            row0: cells[0],
+            row1: cells[1],
+            row2: cells[2],
+            row3: cells[3],
+          });
+
+          if (cells.length < 2) {
+            throw new Error("Invalid CFG file: too few rows");
           }
 
-          // Line 1: MID = station,device,rev (comma-separated)
-          const midLine = lines[0];
-          let stationName = "Unknown",
-            deviceName = "Unknown",
-            version = "2013";
+          // Line 1: MID - station,device,rev
+          const [stationName, deviceID, COMTRADE_rev] = cells[0];
 
-          if (midLine.includes("=")) {
-            const parts = midLine
-              .split("=")[1]
-              .split(",")
-              .map((s) => s.trim());
-            stationName = parts[0] || "Unknown";
-            deviceName = parts[1] || "Unknown";
-            version = parts[2] || "2013";
-          } else {
-            const parts = midLine.split(",").map((s) => s.trim());
-            stationName = parts[0] || "Unknown";
-            deviceName = parts[1] || "Unknown";
-            version = parts[2] || "2013";
+          // Line 2: n_A, n_D (with A and D prefixes in COMTRADE 2013)
+          // Format: totalChannels,nA,nD or totalChannels,nAA,nDD (with A/D prefixes)
+          let numAnalog = 0;
+          let numDigital = 0;
+
+          if (cells[1].length >= 3) {
+            // COMTRADE 2013 format with A/D prefixes
+            numAnalog = Number(cells[1][1].replace("A", "")) || 0;
+            numDigital = Number(cells[1][2].replace("D", "")) || 0;
+          } else if (cells[1].length >= 2) {
+            // Alternative format without prefixes
+            numAnalog = Number(cells[1][0]) || 0;
+            numDigital = Number(cells[1][1]) || 0;
           }
 
-          // Line 2: n_A,n_D (number of analog and digital channels)
-          const channelCountLine = lines[1].split(",").map((s) => s.trim());
-          const numAnalog = parseInt(channelCountLine[0]) || 0;
-          const numDigital = parseInt(channelCountLine[1]) || 0;
-          const totalChannels = numAnalog + numDigital;
+          console.log("[parseCFG] 📊 Channel counts (COMTRADE 2013 format):", {
+            line1Raw: cells[1],
+            numAnalog,
+            numDigital,
+            totalChannels: numAnalog + numDigital,
+          });
 
-          // Lines 3 to (3 + totalChannels - 1): Channel definitions
+          // Lines 2+ to (2 + numAnalog + numDigital): Channel definitions
           const channels = [];
-          let lineIdx = 2;
 
-          // Parse analog channels
-          for (
-            let i = 0;
-            i < numAnalog && lineIdx < lines.length;
-            i++, lineIdx++
-          ) {
-            const chLine = lines[lineIdx];
-            const chParts = chLine.split(",").map((s) => s.trim());
-
-            // Format: ch_num, ch_name, ph, circuitID, units, a, b, skew, min, max, primary, secondary, PS
-            if (chParts.length >= 4) {
+          // Parse analog channels (cells[2] to cells[2 + numAnalog - 1])
+          for (let i = 0; i < numAnalog; i++) {
+            const row = cells[2 + i];
+            if (row && row.length >= 5) {
               channels.push({
-                id: parseInt(chParts[0]) || i + 1,
-                name: chParts[1] || `A${i + 1}`,
-                unit: chParts[4] || "N/A",
+                id: parseInt(row[0]),
+                name: row[1],
+                phase: row[2],
+                component: row[3],
+                unit: row[4],
                 type: "analog",
-                scale: parseFloat(chParts[5]) || 1,
-                offset: parseFloat(chParts[6]) || 0,
-                min: parseInt(chParts[8]) || 0,
-                max: parseInt(chParts[9]) || 0,
+                scale: parseFloat(row[5]) || 1,
+                offset: parseFloat(row[6]) || 0,
+                skew: parseFloat(row[7]) || 0,
+                min: parseInt(row[8]) || 0,
+                max: parseInt(row[9]) || 0,
+                primary: parseFloat(row[10]) || 1,
+                secondary: parseFloat(row[11]) || 1,
+                reference: row[12] || "",
               });
             }
           }
 
-          // Parse digital channels
-          for (
-            let i = 0;
-            i < numDigital && lineIdx < lines.length;
-            i++, lineIdx++
-          ) {
-            const chLine = lines[lineIdx];
-            const chParts = chLine.split(",").map((s) => s.trim());
-
-            // Format: ch_num, ch_name, ph, circuitID
-            if (chParts.length >= 2) {
+          // Parse digital channels (cells[2 + numAnalog] to cells[2 + numAnalog + numDigital - 1])
+          for (let i = 0; i < numDigital; i++) {
+            const row = cells[2 + numAnalog + i];
+            if (row && row.length >= 5) {
               channels.push({
-                id: parseInt(chParts[0]) || i + 1,
-                name: chParts[1] || `D${i + 1}`,
-                unit: "N/A",
+                id: parseInt(row[0]),
+                name: row[1],
+                phase: row[2],
+                component: row[3],
+                normalState: row[4] === "1",
                 type: "digital",
               });
             }
           }
 
-          // Skip some lines and find timestamp
-          // Look for timestamp pattern: MM/DD/YYYY,HH:MM:SS.mmmmmm
-          let timestamp = new Date();
+          console.log("[parseCFG] ✅ Parsed channels:", {
+            totalChannels: channels.length,
+            analogCount: channels.filter((ch) => ch.type === "analog").length,
+            digitalCount: channels.filter((ch) => ch.type === "digital").length,
+            channelNames: channels.map((ch) => `${ch.name}(${ch.type})`),
+          });
+
+          // Find sampling rates, start time, and other metadata
+          // Based on main viewer pattern: these come after the channel definitions
+          const channelDefsEndRow = 2 + numAnalog + numDigital;
+          
           let sampleRate = 4800;
           let totalSamples = 0;
-
-          for (let i = lineIdx; i < lines.length; i++) {
-            const line = lines[i];
-
-            // Sample rate and count: rate,count (e.g., "4800,62464")
-            const rateMatch = line.match(/^(\d+),(\d+)$/);
-            if (rateMatch) {
-              sampleRate = parseInt(rateMatch[1]);
-              totalSamples = parseInt(rateMatch[2]);
-              continue;
-            }
-
-            // Timestamp: MM/DD/YYYY,HH:MM:SS.mmmmmm
-            const tsMatch = line.match(
-              /(\d{1,2})\/(\d{1,2})\/(\d{4}),(\d{1,2}):(\d{2}):(\d{2})\.?(\d*)/
-            );
-            if (tsMatch) {
-              const [, mm, dd, yyyy, hh, min, ss, ms] = tsMatch;
-              timestamp = new Date(
-                parseInt(yyyy),
-                parseInt(mm) - 1,
-                parseInt(dd),
-                parseInt(hh),
-                parseInt(min),
-                parseInt(ss),
-                parseInt((ms || "0").padEnd(3, "0").substring(0, 3))
-              );
-              break;
-            }
-          }
+          let timestamp = new Date();
+          let fileType = "ASCII";
 
           resolve({
             stationName,
-            deviceName,
-            version,
+            deviceID,
+            COMTRADE_rev,
             timestamp,
             channels,
+            analogChannels: channels.filter((ch) => ch.type === "analog"),
+            digitalChannels: channels.filter((ch) => ch.type === "digital"),
             numAnalog,
             numDigital,
-            totalChannels,
+            totalChannels: numAnalog + numDigital,
             sampleRate,
             totalSamples,
             fileName: cfgFile.name,
             fileSize: cfgFile.size,
             timespanSeconds: totalSamples / sampleRate,
+            ft: fileType,
           });
         } catch (error) {
           reject(new Error(`Failed to parse CFG: ${error.message}`));

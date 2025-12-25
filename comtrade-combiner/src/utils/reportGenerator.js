@@ -101,6 +101,14 @@ export class ReportGenerator {
       similarityThreshold = 0.95,
     } = options;
 
+    console.log(`[analyzeGroup] Group ${groupIdx}:`, {
+      fileCount: group.files.length,
+      startTime: group.startTime,
+      startTimeType: typeof group.startTime,
+      startTimeIsDate: group.startTime instanceof Date,
+      timeSpan: group.timeSpan,
+    });
+
     const groupReport = {
       groupNumber: groupIdx + 1,
       fileCount: group.files.length,
@@ -111,7 +119,7 @@ export class ReportGenerator {
         channels: f.channels ? f.channels.length : 0,
       })),
       timeSpan: {
-        startTime: new Date(group.startTime).toISOString(),
+        startTime: (group.startTime instanceof Date ? group.startTime : new Date(group.startTime)).toISOString(),
         duration: `${group.timeSpan.toFixed(3)}s`,
         seconds: group.timeSpan,
       },
