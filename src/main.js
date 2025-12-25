@@ -46,6 +46,7 @@ import {
   loadComputedChannelsFromStorage,
 } from "./utils/computedChannelStorage.js";
 import { PolarChart } from "./components/PolarChart.js";
+import { PolarChartCanvas } from "./components/PolarChartCanvas.js"; // ✅ NEW: Canvas-based renderer
 import { setupPolarChartWithVerticalLines } from "./components/setupPolarChartIntegration.js";
 import {
   initTheme,
@@ -224,11 +225,19 @@ export function getPolarChart() {
   return polarChart;
 }
 
+export function getChartsComputed() {
+  return chartsComputed;
+}
+
 let charts = [null, null]; // [analogChart, digitalChart]
 const chartTypes = ["analog", "digital"];
 
+// Computed channels charts array - one chart per computed channel
+let chartsComputed = [];
+
 // Expose charts globally for theme system to access
 window.__charts = charts;
+window.__chartsComputed = chartsComputed;
 
 // Global config and data
 let cfg, data;
@@ -2378,50 +2387,36 @@ async function handleLoadFiles() {
 
     console.log("[handleLoadFiles] 🎯 PHASE 5: Polar chart initialization");
 
-    // PHASE 5: Initialize Polar Chart
+    // PHASE 5: Initialize Polar Chart using Canvas (much faster than SVG!)
     try {
-      console.log("[handleLoadFiles] Creating PolarChart instance...");
+      console.log("[handleLoadFiles] Creating PolarChartCanvas instance...");
       if (!polarChart) {
-        polarChart = new PolarChart("polarChartContainer");
-        polarChart.init(); // This just clears container
-        console.log("[handleLoadFiles] ✅ PolarChart instance created");
+        // ✅ Use Canvas-based renderer for 10x+ better performance
+        polarChart = new PolarChartCanvas("polarChartContainer");
+        polarChart.init();
+        console.log("[handleLoadFiles] ✅ PolarChartCanvas instance created");
       } else {
         console.log(
           "[handleLoadFiles] ⏭️ PolarChart already exists, skipping creation"
         );
       }
 
-      // Defer the expensive updatePhasorAtTimeIndex to avoid blocking
-      if (window.requestIdleCallback) {
-        window.requestIdleCallback(
-          () => {
-            try {
-              console.log("[PolarChart] Background: Updating phasor data...");
-              polarChart.updatePhasorAtTimeIndex(cfg, data, 0);
-              console.log("[PolarChart] ✅ Background phasor update complete");
-            } catch (err) {
-              console.error("[PolarChart] Background update failed:", err);
-            }
-          },
-          { timeout: 2000 } // Timeout after 2s if browser too busy
-        );
-      } else {
-        // Fallback: Use requestAnimationFrame for older browsers
+      // ✅ OPTIMIZED: Use double RAF for better responsiveness
+      // Canvas rendering is so fast we can use regular RAF instead of requestIdleCallback
+      requestAnimationFrame(() => {
         requestAnimationFrame(() => {
-          setTimeout(() => {
-            try {
-              console.log("[PolarChart] Fallback: Updating phasor data...");
-              polarChart.updatePhasorAtTimeIndex(cfg, data, 0);
-              console.log("[PolarChart] ✅ Fallback phasor update complete");
-            } catch (err) {
-              console.error("[PolarChart] Fallback update failed:", err);
-            }
-          }, 100);
+          try {
+            console.log("[PolarChart] 🎨 Deferred: Updating phasor visualization...");
+            polarChart.updatePhasorAtTimeIndex(cfg, data, 0);
+            console.log("[PolarChart] ✅ Phasor visualization complete");
+          } catch (err) {
+            console.error("[PolarChart] Phasor update failed:", err);
+          }
         });
-      }
+      });
 
       console.log(
-        "[handleLoadFiles] ✅ Polar chart instance created (rendering deferred)"
+        "[handleLoadFiles] ✅ Polar chart initialized (Canvas render - super fast!)"
       );
     } catch (err) {
       console.error(
@@ -2842,35 +2837,42 @@ function setupComputedChannelsListener() {
         return;
       }
 
-      // Check if computed chart already exists
+      // ✅ Clear old computed charts for fresh render
       const removeStartTime = performance.now();
-      const existingComputedChartDiv = chartsContainer.querySelector(
+      
+      // Destroy old chart instances
+      chartsComputed.forEach((chart) => {
+        try {
+          chart.destroy();
+        } catch (e) {}
+      });
+      chartsComputed = [];
+      window.__chartsComputed = chartsComputed;
+      
+      // Remove old computed chart containers from DOM
+      const oldComputedContainers = chartsContainer.querySelectorAll(
         '[data-chart-type="computed"]'
       );
-
-      if (existingComputedChartDiv) {
-        existingComputedChartDiv.remove();
-
-        // Remove from charts array
-        const chartIndex = charts.findIndex((c) => c && c._type === "computed");
-        if (chartIndex >= 0) {
-          charts.splice(chartIndex, 1);
-        }
-      }
+      oldComputedContainers.forEach((container) => {
+        container.remove();
+      });
+      
       const removeTime = performance.now() - removeStartTime;
-      console.log(`[Main] ⏱️ Remove old chart: ${removeTime.toFixed(2)}ms`);
+      console.log(`[Main] ⏱️ Chart cleanup: ${removeTime.toFixed(2)}ms`);
 
-      // Create/recreate the computed chart with all current computed channels
+      // Create computed channel charts - one per channel
       try {
         const renderStartTime = performance.now();
         console.log(
           "[Main] Rendering computed channels...",
           data.computedData?.length || 0
         );
+        
+        // ✅ Pass chartsComputed array to renderComputedChannels (one chart per channel)
         renderComputedChannels(
           data,
           chartsContainer,
-          charts,
+          chartsComputed,  // ← Pass chartsComputed array
           verticalLinesX,
           channelState
         );
