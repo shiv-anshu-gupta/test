@@ -41,21 +41,21 @@ initUPlotChart(opts, chartData, div)
 ```javascript
 case "evaluateComputedChannel": {
     // ... validation ...
-    
+
     // ✅ CREATES NEW WORKER FOR EACH EXPRESSION
     const worker = new Worker("./src/workers/computedChannelWorker.js");
     const startTime = performance.now();
-    
+
     worker.onmessage = function (e) {
         const { type, resultsBuffer, sampleCount } = e.data;
-        
+
         switch (type) {
             case "complete": {
                 // Process and render...
             }
         }
     };
-    
+
     worker.postMessage({
         mathJsExpr,
         analogBuffers,
@@ -66,6 +66,7 @@ case "evaluateComputedChannel": {
 ```
 
 **Current Flow**:
+
 - User clicks "Save" on expression #1 → Worker created, evaluation starts (4.6s)
 - User waits ~4.6 seconds for Worker to complete
 - Chart renders
@@ -75,6 +76,7 @@ case "evaluateComputedChannel": {
 ### 2. Worker Processing Time Breakdown
 
 **Current Performance**:
+
 - Web Worker evaluation: **4.6 seconds** (62,464 samples)
 - Event processing: **13.1ms**
 - requestAnimationFrame wait: **10.6ms**
@@ -92,12 +94,14 @@ case "evaluateComputedChannel": {
 #### Scenario A: Multiple Expressions Queued (Most Applicable)
 
 **Current Problem**:
+
 - User creates expression #1 → 4.6s wait
 - User creates expression #2 → Worker destroyed, new one created, 4.6s wait
 - Sequential: 9.2 seconds total
 - Both charts render separately
 
 **With Parallel Workers**:
+
 - User creates expression #1 → Worker #1 starts (background)
 - User creates expression #2 → Worker #2 starts (background)
 - User continues using UI (NO BLOCKING)
@@ -108,6 +112,7 @@ case "evaluateComputedChannel": {
 #### Scenario B: Single Expression Split Across Workers (Data Parallelism)
 
 **Theoretical**:
+
 - Split 62,464 samples into chunks
 - Worker #1 processes samples 0-15,616
 - Worker #2 processes samples 15,616-31,232
@@ -116,6 +121,7 @@ case "evaluateComputedChannel": {
 - **Speedup**: ~4x (minus overhead)
 
 **Reality Check**:
+
 - math.js compilation happens in each worker: **OVERHEAD**
 - Transferring 4 ArrayBuffers: **More overhead**
 - Network latency between threads: **Still has overhead**
@@ -129,6 +135,7 @@ case "evaluateComputedChannel": {
 ### Why This is the Right Approach
 
 1. **Users naturally want to create multiple expressions**
+
    - "Let me try another formula..."
    - "I want to see expressions A, B, and C side-by-side"
    - "Let me compare sqrt(IA^2+IB^2+IC^2) vs IA+IB+IC"
@@ -155,52 +162,52 @@ class ComputedChannelWorkerPool {
     this.workers = [];
     this.queue = [];
     this.activeWorkers = new Map();
-    
+
     // Create worker pool
     for (let i = 0; i < this.poolSize; i++) {
       const worker = new Worker("./src/workers/computedChannelWorker.js");
       this.workers.push({
         instance: worker,
         busy: false,
-        taskId: null
+        taskId: null,
       });
     }
   }
-  
+
   async evaluate(task) {
     // task = { mathJsExpr, analogBuffers, digitalBuffers, ... }
-    
+
     // Wait for available worker
     while (true) {
-      const availableWorker = this.workers.find(w => !w.busy);
+      const availableWorker = this.workers.find((w) => !w.busy);
       if (availableWorker) {
         return this._executeTask(availableWorker, task);
       }
       // Queue the task and wait
-      await new Promise(resolve => this.queue.push(resolve));
+      await new Promise((resolve) => this.queue.push(resolve));
     }
   }
-  
+
   _executeTask(workerSlot, task) {
     return new Promise((resolve, reject) => {
       const taskId = `task_${Date.now()}_${Math.random()}`;
       workerSlot.busy = true;
       workerSlot.taskId = taskId;
-      
+
       const messageHandler = (e) => {
         const { type, resultsBuffer, sampleCount, error } = e.data;
-        
+
         if (type === "complete" || type === "error") {
           workerSlot.busy = false;
           workerSlot.taskId = null;
           workerSlot.instance.removeEventListener("message", messageHandler);
-          
+
           if (type === "error") {
             reject(new Error(error.message));
           } else {
             resolve({ resultsBuffer, sampleCount });
           }
-          
+
           // Process next queued task
           if (this.queue.length > 0) {
             const resolve = this.queue.shift();
@@ -208,14 +215,14 @@ class ComputedChannelWorkerPool {
           }
         }
       };
-      
+
       workerSlot.instance.addEventListener("message", messageHandler);
       workerSlot.instance.postMessage(task, task.transferables);
     });
   }
-  
+
   terminate() {
-    this.workers.forEach(w => w.instance.terminate());
+    this.workers.forEach((w) => w.instance.terminate());
     this.workers = [];
   }
 }
@@ -236,7 +243,7 @@ function initComputedChannelWorkerPool() {
 // In evaluateComputedChannel handler:
 case "evaluateComputedChannel": {
     // ... validation ...
-    
+
     // ✅ Use worker pool instead of creating new worker
     try {
       const result = await computedChannelWorkerPool.evaluate({
@@ -250,7 +257,7 @@ case "evaluateComputedChannel": {
         digitalCount: digitalArray.length,
         transferables: [...analogBuffers, ...digitalBuffers]
       });
-      
+
       // Process result...
       const results = Array.from(new Float64Array(result.resultsBuffer));
       // ... rest of handler
@@ -261,6 +268,7 @@ case "evaluateComputedChannel": {
 ```
 
 **Benefits**:
+
 - ✅ Multiple expressions evaluate in parallel
 - ✅ Workers reused (no creation/destruction overhead)
 - ✅ Automatic queuing if all workers busy
@@ -277,26 +285,28 @@ case "evaluateComputedChannel": {
 case "evaluateComputedChannel": {
     // Just don't kill previous workers
     // Let them complete and dispose naturally
-    
+
     const worker = new Worker("./src/workers/computedChannelWorker.js");
     // Previous worker continues running in background
     // New worker starts immediately
-    
+
     worker.onmessage = (e) => {
         // Handles its own result...
         // Automatically garbage collected when done
     };
-    
+
     worker.postMessage(task, transferables);
 }
 ```
 
 **Pros**:
+
 - ✅ Simple - no new classes
 - ✅ Works immediately
 - ✅ Parallel evaluation
 
 **Cons**:
+
 - ❌ Workers persist in memory (memory leak)
 - ❌ Uncontrolled number of workers
 - ❌ No queuing mechanism
@@ -309,6 +319,7 @@ case "evaluateComputedChannel": {
 ### Scenario: User Creates 3 Expressions Sequentially
 
 #### Before Parallel Workers (Sequential)
+
 ```
 Time    Process
 0-4.6s  Expression #1 evaluates in Worker
@@ -330,6 +341,7 @@ TOTAL: ~15 seconds ❌
 ```
 
 #### After Parallel Workers (Worker Pool with 2 cores)
+
 ```
 Time    Process
 0-4.6s  Expression #1 in Worker #1
@@ -348,6 +360,7 @@ TOTAL: ~9.2 seconds ✅ (39% faster)
 ```
 
 #### After Parallel Workers (Worker Pool with 4 cores)
+
 ```
 Time    Process
 0-4.6s  Expressions #1, #2, #3 all evaluate simultaneously
@@ -362,13 +375,13 @@ TOTAL: ~4.6 seconds ✅ (69% faster - no waiting!)
 
 ## Performance Impact Summary
 
-| Scenario | Sequential | 2-Core Pool | 4-Core Pool |
-|----------|-----------|-----------|-----------|
-| 1 Expression | 4.6s | 4.6s | 4.6s |
-| 2 Expressions | 9.2s | 4.6s | 4.6s |
-| 3 Expressions | 13.8s | 9.2s | 4.6s |
-| 4 Expressions | 18.4s | 13.8s | 4.6s |
-| 10 Expressions | 46s | 36s+ (queued) | 34s+ (queued) |
+| Scenario       | Sequential | 2-Core Pool   | 4-Core Pool   |
+| -------------- | ---------- | ------------- | ------------- |
+| 1 Expression   | 4.6s       | 4.6s          | 4.6s          |
+| 2 Expressions  | 9.2s       | 4.6s          | 4.6s          |
+| 3 Expressions  | 13.8s      | 9.2s          | 4.6s          |
+| 4 Expressions  | 18.4s      | 13.8s         | 4.6s          |
+| 10 Expressions | 46s        | 36s+ (queued) | 34s+ (queued) |
 
 ---
 
@@ -377,6 +390,7 @@ TOTAL: ~4.6 seconds ✅ (69% faster - no waiting!)
 ### Files That Need Modification
 
 **If implementing Worker Pool**:
+
 1. ✅ Create: `src/utils/ComputedChannelWorkerPool.js` (new file, ~120 lines)
 2. ✅ Modify: `src/main.js` (3 changes, ~50 lines):
    - Import pool class (1 line)
@@ -392,6 +406,7 @@ TOTAL: ~4.6 seconds ✅ (69% faster - no waiting!)
 ## Data Transfer Efficiency Check
 
 ### Current ArrayBuffer Transfer (Already Optimal)
+
 ```javascript
 const transferableObjects = [];
 for (let i = 0; i < analogArray.length; i++) {
@@ -404,12 +419,14 @@ worker.postMessage({...}, transferableObjects); // ✅ Ownership transferred
 ```
 
 **Analysis**:
+
 - ✅ Already using Transferable Objects
 - ✅ Zero-copy to first worker
 - ⚠️ Second worker gets... cloned data? Or shared?
 
 **Critical Issue for Parallelization**:
 When multiple workers process same data:
+
 ```javascript
 // Worker #1 gets
 analogBuffers[0] → Float64Array
@@ -435,25 +452,26 @@ worker.postMessage({ analogBuffers, ... }); // No transferables array
 ```
 
 **Memory Impact**:
+
 - Original approach: 1 copy in memory at a time
 - Parallel approach: N copies in memory (for N parallel workers)
-- For 62K float64 samples: 62464 * 8 bytes * 4 workers = 2MB extra
+- For 62K float64 samples: 62464 _ 8 bytes _ 4 workers = 2MB extra
 - **Acceptable**: Modern systems have gigabytes of RAM
 
 ---
 
 ## Recommendation Matrix
 
-| Question | Answer | Impact |
-|----------|--------|--------|
-| Is parallelization possible? | ✅ YES | Large speedup (2-4x for typical use) |
-| Is it safe? | ✅ YES | No shared state, clean message passing |
-| Is it complex? | ⚠️ MODERATE | Worker Pool adds ~120 lines, well-isolated |
-| Is it worth implementing? | ✅ YES | Significantly improves multi-channel UX |
-| Can current code handle it? | ✅ YES | Minimal changes needed |
-| Performance penalty if not used? | ✅ NONE | Fully backward compatible |
-| Memory cost? | ✅ LOW | ~2-8MB for typical workload |
-| CPU cost? | ✅ NEGATIVE | Utilizes idle cores (net positive) |
+| Question                         | Answer      | Impact                                     |
+| -------------------------------- | ----------- | ------------------------------------------ |
+| Is parallelization possible?     | ✅ YES      | Large speedup (2-4x for typical use)       |
+| Is it safe?                      | ✅ YES      | No shared state, clean message passing     |
+| Is it complex?                   | ⚠️ MODERATE | Worker Pool adds ~120 lines, well-isolated |
+| Is it worth implementing?        | ✅ YES      | Significantly improves multi-channel UX    |
+| Can current code handle it?      | ✅ YES      | Minimal changes needed                     |
+| Performance penalty if not used? | ✅ NONE     | Fully backward compatible                  |
+| Memory cost?                     | ✅ LOW      | ~2-8MB for typical workload                |
+| CPU cost?                        | ✅ NEGATIVE | Utilizes idle cores (net positive)         |
 
 ---
 
@@ -462,6 +480,7 @@ worker.postMessage({ analogBuffers, ... }); // No transferables array
 **If implementing, go with:**
 
 1. ⭐ **Option 1: Worker Pool (Recommended)**
+
    - Best user experience
    - Scales automatically
    - Professional architecture
@@ -481,18 +500,22 @@ worker.postMessage({ analogBuffers, ... }); // No transferables array
 ## Next Steps If You Want to Proceed
 
 ### Step 1: Create Worker Pool Class
+
 Create `/src/utils/ComputedChannelWorkerPool.js` with:
+
 - Pool initialization (detect CPU cores)
 - Queue management
 - Worker lifecycle
 - Task scheduling
 
 ### Step 2: Update main.js
+
 - Import pool class
 - Initialize at app startup
 - Replace direct worker creation with pool.evaluate()
 
 ### Step 3: Test Scenarios
+
 - Create 1 expression (should work identically)
 - Create 2 expressions quickly (should run in parallel)
 - Create many expressions (should queue properly)
@@ -500,6 +523,7 @@ Create `/src/utils/ComputedChannelWorkerPool.js` with:
 - Monitor timing logs
 
 ### Step 4: Cleanup
+
 - Remove verbose Worker console logs
 - Add pool debugging utilities
 - Document pool behavior
@@ -511,6 +535,7 @@ Create `/src/utils/ComputedChannelWorkerPool.js` with:
 **Your current architecture is good, but parallelization is a natural next step.**
 
 The bottleneck (4.6s Worker evaluation) is:
+
 - ✅ Already optimized (uses Transferable Objects, tight loop, compiled expressions)
 - ✅ Cannot be optimized further (math.js limitation)
 - ✅ **Best solved by parallel execution** (multiple workers on multiple cores)

@@ -2609,7 +2609,9 @@ function setupComputedChannelsListener() {
         saveComputedChannelsToStorage(data.computedData);
       }
       const eventProcessTime = performance.now() - eventProcessStart;
-      console.log(`[Main] ⏱️ Event data processing: ${eventProcessTime.toFixed(2)}ms`);
+      console.log(
+        `[Main] ⏱️ Event data processing: ${eventProcessTime.toFixed(2)}ms`
+      );
     }
 
     // ✅ OPTIMIZATION: Use requestAnimationFrame to defer chart rendering
@@ -2617,7 +2619,11 @@ function setupComputedChannelsListener() {
     const rafStartTime = performance.now();
     requestAnimationFrame(() => {
       const rafExecStart = performance.now();
-      console.log(`[Main] ⏱️ requestAnimationFrame wait: ${(rafExecStart - rafStartTime).toFixed(2)}ms`);
+      console.log(
+        `[Main] ⏱️ requestAnimationFrame wait: ${(
+          rafExecStart - rafStartTime
+        ).toFixed(2)}ms`
+      );
 
       const chartsContainer = document.getElementById("charts");
       if (!chartsContainer) {
@@ -2658,7 +2664,11 @@ function setupComputedChannelsListener() {
           channelState
         );
         const renderTime = performance.now() - renderStartTime;
-        console.log(`[Main] ⏱️ renderComputedChannels function: ${renderTime.toFixed(2)}ms`);
+        console.log(
+          `[Main] ⏱️ renderComputedChannels function: ${renderTime.toFixed(
+            2
+          )}ms`
+        );
 
         // Scroll to the new chart
         const scrollStartTime = performance.now();
@@ -2678,19 +2688,31 @@ function setupComputedChannelsListener() {
       } catch (error) {
         console.error("[Main] Error rendering computed channels:", error);
       }
-      
+
       const totalRafTime = performance.now() - rafExecStart;
-      console.log(`[Main] ⏱️ Total requestAnimationFrame work: ${totalRafTime.toFixed(2)}ms`);
-      
+      console.log(
+        `[Main] ⏱️ Total requestAnimationFrame work: ${totalRafTime.toFixed(
+          2
+        )}ms`
+      );
+
       // Schedule a check after RAF to see if anything else is running
       requestAnimationFrame(() => {
         const afterRafTime = performance.now() - listenerStartTime;
-        console.log(`[Main] ⏱️ After RAF callback: ${afterRafTime.toFixed(2)}ms (this captures any hanging async work)`);
+        console.log(
+          `[Main] ⏱️ After RAF callback: ${afterRafTime.toFixed(
+            2
+          )}ms (this captures any hanging async work)`
+        );
       });
     });
 
     const totalListenerTime = performance.now() - listenerStartTime;
-    console.log(`[Main] ⏱️ Total listener execution (sync part): ${totalListenerTime.toFixed(2)}ms`);
+    console.log(
+      `[Main] ⏱️ Total listener execution (sync part): ${totalListenerTime.toFixed(
+        2
+      )}ms`
+    );
   }, 0); // ✅ CHANGED: No debounce delay - process immediately instead of waiting 300ms
 
   window.addEventListener("computedChannelSaved", handleComputedChannelSaved);

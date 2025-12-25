@@ -13,23 +13,23 @@ export const convertResultsToArray = (resultsBuffer) => {
  */
 export const calculateStatistics = (results) => {
   const validResults = results.filter((v) => isFinite(v) && v !== 0);
-  
+
   if (validResults.length === 0) {
     return {
       min: 0,
       max: 0,
       mean: 0,
       count: results.length,
-      validCount: 0
+      validCount: 0,
     };
   }
-  
+
   return {
     min: Math.min(...validResults),
     max: Math.max(...validResults),
     mean: validResults.reduce((a, b) => a + b, 0) / validResults.length,
     count: results.length,
-    validCount: validResults.length
+    validCount: validResults.length,
   };
 };
 
@@ -51,7 +51,7 @@ export const buildChannelData = (
   stats
 ) => {
   const channelName = generateChannelName();
-  
+
   return {
     id: channelName,
     name: channelName,
@@ -63,6 +63,6 @@ export const buildChannelData = (
     unit: unit || "",
     sampleCount: results.length,
     createdAt: Date.now(),
-    index: window.globalData?.computedData?.length || 0
+    index: window.globalData?.computedData?.length || 0,
   };
 };

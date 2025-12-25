@@ -5,13 +5,17 @@
  * Extract and validate data sources
  */
 export const extractDataSources = (dataObj, cfgData) => {
-  const analogArray = Array.isArray(dataObj?.analogData) ? dataObj.analogData : [];
-  const digitalArray = Array.isArray(dataObj?.digitalData) ? dataObj.digitalData : [];
-  
+  const analogArray = Array.isArray(dataObj?.analogData)
+    ? dataObj.analogData
+    : [];
+  const digitalArray = Array.isArray(dataObj?.digitalData)
+    ? dataObj.digitalData
+    : [];
+
   return {
     analogArray,
     digitalArray,
-    sampleCount: analogArray?.[0]?.length || 0
+    sampleCount: analogArray?.[0]?.length || 0,
   };
 };
 
@@ -40,7 +44,7 @@ export const convertToTransferableBuffers = (analogArray, digitalArray) => {
   return {
     analogBuffers,
     digitalBuffers,
-    transferableObjects
+    transferableObjects,
   };
 };
 
@@ -62,7 +66,7 @@ export const serializeChannelMetadata = (cfgData) => {
 
   return {
     analogChannelsMeta,
-    digitalChannelsMeta
+    digitalChannelsMeta,
   };
 };
 
@@ -87,6 +91,6 @@ export const buildWorkerTask = (
     digitalChannels: digitalChannelsMeta,
     sampleCount,
     analogCount: analogArray.length,
-    digitalCount: digitalArray.length
+    digitalCount: digitalArray.length,
   };
 };

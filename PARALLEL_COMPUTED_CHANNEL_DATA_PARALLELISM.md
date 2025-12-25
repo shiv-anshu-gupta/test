@@ -61,12 +61,12 @@ Time taken: 1.2 seconds ✅ (4.6s ÷ 4 cores ≈ 1.2s)
 
 ## Performance Impact: Single Computed Channel
 
-| Metric | Single Worker | 2 Workers | 4 Workers |
-|--------|---------------|-----------|-----------|
-| Expression evaluation | 4.6s | 2.4s | 1.2s |
-| Event dispatch + render | 13ms | 13ms | 13ms |
-| **Total** | **4.6s** | **2.4s** | **1.2s** |
-| **Speedup** | — | **1.9x** | **3.8x** ✅ |
+| Metric                  | Single Worker | 2 Workers | 4 Workers   |
+| ----------------------- | ------------- | --------- | ----------- |
+| Expression evaluation   | 4.6s          | 2.4s      | 1.2s        |
+| Event dispatch + render | 13ms          | 13ms      | 13ms        |
+| **Total**               | **4.6s**      | **2.4s**  | **1.2s**    |
+| **Speedup**             | —             | **1.9x**  | **3.8x** ✅ |
 
 ---
 
@@ -78,14 +78,14 @@ Time taken: 1.2 seconds ✅ (4.6s ÷ 4 cores ≈ 1.2s)
 // src/main.js - evaluateComputedChannel handler
 case "evaluateComputedChannel": {
   const worker = new Worker("./src/workers/computedChannelWorker.js");
-  
+
   worker.postMessage({
     mathJsExpr,
     analogBuffers,      // All 62,464 samples
     digitalBuffers,     // All 62,464 samples
     sampleCount: 62464, // Evaluate all
   }, transferables);
-  
+
   worker.onmessage = (e) => {
     const { resultsBuffer } = e.data;
     // Process results (takes 13ms)
@@ -101,12 +101,12 @@ class ComputedChannelWorkerPool {
   constructor(poolSize = navigator.hardwareConcurrency || 2) {
     this.poolSize = Math.min(poolSize, 4); // Cap at 4 workers
     this.workers = [];
-    
+
     for (let i = 0; i < this.poolSize; i++) {
       this.workers.push(new Worker("./src/workers/computedChannelWorker.js"));
     }
   }
-  
+
   async evaluate(task) {
     const {
       mathJsExpr,
@@ -116,29 +116,29 @@ class ComputedChannelWorkerPool {
       digitalChannels,
       sampleCount,
       analogCount,
-      digitalCount
+      digitalCount,
     } = task;
-    
+
     // ✅ SPLIT into chunks
     const samplesPerWorker = Math.ceil(sampleCount / this.poolSize);
     const chunks = [];
-    
+
     for (let i = 0; i < this.poolSize; i++) {
       const startSample = i * samplesPerWorker;
       const endSample = Math.min((i + 1) * samplesPerWorker, sampleCount);
-      
+
       if (startSample >= sampleCount) break;
-      
+
       chunks.push({
         workerId: i,
         startSample,
         endSample,
-        chunkSize: endSample - startSample
+        chunkSize: endSample - startSample,
       });
     }
-    
+
     // ✅ SEND each chunk to a worker
-    const promises = chunks.map(chunk => 
+    const promises = chunks.map((chunk) =>
       this._evaluateChunk(chunk, {
         mathJsExpr,
         analogBuffers,
@@ -146,69 +146,74 @@ class ComputedChannelWorkerPool {
         analogChannels,
         digitalChannels,
         analogCount,
-        digitalCount
+        digitalCount,
       })
     );
-    
+
     // ✅ WAIT for all workers simultaneously
     const results = await Promise.all(promises);
-    
+
     // ✅ COMBINE chunks back together
     return this._combineResults(results, sampleCount);
   }
-  
+
   _evaluateChunk(chunk, taskData) {
     return new Promise((resolve, reject) => {
       const { workerId, startSample, endSample, chunkSize } = chunk;
       const worker = this.workers[workerId];
-      
+
       const messageHandler = (e) => {
-        const { type, resultsBuffer, chunkId, startSample: returnedStart } = e.data;
-        
+        const {
+          type,
+          resultsBuffer,
+          chunkId,
+          startSample: returnedStart,
+        } = e.data;
+
         if (type === "complete") {
           worker.removeEventListener("message", messageHandler);
           resolve({
             chunkId,
             startSample: returnedStart,
             resultsBuffer,
-            chunkSize
+            chunkSize,
           });
         } else if (type === "error") {
           worker.removeEventListener("message", messageHandler);
           reject(new Error(e.data.message));
         }
       };
-      
+
       worker.addEventListener("message", messageHandler);
-      
+
       // Send only the chunk of data this worker needs
-      worker.postMessage({
-        ...taskData,
-        sampleCount: chunkSize,
-        startSample,
-        endSample,
-        chunkId: workerId
-      }, [
-        ...taskData.analogBuffers,
-        ...taskData.digitalBuffers
-      ]);
+      worker.postMessage(
+        {
+          ...taskData,
+          sampleCount: chunkSize,
+          startSample,
+          endSample,
+          chunkId: workerId,
+        },
+        [...taskData.analogBuffers, ...taskData.digitalBuffers]
+      );
     });
   }
-  
+
   _combineResults(results, totalSamples) {
     // Sort by chunk position
     results.sort((a, b) => a.startSample - b.startSample);
-    
+
     // Combine all results into single array
     const combined = new Float64Array(totalSamples);
     let offset = 0;
-    
+
     for (const chunk of results) {
       const chunkResults = new Float64Array(chunk.resultsBuffer);
       combined.set(chunkResults, offset);
       offset += chunk.chunkSize;
     }
-    
+
     return { resultsBuffer: combined.buffer };
   }
 }
@@ -219,10 +224,11 @@ class ComputedChannelWorkerPool {
 ## Modified Worker Code
 
 ### Current Worker
+
 ```javascript
 self.onmessage = function (e) {
   const { mathJsExpr, analogBuffers, sampleCount } = e.data;
-  
+
   // Evaluate ALL samples 0 to sampleCount
   for (let i = 0; i < sampleCount; i++) {
     // evaluate sample i
@@ -237,10 +243,10 @@ self.onmessage = function (e) {
   const {
     mathJsExpr,
     analogBuffers,
-    sampleCount,        // CHUNK size (e.g., 15,616)
-    startSample,        // Absolute starting sample (e.g., 0, 15616, 31232)
-    endSample,          // Absolute ending sample
-    chunkId,            // Which chunk (0, 1, 2, 3)
+    sampleCount, // CHUNK size (e.g., 15,616)
+    startSample, // Absolute starting sample (e.g., 0, 15616, 31232)
+    endSample, // Absolute ending sample
+    chunkId, // Which chunk (0, 1, 2, 3)
     analogChannels,
     digitalChannels,
     analogCount,
@@ -248,7 +254,9 @@ self.onmessage = function (e) {
   } = e.data;
 
   try {
-    console.log(`[Worker ${chunkId}] Evaluating samples ${startSample}-${endSample}`);
+    console.log(
+      `[Worker ${chunkId}] Evaluating samples ${startSample}-${endSample}`
+    );
 
     // Convert ArrayBuffers
     const analogArray = [];
@@ -264,7 +272,7 @@ self.onmessage = function (e) {
     // ✅ KEY CHANGE: Loop only through samples in this chunk
     for (let globalIdx = startSample; globalIdx < endSample; globalIdx++) {
       const localIdx = globalIdx - startSample; // Index in local results array
-      
+
       // Map channels from GLOBAL index (absolute sample position)
       for (let idx = 0; idx < analogArray.length; idx++) {
         scope[`a${idx}`] = analogArray[idx][globalIdx] ?? 0; // ← Use globalIdx for data access
@@ -296,7 +304,7 @@ self.onmessage = function (e) {
         resultsBuffer,
         chunkId,
         startSample,
-        sampleCount: sampleCount // Local chunk size
+        sampleCount: sampleCount, // Local chunk size
       },
       [resultsBuffer]
     );
@@ -304,7 +312,7 @@ self.onmessage = function (e) {
     self.postMessage({
       type: "error",
       chunkId,
-      message: error.message
+      message: error.message,
     });
   }
 };
@@ -330,7 +338,7 @@ function initComputedChannelWorkerPool() {
 // In evaluateComputedChannel handler
 case "evaluateComputedChannel": {
   // ... validation ...
-  
+
   // Initialize pool on first use
   if (!computedChannelWorkerPool) {
     initComputedChannelWorkerPool();
@@ -348,14 +356,14 @@ case "evaluateComputedChannel": {
       analogCount: analogArray.length,
       digitalCount: digitalArray.length
     });
-    
+
     // ✅ SAME REST OF FLOW
     const results = Array.from(new Float64Array(result.resultsBuffer));
     const channelName = `computed_${Date.now()}`;
-    
+
     // Calculate statistics, create channel data, dispatch event...
     // (identical to current code)
-    
+
   } catch (error) {
     console.error("[main.js] Parallel evaluation failed:", error);
     // Fall back to single worker if needed
@@ -395,11 +403,11 @@ If 8 cores available: Both expressions complete in 1.2s (not 9.2s sequential)
 
 ## File Changes Required
 
-| File | Change | Purpose |
-|------|--------|---------|
-| `src/utils/ComputedChannelWorkerPool.js` | **CREATE** | Pool coordinator for data parallelism (250 lines) |
-| `src/workers/computedChannelWorker.js` | **MODIFY** | Add `startSample`, `endSample`, `chunkId` support (20 lines) |
-| `src/main.js` | **MODIFY** | Use pool instead of single worker (15 lines) |
+| File                                     | Change     | Purpose                                                      |
+| ---------------------------------------- | ---------- | ------------------------------------------------------------ |
+| `src/utils/ComputedChannelWorkerPool.js` | **CREATE** | Pool coordinator for data parallelism (250 lines)            |
+| `src/workers/computedChannelWorker.js`   | **MODIFY** | Add `startSample`, `endSample`, `chunkId` support (20 lines) |
+| `src/main.js`                            | **MODIFY** | Use pool instead of single worker (15 lines)                 |
 
 ---
 
@@ -408,6 +416,7 @@ If 8 cores available: Both expressions complete in 1.2s (not 9.2s sequential)
 ### Scenario: Create 1 Computed Channel with Expression: `sqrt(IA^2+IB^2+IC^2)`
 
 **Sequential (Current)**:
+
 ```
 Worker evaluation:     4.6s
 Event + render:        0.013s
@@ -416,6 +425,7 @@ User waits:            4.6 seconds ❌
 ```
 
 **Parallel 2 Workers**:
+
 ```
 Workers evaluate:      2.4s (both cores active)
 Event + render:        0.013s
@@ -425,6 +435,7 @@ User waits:            2.4 seconds
 ```
 
 **Parallel 4 Workers**:
+
 ```
 Workers evaluate:      1.2s (all cores active)
 Event + render:        0.013s
@@ -437,25 +448,26 @@ User waits:            1.2 seconds ✅
 
 ## Comparison: Three Parallelization Strategies
 
-| Strategy | Speedup | Complexity | Use Case |
-|----------|---------|-----------|----------|
-| **Single Worker** (current) | 1x | — | Baseline |
-| **Data Parallelism in Computed Channels** (this) | 3-4x | Medium | Single channel is slow |
-| **Worker Pool for Sequential Channels** | 2-4x | Low | Multiple channels created fast |
-| **Both Combined** | 4x (single) + 4x (parallel) | High | Maximum throughput |
+| Strategy                                         | Speedup                     | Complexity | Use Case                       |
+| ------------------------------------------------ | --------------------------- | ---------- | ------------------------------ |
+| **Single Worker** (current)                      | 1x                          | —          | Baseline                       |
+| **Data Parallelism in Computed Channels** (this) | 3-4x                        | Medium     | Single channel is slow         |
+| **Worker Pool for Sequential Channels**          | 2-4x                        | Low        | Multiple channels created fast |
+| **Both Combined**                                | 4x (single) + 4x (parallel) | High       | Maximum throughput             |
 
 ---
 
 ## Implementation Complexity & Risk Assessment
 
-| Component | Lines | Risk | Difficulty |
-|-----------|-------|------|------------|
-| ComputedChannelWorkerPool.js | 250 | Low | Medium |
-| computedChannelWorker.js mods | 20 | Low | Low |
-| main.js integration | 15 | Low | Low |
-| **Total** | **285** | **Low** | **Medium** |
+| Component                     | Lines   | Risk    | Difficulty |
+| ----------------------------- | ------- | ------- | ---------- |
+| ComputedChannelWorkerPool.js  | 250     | Low     | Medium     |
+| computedChannelWorker.js mods | 20      | Low     | Low        |
+| main.js integration           | 15      | Low     | Low        |
+| **Total**                     | **285** | **Low** | **Medium** |
 
 **Why Low Risk**:
+
 - ✅ Parallel evaluation produces identical results
 - ✅ Pool is isolated from rest of code
 - ✅ Can add fallback to single worker if needed
@@ -472,8 +484,10 @@ try {
   // Try parallel evaluation
   result = await computedChannelWorkerPool.evaluate(task);
 } catch (error) {
-  console.warn("[main.js] Parallel evaluation failed, falling back to sequential");
-  
+  console.warn(
+    "[main.js] Parallel evaluation failed, falling back to sequential"
+  );
+
   // Create single worker as fallback
   const worker = new Worker("./src/workers/computedChannelWorker.js");
   // ... old single-worker code ...

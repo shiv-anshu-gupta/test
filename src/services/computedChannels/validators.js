@@ -6,14 +6,14 @@
  */
 export const validateExpressionPayload = (payload) => {
   const { expression, unit } = payload || {};
-  
+
   if (!expression) {
     return {
       valid: false,
-      error: "No expression provided for computed channel"
+      error: "No expression provided for computed channel",
     };
   }
-  
+
   return { valid: true };
 };
 
@@ -27,11 +27,11 @@ export const validateGlobalData = (cfgData, dataObj) => {
       error: "Global cfg/data not available",
       details: {
         hasGlobalCfg: !!cfgData,
-        hasGlobalData: !!dataObj
-      }
+        hasGlobalData: !!dataObj,
+      },
     };
   }
-  
+
   return { valid: true };
 };
 
@@ -40,14 +40,14 @@ export const validateGlobalData = (cfgData, dataObj) => {
  */
 export const validateSampleData = (analogArray) => {
   const sampleCount = analogArray?.[0]?.length || 0;
-  
+
   if (!sampleCount) {
     return {
       valid: false,
-      error: "No analog samples available"
+      error: "No analog samples available",
     };
   }
-  
+
   return { valid: true, sampleCount };
 };
 
@@ -61,7 +61,7 @@ export const validateExpressionSyntax = (mathJsExpr) => {
   } catch (error) {
     return {
       valid: false,
-      error: error.message
+      error: error.message,
     };
   }
 };

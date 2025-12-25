@@ -4,7 +4,13 @@
 /**
  * Dispatch computedChannelSaved event to trigger chart rendering
  */
-export const dispatchChannelSavedEvent = (channelData, expression, unit, stats, results) => {
+export const dispatchChannelSavedEvent = (
+  channelData,
+  expression,
+  unit,
+  stats,
+  results
+) => {
   window.dispatchEvent(
     new CustomEvent("computedChannelSaved", {
       detail: {
@@ -14,8 +20,8 @@ export const dispatchChannelSavedEvent = (channelData, expression, unit, stats, 
         samples: results.length,
         unit: unit || "",
         stats: stats,
-        fullData: channelData
-      }
+        fullData: channelData,
+      },
     })
   );
 };
@@ -23,7 +29,13 @@ export const dispatchChannelSavedEvent = (channelData, expression, unit, stats, 
 /**
  * Notify child window of successful evaluation
  */
-export const notifyChildWindowSuccess = (channelName, resultCount, unit, stats, elapsedMs) => {
+export const notifyChildWindowSuccess = (
+  channelName,
+  resultCount,
+  unit,
+  stats,
+  elapsedMs
+) => {
   try {
     const channelListWindow = window.open("", "ChannelListWindow");
     if (channelListWindow && !channelListWindow.closed) {
@@ -37,8 +49,8 @@ export const notifyChildWindowSuccess = (channelName, resultCount, unit, stats, 
             samples: resultCount,
             unit: unit,
             stats: stats,
-            elapsedMs: elapsedMs
-          }
+            elapsedMs: elapsedMs,
+          },
         },
         "*"
       );
@@ -61,8 +73,8 @@ export const notifyChildWindowError = (message) => {
           type: "computedChannelEvaluated",
           payload: {
             success: false,
-            error: message
-          }
+            error: message,
+          },
         },
         "*"
       );

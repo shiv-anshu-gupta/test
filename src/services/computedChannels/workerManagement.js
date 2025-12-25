@@ -29,7 +29,7 @@ export const buildWorkerMessageHandler = (
       percent,
       resultsBuffer,
       sampleCount: resultCount,
-      message
+      message,
     } = e.data;
 
     switch (type) {
@@ -40,9 +40,16 @@ export const buildWorkerMessageHandler = (
       case "complete": {
         const endTime = performance.now();
         const elapsedMs = (endTime - startTime).toFixed(2);
-        
-        onSuccess?.(resultsBuffer, resultCount, elapsedMs, unit, expression, cfgData);
-        
+
+        onSuccess?.(
+          resultsBuffer,
+          resultCount,
+          elapsedMs,
+          unit,
+          expression,
+          cfgData
+        );
+
         worker.terminate();
         break;
       }

@@ -55,6 +55,7 @@ Render to Charts (PARALLEL PROCESSING OPPORTUNITY #1)
 **Current bottleneck**: `parseDAT()` takes 500-800ms for 62,464 samples
 
 **Why it's slow**:
+
 ```javascript
 // Current - SINGLE THREAD
 for (let i = 0; i < sampleCount; i++) {
@@ -89,6 +90,7 @@ ACTUAL TIME: ~200-250ms (vs 800ms sequential)
 ```
 
 **Implementation Complexity**: MODERATE
+
 - Create `parseDAT` worker (120 lines)
 - Chunk coordination logic in main (80 lines)
 - Array concatenation after results return (20 lines)
@@ -119,6 +121,7 @@ SPEEDUP: ~50% (minimal, already fast)
 ```
 
 **Implementation Complexity**: LOW
+
 - Already fast (50ms)
 - Limited gain
 - **Verdict: Not worth complexity**
@@ -149,6 +152,7 @@ Total: 600ms ✅ (75% faster!)
 ```
 
 **Implementation Complexity**: MODERATE
+
 - Handles multiple parseDAT workers
 - Merge coordination
 - **Verdict: Good but covered by Opportunity #1**
@@ -177,15 +181,15 @@ Total: 600ms ✅ (75% faster!)
 // In worker:
 self.onmessage = (e) => {
   const {
-    datContent,        // Full DAT string
-    cfg,               // Config object
-    ft,                // 'ASCII' or 'BINARY'
-    startSample,       // Chunk start
-    endSample,         // Chunk end
-    chunkId,           // Which chunk (for reassembly)
-    timeUnit
+    datContent, // Full DAT string
+    cfg, // Config object
+    ft, // 'ASCII' or 'BINARY'
+    startSample, // Chunk start
+    endSample, // Chunk end
+    chunkId, // Which chunk (for reassembly)
+    timeUnit,
   } = e.data;
-  
+
   // Call existing parseDAT function, but ONLY for samples startSample to endSample
   const chunkData = parseDAT(
     datContent,
@@ -194,14 +198,17 @@ self.onmessage = (e) => {
     timeUnit,
     { startSample, endSample } // ← NEW parameter for chunking
   );
-  
-  self.postMessage({
-    chunkId,
-    time: chunkData.time,
-    analogData: chunkData.analogData,
-    digitalData: chunkData.digitalData,
-    // Transfer typed arrays (zero-copy)
-  }, transferables);
+
+  self.postMessage(
+    {
+      chunkId,
+      time: chunkData.time,
+      analogData: chunkData.analogData,
+      digitalData: chunkData.digitalData,
+      // Transfer typed arrays (zero-copy)
+    },
+    transferables
+  );
 };
 ```
 
@@ -219,16 +226,16 @@ class ParallelDATParser {
       this.workers.push(new Worker('./src/workers/parseDAT-Worker.js'));
     }
   }
-  
+
   async parseDAT(datContent, cfg, ft, timeUnit) {
     const sampleCount = ... // extract from DAT or cfg
     const samplesPerWorker = Math.ceil(sampleCount / this.workerCount);
-    
+
     const tasks = [];
     for (let i = 0; i < this.workerCount; i++) {
       const startSample = i * samplesPerWorker;
       const endSample = Math.min((i + 1) * samplesPerWorker, sampleCount);
-      
+
       const task = new Promise((resolve) => {
         this.workers[i].onmessage = (e) => {
           resolve({
@@ -236,7 +243,7 @@ class ParallelDATParser {
             data: e.data
           });
         };
-        
+
         this.workers[i].postMessage({
           datContent,
           cfg,
@@ -247,19 +254,19 @@ class ParallelDATParser {
           timeUnit
         });
       });
-      
+
       tasks.push(task);
     }
-    
+
     // Wait for all workers
     const chunks = await Promise.all(tasks);
-    
+
     // Sort by chunkId and concatenate
     chunks.sort((a, b) => a.chunkId - b.chunkId);
-    
+
     return this.concatenateChunks(chunks.map(c => c.data));
   }
-  
+
   concatenateChunks(chunkResults) {
     const combined = {
       time: [],
@@ -267,7 +274,7 @@ class ParallelDATParser {
       digitalData: [... create empty arrays ...],
       startDateInfo: chunkResults[0].startDateInfo
     };
-    
+
     for (const chunk of chunkResults) {
       combined.time.push(...chunk.time);
       for (let i = 0; i < chunk.analogData.length; i++) {
@@ -277,10 +284,10 @@ class ParallelDATParser {
         combined.digitalData[i].push(...chunk.digitalData[i]);
       }
     }
-    
+
     return combined;
   }
-  
+
   terminate() {
     this.workers.forEach(w => w.terminate());
   }
@@ -297,10 +304,10 @@ let datParser = new ParallelDATParser(navigator.hardwareConcurrency || 2);
 case 'file-loaded':
   const { cfgText, datText, fileType } = event.detail;
   const cfg = parseCFG(cfgText);
-  
+
   // ✅ Use parallel parser instead of direct parseDAT call
   const data = await datParser.parseDAT(datText, cfg, fileType, 'seconds');
-  
+
   // Rest of flow continues identically
   window.globalData = data;
   renderCharts(data);
@@ -313,14 +320,15 @@ case 'file-loaded':
 
 ### Scenario: Load 62,464 Sample COMTRADE File
 
-| Phase | Sequential | Parallel (2 cores) | Parallel (4 cores) | Speedup |
-|-------|-----------|------------------|------------------|---------|
-| CFG Parsing | 5ms | 5ms | 5ms | — |
-| DAT Parsing | 800ms | 450ms | 220ms | **3.6x** ✅ |
-| Chart Rendering | 80ms | 80ms | 80ms | — |
-| **Total** | **885ms** | **535ms** | **305ms** | **2.9x** |
+| Phase           | Sequential | Parallel (2 cores) | Parallel (4 cores) | Speedup     |
+| --------------- | ---------- | ------------------ | ------------------ | ----------- |
+| CFG Parsing     | 5ms        | 5ms                | 5ms                | —           |
+| DAT Parsing     | 800ms      | 450ms              | 220ms              | **3.6x** ✅ |
+| Chart Rendering | 80ms       | 80ms               | 80ms               | —           |
+| **Total**       | **885ms**  | **535ms**          | **305ms**          | **2.9x**    |
 
 **User Experience**:
+
 - Sequential: ~1 second before chart appears
 - Parallel (4 cores): ~300ms before chart appears (3.3x faster!)
 
@@ -336,21 +344,21 @@ Add optional parameter to parseDAT:
 
 ```javascript
 export function parseDAT(
-  datContent, 
-  cfg, 
-  ft, 
+  datContent,
+  cfg,
+  ft,
   timeUnit = "microseconds",
-  chunkRange = null  // ← NEW: { startSample, endSample }
+  chunkRange = null // ← NEW: { startSample, endSample }
 ) {
   // ... existing code ...
-  
+
   // Filter records by sample number if chunking
   if (chunkRange) {
     // Only parse records within startSample to endSample
     // For ASCII: skip lines until we reach startSample
     // For BINARY: seek to byte position of startSample, read until endSample
   }
-  
+
   // ... rest of function ...
 }
 ```
@@ -364,40 +372,32 @@ export function parseDAT(
 import { parseDAT } from "../components/comtradeUtils.js";
 
 self.onmessage = (e) => {
-  const {
-    datContent,
-    cfg,
-    ft,
-    startSample,
-    endSample,
-    chunkId,
-    timeUnit
-  } = e.data;
+  const { datContent, cfg, ft, startSample, endSample, chunkId, timeUnit } =
+    e.data;
 
   try {
-    console.log(`[Worker ${chunkId}] Parsing samples ${startSample}-${endSample}`);
-    
-    const chunkData = parseDAT(
-      datContent,
-      cfg,
-      ft,
-      timeUnit,
-      { startSample, endSample }
+    console.log(
+      `[Worker ${chunkId}] Parsing samples ${startSample}-${endSample}`
     );
-    
+
+    const chunkData = parseDAT(datContent, cfg, ft, timeUnit, {
+      startSample,
+      endSample,
+    });
+
     console.log(`[Worker ${chunkId}] ✅ Complete`);
-    
+
     self.postMessage({
       chunkId,
       time: chunkData.time,
       analogData: chunkData.analogData,
       digitalData: chunkData.digitalData,
-      startDateInfo: chunkData.startDateInfo
+      startDateInfo: chunkData.startDateInfo,
     });
   } catch (error) {
     self.postMessage({
       chunkId,
-      error: error.message
+      error: error.message,
     });
   }
 };
@@ -426,13 +426,13 @@ Replace the direct `parseDAT` call with the parallel parser.
 
 ## Code Size & Complexity
 
-| Component | Lines | Complexity | Risk |
-|-----------|-------|-----------|------|
-| parseDAT chunking support | 30-50 | Low | Low |
-| parseDAT-Worker.js | 40-50 | Low | Low |
-| ParallelDATParser.js | 150-200 | Medium | Medium |
-| main.js integration | 5-10 | Low | Low |
-| **Total** | **225-310** | Medium | **Medium** |
+| Component                 | Lines       | Complexity | Risk       |
+| ------------------------- | ----------- | ---------- | ---------- |
+| parseDAT chunking support | 30-50       | Low        | Low        |
+| parseDAT-Worker.js        | 40-50       | Low        | Low        |
+| ParallelDATParser.js      | 150-200     | Medium     | Medium     |
+| main.js integration       | 5-10        | Low        | Low        |
+| **Total**                 | **225-310** | Medium     | **Medium** |
 
 ---
 
@@ -485,18 +485,21 @@ if (shouldUseParallel(sampleCount, cpuCores)) {
 ### ⭐ **Implement Opportunity #1: Parallel DAT Parsing**
 
 **Why**:
+
 - Largest bottleneck (800ms)
 - Clean separation of concerns
 - 3-4x speedup (most impressive improvement)
 - Natural fit for worker pools
 - Can be progressive enhancement (optional)
 
-**Timeline**: 
+**Timeline**:
+
 - Estimated implementation: 4-6 hours
 - Testing: 1-2 hours
 - Total: 5-8 hours
 
 **Impact**:
+
 - User perceives 3x faster file loading
 - Scales with available CPU cores
 - No UI changes needed

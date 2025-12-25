@@ -230,14 +230,18 @@ class AdaptiveComputedChannelWorkerPool {
     this.sampleCount = sampleCount;
     this.poolSize = this.calculateOptimalWorkers();
     this.fallbackMode = false;
-    
-    console.log(`[Pool] ${sampleCount.toLocaleString()} samples → ${this.poolSize} workers`);
+
+    console.log(
+      `[Pool] ${sampleCount.toLocaleString()} samples → ${
+        this.poolSize
+      } workers`
+    );
   }
-  
+
   calculateOptimalWorkers() {
     const cpuCores = navigator.hardwareConcurrency || 2;
     const memoryRatio = this.estimateMemoryUsage() / 2147483648; // 2GB limit
-    
+
     if (this.sampleCount < 100000) {
       // Small: Use all cores
       return Math.min(cpuCores, 4);
@@ -255,7 +259,7 @@ class AdaptiveComputedChannelWorkerPool {
       return 1;
     }
   }
-  
+
   estimateMemoryUsage() {
     const bytesPerSample = 8; // float64
     const approximateChannels = 4; // IA, IB, IC, + computed
@@ -268,15 +272,15 @@ class AdaptiveComputedChannelWorkerPool {
 
 ## Performance Table by Sample Count
 
-| Samples | File Size | Web Workers | Time (4W) | Time (1W) | Speedup | Memory | Status |
-|---------|-----------|-------------|----------|----------|---------|--------|--------|
-| 62,464 | 2-5MB | Yes (4) | 1.2s | 4.6s | 3.8x | 8MB | ✅ Excellent |
-| 500K | 16-40MB | Yes (4) | 10s | 40s | 4.0x | 64MB | ✅ Excellent |
-| 1M | 32-80MB | Yes (4) | 20s | 80s | 4.0x | 128MB | ✅ Perfect |
-| 5M | 160-400MB | Yes (2-4) | 110s | 400s | 3.6x | 320-640MB | ✅ Good |
-| 10M | 320-800MB | Yes (2) | 230s | 800s | 3.5x | 640MB-1.2GB | ⚠️ Monitor |
-| 20M | 640MB-1.6GB | Yes (1) | 400s | 400s | 1.0x | 1.3-2.6GB | ❌ Fallback |
-| 50M+ | > 1.6GB | No | N/A | Crash | — | > 2GB | ❌ Not suitable |
+| Samples | File Size   | Web Workers | Time (4W) | Time (1W) | Speedup | Memory      | Status          |
+| ------- | ----------- | ----------- | --------- | --------- | ------- | ----------- | --------------- |
+| 62,464  | 2-5MB       | Yes (4)     | 1.2s      | 4.6s      | 3.8x    | 8MB         | ✅ Excellent    |
+| 500K    | 16-40MB     | Yes (4)     | 10s       | 40s       | 4.0x    | 64MB        | ✅ Excellent    |
+| 1M      | 32-80MB     | Yes (4)     | 20s       | 80s       | 4.0x    | 128MB       | ✅ Perfect      |
+| 5M      | 160-400MB   | Yes (2-4)   | 110s      | 400s      | 3.6x    | 320-640MB   | ✅ Good         |
+| 10M     | 320-800MB   | Yes (2)     | 230s      | 800s      | 3.5x    | 640MB-1.2GB | ⚠️ Monitor      |
+| 20M     | 640MB-1.6GB | Yes (1)     | 400s      | 400s      | 1.0x    | 1.3-2.6GB   | ❌ Fallback     |
+| 50M+    | > 1.6GB     | No          | N/A       | Crash     | —       | > 2GB       | ❌ Not suitable |
 
 ---
 
@@ -287,20 +291,20 @@ class AdaptiveComputedChannelWorkerPool {
 ```javascript
 // Recommended implementation:
 const adaptivePool = {
-  
+
   // 1. Always use web workers for < 10M samples
   if (sampleCount < 10000000) {
     useWebWorkerPool = true;
     workerCount = adaptiveSelect(cpuCores, sampleCount);
   }
-  
+
   // 2. Fall back to single worker for 10M-50M
   else if (sampleCount < 50000000) {
     useWebWorkerPool = true;
     workerCount = 1;
     showWarning("Large file: Processing in background (may be slow)");
   }
-  
+
   // 3. Show error for > 50M (not practical)
   else {
     showError("File too large for browser processing. Max 50M samples.");
@@ -347,21 +351,25 @@ Your current case (62,464): ✅ IDEAL FOR WEB WORKERS
 ## Implementation Strategy
 
 ### Phase 1: Current Support (62K-1M samples)
+
 - ✅ Use adaptive worker pool (2-4 workers)
 - ✅ Predictable 1-20 second processing
 - ✅ No memory concerns
 
 ### Phase 2: Extended Support (1M-10M samples)
+
 - ⚠️ Reduce workers to 2 if memory pressure detected
 - ⚠️ Add progress UI for longer operations
 - ⚠️ Warn user about extended processing time
 
 ### Phase 3: Large File Graceful Degradation (10M-50M)
+
 - ❌ Use single worker
 - ❌ Show warning message
 - ❌ Process in background
 
 ### Phase 4: Out of Memory Protection (50M+)
+
 - ❌ Reject with error message
 - ❌ Suggest server-side processing
 - ❌ Provide file size limits

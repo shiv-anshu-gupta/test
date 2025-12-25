@@ -18,7 +18,7 @@ export const saveToCfg = (channelData, cfgData) => {
   if (!cfgData.computedChannels) {
     cfgData.computedChannels = [];
   }
-  
+
   cfgData.computedChannels.push({
     id: channelData.id,
     name: channelData.name,
@@ -26,7 +26,7 @@ export const saveToCfg = (channelData, cfgData) => {
     mathJsExpression: channelData.mathJsExpression,
     unit: channelData.unit,
     group: "Computed",
-    index: window.globalData.computedData.length - 1
+    index: window.globalData.computedData.length - 1,
   });
 };
 
@@ -36,10 +36,6 @@ export const saveToCfg = (channelData, cfgData) => {
 export const updateStateStore = (channelData) => {
   const computedChannelsState = getComputedChannelsState();
   if (computedChannelsState?.addChannel) {
-    computedChannelsState.addChannel(
-      channelData.id,
-      channelData,
-      "parent"
-    );
+    computedChannelsState.addChannel(channelData.id, channelData, "parent");
   }
 };

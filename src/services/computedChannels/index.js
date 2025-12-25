@@ -1,12 +1,39 @@
 // File: src/services/computedChannels/index.js
 // Single Responsibility: Orchestrate the entire flow
 
-import { validateExpressionPayload, validateGlobalData, validateSampleData, validateExpressionSyntax } from "./validators.js";
-import { extractDataSources, convertToTransferableBuffers, serializeChannelMetadata, buildWorkerTask } from "./dataPreparation.js";
-import { convertResultsToArray, calculateStatistics, buildChannelData } from "./resultProcessing.js";
-import { saveToGlobalData, saveToCfg, updateStateStore } from "./stateUpdate.js";
-import { dispatchChannelSavedEvent, notifyChildWindowSuccess, notifyChildWindowError } from "./eventHandling.js";
-import { createComputedChannelWorker, buildWorkerMessageHandler, buildWorkerErrorHandler, sendTaskToWorker } from "./workerManagement.js";
+import {
+  validateExpressionPayload,
+  validateGlobalData,
+  validateSampleData,
+  validateExpressionSyntax,
+} from "./validators.js";
+import {
+  extractDataSources,
+  convertToTransferableBuffers,
+  serializeChannelMetadata,
+  buildWorkerTask,
+} from "./dataPreparation.js";
+import {
+  convertResultsToArray,
+  calculateStatistics,
+  buildChannelData,
+} from "./resultProcessing.js";
+import {
+  saveToGlobalData,
+  saveToCfg,
+  updateStateStore,
+} from "./stateUpdate.js";
+import {
+  dispatchChannelSavedEvent,
+  notifyChildWindowSuccess,
+  notifyChildWindowError,
+} from "./eventHandling.js";
+import {
+  createComputedChannelWorker,
+  buildWorkerMessageHandler,
+  buildWorkerErrorHandler,
+  sendTaskToWorker,
+} from "./workerManagement.js";
 
 /**
  * Main orchestrator: Handles computed channel evaluation end-to-end
@@ -23,18 +50,27 @@ export const handleComputedChannelEvaluation = async (payload) => {
     const { expression, unit } = payload;
 
     // 2️⃣ VALIDATE DATA AVAILABILITY
-    const cfgData = window.globalCfg || (window.opener && window.opener.globalCfg);
-    const dataObj = window.globalData || (window.opener && window.opener.globalData);
-    
+    const cfgData =
+      window.globalCfg || (window.opener && window.opener.globalCfg);
+    const dataObj =
+      window.globalData || (window.opener && window.opener.globalData);
+
     const validation2 = validateGlobalData(cfgData, dataObj);
     if (!validation2.valid) {
-      console.error("[ComputedChannel]", validation2.error, validation2.details);
+      console.error(
+        "[ComputedChannel]",
+        validation2.error,
+        validation2.details
+      );
       return;
     }
 
     // 3️⃣ EXTRACT & VALIDATE DATA
-    const { analogArray, digitalArray, sampleCount } = extractDataSources(dataObj, cfgData);
-    
+    const { analogArray, digitalArray, sampleCount } = extractDataSources(
+      dataObj,
+      cfgData
+    );
+
     const validation3 = validateSampleData(analogArray);
     if (!validation3.valid) {
       console.error("[ComputedChannel]", validation3.error);
@@ -43,18 +79,26 @@ export const handleComputedChannelEvaluation = async (payload) => {
 
     // 4️⃣ CONVERT EXPRESSION FORMAT
     const mathJsExpr = convertLatexToMathJs(expression);
-    console.log("[ComputedChannel] 📝 Expression converted:", { original: expression, converted: mathJsExpr });
+    console.log("[ComputedChannel] 📝 Expression converted:", {
+      original: expression,
+      converted: mathJsExpr,
+    });
 
     // 5️⃣ VALIDATE EXPRESSION SYNTAX
     const validation4 = validateExpressionSyntax(mathJsExpr);
     if (!validation4.valid) {
-      console.error("[ComputedChannel] Invalid expression syntax:", validation4.error);
+      console.error(
+        "[ComputedChannel] Invalid expression syntax:",
+        validation4.error
+      );
       return;
     }
 
     // 6️⃣ PREPARE DATA FOR WORKER
-    const { analogBuffers, digitalBuffers, transferableObjects } = convertToTransferableBuffers(analogArray, digitalArray);
-    const { analogChannelsMeta, digitalChannelsMeta } = serializeChannelMetadata(cfgData);
+    const { analogBuffers, digitalBuffers, transferableObjects } =
+      convertToTransferableBuffers(analogArray, digitalArray);
+    const { analogChannelsMeta, digitalChannelsMeta } =
+      serializeChannelMetadata(cfgData);
     const workerTask = buildWorkerTask(
       mathJsExpr,
       analogBuffers,
@@ -76,13 +120,26 @@ export const handleComputedChannelEvaluation = async (payload) => {
       console.log(`[Worker] 📊 Progress: ${percent}% (${processed}/${total})`);
     };
 
-    const onSuccess = (resultsBuffer, resultCount, elapsedMs, unit, expression, cfgData) => {
+    const onSuccess = (
+      resultsBuffer,
+      resultCount,
+      elapsedMs,
+      unit,
+      expression,
+      cfgData
+    ) => {
       console.log(`[ComputedChannel] ✅ Worker completed in ${elapsedMs}ms`);
 
       // Process results
       const results = convertResultsToArray(resultsBuffer);
       const stats = calculateStatistics(results);
-      const channelData = buildChannelData(results, expression, mathJsExpr, unit, stats);
+      const channelData = buildChannelData(
+        results,
+        expression,
+        mathJsExpr,
+        unit,
+        stats
+      );
 
       // Update state
       saveToGlobalData(channelData);
@@ -91,7 +148,13 @@ export const handleComputedChannelEvaluation = async (payload) => {
 
       // Dispatch events
       dispatchChannelSavedEvent(channelData, expression, unit, stats, results);
-      notifyChildWindowSuccess(channelData.name, resultCount, unit, stats, elapsedMs);
+      notifyChildWindowSuccess(
+        channelData.name,
+        resultCount,
+        unit,
+        stats,
+        elapsedMs
+      );
 
       console.log("[ComputedChannel] ✅ Channel saved and events dispatched");
     };
@@ -112,7 +175,7 @@ export const handleComputedChannelEvaluation = async (payload) => {
       onSuccess,
       onError
     );
-    
+
     const errorHandler = buildWorkerErrorHandler(worker, onError);
 
     worker.onmessage = messageHandler;
@@ -121,7 +184,6 @@ export const handleComputedChannelEvaluation = async (payload) => {
     // 8️⃣ SEND TASK TO WORKER
     sendTaskToWorker(worker, workerTask, transferableObjects);
     console.log("[ComputedChannel] ✅ Task sent to worker (zero-copy)");
-
   } catch (error) {
     console.error("[ComputedChannel] ❌ Unexpected error:", error);
   }

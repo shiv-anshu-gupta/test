@@ -3,6 +3,7 @@
 ## What Changed
 
 ### Before (Single Large Function)
+
 ```javascript
 case "evaluateComputedChannel": {
   // 300+ lines of mixed responsibilities
@@ -17,6 +18,7 @@ case "evaluateComputedChannel": {
 ```
 
 ### After (Modular Approach)
+
 ```javascript
 import { handleComputedChannelEvaluation } from "./services/computedChannels/index.js";
 
@@ -48,6 +50,7 @@ src/services/computedChannels/
 ## Each File's Responsibility
 
 ### 1. `validators.js` - Check Everything Upfront
+
 ```javascript
 ✓ validateExpressionPayload() - Is expression provided?
 ✓ validateGlobalData() - Are cfg/data available?
@@ -56,6 +59,7 @@ src/services/computedChannels/
 ```
 
 ### 2. `dataPreparation.js` - Convert & Prepare Data
+
 ```javascript
 ✓ extractDataSources() - Get analog/digital arrays
 ✓ convertToTransferableBuffers() - Convert to ArrayBuffers
@@ -64,6 +68,7 @@ src/services/computedChannels/
 ```
 
 ### 3. `resultProcessing.js` - Handle Worker Results
+
 ```javascript
 ✓ convertResultsToArray() - Convert ArrayBuffer back
 ✓ calculateStatistics() - Compute min/max/mean
@@ -72,6 +77,7 @@ src/services/computedChannels/
 ```
 
 ### 4. `stateUpdate.js` - Update Application State
+
 ```javascript
 ✓ saveToGlobalData() - Add to window.globalData
 ✓ saveToCfg() - Add to cfgData
@@ -79,6 +85,7 @@ src/services/computedChannels/
 ```
 
 ### 5. `eventHandling.js` - Communicate Results
+
 ```javascript
 ✓ dispatchChannelSavedEvent() - Trigger chart rendering
 ✓ notifyChildWindowSuccess() - Tell MathLive editor: success!
@@ -86,6 +93,7 @@ src/services/computedChannels/
 ```
 
 ### 6. `workerManagement.js` - Worker Lifecycle
+
 ```javascript
 ✓ createComputedChannelWorker() - Create worker
 ✓ buildWorkerMessageHandler() - Handle results
@@ -94,6 +102,7 @@ src/services/computedChannels/
 ```
 
 ### 7. `index.js` - Orchestrator (Coordinator)
+
 ```javascript
 Coordinates all layers:
 1. Validate input
@@ -122,6 +131,7 @@ import { handleComputedChannelEvaluation } from "./services/computedChannels/ind
 ### Step 2: Replace evaluateComputedChannel Case
 
 **Find this (lines ~3311-3650):**
+
 ```javascript
 case "evaluateComputedChannel": {
   try {
@@ -138,6 +148,7 @@ case "evaluateComputedChannel": {
 ```
 
 **Replace with this:**
+
 ```javascript
 case "evaluateComputedChannel": {
   handleComputedChannelEvaluation(payload);
@@ -151,28 +162,30 @@ case "evaluateComputedChannel": {
 
 ## Benefits of This Refactoring
 
-| Aspect | Before | After |
-|--------|--------|-------|
-| **Lines in case block** | 340 lines | 2 lines |
-| **Single responsibility** | ❌ 10+ things | ✅ Each file = 1 thing |
-| **Testability** | ❌ Hard to test | ✅ Easy - each function testable |
-| **Reusability** | ❌ Tightly coupled | ✅ Functions can be reused |
-| **Readability** | ❌ Hard to follow | ✅ Clear flow (8 steps) |
-| **Debugging** | ❌ Find issue in 300 lines | ✅ Go directly to failing function |
-| **Adding features** | ❌ Modify main.js | ✅ Add function to appropriate file |
-| **Error handling** | ❌ Scattered try/catch | ✅ Centralized in orchestrator |
+| Aspect                    | Before                     | After                               |
+| ------------------------- | -------------------------- | ----------------------------------- |
+| **Lines in case block**   | 340 lines                  | 2 lines                             |
+| **Single responsibility** | ❌ 10+ things              | ✅ Each file = 1 thing              |
+| **Testability**           | ❌ Hard to test            | ✅ Easy - each function testable    |
+| **Reusability**           | ❌ Tightly coupled         | ✅ Functions can be reused          |
+| **Readability**           | ❌ Hard to follow          | ✅ Clear flow (8 steps)             |
+| **Debugging**             | ❌ Find issue in 300 lines | ✅ Go directly to failing function  |
+| **Adding features**       | ❌ Modify main.js          | ✅ Add function to appropriate file |
+| **Error handling**        | ❌ Scattered try/catch     | ✅ Centralized in orchestrator      |
 
 ---
 
 ## Example: Testing Individual Functions
 
 ### Before (Nearly Impossible)
+
 ```javascript
 // How do you test just the validation in 300-line case block?
 // You can't easily - too many dependencies!
 ```
 
 ### After (Easy!)
+
 ```javascript
 // Test validators in isolation
 import { validateExpressionPayload } from "./validators.js";
@@ -196,6 +209,7 @@ test("validateSampleData should accept valid samples", () => {
 ## Example: Adding New Feature
 
 ### Before (Modify main.js)
+
 ```javascript
 // Want to log all evaluations?
 // Want to add caching?
@@ -204,6 +218,7 @@ test("validateSampleData should accept valid samples", () => {
 ```
 
 ### After (Add to appropriate service)
+
 ```javascript
 // Add logging? → Add to index.js orchestrator
 // Add caching? → Add function to index.js, check before eval
@@ -217,6 +232,7 @@ test("validateSampleData should accept valid samples", () => {
 ## Visual Flow
 
 ### Current Flow (Hard to Follow)
+
 ```
 main.js case block (HUGE)
 ├─ validation scattered
@@ -229,6 +245,7 @@ main.js case block (HUGE)
 ```
 
 ### New Flow (Crystal Clear)
+
 ```
 index.js (Orchestrator)
 ├─ validators.js ✓ Pass/Fail
@@ -248,6 +265,7 @@ Each step: clear responsibility, easy to test, easy to debug!
 ## Important Notes
 
 ### 1. Same Functionality
+
 - ✅ All 300 lines of original logic preserved
 - ✅ No new workers added
 - ✅ No changes to worker code
@@ -255,12 +273,14 @@ Each step: clear responsibility, easy to test, easy to debug!
 - ✅ No new dependencies
 
 ### 2. Backward Compatible
+
 - ✅ UI behavior identical
 - ✅ Results identical
 - ✅ Performance identical
 - ✅ No breaking changes
 
 ### 3. Clean Code
+
 - ✅ Single Responsibility Principle
 - ✅ DRY (Don't Repeat Yourself)
 - ✅ Easy to understand
@@ -294,6 +314,7 @@ case "evaluateComputedChannel": {
 **That's it!** 🎉
 
 The entire computed channel flow is now:
+
 - ✅ Modular (like React components)
 - ✅ Functional (pure functions where possible)
 - ✅ Reactive (event-driven)

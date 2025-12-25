@@ -66,12 +66,12 @@ Worker Overhead becomes significant:
 
 ## Memory Analysis by Sample Count
 
-| Samples | Per Channel | Per Worker (4 workers) | Total (4 Workers) | Status |
-|---------|------------|----------------------|------------------|--------|
-| 62,464 | 500KB | 2MB | 8MB | ✅ Excellent |
-| 624,640 | 5MB | 20MB | 80MB | ✅ Good |
-| 6,246,400 | 50MB | 200MB | 800MB | ⚠️ High |
-| 62,464,000 | 500MB | 2GB | 8GB | ❌ Critical |
+| Samples    | Per Channel | Per Worker (4 workers) | Total (4 Workers) | Status       |
+| ---------- | ----------- | ---------------------- | ----------------- | ------------ |
+| 62,464     | 500KB       | 2MB                    | 8MB               | ✅ Excellent |
+| 624,640    | 5MB         | 20MB                   | 80MB              | ✅ Good      |
+| 6,246,400  | 50MB        | 200MB                  | 800MB             | ⚠️ High      |
+| 62,464,000 | 500MB       | 2GB                    | 8GB               | ❌ Critical  |
 
 ---
 
@@ -122,20 +122,20 @@ class ComputedChannelWorkerPool {
   constructor(sampleCount) {
     // ✅ Dynamically choose worker count based on data size
     this.poolSize = this.calculateOptimalWorkerCount(sampleCount);
-    
+
     console.log(
       `[Pool] ${sampleCount} samples → Using ${this.poolSize} workers`
     );
-    
+
     this.workers = [];
     for (let i = 0; i < this.poolSize; i++) {
       this.workers.push(new Worker("./src/workers/computedChannelWorker.js"));
     }
   }
-  
+
   calculateOptimalWorkerCount(sampleCount) {
     const cpuCores = navigator.hardwareConcurrency || 2;
-    
+
     // ✅ Smart scaling based on sample count and memory
     if (sampleCount < 100000) {
       // Small files: Use all available cores
@@ -151,22 +151,22 @@ class ComputedChannelWorkerPool {
       return 1;
     }
   }
-  
+
   async evaluate(task) {
     // If only 1 worker selected, use it directly (no overhead)
     if (this.poolSize === 1) {
       console.log("[Pool] Massive dataset - using single worker (no split)");
       return await this._evaluateSingleWorker(task);
     }
-    
+
     // Otherwise, use parallel approach
     return await this._evaluateParallel(task);
   }
-  
+
   async _evaluateSingleWorker(task) {
     return new Promise((resolve, reject) => {
       const worker = this.workers[0];
-      
+
       worker.onmessage = (e) => {
         if (e.data.type === "complete") {
           resolve({ resultsBuffer: e.data.resultsBuffer });
@@ -174,20 +174,20 @@ class ComputedChannelWorkerPool {
           reject(new Error(e.data.message));
         }
       };
-      
+
       // Send entire task to single worker (no chunking)
-      worker.postMessage({
-        ...task,
-        chunkId: 0,
-        startSample: 0,
-        endSample: task.sampleCount
-      }, [
-        ...task.analogBuffers,
-        ...task.digitalBuffers
-      ]);
+      worker.postMessage(
+        {
+          ...task,
+          chunkId: 0,
+          startSample: 0,
+          endSample: task.sampleCount,
+        },
+        [...task.analogBuffers, ...task.digitalBuffers]
+      );
     });
   }
-  
+
   async _evaluateParallel(task) {
     // ... existing parallel code ...
   }
@@ -199,6 +199,7 @@ class ComputedChannelWorkerPool {
 ## Performance Predictions by Sample Count
 
 ### 62,464 Samples (Standard COMTRADE)
+
 ```
 Strategy: 4 workers
 Time: 1.2 seconds
@@ -208,6 +209,7 @@ Result: ✅ PERFECT
 ```
 
 ### 624,640 Samples (10x standard)
+
 ```
 Strategy: 4 workers
 Time: 11.5 seconds
@@ -217,6 +219,7 @@ Result: ✅ ACCEPTABLE (scaling linearly)
 ```
 
 ### 6,246,400 Samples (100x standard)
+
 ```
 Strategy: 4 workers
 Time: ~115 seconds (1.9 minutes)
@@ -231,6 +234,7 @@ Result: ⚠️ Slower but uses less memory
 ```
 
 ### 62,464,000 Samples (1000x standard)
+
 ```
 Strategy: Should switch to SINGLE WORKER
 Time: ~1150 seconds (19 minutes)
@@ -291,23 +295,23 @@ class AdaptiveComputedChannelWorkerPool {
   constructor() {
     this.currentPool = null;
   }
-  
+
   async evaluate(task) {
     const { sampleCount } = task;
-    
+
     // ✅ Create new pool optimized for THIS sample count
     this.currentPool = new ComputedChannelWorkerPool(sampleCount);
-    
+
     // Evaluate
     const result = await this.currentPool.evaluate(task);
-    
+
     // Cleanup
     this.currentPool.terminate();
     this.currentPool = null;
-    
+
     return result;
   }
-  
+
   terminate() {
     if (this.currentPool) {
       this.currentPool.terminate();
@@ -328,28 +332,31 @@ let adaptivePool = new AdaptiveComputedChannelWorkerPool();
 
 ## When Parallelism BREAKS DOWN
 
-| Factor | Impact | Threshold |
-|--------|--------|-----------|
+| Factor                | Impact                | Threshold          |
+| --------------------- | --------------------- | ------------------ |
 | **Memory per worker** | Exceeds available RAM | > 500MB per worker |
-| **Transfer overhead** | Dominates computation | Samples > 10M |
-| **CPU cores** | Can't saturate all | Samples < 50K |
-| **Math.js startup** | Overhead grows | 8+ workers |
+| **Transfer overhead** | Dominates computation | Samples > 10M      |
+| **CPU cores**         | Can't saturate all    | Samples < 50K      |
+| **Math.js startup**   | Overhead grows        | 8+ workers         |
 
 ---
 
 ## Practical Limits for Your Use Case
 
 ### COMTRADE Standard Files
+
 - **Typical range**: 50K - 500K samples
 - **Recommendation**: Always use 4 workers ✅
 - **Performance**: 1-6 seconds (excellent)
 
 ### Extended Recording Files
+
 - **Typical range**: 500K - 5M samples
 - **Recommendation**: Use 4 workers for 500K-1M, then 2 for larger
 - **Performance**: 10-60 seconds (acceptable)
 
 ### Theoretical Maximum (Before Breakdown)
+
 - **Samples**: ~10M (10 million)
 - **File size**: ~320MB (4 channels × 10M × 8 bytes)
 - **Memory with 4 workers**: 1.28GB total
@@ -357,6 +364,7 @@ let adaptivePool = new AdaptiveComputedChannelWorkerPool();
 - **Verdict**: Doable but slow
 
 ### Beyond This Point
+
 - **Samples**: > 10M
 - **Use**: Single worker (no parallelism)
 - **Accept**: Will be very slow, but won't crash system
@@ -369,38 +377,48 @@ let adaptivePool = new AdaptiveComputedChannelWorkerPool();
 class ComputedChannelWorkerPool {
   constructor(sampleCount, maxWorkers = 4) {
     const cpuCores = navigator.hardwareConcurrency || 2;
-    
+
     // ✅ Smart decision tree
     if (sampleCount > 10000000) {
       // Massive: Single worker to avoid transfer overhead
       this.poolSize = 1;
-      console.warn(`[Pool] ${sampleCount.toLocaleString()} samples - using single worker`);
+      console.warn(
+        `[Pool] ${sampleCount.toLocaleString()} samples - using single worker`
+      );
     } else if (sampleCount > 1000000) {
       // Large: Limit to 2 workers
       this.poolSize = Math.min(cpuCores, 2);
-      console.log(`[Pool] ${sampleCount.toLocaleString()} samples - using ${this.poolSize} workers`);
+      console.log(
+        `[Pool] ${sampleCount.toLocaleString()} samples - using ${
+          this.poolSize
+        } workers`
+      );
     } else {
       // Standard: Use available cores up to max
       this.poolSize = Math.min(cpuCores, maxWorkers);
-      console.log(`[Pool] ${sampleCount.toLocaleString()} samples - using ${this.poolSize} workers`);
+      console.log(
+        `[Pool] ${sampleCount.toLocaleString()} samples - using ${
+          this.poolSize
+        } workers`
+      );
     }
-    
+
     this.workers = [];
     for (let i = 0; i < this.poolSize; i++) {
       this.workers.push(new Worker("./src/workers/computedChannelWorker.js"));
     }
   }
-  
+
   async evaluate(task) {
     if (this.poolSize === 1) {
       // Single worker: no chunking
       return this._evaluateSingleWorker(task);
     }
-    
+
     // Multiple workers: parallel evaluation
     return this._evaluateParallel(task);
   }
-  
+
   // ... rest of implementation ...
 }
 ```
@@ -409,13 +427,13 @@ class ComputedChannelWorkerPool {
 
 ## Comparison: Single vs Parallel by File Size
 
-| Samples | File Size | Single Worker | 4 Workers | Speedup | Status |
-|---------|-----------|--------------|-----------|---------|--------|
-| 62,464 | 2MB | 4.6s | 1.2s | 3.8x | ✅ Excellent |
-| 624,640 | 20MB | 46s | 11.5s | 4.0x | ✅ Excellent |
-| 6,244,000 | 200MB | 460s | 115s | 4.0x | ✅ Good |
-| 62,440,000 | 2GB | 4600s | 1500s | 3.0x | ⚠️ Transfer overhead |
-| 624,400,000 | 20GB | 46000s | 15000s | 3.0x | ❌ Memory pressure |
+| Samples     | File Size | Single Worker | 4 Workers | Speedup | Status               |
+| ----------- | --------- | ------------- | --------- | ------- | -------------------- |
+| 62,464      | 2MB       | 4.6s          | 1.2s      | 3.8x    | ✅ Excellent         |
+| 624,640     | 20MB      | 46s           | 11.5s     | 4.0x    | ✅ Excellent         |
+| 6,244,000   | 200MB     | 460s          | 115s      | 4.0x    | ✅ Good              |
+| 62,440,000  | 2GB       | 4600s         | 1500s     | 3.0x    | ⚠️ Transfer overhead |
+| 624,400,000 | 20GB      | 46000s        | 15000s    | 3.0x    | ❌ Memory pressure   |
 
 ---
 
@@ -426,10 +444,12 @@ class ComputedChannelWorkerPool {
 **A: The parallelization strategy adapts:**
 
 1. **Up to 1M samples**: Full 4-worker parallelism works great
+
    - 4-5x speedup ✅
    - < 1GB memory
 
 2. **1M - 10M samples**: Works but memory becomes concern
+
    - 2-4x speedup ⚠️
    - 400MB - 1.6GB memory
    - Recommendation: Use 2-4 workers based on available RAM

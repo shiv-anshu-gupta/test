@@ -24,7 +24,8 @@ export function loadMathJax() {
       const script = document.createElement("script");
       script.id = "mathjax-script";
       script.async = true;
-      script.src = "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js";
+      script.src =
+        "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js";
 
       script.onload = () => {
         console.log("[MathJax] ✅ Loaded successfully");

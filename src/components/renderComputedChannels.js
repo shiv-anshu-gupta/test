@@ -124,7 +124,11 @@ export function renderComputedChannels(
     "computed"
   );
   const containerTime = performance.now() - containerStartTime;
-  console.log(`[renderComputedChannels] ⏱️ createChartContainer: ${containerTime.toFixed(2)}ms`);
+  console.log(
+    `[renderComputedChannels] ⏱️ createChartContainer: ${containerTime.toFixed(
+      2
+    )}ms`
+  );
 
   chartsContainer.appendChild(parentDiv);
   console.log(`[renderComputedChannels] 🏗️ Chart container created`);
@@ -232,8 +236,9 @@ export function renderComputedChannels(
     });
   }
   const labelTime = performance.now() - labelStartTime;
-  console.log(`[renderComputedChannels] ⏱️ Label setup: ${labelTime.toFixed(2)}ms`);
-
+  console.log(
+    `[renderComputedChannels] ⏱️ Label setup: ${labelTime.toFixed(2)}ms`
+  );
 
   // ✅ OPTIMIZATION: Data already scaled during save, no runtime scaling needed
   const channelDataArrays = computedChannels.map((ch) => {
@@ -319,7 +324,11 @@ export function renderComputedChannels(
   const uplotStartTime = performance.now();
   const chart = initUPlotChart(opts, chartData, chartDiv, charts);
   const uplotTime = performance.now() - uplotStartTime;
-  console.log(`[renderComputedChannels] ⏱️ uPlot chart creation: ${uplotTime.toFixed(2)}ms`);
+  console.log(
+    `[renderComputedChannels] ⏱️ uPlot chart creation: ${uplotTime.toFixed(
+      2
+    )}ms`
+  );
 
   chart._computed = true;
   chart._computedIds = computedChannels.map((ch) => ch.id);
