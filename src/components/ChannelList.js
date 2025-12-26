@@ -2223,14 +2223,6 @@ export function createChannelList(
       if (table && typeof table.on === "function") {
         table.on("rowAdded", (row) => {
           const data = row.getData ? row.getData() : row;
-          // attach a temporary client id so the parent can ack with a stable channelID
-          try {
-            data.tempClientId = `tmp-${Date.now()}-${Math.random()
-              .toString(36)
-              .slice(2, 6)}`;
-          } catch (e) {
-            data.tempClientId = `tmp-${Date.now()}`;
-          }
           // local callback
           if (typeof onChannelUpdate === "function") {
             try {
@@ -2238,25 +2230,6 @@ export function createChannelList(
             } catch (e) {
               /* ignore */
             }
-          }
-          // notify parent
-          try {
-            if (
-              typeof window !== "undefined" &&
-              window.opener &&
-              !window.opener.closed
-            ) {
-              window.opener.postMessage(
-                {
-                  source: "ChildWindow",
-                  type: "callback_addChannel",
-                  payload: data,
-                },
-                "*"
-              );
-            }
-          } catch (e) {
-            /* ignore */
           }
         });
 
@@ -2367,37 +2340,7 @@ export function createChannelList(
 
             if (d.source !== "ParentWindow") return;
 
-            if (d.type === "ack_addChannel" && d.payload) {
-              const { tempClientId, channelID, assignedIndex } = d.payload;
-              if (!tempClientId || !channelID) return;
-              // Try to find the row with matching tempClientId and update its metadata
-              try {
-                const rows = table.getRows ? table.getRows() : [];
-                for (let r of rows) {
-                  const rd = r.getData ? r.getData() : null;
-                  if (!rd) continue;
-                  if (rd.tempClientId && rd.tempClientId === tempClientId) {
-                    // update the row data to include stable channelID and assigned index
-                    const updateObj = { channelID };
-                    if (typeof assignedIndex === "number")
-                      updateObj.originalIndex = assignedIndex;
-                    // remove tempClientId
-                    updateObj.tempClientId = null;
-                    try {
-                      if (typeof r.update === "function") r.update(updateObj);
-                    } catch (e) {
-                      // fallback: set data directly
-                      rd.channelID = channelID;
-                      if (typeof assignedIndex === "number")
-                        rd.originalIndex = assignedIndex;
-                    }
-                    break;
-                  }
-                }
-              } catch (e) {
-                /* ignore */
-              }
-            }
+            // deprecated: ack_addChannel flow removed
           } catch (e) {
             /* ignore */
           }
