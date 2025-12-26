@@ -27,6 +27,7 @@ import {
   dispatchChannelSavedEvent,
   notifyChildWindowSuccess,
   notifyChildWindowError,
+  notifyChildWindowStateUpdated,
 } from "./eventHandling.js";
 import {
   createComputedChannelWorker,
@@ -172,6 +173,9 @@ export const handleComputedChannelEvaluation = async (payload) => {
         stats,
         elapsedMs
       );
+
+      // ✅ Notify child window to update Tabulator with new computed channel
+      notifyChildWindowStateUpdated(cfgData.computedChannels);
 
       console.log("[ComputedChannel] ✅ Channel saved and events dispatched");
     };

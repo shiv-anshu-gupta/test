@@ -2301,20 +2301,32 @@ export function createChannelList(
         window.addEventListener("message", (ev) => {
           try {
             const d = ev && ev.data;
-            if (!d || d.source !== "ParentWindow") return;
+            if (!d) {
+              console.log("[ChannelList] Received message with no data");
+              return;
+            }
 
             // Handle computed channel state updates from parent
-            if (
-              d.type === "COMPUTED_CHANNEL_STATE_UPDATED" &&
-              d.computedChannels
-            ) {
+            if (d.type === "COMPUTED_CHANNEL_STATE_UPDATED") {
               console.log(
-                "[ChannelList] Received computed channel update:",
-                d.computedChannels
+                "[ChannelList] ✅ Received COMPUTED_CHANNEL_STATE_UPDATED message",
+                {
+                  source: d.source,
+                  channelCount: d.computedChannels?.length || 0,
+                  channels: d.computedChannels,
+                }
               );
+
+              if (!d.computedChannels || d.computedChannels.length === 0) {
+                console.warn(
+                  "[ChannelList] ⚠️ No computed channels in message"
+                );
+                return;
+              }
 
               // Add new computed channels to table
               d.computedChannels.forEach((ch) => {
+                console.log("[ChannelList] Processing channel:", ch.name);
                 const existingRow = table.getRows().find((r) => {
                   const rowData = r.getData();
                   return (
@@ -2323,6 +2335,7 @@ export function createChannelList(
                 });
 
                 if (!existingRow) {
+                  console.log("[ChannelList] ✅ Adding new row for:", ch.name);
                   table.addRow(
                     {
                       id: table.getRows().length + 1,
@@ -2338,10 +2351,21 @@ export function createChannelList(
                     },
                     false
                   );
+                  console.log(
+                    "[ChannelList] ✅ Row added successfully. Total rows:",
+                    table.getRows().length
+                  );
+                } else {
+                  console.log(
+                    "[ChannelList] ℹ️ Row already exists for:",
+                    ch.name
+                  );
                 }
               });
               return;
             }
+
+            if (d.source !== "ParentWindow") return;
 
             if (d.type === "ack_addChannel" && d.payload) {
               const { tempClientId, channelID, assignedIndex } = d.payload;
