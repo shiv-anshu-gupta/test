@@ -164,9 +164,9 @@ export default function verticalLinePlugin(
               if (Math.abs(xVal - xData) < hoverRadius) {
                 isDragging = true;
                 draggedLineIndex = idx;
-                
+
                 // ✅ DISABLE uPlot's selection while dragging vertical line
-                u.setSelect = function() {
+                u.setSelect = function () {
                   // Do nothing - block all selection updates during drag
                 };
 
@@ -265,13 +265,13 @@ export default function verticalLinePlugin(
               event.stopPropagation();
               event.preventDefault();
               event.stopImmediatePropagation();
-              
+
               // ✅ RE-ENABLE uPlot's selection after drag ends
               u.setSelect = originalSetSelect;
-              
+
               // ✅ Clear any lingering selection box
               u.setSelect({ left: 0, top: 0, width: 0, height: 0 });
-              
+
               overlay.style.cursor = "default";
               draggedLineIndex = null;
             }
