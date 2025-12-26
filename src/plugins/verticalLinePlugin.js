@@ -116,6 +116,9 @@ export default function verticalLinePlugin(
           // ✅ Save the original setSelect function at init time
           const originalSetSelect = u.setSelect.bind(u);
 
+          // ✅ Save original cursor.drag settings (the REAL culprit for selection box!)
+          const originalCursorDrag = { ...u.cursor.drag };
+
           // Subscribe to vertical lines state changes to recalculate deltas
           if (
             verticalLinesXState &&
@@ -155,8 +158,7 @@ export default function verticalLinePlugin(
             });
           }
 
-          // prevent selection during dragging
-
+          // ✅ MOUSEDOWN: Disable BOTH cursor.drag AND setSelect to prevent selection box
           overlay.addEventListener("mousedown", (e) => {
             if (!u || !u.scales || !u.data) return;
             const lines = verticalLinesXState.asArray();
@@ -168,9 +170,14 @@ export default function verticalLinePlugin(
                 isDragging = true;
                 draggedLineIndex = idx;
 
-                // ✅ DISABLE uPlot's selection while dragging vertical line
+                // ✅ CRITICAL: Disable cursor.drag to prevent selection box
+                u.cursor.drag.x = false;
+                u.cursor.drag.y = false;
+
+                // ✅ Also disable setSelect as fallback
                 u.setSelect = function () {
-                  // Do nothing - block all selection updates during drag
+                  // Block all setSelect calls
+                  return;
                 };
 
                 e.preventDefault();
@@ -265,24 +272,36 @@ export default function verticalLinePlugin(
           overlay.addEventListener("mouseup", (event) => {
             if (isDragging) {
               isDragging = false;
-              event.stopPropagation();
-              event.preventDefault();
-              event.stopImmediatePropagation();
+              draggedLineIndex = null;
 
-              // ✅ RE-ENABLE uPlot's selection after drag ends
+              // ✅ RESTORE original cursor.drag settings
+              u.cursor.drag.x = originalCursorDrag.x;
+              u.cursor.drag.y = originalCursorDrag.y;
+
+              // ✅ RESTORE original setSelect function
               u.setSelect = originalSetSelect;
 
               // ✅ Clear any lingering selection box
               u.setSelect({ left: 0, top: 0, width: 0, height: 0 });
 
               overlay.style.cursor = "default";
-              draggedLineIndex = null;
+
+              event.preventDefault();
+              event.stopPropagation();
+              event.stopImmediatePropagation();
             }
           });
 
           overlay.addEventListener("mouseleave", () => {
-            //     isDragging = false;
-            //    draggedLineIndex = null;
+            // Handle edge case: if drag ends outside chart area
+            if (isDragging) {
+              isDragging = false;
+              draggedLineIndex = null;
+              u.cursor.drag.x = originalCursorDrag.x;
+              u.cursor.drag.y = originalCursorDrag.y;
+              u.setSelect = originalSetSelect;
+              overlay.style.cursor = "default";
+            }
           });
         },
       ],
