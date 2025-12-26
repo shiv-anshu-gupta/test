@@ -1392,7 +1392,7 @@ function openMathLiveEditor(
     };
 
     // Save button: evaluate expression, create computed channel, and update cell
-    doc.getElementById("save-btn").addEventListener("click", () => {
+    doc.getElementById("save-btn").addEventListener("click", async () => {
       if (!mathField) return;
 
       const expression = mathField.value.trim();
@@ -1405,6 +1405,10 @@ function openMathLiveEditor(
       }
 
       try {
+        // ✅ Show progress bar immediately when user clicks save
+        const { showProgress } = await import("../components/ProgressBar.js");
+        showProgress(1, `Processing: ${expression.substring(0, 30)}...`);
+        
         // ✅ NEW: Send expression to parent window for evaluation
         // Parent has the actual data and can evaluate the expression
         showStatus("⏳ Sending expression to parent for evaluation...");

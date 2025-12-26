@@ -17,20 +17,8 @@ export const validateExpressionPayload = (payload) => {
     };
   }
 
-  console.log("[Validator] 🔍 validateExpressionPayload - Raw input:", {
-    expression,
-    unit,
-  });
-
   // ✅ NEW: Process equation to extract channel name and math expression
   const processed = processEquationInput(expression);
-
-  console.log("[Validator] 📦 processEquationInput result:", {
-    valid: processed.valid,
-    channelName: processed.channelName,
-    mathExpression: processed.mathExpression,
-    error: processed.error,
-  });
 
   if (!processed.valid) {
     console.warn("[Validator] ⚠️ Name validation failed:", processed.error);
@@ -41,12 +29,6 @@ export const validateExpressionPayload = (payload) => {
       mathExpression: processed.mathExpression,
     };
   }
-
-  console.log("[Validator] ✅ Validation passed, returning:", {
-    valid: true,
-    channelName: processed.channelName,
-    mathExpression: processed.mathExpression,
-  });
 
   return {
     valid: true,

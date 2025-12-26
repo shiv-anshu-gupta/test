@@ -49,6 +49,12 @@ import { PolarChart } from "./components/PolarChart.js";
 import { PolarChartCanvas } from "./components/PolarChartCanvas.js"; // ✅ NEW: Canvas-based renderer
 import { setupPolarChartWithVerticalLines } from "./components/setupPolarChartIntegration.js";
 import {
+  createProgressBar,
+  showProgress,
+  updateProgress,
+  hideProgress,
+} from "./components/ProgressBar.js";
+import {
   initTheme,
   toggleTheme,
   getCurrentTheme,
@@ -1230,6 +1236,14 @@ const cfgFileNameEl = document.getElementById("cfgFileName");
 const datFileNameEl = document.getElementById("datFileName");
 const chartsContainer = document.getElementById("charts");
 const fixedResultsEl = document.getElementById("fixed-results");
+
+// Initialize progress bar in header
+const topHeader = document.querySelector(".top-header");
+if (topHeader) {
+  const progressBar = createProgressBar();
+  topHeader.style.position = "relative";
+  topHeader.appendChild(progressBar);
+}
 
 console.log("[main.js] DOM Elements:", {
   loadBtn,

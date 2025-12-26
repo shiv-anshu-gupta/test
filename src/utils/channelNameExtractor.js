@@ -26,21 +26,11 @@ export const extractChannelNameFromEquation = (equation) => {
   // Valid identifier: starts with letter or underscore, followed by letters, numbers, or underscores
   const match = equation.match(/^\s*([a-zA-Z_][a-zA-Z0-9_]*)\s*=/);
 
-  console.log("[channelNameExtractor] 🔍 Regex match result:", {
-    equation: equation,
-    pattern: "/^\\s*([a-zA-Z_][a-zA-Z0-9_]*)\\s*=/",
-    matched: !!match,
-    groups: match ? match.length : 0,
-    extractedName: match ? match[1] : null,
-  });
-
   if (match && match[1]) {
     const name = match[1].trim();
-    console.log("[channelNameExtractor] ✅ Extracted channel name:", name);
     return name;
   }
 
-  console.log("[channelNameExtractor] ❌ No channel name found in equation");
   return null;
 };
 

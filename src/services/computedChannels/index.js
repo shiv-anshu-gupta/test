@@ -51,21 +51,6 @@ export const handleComputedChannelEvaluation = async (payload) => {
     const { expression, unit } = payload;
     const { channelName, mathExpression } = validation1; // ← Extract from validator
 
-    console.log(
-      "[ComputedChannel] � Step 1 - Validation & Extraction complete:",
-      {
-        expression: expression,
-        extractedChannelName: channelName,
-        mathExpression: mathExpression,
-        unit: unit,
-      }
-    );
-
-    console.log("[ComputedChannel] �📛 Channel name extracted:", {
-      provided: channelName,
-      equation: expression,
-      fallbackExpression: mathExpression,
-    });
 
     // 2️⃣ VALIDATE DATA AVAILABILITY
     const cfgData =
@@ -97,10 +82,6 @@ export const handleComputedChannelEvaluation = async (payload) => {
 
     // 4️⃣ CONVERT EXPRESSION FORMAT
     const mathJsExpr = convertLatexToMathJs(expression);
-    console.log("[ComputedChannel] 📝 Expression converted:", {
-      original: expression,
-      converted: mathJsExpr,
-    });
 
     // 5️⃣ VALIDATE EXPRESSION SYNTAX
     const validation4 = validateExpressionSyntax(mathJsExpr);
@@ -134,8 +115,16 @@ export const handleComputedChannelEvaluation = async (payload) => {
     const worker = createComputedChannelWorker();
     const startTime = performance.now();
 
+    // Import progress functions
+    const { showProgress, updateProgress, hideProgress } = await import("../../components/ProgressBar.js");
+    
+    // Show progress bar immediately
+    showProgress(1, `Processing: ${channelName || expression.substring(0, 20)}...`);
+    
     const onProgress = (percent, processed, total) => {
       console.log(`[Worker] 📊 Progress: ${percent}% (${processed}/${total})`);
+      // Update UI progress bar
+      updateProgress(Math.max(1, percent), `Processing: ${percent}% (${processed}/${total})`);
     };
 
     const onSuccess = (
@@ -147,6 +136,8 @@ export const handleComputedChannelEvaluation = async (payload) => {
       cfgData
     ) => {
       console.log(`[ComputedChannel] ✅ Worker completed in ${elapsedMs}ms`);
+      // Hide progress bar
+      hideProgress();
 
       // Process results
       const results = convertResultsToArray(resultsBuffer);
@@ -180,6 +171,8 @@ export const handleComputedChannelEvaluation = async (payload) => {
 
     const onError = (message) => {
       console.error("[ComputedChannel] ❌ Error:", message);
+      // Hide progress bar on error
+      hideProgress();
       notifyChildWindowError(message);
     };
 
