@@ -51,7 +51,6 @@ export const handleComputedChannelEvaluation = async (payload) => {
     const { expression, unit } = payload;
     const { channelName, mathExpression } = validation1; // ← Extract from validator
 
-
     // 2️⃣ VALIDATE DATA AVAILABILITY
     const cfgData =
       window.globalCfg || (window.opener && window.opener.globalCfg);
@@ -116,15 +115,23 @@ export const handleComputedChannelEvaluation = async (payload) => {
     const startTime = performance.now();
 
     // Import progress functions
-    const { showProgress, updateProgress, hideProgress } = await import("../../components/ProgressBar.js");
-    
+    const { showProgress, updateProgress, hideProgress } = await import(
+      "../../components/ProgressBar.js"
+    );
+
     // Show progress bar immediately
-    showProgress(1, `Processing: ${channelName || expression.substring(0, 20)}...`);
-    
+    showProgress(
+      1,
+      `Processing: ${channelName || expression.substring(0, 20)}...`
+    );
+
     const onProgress = (percent, processed, total) => {
       console.log(`[Worker] 📊 Progress: ${percent}% (${processed}/${total})`);
       // Update UI progress bar
-      updateProgress(Math.max(1, percent), `Processing: ${percent}% (${processed}/${total})`);
+      updateProgress(
+        Math.max(1, percent),
+        `Processing: ${percent}% (${processed}/${total})`
+      );
     };
 
     const onSuccess = (

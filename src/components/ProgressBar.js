@@ -47,7 +47,7 @@ export function createProgressBar() {
   // Subscribe to progress state changes - check by property name
   progressState.subscribe((change) => {
     const propName = Array.isArray(change.path) ? change.path[0] : change.prop;
-    
+
     // Handle visible property change
     if (propName === "visible" || change.newValue !== undefined) {
       if (progressState.visible && progressState.percent > 0) {
@@ -57,7 +57,7 @@ export function createProgressBar() {
         progressBar.style.width = "0%";
       }
     }
-    
+
     // Handle percent property change
     if (propName === "percent") {
       const percent = Math.min(100, Math.max(0, progressState.percent));
