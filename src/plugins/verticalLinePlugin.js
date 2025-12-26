@@ -1,80 +1,9 @@
 /**
  * uPlot Plugin: Vertical Line & Crosshair Points
- *
- * Features:
- * - Draws one or more draggable vertical lines on a uPlot chart.
- * - Shows crosshair points at the intersection of each vertical line and all series.
- * - Customizable line color, width, point radius, and label formatting.
- * - Supports multi-chart synchronization (dragging a line updates all linked charts).
- * - Keyboard accessibility: can be extended for keyboard support.
- * - Robust event management and cleanup.
- * - Defensive programming for safe integration.
- *
- * Nuances, Limitations, and Known Issues:
- * - Dragging is only supported with the mouse; keyboard accessibility is not implemented by default but can be extended.
- * - The plugin expects the x-axis data to be sorted and continuous; erratic or non-monotonic x data may cause unexpected behavior.
- * - If multiple charts are synchronized, all must share the same x-axis domain for correct vertical line alignment.
- * - The plugin does not prevent vertical lines from overlapping; users can drag lines to the same x position.
- * - If the chart is resized rapidly or the DOM is manipulated externally, redraws may lag or lines may temporarily misalign.
- * - The plugin assumes the chart's overlay (`u.over`) is present and not replaced by other plugins or custom code.
- * - If the state object does not implement `.subscribe`, only direct array mutation will trigger redraws.
- * - The labelFormatter function receives the color as its only argument; for more context, you must wrap the plugin or extend it.
- * - The plugin is robust to missing or undefined chart/overlay references, but will silently do nothing if these are not present.
- * - If you use a reactive state, ensure you do not mutate the array in place; always replace the array to trigger subscribers.
- *
- * @param {Object|number[]} verticalLinesXState
- *   State object with a `.value` property (array of x positions) or a plain array of x positions.
- *   If using a state object, it should support `.subscribe(fn)` for reactive updates (optional).
- *
- * @param {function(): uPlot[]} [getCharts]
- *   Optional getter function that returns an array of all uPlot chart instances to synchronize.
- *   If provided, dragging a line will update/redraw all charts and recalculate deltas.
- *
- * @param {Object} [options]
- *   Customization options for appearance and behavior.
- * @param {string[]} [options.lineColors] - Array of colors for vertical lines (default: crosshairColors).
- * @param {number}   [options.lineWidth]  - Width of vertical lines (default: 2).
- * @param {number}   [options.pointRadius]- Radius of crosshair points (default: 5).
- * @param {function(string): string} [options.labelFormatter] - Function to format the label text (default: capitalizes color name).
- *
- * @returns {Object} uPlot plugin object with hooks for draw, ready, and destroy.
- *
- * @example <caption>Basic usage with a plain array</caption>
- * import verticalLinePlugin from './plugins/verticalLinePlugin.js';
- *
- * const verticalLines = [0.1, 0.5];
- * const opts = {
- *   ...otherUplotOptions,
- *   plugins: [verticalLinePlugin(verticalLines)]
- * };
- * new uPlot(opts, data, target);
- *
- * @example <caption>Usage with a reactive state object and multi-chart sync</caption>
- * import createState from './createState.js';
- * import verticalLinePlugin from './plugins/verticalLinePlugin.js';
- *
- * const verticalLinesState = createState([0.1, 0.5]);
- * const getCharts = () => [chart1, chart2];
- * const opts = {
- *   ...otherUplotOptions,
- *   plugins: [verticalLinePlugin(verticalLinesState, getCharts, {
- *     lineColors: ['#e41a1c', '#377eb8'],
- *     lineWidth: 3,
- *     pointRadius: 7,
- *     labelFormatter: (color) => `Line: ${color}`
- *   })]
- * };
- * const chart1 = new uPlot(opts, data1, target1);
- * const chart2 = new uPlot(opts, data2, target2);
- *
- * @example <caption>Custom label formatting</caption>
- * verticalLinePlugin(state, null, {
- *   labelFormatter: (color) => `T = ${color}`
- * });
+ * FIXED: Prevents selection box during drag using event capture phase
  */
 import { crosshairColors } from "../utils/constants.js";
 import { getNearestIndex } from "../utils/helpers.js";
-import { calculateDeltas } from "../utils/calculateDeltas.js";
 
 export default function verticalLinePlugin(
   verticalLinesXState,
@@ -85,7 +14,6 @@ export default function verticalLinePlugin(
   let draggedLineIndex = null;
   let overlayRef = null;
   let unsubscribe = null;
-  const handlerRefs = {};
   const lineColors = options.lineColors || crosshairColors;
   const lineWidth = options.lineWidth || 2;
   const pointRadius = options.pointRadius || 5;
@@ -98,14 +26,6 @@ export default function verticalLinePlugin(
     return lines.some((xData) => Math.abs(xVal - xData) < hoverRadius);
   }
 
-  function updateLines(state, lines) {
-    if (state && state.value !== undefined) {
-      state.value = Array.from(lines);
-    } else {
-      state = Array.from(lines);
-    }
-  }
-
   return {
     hooks: {
       init: [
@@ -113,13 +33,7 @@ export default function verticalLinePlugin(
           const overlay = u.over;
           overlayRef = overlay;
 
-          // ✅ Save the original setSelect function at init time
-          const originalSetSelect = u.setSelect.bind(u);
-
-          // ✅ Save original cursor.drag settings (the REAL culprit for selection box!)
-          const originalCursorDrag = { ...u.cursor.drag };
-
-          // Subscribe to vertical lines state changes to recalculate deltas
+          // Subscribe to state changes
           if (
             verticalLinesXState &&
             typeof verticalLinesXState.subscribe === "function"
@@ -143,7 +57,6 @@ export default function verticalLinePlugin(
                   }
                 }
 
-                // Update delta window with all collected data
                 if (allDeltaData.length > 0) {
                   try {
                     const { deltaWindow } = await import("../main.js");
@@ -151,90 +64,72 @@ export default function verticalLinePlugin(
                       deltaWindow.update(allDeltaData);
                     }
                   } catch (e) {
-                    // Silent fail - deltaWindow may not be available
+                    // Silent fail
                   }
                 }
               }
             });
           }
 
-          // ✅ MOUSEDOWN: Disable BOTH cursor.drag AND setSelect to prevent selection box
-          overlay.addEventListener("mousedown", (e) => {
+          // ✅ CRITICAL: Attach handlers in CAPTURE phase (true) to run BEFORE uPlot's handlers
+          const handleMouseDown = (e) => {
             if (!u || !u.scales || !u.data) return;
+
             const lines = verticalLinesXState.asArray();
             const xVal = u.posToVal(e.offsetX, "x");
             const hoverRadius = (u.scales.x.max - u.scales.x.min) * 0.01;
+
             for (let idx = 0; idx < lines.length; idx++) {
               const xData = lines[idx];
               if (Math.abs(xVal - xData) < hoverRadius) {
                 isDragging = true;
                 draggedLineIndex = idx;
 
-                // ✅ CRITICAL: Disable cursor.drag to prevent selection box
-                u.cursor.drag.x = false;
-                u.cursor.drag.y = false;
-
-                // ✅ Also disable setSelect as fallback
-                u.setSelect = function () {
-                  // Block all setSelect calls
-                  return;
-                };
-
-                e.preventDefault();
+                // ✅ STOP event from reaching uPlot's handlers
                 e.stopPropagation();
                 e.stopImmediatePropagation();
+                e.preventDefault();
+
                 u.redraw();
                 return;
               }
             }
-          });
+          };
 
-          overlay.addEventListener("mousemove", (e) => {
+          const handleMouseMove = (e) => {
+            if (!u || !u.scales) return;
+
             const xVal = u.posToVal(e.offsetX, "x");
             const hoverRadius = (u.scales.x.max - u.scales.x.min) * 0.005;
             const isHovering = isHoveringLine(u, xVal, hoverRadius);
+
             overlay.style.cursor = isHovering ? "ew-resize" : "default";
-            if (isHovering) {
-              e.preventDefault();
-              e.stopImmediatePropagation();
-            }
+
             if (isDragging) {
-              const xData = verticalLinesXState[draggedLineIndex];
-              e.preventDefault();
+              // ✅ BLOCK event during drag to prevent selection box
               e.stopPropagation();
               e.stopImmediatePropagation();
-              verticalLinesXState[draggedLineIndex] = xVal; // Update the state directly
-              console.log("MOUSEMOVE CALLED:", verticalLinesXState.asArray());
+              e.preventDefault();
+
+              verticalLinesXState[draggedLineIndex] = xVal;
+
+              // Sync with other charts
               if (getCharts) {
                 const charts = getCharts();
                 (async () => {
-                  // Update polar chart with dragged line position
-                  try {
-                    const { polarChart } = await import("../main.js");
-                    if (polarChart) {
-                      console.log(
-                        "[verticalLinePlugin] Updating polar chart during drag at:",
-                        x
-                      );
-                      // This will be called during drag, so update with current position
-                      // We need cfg and data though...
+                  for (let chart of charts) {
+                    if (chart && chart !== u && chart.redraw) {
+                      chart.redraw();
                     }
-                  } catch (e) {
-                    console.log(
-                      "[verticalLinePlugin] Cannot update polar chart:",
-                      e.message
-                    );
                   }
 
-                  // Collect delta data from ALL charts
+                  // Collect deltas
                   const { collectChartDeltas } = await import(
                     "../utils/calculateDeltas.js"
                   );
                   const allDeltaData = [];
 
                   for (const chart of charts) {
-                    chart.redraw(); // Redraw chart
-                    // Collect deltas from this chart
                     const chartDeltas = collectChartDeltas(
                       verticalLinesXState.asArray(),
                       chart,
@@ -245,8 +140,6 @@ export default function verticalLinePlugin(
                     }
                   }
 
-                  // Update delta window with combined data
-                  // Only show delta window if there are 2 or more vertical lines
                   const linesArray =
                     verticalLinesXState?.value || verticalLinesXState || [];
                   const linesLength = Array.isArray(linesArray)
@@ -257,80 +150,58 @@ export default function verticalLinePlugin(
                     try {
                       const { deltaWindow } = await import("../main.js");
                       if (deltaWindow) {
-                        deltaWindow.show(); // OPEN THE POPUP WINDOW
+                        deltaWindow.show();
                         deltaWindow.update(allDeltaData);
                       }
                     } catch (e) {
-                      // Silent fail - deltaWindow may not be available
+                      // Silent fail
                     }
                   }
                 })();
               }
             }
-          });
+          };
 
-          overlay.addEventListener("mouseup", (event) => {
+          const handleMouseUp = (e) => {
             if (isDragging) {
               isDragging = false;
               draggedLineIndex = null;
-
-              // ✅ RESTORE original cursor.drag settings
-              u.cursor.drag.x = originalCursorDrag.x;
-              u.cursor.drag.y = originalCursorDrag.y;
-
-              // ✅ RESTORE original setSelect function
-              u.setSelect = originalSetSelect;
-
-              // ✅ Clear any lingering selection box
-              u.setSelect({ left: 0, top: 0, width: 0, height: 0 });
-
               overlay.style.cursor = "default";
 
-              event.preventDefault();
-              event.stopPropagation();
-              event.stopImmediatePropagation();
+              // ✅ BLOCK event to prevent unwanted selection
+              e.stopPropagation();
+              e.stopImmediatePropagation();
+              e.preventDefault();
             }
-          });
+          };
 
-          overlay.addEventListener("mouseleave", () => {
-            // Handle edge case: if drag ends outside chart area
-            if (isDragging) {
-              isDragging = false;
-              draggedLineIndex = null;
-              u.cursor.drag.x = originalCursorDrag.x;
-              u.cursor.drag.y = originalCursorDrag.y;
-              u.setSelect = originalSetSelect;
-              overlay.style.cursor = "default";
-            }
-          });
-        },
-      ],
-      drawSeries: [
-        (u, seriesIdx) => {
-          // No-op on drawSeries - we use a separate layer
+          // ✅ Use CAPTURE phase (true) to intercept events BEFORE uPlot's bubble phase
+          overlay.addEventListener("mousedown", handleMouseDown, true);
+          overlay.addEventListener("mousemove", handleMouseMove, true);
+          overlay.addEventListener("mouseup", handleMouseUp, true);
+
+          overlay.addEventListener(
+            "mouseleave",
+            () => {
+              if (isDragging) {
+                isDragging = false;
+                draggedLineIndex = null;
+                overlay.style.cursor = "default";
+              }
+            },
+            true
+          );
         },
       ],
       draw: [
         (u) => {
-          // This runs after all series are drawn
-          // Defensive: ensure verticalLinesXState is available
-          if (!verticalLinesXState) {
-            return;
-          }
-
-          // Validate chart data exists
-          if (!u.data || !u.data[0] || u.data[0].length === 0) {
-            return;
-          }
+          if (!verticalLinesXState) return;
+          if (!u.data || !u.data[0] || u.data[0].length === 0) return;
 
           const ctx = u.ctx;
           const { top, height } = u.bbox;
 
-          // Validate bbox
-          if (!top || !height) {
-            console.warn("[verticalLinePlugin] Invalid chart bbox");
-            return;
-          }
+          if (!top || !height || !ctx) return;
 
           const lines =
             typeof verticalLinesXState.asArray === "function"
@@ -339,62 +210,37 @@ export default function verticalLinePlugin(
               ? verticalLinesXState
               : verticalLinesXState.value || [];
 
-          // Ensure we have valid context
-          if (!ctx) {
-            console.warn("[verticalLinePlugin] No canvas context available");
-            return;
-          }
-
-          // Log for debugging with multiple files
-          if (lines.length > 0) {
-            console.log(
-              "[verticalLinePlugin.draw] Rendering",
-              lines.length,
-              "lines for chart with",
-              u.data.length - 1,
-              "series"
-            );
-          }
-
           ctx.save();
-          ctx.lineWidth = options.lineWidth || 2;
+          ctx.lineWidth = lineWidth;
 
           lines.forEach((xData, idx) => {
             try {
               const nearestIdx = getNearestIndex(u.data[0], xData);
 
-              // Validate nearestIdx
               if (
                 !Number.isFinite(nearestIdx) ||
                 nearestIdx < 0 ||
                 nearestIdx >= u.data[0].length
               ) {
-                console.warn(
-                  "[verticalLinePlugin] Invalid nearestIdx:",
-                  nearestIdx
-                );
                 return;
               }
 
               const xPos = u.valToPos(u.data[0][nearestIdx], "x", true);
-              const color = (options.lineColors || crosshairColors)[
-                idx % crosshairColors.length
-              ];
+              const color = lineColors[idx % lineColors.length];
 
-              // Draw vertical line with higher z-order
+              // Draw vertical line
               ctx.strokeStyle = color;
-              ctx.globalAlpha = 1; // Ensure full opacity
+              ctx.globalAlpha = 1;
               ctx.beginPath();
               ctx.moveTo(xPos, top);
               ctx.lineTo(xPos, top + height);
               ctx.stroke();
 
-              // Draw crosshair points with interpolation for different sampling rates
+              // Draw crosshair points
               u.data.slice(1).forEach((series, seriesIdx) => {
                 const actualIdx = seriesIdx + 1;
                 if (!u.series[actualIdx]) return;
 
-                // Get interpolated value
                 const interpolatedValue = getInterpolatedValue(
                   u.data[0],
                   series,
@@ -404,7 +250,7 @@ export default function verticalLinePlugin(
 
                 const yPos = u.valToPos(interpolatedValue, "y", true);
                 ctx.beginPath();
-                ctx.arc(xPos, yPos, options.pointRadius || 5, 0, 2 * Math.PI);
+                ctx.arc(xPos, yPos, pointRadius, 0, 2 * Math.PI);
                 ctx.fillStyle = color;
                 ctx.globalAlpha = 1;
                 ctx.fill();
@@ -412,18 +258,12 @@ export default function verticalLinePlugin(
 
               // Draw label
               ctx.font = "bold 12px Arial";
-              ctx.fillStyle = lineColors[idx % lineColors.length];
+              ctx.fillStyle = color;
               ctx.globalAlpha = 1;
-              ctx.fillText(
-                labelFormatter(lineColors[idx % lineColors.length]),
-                xPos + 5,
-                u.bbox.top + 15
-              );
+              ctx.fillText(labelFormatter(color), xPos + 5, u.bbox.top + 15);
             } catch (err) {
               console.error(
-                "[verticalLinePlugin] Error drawing line",
-                idx,
-                ":",
+                "[verticalLinePlugin] Error drawing line:",
                 err.message
               );
             }
@@ -431,20 +271,11 @@ export default function verticalLinePlugin(
           ctx.restore();
         },
       ],
-      /*       setSelect: [
-        function(u, select) {
-          // Prevent infinite recursion: only clear selection if select is not null/false
-          if (isDragging && flag == false) {
-            flag = true
-            console.log("SETSELECT called during dragging, clearing selection once");
-            u.setSelect(null); // This will not recurse infinitely because we check select
-          }
-        }
-      ], */
       destroy: [
         (u) => {
+          if (unsubscribe) unsubscribe();
           if (overlayRef) {
-            overlayRef.replaceWith(overlayRef.cloneNode(true)); // Remove all event listeners
+            overlayRef.replaceWith(overlayRef.cloneNode(true));
           }
         },
       ],
@@ -452,14 +283,12 @@ export default function verticalLinePlugin(
   };
 }
 
-// helpers
+// Helper function for value interpolation
 function getInterpolatedValue(xData, yData, targetX, nearestIdx) {
-  // If target X is exactly at a data point, return the value directly
   if (xData[nearestIdx] === targetX) {
     return yData[nearestIdx];
   }
 
-  // Find two surrounding points for linear interpolation
   let idx1 = nearestIdx;
   let idx2 = nearestIdx;
 
@@ -475,16 +304,10 @@ function getInterpolatedValue(xData, yData, targetX, nearestIdx) {
   const y1 = yData[idx1];
   const y2 = yData[idx2];
 
-  // Handle edge cases
   if (x1 === x2 || typeof y1 !== "number" || typeof y2 !== "number") {
     return yData[nearestIdx];
   }
 
-  // Linear interpolation: y = y1 + (y2 - y1) * (x - x1) / (x2 - x1)
   const interpolated = y1 + ((y2 - y1) * (targetX - x1)) / (x2 - x1);
   return interpolated;
-}
-
-function isArrayLike(a) {
-  return a && typeof a.length === "number";
 }
