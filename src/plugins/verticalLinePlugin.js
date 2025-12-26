@@ -113,6 +113,9 @@ export default function verticalLinePlugin(
 
               verticalLinesXState[draggedLineIndex] = xVal;
 
+              // ✅ IMMEDIATELY redraw the current chart being dragged for smooth movement
+              u.redraw();
+
               // Sync with other charts
               if (getCharts) {
                 const charts = getCharts();
