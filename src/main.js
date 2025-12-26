@@ -1146,6 +1146,21 @@ export const channelState = createState({
     xLabel: "",
     xUnit: "",
   },
+  computed: {
+    channelIDs: [],
+    yLabels: [],
+    lineColors: [],
+    yUnits: [],
+    groups: [],
+    // per-channel parameters managed by ChannelList
+    scales: [],
+    starts: [],
+    durations: [],
+    inverts: [],
+    equations: [],
+    xLabel: "Time",
+    xUnit: "sec",
+  },
 });
 
 // Small runtime helper to inspect key runtime structures from DevTools.
@@ -1527,6 +1542,7 @@ window.addEventListener("mergedFilesReceived", async (event) => {
         );
       }
     }
+    subscribeToComputedChannelStateChanges();
     setupComputedChannelsListener();
 
     // Yield to event loop
@@ -2760,6 +2776,38 @@ function initializeChannelState(cfg, data) {
   });
   channelState.digital.xLabel = "Time";
   channelState.digital.xUnit = "sec";
+}
+
+/**
+ * Subscribe to channelState.computed changes for tabulator updates
+ */
+function subscribeToComputedChannelStateChanges() {
+  channelState.subscribe(
+    (change) => {
+      console.log("[Main] channelState.computed changed:", change.path);
+
+      // Notify any open channel list windows to refresh
+      if (window.channelListWindow && !window.channelListWindow.closed) {
+        window.channelListWindow.postMessage(
+          {
+            type: "COMPUTED_CHANNEL_STATE_UPDATED",
+            computedChannels: channelState.computed.channelIDs.map(
+              (id, idx) => ({
+                id,
+                name: channelState.computed.yLabels[idx],
+                unit: channelState.computed.yUnits[idx],
+                color: channelState.computed.lineColors[idx],
+                group: channelState.computed.groups[idx],
+                equation: channelState.computed.equations[idx],
+              })
+            ),
+          },
+          "*"
+        );
+      }
+    },
+    { path: "computed", descendants: true }
+  );
 }
 
 /**

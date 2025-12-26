@@ -455,6 +455,27 @@ export function showChannelListWindow(
           }))
         : [];
 
+    // Also include computed channels from channelState if available
+    if (
+      channelState?.computed?.channelIDs &&
+      channelState.computed.channelIDs.length > 0
+    ) {
+      channelState.computed.channelIDs.forEach((id, idx) => {
+        // Only add if not already in computedChannels
+        if (!computedChannels.some((ch) => ch.id === id)) {
+          computedChannels.push({
+            id,
+            name: channelState.computed.yLabels[idx] || id,
+            type: "Computed",
+            unit: channelState.computed.yUnits[idx] || "",
+            group: channelState.computed.groups[idx] || "Computed",
+            color: channelState.computed.lineColors[idx] || "#FF6B6B",
+            idx: computedChannels.length,
+          });
+        }
+      });
+    }
+
     console.log(
       "[showChannelListWindow] cfg.computedChannels:",
       cfg?.computedChannels
@@ -491,6 +512,9 @@ export function showChannelListWindow(
     // win.document.getElementById("channel-root").appendChild(listEl);
 
     const root = win.document.getElementById("channel-root");
+
+    // Update globalCfg to use channelListCfg so that MathLive editor has access to all channels
+    win.globalCfg = channelListCfg;
 
     // Inject a small module script into the popup so the ChannelList code runs
     // inside the child window context. That allows the child to postMessage

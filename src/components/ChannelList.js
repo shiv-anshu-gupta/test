@@ -2302,6 +2302,47 @@ export function createChannelList(
           try {
             const d = ev && ev.data;
             if (!d || d.source !== "ParentWindow") return;
+
+            // Handle computed channel state updates from parent
+            if (
+              d.type === "COMPUTED_CHANNEL_STATE_UPDATED" &&
+              d.computedChannels
+            ) {
+              console.log(
+                "[ChannelList] Received computed channel update:",
+                d.computedChannels
+              );
+
+              // Add new computed channels to table
+              d.computedChannels.forEach((ch) => {
+                const existingRow = table.getRows().find((r) => {
+                  const rowData = r.getData();
+                  return (
+                    rowData.type === "Computed" && rowData.name === ch.name
+                  );
+                });
+
+                if (!existingRow) {
+                  table.addRow(
+                    {
+                      id: table.getRows().length + 1,
+                      type: "Computed",
+                      name: ch.name,
+                      unit: ch.unit || "",
+                      group: ch.group || "Computed",
+                      color: ch.color || "#FF6B6B",
+                      scale: 1,
+                      start: 0,
+                      duration: "",
+                      invert: false,
+                    },
+                    false
+                  );
+                }
+              });
+              return;
+            }
+
             if (d.type === "ack_addChannel" && d.payload) {
               const { tempClientId, channelID, assignedIndex } = d.payload;
               if (!tempClientId || !channelID) return;
@@ -2454,13 +2495,30 @@ export function createChannelList(
             },
           };
 
+          // Get all available channels for dropdown
+          const analogChannels = (cfg.analogChannels || []).map((ch, idx) => {
+            const label = ch.id || `Analog ${idx + 1}`;
+            return {
+              label,
+              latex: label, // Use actual channel name as LaTeX
+            };
+          });
+          const digitalChannels = (cfg.digitalChannels || []).map((ch, idx) => {
+            const label = ch.id || `Digital ${idx + 1}`;
+            return {
+              label,
+              latex: label, // Use actual channel name as LaTeX
+            };
+          });
+          const allChannels = [...analogChannels, ...digitalChannels];
+
           // Open the expression editor with the temporary cell (NOT added to table yet)
           // We pass cfg and data directly so evaluation works
           openMathLiveEditor(
             tempCell,
             doc,
             doc.defaultView || window,
-            [],
+            allChannels,
             {},
             cfg,
             data
