@@ -113,6 +113,9 @@ export default function verticalLinePlugin(
           const overlay = u.over;
           overlayRef = overlay;
 
+          // ✅ Save the original setSelect function at init time
+          const originalSetSelect = u.setSelect.bind(u);
+
           // Subscribe to vertical lines state changes to recalculate deltas
           if (
             verticalLinesXState &&
