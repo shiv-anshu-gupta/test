@@ -164,6 +164,12 @@ export default function verticalLinePlugin(
               if (Math.abs(xVal - xData) < hoverRadius) {
                 isDragging = true;
                 draggedLineIndex = idx;
+                
+                // ✅ DISABLE uPlot's selection while dragging vertical line
+                u.setSelect = function() {
+                  // Do nothing - block all selection updates during drag
+                };
+
                 e.preventDefault();
                 e.stopPropagation();
                 e.stopImmediatePropagation();
@@ -256,21 +262,18 @@ export default function verticalLinePlugin(
           overlay.addEventListener("mouseup", (event) => {
             if (isDragging) {
               isDragging = false;
-              setTimeout(() => u.setSelect(null), 0); // Clear selection to prevent unwanted behavior
               event.stopPropagation();
               event.preventDefault();
               event.stopImmediatePropagation();
+              
+              // ✅ RE-ENABLE uPlot's selection after drag ends
+              u.setSelect = originalSetSelect;
+              
+              // ✅ Clear any lingering selection box
+              u.setSelect({ left: 0, top: 0, width: 0, height: 0 });
+              
               overlay.style.cursor = "default";
-              //   u.setSelect({left: 0, top: 0, width: 0, height: 0}); // Clear selection to prevent unwanted behavior
               draggedLineIndex = null;
-              const origSetSelect = u.setSelect;
-              u.setSelect = function (sel) {
-                if (isDragging) {
-                  origSetSelect.call(u, null);
-                } else {
-                  origSetSelect.call(u, sel);
-                }
-              };
             }
           });
 
