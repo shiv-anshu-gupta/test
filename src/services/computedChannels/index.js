@@ -94,8 +94,14 @@ export const handleComputedChannelEvaluation = async (payload) => {
     }
 
     // 6️⃣ PREPARE DATA FOR WORKER
+    // ✅ OPTIMIZATION: Only convert channels used in the expression
     const { analogBuffers, digitalBuffers, transferableObjects } =
-      convertToTransferableBuffers(analogArray, digitalArray);
+      convertToTransferableBuffers(
+        analogArray,
+        digitalArray,
+        mathJsExpr,
+        cfgData
+      );
     const { analogChannelsMeta, digitalChannelsMeta } =
       serializeChannelMetadata(cfgData);
     const workerTask = buildWorkerTask(
