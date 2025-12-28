@@ -1692,9 +1692,8 @@ window.addEventListener("mergedFilesReceived", async (event) => {
 });
 console.log("[main.js] mergedFilesReceived event listener attached");
 
-// Initialize sidebar registry system - ensures only one sidebar visible at a time
-// Both Analysis sidebar and Delta drawer start closed by default
-initSidebarSystem();
+// Note: initSidebarSystem() is now called in DOMContentLoaded (see below)
+// This ensures the DOM is ready before initializing the sidebar system
 
 // DOM Elements for Phasor/Analysis Controls
 const mainContent = document.querySelector("main");
@@ -2028,6 +2027,11 @@ function setupHtmlButtonHandlers() {
 
 // Setup handlers after first render
 document.addEventListener("DOMContentLoaded", () => {
+  // Initialize sidebar system FIRST (before button handlers)
+  // This ensures sidebars are registered before buttons try to control them
+  // and before the DOM elements are accessed
+  initSidebarSystem();
+
   setupAnalysisSidebarHandlers();
   setupHtmlButtonHandlers();
 });
