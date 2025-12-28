@@ -287,7 +287,7 @@ export async function calculateDeltas(
     deltaData.push(section);
   }
 
-  // Update delta window if available
+  // Update delta drawer if available
   // Show drawer whenever there are vertical lines (even if just 1)
   try {
     const { deltaWindow } = await import("../main.js");

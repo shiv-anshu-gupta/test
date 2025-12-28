@@ -156,7 +156,7 @@ export default function verticalLinePlugin(
                     try {
                       const { deltaWindow } = await import("../main.js");
                       if (deltaWindow) {
-                        deltaWindow.show();
+                        deltaWindow.show(); // Show the drawer when dragging lines
                         deltaWindow.update(allDeltaData, linesLength);
                       }
                     } catch (e) {

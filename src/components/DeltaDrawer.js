@@ -229,13 +229,6 @@ export function createDeltaDrawer() {
         </div>
       </div>
     </div>
-
-    <button id="delta-drawer-toggle" title="Open delta measurements (ESC)">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-        <path d="M15 19H9m0-14h6M9 5v14" stroke-linecap="round" stroke-linejoin="round" />
-      </svg>
-      Δ Data
-    </button>
   `;
 
   function injectDrawerHTML() {
@@ -246,24 +239,21 @@ export function createDeltaDrawer() {
     styleContainer.innerHTML = styleHTML;
     document.head.appendChild(styleContainer.firstElementChild);
 
-    // Inject drawer HTML
+    // Inject drawer HTML (without button - using HTML button from index.html instead)
     const container = document.createElement("div");
     container.innerHTML = drawerHTML;
     document.body.appendChild(container.firstElementChild);
-    document.body.appendChild(container.lastElementChild);
 
     setupEventListeners();
   }
 
   function setupEventListeners() {
     const drawer = document.getElementById("delta-drawer");
-    const backdrop = document.getElementById("delta-drawer-backdrop");
-    const panel = document.getElementById("delta-drawer-panel");
     const closeBtn = document.getElementById("delta-drawer-close");
-    const toggleBtn = document.getElementById("delta-drawer-toggle");
+    const panel = document.getElementById("delta-drawer-panel");
     const scrim = document.getElementById("delta-drawer-scrim");
 
-    if (!drawer || !closeBtn || !toggleBtn) return;
+    if (!drawer || !closeBtn) return;
 
     // Close drawer
     const closeDrawer = () => {
@@ -274,24 +264,9 @@ export function createDeltaDrawer() {
       panel.classList.remove("open");
     };
 
-    // Open drawer
-    const openDrawer = () => {
-      injectDrawerHTML(); // Ensure it exists
-      const drawer = document.getElementById("delta-drawer");
-      const panel = document.getElementById("delta-drawer-panel");
-      const scrim = document.getElementById("delta-drawer-scrim");
-
-      isOpen = true;
-      drawer.style.display = "block";
-      drawer.classList.add("open");
-      scrim.style.display = "block";
-      panel.classList.add("open");
-    };
-
     closeBtn.addEventListener("click", closeDrawer);
     // Don't close on backdrop click - portal should not block parent
     // backdrop.addEventListener("click", closeDrawer);
-    toggleBtn.addEventListener("click", openDrawer);
 
     // Close on Escape key
     document.addEventListener("keydown", (e) => {
@@ -312,14 +287,21 @@ export function createDeltaDrawer() {
       const panel = document.getElementById("delta-drawer-panel");
       const scrim = document.getElementById("delta-drawer-scrim");
 
-      if (!drawer) return;
+      if (!drawer) {
+        console.error("[DeltaDrawer] Failed to inject drawer HTML");
+        return;
+      }
 
       isOpen = true;
       drawer.style.display = "block";
       drawer.classList.add("open");
-      backdrop.style.opacity = "1";
-      scrim.style.display = "block";
-      panel.classList.add("open");
+      if (backdrop) backdrop.style.opacity = "1";
+      if (scrim) scrim.style.display = "block";
+      if (panel) {
+        panel.classList.add("open");
+        panel.style.transform = "translateX(0)";
+      }
+      console.log("[DeltaDrawer] Drawer shown successfully");
     },
 
     hide: () => {
@@ -329,14 +311,22 @@ export function createDeltaDrawer() {
       const panel = document.getElementById("delta-drawer-panel");
       const scrim = document.getElementById("delta-drawer-scrim");
 
-      if (!drawer) return;
+      if (!drawer) {
+        console.warn("[DeltaDrawer] Drawer not found in DOM");
+        isOpen = false;
+        return;
+      }
 
       isOpen = false;
       drawer.classList.remove("open");
       drawer.style.display = "none";
-      backdrop.style.opacity = "0";
-      scrim.style.display = "none";
-      if (panel) panel.classList.remove("open");
+      if (backdrop) backdrop.style.opacity = "0";
+      if (scrim) scrim.style.display = "none";
+      if (panel) {
+        panel.classList.remove("open");
+        panel.style.transform = "translateX(100%)";
+      }
+      console.log("[DeltaDrawer] Drawer hidden successfully");
     },
 
     update: (deltaData = [], verticalLinesCount = 0) => {

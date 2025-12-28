@@ -1998,37 +1998,43 @@ function setupAnalysisSidebarHandlers() {
 function setupHtmlButtonHandlers() {
   console.log("[main.js] Setting up HTML button handlers");
 
-  // Analysis button (opens analysis sidebar)
+  // Analysis button (left sidebar - opens Phasor Diagram)
   const analysisBtn = document.getElementById("Analysis");
   if (analysisBtn) {
     analysisBtn.addEventListener("click", () => {
-      console.log("[main.js] Analysis button clicked");
-      // Ensure sidebar HTML is injected first
-      analysisSidebar.show();
-      console.log("[main.js] Analysis sidebar opened");
+      console.log("[main.js] ⚡ Analysis button clicked");
+      sidebarStore.toggle("analysis-sidebar");
+      console.log("[main.js] ✅ Analysis sidebar toggled via sidebarStore");
     });
-    console.log("[main.js] Analysis button handler attached");
+    console.log("[main.js] ✓ Analysis button handler attached");
   } else {
-    console.warn("[main.js] Analysis button not found in DOM");
+    console.warn("[main.js] ⚠️ Analysis button not found in DOM");
   }
 
-  // Delta button (opens delta drawer)
+  // Delta button (right drawer - opens Delta Measurements)
   const deltaBtn = document.getElementById("delta-values");
   if (deltaBtn) {
-    deltaBtn.addEventListener("click", () => {
-      console.log("[main.js] Delta button clicked");
-      // Check if drawer is open, if so close it, if closed open it
-      if (deltaWindow.isOpen()) {
-        deltaWindow.hide();
-        console.log("[main.js] Delta drawer closed");
-      } else {
-        deltaWindow.show();
-        console.log("[main.js] Delta drawer opened");
+    deltaBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      console.log("[main.js] ⚡ Delta's button clicked");
+      console.log("[main.js] deltaWindow state:", deltaWindow.isOpen());
+      try {
+        if (deltaWindow.isOpen()) {
+          console.log("[main.js] Closing delta drawer");
+          deltaWindow.hide();
+          console.log("[main.js] ✅ Delta drawer closed");
+        } else {
+          console.log("[main.js] Opening delta drawer");
+          deltaWindow.show();
+          console.log("[main.js] ✅ Delta drawer opened");
+        }
+      } catch (err) {
+        console.error("[main.js] Error toggling delta drawer:", err);
       }
     });
-    console.log("[main.js] Delta button handler attached");
+    console.log("[main.js] ✓ Delta button handler attached successfully");
   } else {
-    console.warn("[main.js] Delta button (delta-values) not found in DOM");
+    console.warn("[main.js] ⚠️ Delta button (delta-values) not found in DOM");
   }
 }
 
