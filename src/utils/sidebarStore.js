@@ -23,7 +23,7 @@ class SidebarStore {
    */
   register(id, config) {
     if (!id || !config.show || !config.hide || !config.isOpen) {
-      console.error('[SidebarStore] Invalid configuration for sidebar:', id);
+      console.error("[SidebarStore] Invalid configuration for sidebar:", id);
       return false;
     }
 
@@ -32,7 +32,10 @@ class SidebarStore {
       show: config.show,
       hide: config.hide,
       isOpen: config.isOpen,
-      isClosedByDefault: config.isClosedByDefault !== undefined ? config.isClosedByDefault : true,
+      isClosedByDefault:
+        config.isClosedByDefault !== undefined
+          ? config.isClosedByDefault
+          : true,
     });
 
     console.log(`[SidebarStore] Registered sidebar: ${id}`);
@@ -97,7 +100,7 @@ class SidebarStore {
       }
     });
     this.activeSidebar = null;
-    console.log('[SidebarStore] Hidden all sidebars');
+    console.log("[SidebarStore] Hidden all sidebars");
   }
 
   /**

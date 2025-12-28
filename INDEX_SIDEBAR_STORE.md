@@ -5,14 +5,18 @@
 If you're new to the Global Sidebar Store system, start with these files in order:
 
 ### 1. **Quick Overview** (5 min read)
+
 📄 [SIDEBAR_STORE_QUICK_REFERENCE.md](SIDEBAR_STORE_QUICK_REFERENCE.md)
+
 - Quick commands
 - What it does
 - Common use cases
 - Debugging in console
 
 ### 2. **Understanding the Change** (10 min read)
+
 📄 [SIDEBAR_STORE_README.md](SIDEBAR_STORE_README.md)
+
 - What the system does
 - Why it was created
 - How it works
@@ -20,7 +24,9 @@ If you're new to the Global Sidebar Store system, start with these files in orde
 - How to add new sidebars
 
 ### 3. **Architecture Comparison** (10 min read)
+
 📄 [SIDEBAR_STORE_BEFORE_AFTER.md](SIDEBAR_STORE_BEFORE_AFTER.md)
+
 - Before state (problems)
 - After state (solutions)
 - Code comparison
@@ -28,7 +34,9 @@ If you're new to the Global Sidebar Store system, start with these files in orde
 - Technical improvements
 
 ### 4. **For Developers** (15 min read)
+
 📄 [SIDEBAR_STORE_DEVELOPER_GUIDE.md](SIDEBAR_STORE_DEVELOPER_GUIDE.md)
+
 - Integration checklist
 - How to use in code
 - How to register new sidebars
@@ -39,7 +47,9 @@ If you're new to the Global Sidebar Store system, start with these files in orde
 ## 📖 Reference Documents
 
 ### Complete Implementation Summary
+
 📄 [SIDEBAR_STORE_IMPLEMENTATION_SUMMARY.md](SIDEBAR_STORE_IMPLEMENTATION_SUMMARY.md)
+
 - What was created
 - Problems solved
 - Files created/modified
@@ -49,7 +59,9 @@ If you're new to the Global Sidebar Store system, start with these files in orde
 - Production status
 
 ### API Documentation (for developers)
+
 📄 [src/utils/SIDEBAR_STORE_DOCUMENTATION.js](src/utils/SIDEBAR_STORE_DOCUMENTATION.js)
+
 - Full API reference
 - Usage examples
 - How to register sidebars
@@ -60,18 +72,23 @@ If you're new to the Global Sidebar Store system, start with these files in orde
 ## 🔧 Implementation Files
 
 ### Core Implementation
+
 📂 [src/utils/sidebarStore.js](src/utils/sidebarStore.js)
+
 - SidebarStore class (singleton)
 - All state management logic
 - ~185 lines of well-documented code
 
 ### Integration Points
+
 📂 [src/main.js](src/main.js) (Modified)
+
 - `initSidebarSystem()` function
 - Registers "analysis-sidebar"
 - Calls `deltaWindow.registerWithStore()`
 
 📂 [src/components/DeltaDrawer.js](src/components/DeltaDrawer.js) (Modified)
+
 - `registerWithStore()` method
 - Registers "delta-drawer"
 
@@ -79,33 +96,33 @@ If you're new to the Global Sidebar Store system, start with these files in orde
 
 ### What's Registered
 
-| ID | Name | Location | Default |
-|----|------|----------|---------|
-| `analysis-sidebar` | Phasor Analysis | Left sidebar | Closed |
-| `delta-drawer` | Delta Measurements | Right drawer | Closed |
+| ID                 | Name               | Location     | Default |
+| ------------------ | ------------------ | ------------ | ------- |
+| `analysis-sidebar` | Phasor Analysis    | Left sidebar | Closed  |
+| `delta-drawer`     | Delta Measurements | Right drawer | Closed  |
 
 ### Basic API
 
 ```javascript
-import { sidebarStore } from './src/utils/sidebarStore.js';
+import { sidebarStore } from "./src/utils/sidebarStore.js";
 
-sidebarStore.show('sidebar-id');       // Show sidebar
-sidebarStore.hide('sidebar-id');       // Hide sidebar
-sidebarStore.toggle('sidebar-id');     // Toggle visibility
-sidebarStore.getActiveSidebar();       // Check current
-sidebarStore.isOpen('sidebar-id');     // Is it open?
+sidebarStore.show("sidebar-id"); // Show sidebar
+sidebarStore.hide("sidebar-id"); // Hide sidebar
+sidebarStore.toggle("sidebar-id"); // Toggle visibility
+sidebarStore.getActiveSidebar(); // Check current
+sidebarStore.isOpen("sidebar-id"); // Is it open?
 ```
 
 ## 📋 Documentation Overview
 
-| File | Purpose | Read Time |
-|------|---------|-----------|
-| SIDEBAR_STORE_QUICK_REFERENCE.md | Quick lookup | 5 min |
-| SIDEBAR_STORE_README.md | User guide | 10 min |
-| SIDEBAR_STORE_BEFORE_AFTER.md | Architecture | 10 min |
-| SIDEBAR_STORE_DEVELOPER_GUIDE.md | Developer reference | 15 min |
-| SIDEBAR_STORE_IMPLEMENTATION_SUMMARY.md | Complete details | 15 min |
-| src/utils/SIDEBAR_STORE_DOCUMENTATION.js | API docs | 20 min |
+| File                                     | Purpose             | Read Time |
+| ---------------------------------------- | ------------------- | --------- |
+| SIDEBAR_STORE_QUICK_REFERENCE.md         | Quick lookup        | 5 min     |
+| SIDEBAR_STORE_README.md                  | User guide          | 10 min    |
+| SIDEBAR_STORE_BEFORE_AFTER.md            | Architecture        | 10 min    |
+| SIDEBAR_STORE_DEVELOPER_GUIDE.md         | Developer reference | 15 min    |
+| SIDEBAR_STORE_IMPLEMENTATION_SUMMARY.md  | Complete details    | 15 min    |
+| src/utils/SIDEBAR_STORE_DOCUMENTATION.js | API docs            | 20 min    |
 
 **Total: ~85 minutes of comprehensive documentation**
 
@@ -122,12 +139,14 @@ sidebarStore.isOpen('sidebar-id');     // Is it open?
 ## 🚀 Getting Started
 
 ### For End Users
+
 1. Read: [SIDEBAR_STORE_README.md](SIDEBAR_STORE_README.md)
 2. Open app and see both sidebars closed by default
 3. Click buttons to open sidebars
 4. Only one shows at a time
 
 ### For Developers
+
 1. Read: [SIDEBAR_STORE_QUICK_REFERENCE.md](SIDEBAR_STORE_QUICK_REFERENCE.md)
 2. Read: [SIDEBAR_STORE_DEVELOPER_GUIDE.md](SIDEBAR_STORE_DEVELOPER_GUIDE.md)
 3. Import sidebarStore in your code
@@ -135,6 +154,7 @@ sidebarStore.isOpen('sidebar-id');     // Is it open?
 5. See [SIDEBAR_STORE_DOCUMENTATION.js](src/utils/SIDEBAR_STORE_DOCUMENTATION.js) for full API
 
 ### For Architects
+
 1. Read: [SIDEBAR_STORE_BEFORE_AFTER.md](SIDEBAR_STORE_BEFORE_AFTER.md)
 2. Read: [SIDEBAR_STORE_IMPLEMENTATION_SUMMARY.md](SIDEBAR_STORE_IMPLEMENTATION_SUMMARY.md)
 3. Review [src/utils/sidebarStore.js](src/utils/sidebarStore.js)
@@ -143,6 +163,7 @@ sidebarStore.isOpen('sidebar-id');     // Is it open?
 ## 🔍 Feature Summary
 
 ### ✅ What It Does
+
 - Ensures only ONE sidebar is visible at a time
 - Both sidebars start CLOSED by default
 - Provides centralized state management
@@ -151,6 +172,7 @@ sidebarStore.isOpen('sidebar-id');     // Is it open?
 - Console logging for debugging
 
 ### ✅ Problem It Solves
+
 - Prevents overlapping sidebars
 - Gives maximum chart view area
 - Simplifies UI state management
@@ -158,6 +180,7 @@ sidebarStore.isOpen('sidebar-id');     // Is it open?
 - Provides consistent behavior
 
 ### ✅ Extensibility
+
 - Add new sidebars in 5 minutes
 - Add animations between transitions
 - Add keyboard shortcuts
@@ -167,6 +190,7 @@ sidebarStore.isOpen('sidebar-id');     // Is it open?
 ## 📞 Support
 
 ### Questions about...
+
 - **"How do I use it?"** → See [SIDEBAR_STORE_DEVELOPER_GUIDE.md](SIDEBAR_STORE_DEVELOPER_GUIDE.md)
 - **"What changed?"** → See [SIDEBAR_STORE_BEFORE_AFTER.md](SIDEBAR_STORE_BEFORE_AFTER.md)
 - **"What's the full API?"** → See [src/utils/SIDEBAR_STORE_DOCUMENTATION.js](src/utils/SIDEBAR_STORE_DOCUMENTATION.js)
@@ -198,17 +222,20 @@ Docs/
 ## 🎓 Learning Paths
 
 ### Path 1: Quick User (15 minutes)
+
 1. [SIDEBAR_STORE_QUICK_REFERENCE.md](SIDEBAR_STORE_QUICK_REFERENCE.md)
 2. Test in browser: `sidebarStore.show('delta-drawer')`
 3. Done!
 
 ### Path 2: Developer Integration (45 minutes)
+
 1. [SIDEBAR_STORE_QUICK_REFERENCE.md](SIDEBAR_STORE_QUICK_REFERENCE.md)
 2. [SIDEBAR_STORE_DEVELOPER_GUIDE.md](SIDEBAR_STORE_DEVELOPER_GUIDE.md)
 3. Import and use in your code
 4. Add your own sidebar if needed
 
 ### Path 3: Complete Understanding (90 minutes)
+
 1. [SIDEBAR_STORE_README.md](SIDEBAR_STORE_README.md)
 2. [SIDEBAR_STORE_BEFORE_AFTER.md](SIDEBAR_STORE_BEFORE_AFTER.md)
 3. [SIDEBAR_STORE_DEVELOPER_GUIDE.md](SIDEBAR_STORE_DEVELOPER_GUIDE.md)
@@ -217,6 +244,7 @@ Docs/
 6. Review implementation code
 
 ### Path 4: Architect Deep Dive (120 minutes)
+
 1. [SIDEBAR_STORE_IMPLEMENTATION_SUMMARY.md](SIDEBAR_STORE_IMPLEMENTATION_SUMMARY.md)
 2. [SIDEBAR_STORE_BEFORE_AFTER.md](SIDEBAR_STORE_BEFORE_AFTER.md)
 3. Review [src/utils/sidebarStore.js](src/utils/sidebarStore.js)
@@ -231,7 +259,7 @@ Docs/
 ✅ **No bugs or errors**  
 ✅ **Easy to understand**  
 ✅ **Easy to extend**  
-✅ **Well-documented**  
+✅ **Well-documented**
 
 ## 📝 Last Updated
 

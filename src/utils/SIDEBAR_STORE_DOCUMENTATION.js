@@ -1,6 +1,6 @@
 /**
  * SIDEBAR/DRAWER GLOBAL STORE SYSTEM
- * 
+ *
  * This document explains how to use the global sidebar management system
  * to ensure only one sidebar/drawer is visible at a time.
  */
@@ -41,27 +41,27 @@
 // USAGE EXAMPLES
 // ============================================================================
 
-import { sidebarStore } from './utils/sidebarStore.js';
+import { sidebarStore } from "./utils/sidebarStore.js";
 
 // --- EXAMPLE 1: Show a specific sidebar ---
-sidebarStore.show('analysis-sidebar');
+sidebarStore.show("analysis-sidebar");
 // Result: Analysis sidebar opens, delta-drawer hides automatically
 
 // --- EXAMPLE 2: Hide a sidebar ---
-sidebarStore.hide('delta-drawer');
+sidebarStore.hide("delta-drawer");
 // Result: Delta drawer closes
 
 // --- EXAMPLE 3: Toggle a sidebar ---
-sidebarStore.toggle('analysis-sidebar');
+sidebarStore.toggle("analysis-sidebar");
 // Result: If open, closes it. If closed, opens it and hides others.
 
 // --- EXAMPLE 4: Get currently visible sidebar ---
 const active = sidebarStore.getActiveSidebar();
-console.log('Currently visible:', active); // Outputs: "analysis-sidebar", "delta-drawer", or null
+console.log("Currently visible:", active); // Outputs: "analysis-sidebar", "delta-drawer", or null
 
 // --- EXAMPLE 5: Check if specific sidebar is open ---
-if (sidebarStore.isOpen('delta-drawer')) {
-  console.log('Delta drawer is currently visible');
+if (sidebarStore.isOpen("delta-drawer")) {
+  console.log("Delta drawer is currently visible");
 }
 
 // --- EXAMPLE 6: Hide all sidebars ---
@@ -70,39 +70,39 @@ sidebarStore.hideAll();
 
 // --- EXAMPLE 7: Get list of all registered sidebars ---
 const allSidebars = sidebarStore.getRegisteredSidebars();
-console.log('Available sidebars:', allSidebars);
+console.log("Available sidebars:", allSidebars);
 // Outputs: ["analysis-sidebar", "delta-drawer"]
 
 // ============================================================================
 // REGISTERING A NEW SIDEBAR
 // ============================================================================
 
-import { sidebarStore } from './utils/sidebarStore.js';
+import { sidebarStore } from "./utils/sidebarStore.js";
 
-const mySidebar = document.getElementById('my-sidebar');
-const myToggleBtn = document.getElementById('my-toggle-btn');
+const mySidebar = document.getElementById("my-sidebar");
+const myToggleBtn = document.getElementById("my-toggle-btn");
 
 // Define control functions
 const showMySidebar = () => {
-  mySidebar.style.display = 'flex';
-  myToggleBtn.style.display = 'none';
+  mySidebar.style.display = "flex";
+  myToggleBtn.style.display = "none";
 };
 
 const hideMySidebar = () => {
-  mySidebar.style.display = 'none';
-  myToggleBtn.style.display = 'flex';
+  mySidebar.style.display = "none";
+  myToggleBtn.style.display = "flex";
 };
 
 const isMyDrawerOpen = () => {
-  return mySidebar.style.display !== 'none';
+  return mySidebar.style.display !== "none";
 };
 
 // Register the sidebar
-sidebarStore.register('my-sidebar', {
+sidebarStore.register("my-sidebar", {
   show: showMySidebar,
   hide: hideMySidebar,
   isOpen: isMyDrawerOpen,
-  isClosedByDefault: true,  // Start closed by default
+  isClosedByDefault: true, // Start closed by default
 });
 
 // Now your sidebar is part of the system!

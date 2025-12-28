@@ -5,7 +5,7 @@
  * Uses plain HTML and CSS - no Tailwind
  */
 
-import { sidebarStore } from '../utils/sidebarStore.js';
+import { sidebarStore } from "../utils/sidebarStore.js";
 
 export function createAnalysisSidebar() {
   let isOpen = false;
@@ -302,21 +302,21 @@ export function createAnalysisSidebar() {
      * Ensures only one sidebar is visible at a time
      */
     registerWithStore: () => {
-      sidebarStore.register('analysis-sidebar', {
+      sidebarStore.register("analysis-sidebar", {
         show: api.show,
         hide: api.hide,
         isOpen: api.isOpen,
         isClosedByDefault: true,
       });
-      console.log('[AnalysisSidebar] Registered with sidebar store');
+      console.log("[AnalysisSidebar] Registered with sidebar store");
     },
 
     /**
      * Unregister this sidebar from the global sidebar store
      */
     unregisterFromStore: () => {
-      sidebarStore.unregister('analysis-sidebar');
-      console.log('[AnalysisSidebar] Unregistered from sidebar store');
+      sidebarStore.unregister("analysis-sidebar");
+      console.log("[AnalysisSidebar] Unregistered from sidebar store");
     },
   };
 

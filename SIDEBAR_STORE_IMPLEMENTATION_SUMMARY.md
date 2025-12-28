@@ -7,6 +7,7 @@ A centralized **Global Sidebar Management System** that ensures only **one sideb
 ## Problem Solved
 
 ### Before:
+
 - ❌ Analysis sidebar always visible (30% of screen)
 - ❌ Delta drawer could overlap with it
 - ❌ Multiple sidebars could be open simultaneously
@@ -15,6 +16,7 @@ A centralized **Global Sidebar Management System** that ensures only **one sideb
 - ❌ No coordination between sidebar components
 
 ### After:
+
 - ✅ Only ONE sidebar visible at a time
 - ✅ Analysis sidebar CLOSED by default
 - ✅ Delta drawer CLOSED by default
@@ -26,14 +28,18 @@ A centralized **Global Sidebar Management System** that ensures only **one sideb
 ## Files Created
 
 ### 1. Core Implementation
+
 **`src/utils/sidebarStore.js`** (185 lines)
+
 - SidebarStore class with singleton pattern
 - Methods: register, show, hide, toggle, getActiveSidebar, isOpen, etc.
 - Exported as `sidebarStore` singleton
 - Complete with console logging for debugging
 
 ### 2. Integration
+
 **`src/main.js`** - Added:
+
 - Import: `import { sidebarStore } from './utils/sidebarStore.js'`
 - Function: `initSidebarSystem()` - Registers all sidebars
 - Registers "analysis-sidebar" with show/hide/isOpen functions
@@ -41,13 +47,16 @@ A centralized **Global Sidebar Management System** that ensures only **one sideb
 - Calls `sidebarStore.initializeDefaults()` to close all on startup
 
 **`src/components/DeltaDrawer.js`** - Added:
+
 - Import: `import { sidebarStore } from '../utils/sidebarStore.js'`
 - Method: `registerWithStore()` - Registers delta drawer
 - Method: `unregisterFromStore()` - Unregisters if needed
 - Automatically registers with ID "delta-drawer"
 
 ### 3. Documentation
+
 **`SIDEBAR_STORE_README.md`** - User-friendly guide
+
 - Overview and features
 - Registered sidebars list
 - How it works
@@ -56,6 +65,7 @@ A centralized **Global Sidebar Management System** that ensures only **one sideb
 - Benefits
 
 **`SIDEBAR_STORE_BEFORE_AFTER.md`** - Architecture comparison
+
 - Before/after visual diagrams
 - Code comparison
 - File changes summary
@@ -64,6 +74,7 @@ A centralized **Global Sidebar Management System** that ensures only **one sideb
 - Technical benefits
 
 **`SIDEBAR_STORE_DEVELOPER_GUIDE.md`** - Developer reference
+
 - Quick integration checklist
 - How to use in code
 - How to register new sidebars
@@ -73,6 +84,7 @@ A centralized **Global Sidebar Management System** that ensures only **one sideb
 - API quick reference
 
 **`src/utils/SIDEBAR_STORE_DOCUMENTATION.js`** - Complete API docs
+
 - Detailed API reference
 - Usage examples
 - Registration guide
@@ -84,13 +96,15 @@ A centralized **Global Sidebar Management System** that ensures only **one sideb
 ## Key Features
 
 ### ✅ Only One Sidebar Visible
+
 ```javascript
-sidebarStore.show('analysis-sidebar');  // Opens analysis
-sidebarStore.show('delta-drawer');       // Closes analysis, opens delta
+sidebarStore.show("analysis-sidebar"); // Opens analysis
+sidebarStore.show("delta-drawer"); // Closes analysis, opens delta
 // Only delta-drawer visible now
 ```
 
 ### ✅ Closed by Default
+
 ```javascript
 // On page load:
 // - Analysis sidebar: HIDDEN
@@ -100,40 +114,49 @@ sidebarStore.initializeDefaults(); // Called automatically
 ```
 
 ### ✅ Centralized Management
-```javascript
-import { sidebarStore } from './utils/sidebarStore.js';
 
-sidebarStore.show('analysis-sidebar');      // Show
-sidebarStore.hide('delta-drawer');           // Hide
-sidebarStore.toggle('analysis-sidebar');     // Toggle
-sidebarStore.getActiveSidebar();             // Check what's visible
-sidebarStore.hideAll();                      // Hide all
+```javascript
+import { sidebarStore } from "./utils/sidebarStore.js";
+
+sidebarStore.show("analysis-sidebar"); // Show
+sidebarStore.hide("delta-drawer"); // Hide
+sidebarStore.toggle("analysis-sidebar"); // Toggle
+sidebarStore.getActiveSidebar(); // Check what's visible
+sidebarStore.hideAll(); // Hide all
 ```
 
 ### ✅ Easy to Extend
+
 ```javascript
 // Add a new sidebar in 5 minutes:
-sidebarStore.register('my-sidebar', {
-  show: () => { /* show logic */ },
-  hide: () => { /* hide logic */ },
-  isOpen: () => { /* check if open */ },
+sidebarStore.register("my-sidebar", {
+  show: () => {
+    /* show logic */
+  },
+  hide: () => {
+    /* hide logic */
+  },
+  isOpen: () => {
+    /* check if open */
+  },
   isClosedByDefault: true,
 });
 
 // Use it like any other sidebar
-sidebarStore.show('my-sidebar');
+sidebarStore.show("my-sidebar");
 ```
 
 ## Registered Sidebars
 
-| ID | Name | Location | Default | Purpose |
-|----|------|----------|---------|---------|
-| `analysis-sidebar` | Analysis | Left sidebar | Closed | Phasor diagram |
-| `delta-drawer` | Delta Drawer | Right drawer | Closed | Delta measurements |
+| ID                 | Name         | Location     | Default | Purpose            |
+| ------------------ | ------------ | ------------ | ------- | ------------------ |
+| `analysis-sidebar` | Analysis     | Left sidebar | Closed  | Phasor diagram     |
+| `delta-drawer`     | Delta Drawer | Right drawer | Closed  | Delta measurements |
 
 ## How It Works
 
 ### Step 1: Initialization
+
 ```
 Page Load
    ↓
@@ -151,6 +174,7 @@ User sees clean interface
 ```
 
 ### Step 2: Show a Sidebar
+
 ```
 User clicks "Analysis" button
    ↓
@@ -166,6 +190,7 @@ Only Analysis sidebar visible
 ```
 
 ### Step 3: Switch to Another Sidebar
+
 ```
 User clicks "Delta" button
    ↓
@@ -183,37 +208,37 @@ Only Delta drawer visible, Analysis hidden
 ## API Quick Reference
 
 ```javascript
-import { sidebarStore } from './utils/sidebarStore.js';
+import { sidebarStore } from "./utils/sidebarStore.js";
 
 // Register a new sidebar
-sidebarStore.register(id, { show, hide, isOpen, isClosedByDefault })
+sidebarStore.register(id, { show, hide, isOpen, isClosedByDefault });
 
 // Show sidebar (hide others)
-sidebarStore.show('sidebar-id')
+sidebarStore.show("sidebar-id");
 
 // Hide sidebar
-sidebarStore.hide('sidebar-id')
+sidebarStore.hide("sidebar-id");
 
 // Hide all sidebars
-sidebarStore.hideAll()
+sidebarStore.hideAll();
 
 // Toggle sidebar visibility
-sidebarStore.toggle('sidebar-id')
+sidebarStore.toggle("sidebar-id");
 
 // Get currently visible sidebar
-sidebarStore.getActiveSidebar()
+sidebarStore.getActiveSidebar();
 
 // Check if sidebar is open
-sidebarStore.isOpen('sidebar-id')
+sidebarStore.isOpen("sidebar-id");
 
 // Get all registered sidebar IDs
-sidebarStore.getRegisteredSidebars()
+sidebarStore.getRegisteredSidebars();
 
 // Unregister a sidebar
-sidebarStore.unregister('sidebar-id')
+sidebarStore.unregister("sidebar-id");
 
 // Close sidebars marked as isClosedByDefault
-sidebarStore.initializeDefaults()
+sidebarStore.initializeDefaults();
 ```
 
 ## Documentation Structure
@@ -268,15 +293,15 @@ src/utils/SIDEBAR_STORE_DOCUMENTATION.js
 
 ## Code Statistics
 
-| File | Lines | Type | Status |
-|------|-------|------|--------|
-| `src/utils/sidebarStore.js` | 185 | Core | ✅ Created |
-| `src/main.js` | +60 | Integration | ✅ Modified |
-| `src/components/DeltaDrawer.js` | +35 | Integration | ✅ Modified |
-| `SIDEBAR_STORE_README.md` | 350 | Documentation | ✅ Created |
-| `SIDEBAR_STORE_BEFORE_AFTER.md` | 380 | Documentation | ✅ Created |
-| `SIDEBAR_STORE_DEVELOPER_GUIDE.md` | 340 | Documentation | ✅ Created |
-| `SIDEBAR_STORE_DOCUMENTATION.js` | 400 | Documentation | ✅ Created |
+| File                               | Lines | Type          | Status      |
+| ---------------------------------- | ----- | ------------- | ----------- |
+| `src/utils/sidebarStore.js`        | 185   | Core          | ✅ Created  |
+| `src/main.js`                      | +60   | Integration   | ✅ Modified |
+| `src/components/DeltaDrawer.js`    | +35   | Integration   | ✅ Modified |
+| `SIDEBAR_STORE_README.md`          | 350   | Documentation | ✅ Created  |
+| `SIDEBAR_STORE_BEFORE_AFTER.md`    | 380   | Documentation | ✅ Created  |
+| `SIDEBAR_STORE_DEVELOPER_GUIDE.md` | 340   | Documentation | ✅ Created  |
+| `SIDEBAR_STORE_DOCUMENTATION.js`   | 400   | Documentation | ✅ Created  |
 
 ## Testing Checklist
 
@@ -298,26 +323,28 @@ src/utils/SIDEBAR_STORE_DOCUMENTATION.js
 1. Open DevTools (F12)
 2. Go to Console tab
 3. Run commands:
+
    ```javascript
    // Check registered sidebars
-   sidebarStore.getRegisteredSidebars()
-   
+   sidebarStore.getRegisteredSidebars();
+
    // Show analysis sidebar
-   sidebarStore.show('analysis-sidebar')
-   
+   sidebarStore.show("analysis-sidebar");
+
    // Show delta drawer
-   sidebarStore.show('delta-drawer')
-   
+   sidebarStore.show("delta-drawer");
+
    // Check what's visible
-   sidebarStore.getActiveSidebar()
-   
+   sidebarStore.getActiveSidebar();
+
    // Hide all
-   sidebarStore.hideAll()
+   sidebarStore.hideAll();
    ```
 
 ## Usage Scenario
 
 ### User Opens App
+
 ```
 1. Page loads
 2. initSidebarSystem() called
@@ -327,6 +354,7 @@ src/utils/SIDEBAR_STORE_DOCUMENTATION.js
 ```
 
 ### User Clicks "Analysis"
+
 ```
 1. Button click triggers sidebarStore.show('analysis-sidebar')
 2. Analysis sidebar slides in from left
@@ -335,6 +363,7 @@ src/utils/SIDEBAR_STORE_DOCUMENTATION.js
 ```
 
 ### User Adds Vertical Lines
+
 ```
 1. User adds vertical lines (Alt+1, Alt+2)
 2. Delta drawer auto-opens with data
@@ -343,6 +372,7 @@ src/utils/SIDEBAR_STORE_DOCUMENTATION.js
 ```
 
 ### User Closes Delta Drawer
+
 ```
 1. User clicks close button
 2. sidebarStore.hide('delta-drawer') called

@@ -13,42 +13,47 @@
 ## How to Use in Your Code
 
 ### 1. Import the Store
+
 ```javascript
-import { sidebarStore } from './utils/sidebarStore.js';
+import { sidebarStore } from "./utils/sidebarStore.js";
 ```
 
 ### 2. Show a Sidebar
+
 ```javascript
 // When user clicks a button to show analysis sidebar
-sidebarStore.show('analysis-sidebar');
+sidebarStore.show("analysis-sidebar");
 // Result: Analysis sidebar opens, delta drawer hides
 ```
 
 ### 3. Hide a Sidebar
+
 ```javascript
 // When user clicks close button
-sidebarStore.hide('delta-drawer');
+sidebarStore.hide("delta-drawer");
 // Result: Delta drawer closes
 ```
 
 ### 4. Toggle a Sidebar
+
 ```javascript
 // When user clicks a toggle button
-sidebarStore.toggle('analysis-sidebar');
+sidebarStore.toggle("analysis-sidebar");
 // Result: If closed, opens it. If open, closes it.
 ```
 
 ### 5. Check Current State
+
 ```javascript
 // Get which sidebar is currently visible
 const active = sidebarStore.getActiveSidebar();
 
-if (active === 'delta-drawer') {
-  console.log('Delta measurements visible');
-} else if (active === 'analysis-sidebar') {
-  console.log('Analysis visible');
+if (active === "delta-drawer") {
+  console.log("Delta measurements visible");
+} else if (active === "analysis-sidebar") {
+  console.log("Analysis visible");
 } else {
-  console.log('No sidebar visible');
+  console.log("No sidebar visible");
 }
 ```
 
@@ -57,30 +62,30 @@ if (active === 'delta-drawer') {
 If you create a new sidebar, register it with the store:
 
 ```javascript
-import { sidebarStore } from './utils/sidebarStore.js';
+import { sidebarStore } from "./utils/sidebarStore.js";
 
 // Define how to show your sidebar
 const showMyPanel = () => {
-  const panel = document.getElementById('my-panel');
-  panel.style.display = 'block';
-  panel.classList.add('visible');
+  const panel = document.getElementById("my-panel");
+  panel.style.display = "block";
+  panel.classList.add("visible");
 };
 
 // Define how to hide your sidebar
 const hideMyPanel = () => {
-  const panel = document.getElementById('my-panel');
-  panel.style.display = 'none';
-  panel.classList.remove('visible');
+  const panel = document.getElementById("my-panel");
+  panel.style.display = "none";
+  panel.classList.remove("visible");
 };
 
 // Define how to check if it's open
 const isMyPanelOpen = () => {
-  const panel = document.getElementById('my-panel');
-  return panel.style.display !== 'none';
+  const panel = document.getElementById("my-panel");
+  return panel.style.display !== "none";
 };
 
 // Register it
-sidebarStore.register('my-panel', {
+sidebarStore.register("my-panel", {
   show: showMyPanel,
   hide: hideMyPanel,
   isOpen: isMyPanelOpen,
@@ -88,30 +93,32 @@ sidebarStore.register('my-panel', {
 });
 
 // Now you can use it like any other sidebar
-sidebarStore.show('my-panel'); // Others hide automatically
+sidebarStore.show("my-panel"); // Others hide automatically
 ```
 
 ## Sidebar IDs Reference
 
-| ID | Description | Location | Default |
-|----|-------------|----------|---------|
-| `analysis-sidebar` | Phasor diagram analysis | Left sidebar | Closed |
-| `delta-drawer` | Delta measurements | Right drawer | Closed |
+| ID                 | Description             | Location     | Default |
+| ------------------ | ----------------------- | ------------ | ------- |
+| `analysis-sidebar` | Phasor diagram analysis | Left sidebar | Closed  |
+| `delta-drawer`     | Delta measurements      | Right drawer | Closed  |
 
 ## Key Concepts
 
 ### Only One Visible
+
 ```javascript
-sidebarStore.show('analysis-sidebar');
+sidebarStore.show("analysis-sidebar");
 // Result: analysis-sidebar opens
 //         delta-drawer closes (if open)
 
-sidebarStore.show('delta-drawer');  
+sidebarStore.show("delta-drawer");
 // Result: delta-drawer opens
 //         analysis-sidebar closes
 ```
 
 ### Closed by Default
+
 ```javascript
 // On page load, all sidebars are closed
 // isClosedByDefault: true means initializeDefaults() hides them
@@ -120,13 +127,14 @@ sidebarStore.show('delta-drawer');
 ```
 
 ### Active Sidebar Tracking
+
 ```javascript
 // The store tracks which sidebar is currently visible
 let active = sidebarStore.getActiveSidebar();
 
 // Returns:
 // - "analysis-sidebar" if that one is showing
-// - "delta-drawer" if that one is showing  
+// - "delta-drawer" if that one is showing
 // - null if none are open
 ```
 
@@ -145,6 +153,7 @@ All operations are logged. Open DevTools (F12 → Console) to see:
 ## Implementation Details
 
 ### Initialization Flow
+
 ```
 1. Page loads
    ↓
@@ -166,6 +175,7 @@ All operations are logged. Open DevTools (F12 → Console) to see:
 ```
 
 ### Show Flow
+
 ```
 1. User clicks button: sidebarStore.show('delta-drawer')
    ↓
@@ -187,6 +197,7 @@ All operations are logged. Open DevTools (F12 → Console) to see:
 ## Best Practices
 
 ✅ **DO:**
+
 - Use `sidebarStore.show()` instead of manipulating DOM directly
 - Register sidebars early in app initialization
 - Check `getActiveSidebar()` to determine state
@@ -194,6 +205,7 @@ All operations are logged. Open DevTools (F12 → Console) to see:
 - Provide all three functions when registering (show/hide/isOpen)
 
 ❌ **DON'T:**
+
 - Manually toggle sidebar display without using store
 - Assume multiple sidebars can be open at once
 - Hardcode visibility state outside the store
@@ -203,6 +215,7 @@ All operations are logged. Open DevTools (F12 → Console) to see:
 ## Troubleshooting
 
 ### Issue: Sidebar doesn't appear
+
 ```javascript
 // Make sure:
 1. Sidebar is registered: sidebarStore.getRegisteredSidebars()
@@ -211,6 +224,7 @@ All operations are logged. Open DevTools (F12 → Console) to see:
 ```
 
 ### Issue: Both sidebars showing
+
 ```javascript
 // This shouldn't happen with store, but if it does:
 // Make sure you're using sidebarStore.show(), not direct DOM manipulation
@@ -218,6 +232,7 @@ All operations are logged. Open DevTools (F12 → Console) to see:
 ```
 
 ### Issue: Sidebar won't close
+
 ```javascript
 // Make sure:
 1. hide() function is in the registration config
@@ -226,69 +241,70 @@ All operations are logged. Open DevTools (F12 → Console) to see:
 ```
 
 ### Issue: Store methods not found
+
 ```javascript
 // Make sure to import:
-import { sidebarStore } from './utils/sidebarStore.js';
+import { sidebarStore } from "./utils/sidebarStore.js";
 // Not:
-import { SidebarStore } from './utils/sidebarStore.js';  // ❌ Wrong
+import { SidebarStore } from "./utils/sidebarStore.js"; // ❌ Wrong
 ```
 
 ## API Reference (Quick)
 
 ```javascript
-import { sidebarStore } from './utils/sidebarStore.js';
+import { sidebarStore } from "./utils/sidebarStore.js";
 
 // Register a sidebar
-sidebarStore.register(id, config)
+sidebarStore.register(id, config);
 // id: string, config: {show, hide, isOpen, isClosedByDefault}
 
 // Show sidebar (hide others)
-sidebarStore.show('sidebar-id')
+sidebarStore.show("sidebar-id");
 // Returns: boolean (success/failure)
 
 // Hide a sidebar
-sidebarStore.hide('sidebar-id')
+sidebarStore.hide("sidebar-id");
 // Returns: boolean (success/failure)
 
 // Hide all sidebars
-sidebarStore.hideAll()
+sidebarStore.hideAll();
 // Returns: void
 
 // Toggle visibility
-sidebarStore.toggle('sidebar-id')
+sidebarStore.toggle("sidebar-id");
 // Returns: boolean (success/failure)
 
 // Get currently visible sidebar
-sidebarStore.getActiveSidebar()
+sidebarStore.getActiveSidebar();
 // Returns: string | null
 
 // Check if sidebar is open
-sidebarStore.isOpen('sidebar-id')
+sidebarStore.isOpen("sidebar-id");
 // Returns: boolean
 
 // Get all registered sidebar IDs
-sidebarStore.getRegisteredSidebars()
+sidebarStore.getRegisteredSidebars();
 // Returns: array of strings
 
 // Remove sidebar from store
-sidebarStore.unregister('sidebar-id')
+sidebarStore.unregister("sidebar-id");
 // Returns: boolean (success/failure)
 
 // Close sidebars marked as isClosedByDefault
-sidebarStore.initializeDefaults()
+sidebarStore.initializeDefaults();
 // Returns: void
 ```
 
 ## File Locations
 
-| File | Purpose |
-|------|---------|
-| `src/utils/sidebarStore.js` | Core store class |
-| `src/main.js` | Registers analysis sidebar |
-| `src/components/DeltaDrawer.js` | Registers delta drawer |
-| `SIDEBAR_STORE_README.md` | User guide |
-| `SIDEBAR_STORE_BEFORE_AFTER.md` | Architecture comparison |
-| `src/utils/SIDEBAR_STORE_DOCUMENTATION.js` | API documentation |
+| File                                       | Purpose                    |
+| ------------------------------------------ | -------------------------- |
+| `src/utils/sidebarStore.js`                | Core store class           |
+| `src/main.js`                              | Registers analysis sidebar |
+| `src/components/DeltaDrawer.js`            | Registers delta drawer     |
+| `SIDEBAR_STORE_README.md`                  | User guide                 |
+| `SIDEBAR_STORE_BEFORE_AFTER.md`            | Architecture comparison    |
+| `src/utils/SIDEBAR_STORE_DOCUMENTATION.js` | API documentation          |
 
 ## Next Steps
 

@@ -3,6 +3,7 @@
 ## BEFORE: Manual Sidebar Management
 
 ### Problem 1: Multiple Sidebars Visible at Once
+
 ```
 ┌─────────────────────────────────────┐
 │  Analysis Sidebar (Phasor Diagram) │  <- Always visible
@@ -30,6 +31,7 @@ Problem: User's workspace gets cluttered
 ```
 
 ### Problem 2: Scattered Visibility Control
+
 ```
 File: main.js (Line 1950+)
 ├─ closeSidebarBtn.addEventListener("click", () => {
@@ -45,7 +47,7 @@ File: DeltaDrawer.js (Line 340+)
 │  └─ // No awareness of other sidebars
 └─ }
 
-Result: 
+Result:
 - No central management
 - Each sidebar manages itself
 - No coordination between sidebars
@@ -53,6 +55,7 @@ Result:
 ```
 
 ### Problem 3: No Default Closed State
+
 ```
 Sidebar visibility on page load:
 - Analysis sidebar: VISIBLE (always shown)
@@ -70,6 +73,7 @@ User Experience:
 ## AFTER: Global Sidebar Store
 
 ### Solution 1: Only One Sidebar Visible at a Time
+
 ```
 Initial Page Load:
 ┌────────────────────────────────────────┐
@@ -97,6 +101,7 @@ Result: Clean UI, no overlaps, more screen space
 ```
 
 ### Solution 2: Centralized Management
+
 ```
 src/utils/sidebarStore.js
 └─ SidebarStore class
@@ -121,6 +126,7 @@ Result:
 ```
 
 ### Solution 3: Closed by Default
+
 ```
 isClosedByDefault Configuration:
 
@@ -147,6 +153,7 @@ Result: Clean, distraction-free interface on startup
 ## Code Comparison
 
 ### BEFORE: DeltaDrawer show() method
+
 ```javascript
 // src/components/DeltaDrawer.js
 show: () => {
@@ -175,12 +182,13 @@ show: () => {
 ---
 
 ### AFTER: Using SidebarStore
+
 ```javascript
 // Any file can now do this:
-import { sidebarStore } from './utils/sidebarStore.js';
+import { sidebarStore } from "./utils/sidebarStore.js";
 
 // Show delta drawer and hide any other open sidebar
-sidebarStore.show('delta-drawer');
+sidebarStore.show("delta-drawer");
 
 // Internally, the store does:
 // 1. Find all open sidebars
@@ -196,12 +204,15 @@ sidebarStore.show('delta-drawer');
 ## File Changes Summary
 
 ### New Files Created:
+
 1. ✅ `src/utils/sidebarStore.js` - Core store implementation
 2. ✅ `src/utils/SIDEBAR_STORE_DOCUMENTATION.js` - API documentation
 3. ✅ `SIDEBAR_STORE_README.md` - User guide
 
 ### Modified Files:
+
 1. ✅ `src/main.js`
+
    - Added: `import { sidebarStore } from './utils/sidebarStore.js'`
    - Added: `initSidebarSystem()` function
    - Added: Call to `initSidebarSystem()` in sidebar setup
@@ -215,22 +226,23 @@ sidebarStore.show('delta-drawer');
 
 ## Functionality Comparison
 
-| Feature | Before | After |
-|---------|--------|-------|
-| Only one sidebar visible | ❌ No | ✅ Yes |
-| Closed by default | ❌ Partial | ✅ Yes |
-| Centralized control | ❌ No | ✅ Yes |
-| Easy to add sidebars | ❌ Scattered code | ✅ Simple registration |
-| Prevent overlaps | ❌ Manual | ✅ Automatic |
-| Toggle functionality | ❌ Inconsistent | ✅ Consistent API |
-| Check active sidebar | ❌ Manual DOM checks | ✅ `getActiveSidebar()` |
-| Hide all sidebars | ❌ Not possible | ✅ `hideAll()` |
+| Feature                  | Before               | After                   |
+| ------------------------ | -------------------- | ----------------------- |
+| Only one sidebar visible | ❌ No                | ✅ Yes                  |
+| Closed by default        | ❌ Partial           | ✅ Yes                  |
+| Centralized control      | ❌ No                | ✅ Yes                  |
+| Easy to add sidebars     | ❌ Scattered code    | ✅ Simple registration  |
+| Prevent overlaps         | ❌ Manual            | ✅ Automatic            |
+| Toggle functionality     | ❌ Inconsistent      | ✅ Consistent API       |
+| Check active sidebar     | ❌ Manual DOM checks | ✅ `getActiveSidebar()` |
+| Hide all sidebars        | ❌ Not possible      | ✅ `hideAll()`          |
 
 ---
 
 ## User Experience Impact
 
 ### BEFORE: Page Load
+
 ```
 User opens COMTRADE viewer
   ↓
@@ -244,6 +256,7 @@ All available by default (confusing)
 ```
 
 ### AFTER: Page Load
+
 ```
 User opens COMTRADE viewer
   ↓
@@ -279,6 +292,7 @@ Sidebars appear as needed (clean by design)
 ## API Examples
 
 ### BEFORE (Scattered across codebase)
+
 ```javascript
 // Close sidebar - in main.js
 sidebar.style.display = "none";
@@ -291,16 +305,19 @@ drawer.classList.add("open");
 panel.classList.add("open");
 
 // Check state - manual DOM inspection
-if (sidebar.style.display !== "none") { /* open */ }
+if (sidebar.style.display !== "none") {
+  /* open */
+}
 ```
 
 ### AFTER (Unified API)
+
 ```javascript
 // Show analysis sidebar
-sidebarStore.show('analysis-sidebar');
+sidebarStore.show("analysis-sidebar");
 
 // Show delta drawer
-sidebarStore.show('delta-drawer');
+sidebarStore.show("delta-drawer");
 
 // Check what's visible
 const active = sidebarStore.getActiveSidebar();
@@ -309,7 +326,7 @@ const active = sidebarStore.getActiveSidebar();
 sidebarStore.hideAll();
 
 // Toggle a sidebar
-sidebarStore.toggle('analysis-sidebar');
+sidebarStore.toggle("analysis-sidebar");
 ```
 
 ---
@@ -317,7 +334,8 @@ sidebarStore.toggle('analysis-sidebar');
 ## Conclusion
 
 The Global Sidebar Store system transforms sidebar management from:
-- ❌ **Scattered, uncoordinated, manual** 
+
+- ❌ **Scattered, uncoordinated, manual**
 - ✅ **Centralized, coordinated, automatic**
 
 **Result**: Better UX, cleaner code, easier maintenance.

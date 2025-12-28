@@ -235,7 +235,10 @@ function initializeSidebarRegistry() {
   // Initialize all sidebars to their default closed state
   sidebarStore.initializeDefaults();
 
-  console.log("[SidebarRegistry] Sidebar registry initialized. Active sidebars:", sidebarStore.getRegisteredSidebars());
+  console.log(
+    "[SidebarRegistry] Sidebar registry initialized. Active sidebars:",
+    sidebarStore.getRegisteredSidebars()
+  );
 }
 
 // Export registry initializer so it can be called after DOM is ready
@@ -1867,7 +1870,9 @@ function setupLayoutButtonHandlers() {
   const floatingWindowBtn = document.getElementById("floatingWindowBtn");
   const belowChartBtn = document.getElementById("belowChartBtn");
   const returnSidebarBtn = document.getElementById("returnSidebarBtn");
-  const returnSidebarFromBelowBtn = document.getElementById("returnSidebarFromBelowBtn");
+  const returnSidebarFromBelowBtn = document.getElementById(
+    "returnSidebarFromBelowBtn"
+  );
 
   // Handle floating window button
   if (floatingWindowBtn && !floatingWindowBtn.__hasListener) {
@@ -1931,12 +1936,12 @@ function setupLayoutButtonHandlers() {
 
 // Call setup when sidebar is shown
 const originalAnalysisSidebarShow = analysisSidebar.show;
-analysisSidebar.show = function() {
+analysisSidebar.show = function () {
   originalAnalysisSidebarShow.call(this);
   setupLayoutButtonHandlers();
 };
 
-// Button handlers are now setup via setupLayoutButtonHandlers() 
+// Button handlers are now setup via setupLayoutButtonHandlers()
 // called when sidebar is shown
 
 // Helper function to update button visibility based on layout mode
@@ -1944,7 +1949,9 @@ function updateLayoutButtonVisibility() {
   const floatingWindowBtn = document.getElementById("floatingWindowBtn");
   const belowChartBtn = document.getElementById("belowChartBtn");
   const returnSidebarBtn = document.getElementById("returnSidebarBtn");
-  const returnSidebarFromBelowBtn = document.getElementById("returnSidebarFromBelowBtn");
+  const returnSidebarFromBelowBtn = document.getElementById(
+    "returnSidebarFromBelowBtn"
+  );
 
   if (
     floatingWindowBtn &&
@@ -1991,17 +1998,22 @@ function setupAnalysisSidebarHandlers() {
 // Connect HTML buttons to sidebars
 function setupHtmlButtonHandlers() {
   console.log("[main.js] Setting up HTML button handlers");
-  
+
   // Analysis button (left edge)
   const analysisBtn = document.getElementById("Analysis");
   if (analysisBtn) {
     analysisBtn.addEventListener("click", () => {
-      console.log("[main.js] Analysis button clicked, analysisSidebar:", analysisSidebar);
+      console.log(
+        "[main.js] Analysis button clicked, analysisSidebar:",
+        analysisSidebar
+      );
       if (analysisSidebar && analysisSidebar.toggle) {
         analysisSidebar.toggle();
         console.log("[main.js] Analysis sidebar toggled");
       } else {
-        console.error("[main.js] analysisSidebar is not available or has no toggle method");
+        console.error(
+          "[main.js] analysisSidebar is not available or has no toggle method"
+        );
       }
     });
     console.log("[main.js] Analysis button handler attached");
@@ -2018,7 +2030,9 @@ function setupHtmlButtonHandlers() {
         deltaWindow.toggle();
         console.log("[main.js] Delta drawer toggled");
       } else {
-        console.error("[main.js] deltaWindow is not available or has no toggle method");
+        console.error(
+          "[main.js] deltaWindow is not available or has no toggle method"
+        );
       }
     });
     console.log("[main.js] Delta button handler attached");
@@ -2035,7 +2049,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // Also setup when sidebar is first shown
 const originalShow = analysisSidebar.show;
-analysisSidebar.show = function() {
+analysisSidebar.show = function () {
   originalShow.call(this);
   setupAnalysisSidebarHandlers();
   setupLayoutButtonHandlers();

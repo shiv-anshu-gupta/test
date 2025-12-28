@@ -4,7 +4,7 @@
  * Uses plain HTML and CSS - no Tailwind
  */
 
-import { sidebarStore } from '../utils/sidebarStore.js';
+import { sidebarStore } from "../utils/sidebarStore.js";
 
 export function createDeltaDrawer() {
   let isOpen = false;
@@ -340,7 +340,13 @@ export function createDeltaDrawer() {
     },
 
     update: (deltaData = [], verticalLinesCount = 0) => {
-      console.log("[DeltaDrawer] update() called with", deltaData.length, "sections and", verticalLinesCount, "vertical lines");
+      console.log(
+        "[DeltaDrawer] update() called with",
+        deltaData.length,
+        "sections and",
+        verticalLinesCount,
+        "vertical lines"
+      );
       injectDrawerHTML();
 
       const content = document.getElementById("delta-drawer-content");
@@ -348,10 +354,11 @@ export function createDeltaDrawer() {
 
       // Show message if less than 2 vertical lines
       if (!deltaData || deltaData.length === 0 || verticalLinesCount < 2) {
-        const message = verticalLinesCount < 1 
-          ? "Add vertical lines using <strong>Alt + 1</strong> on the chart to see delta values"
-          : "Add another vertical line using <strong>Alt + 1</strong> to see delta values between them";
-        
+        const message =
+          verticalLinesCount < 1
+            ? "Add vertical lines using <strong>Alt + 1</strong> on the chart to see delta values"
+            : "Add another vertical line using <strong>Alt + 1</strong> to see delta values between them";
+
         content.innerHTML = `
           <div class="delta-empty-state" style="text-align: center; padding: 24px 16px; color: var(--text-secondary);">
             <div style="font-size: 14px; line-height: 1.5; margin-bottom: 12px;">
@@ -373,8 +380,12 @@ export function createDeltaDrawer() {
         if (section.deltaTime !== undefined) {
           html += `
             <div style="background-color: #f3f4f6; border: 1px solid #d1d5db; padding: 12px; margin-bottom: 16px; border-radius: 6px; text-align: center;">
-              <div style="font-size: 12px; color: #6b7280; margin-bottom: 4px;">Time Difference (T${sectionIdx + 1} → T${sectionIdx + 2})</div>
-              <div style="font-size: 16px; font-weight: 700; color: #111827; font-family: 'Courier New', monospace;">${section.deltaTime}</div>
+              <div style="font-size: 12px; color: #6b7280; margin-bottom: 4px;">Time Difference (T${
+                sectionIdx + 1
+              } → T${sectionIdx + 2})</div>
+              <div style="font-size: 16px; font-weight: 700; color: #111827; font-family: 'Courier New', monospace;">${
+                section.deltaTime
+              }</div>
             </div>
           `;
         }
@@ -384,7 +395,9 @@ export function createDeltaDrawer() {
           html += `
             <div class="delta-section">
               <div class="delta-section-header">
-                <h3 class="delta-section-title">Line Pair: T${sectionIdx + 1} → T${sectionIdx + 2}</h3>
+                <h3 class="delta-section-title">Line Pair: T${
+                  sectionIdx + 1
+                } → T${sectionIdx + 2}</h3>
               </div>
               <div class="delta-items">
           `;
@@ -395,20 +408,28 @@ export function createDeltaDrawer() {
               <div style="margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px solid #e5e7eb;">
                 <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
                   <div style="width: 12px; height: 12px; border-radius: 50%; background-color: ${color};"></div>
-                  <span style="font-weight: 600; color: ${color}; font-size: 13px;">${seriesData.name}</span>
+                  <span style="font-weight: 600; color: ${color}; font-size: 13px;">${
+              seriesData.name
+            }</span>
                 </div>
                 <div style="display: flex; justify-content: space-between; gap: 16px; font-size: 12px;">
                   <div style="flex: 1;">
                     <div style="color: #6b7280; font-size: 11px; margin-bottom: 2px;">Values</div>
-                    <div style="font-weight: 700; color: #111827; font-family: 'Courier New', monospace;">${seriesData.v1.toFixed(2)} → ${seriesData.v2.toFixed(2)}</div>
+                    <div style="font-weight: 700; color: #111827; font-family: 'Courier New', monospace;">${seriesData.v1.toFixed(
+                      2
+                    )} → ${seriesData.v2.toFixed(2)}</div>
                   </div>
                   <div style="flex: 1;">
                     <div style="color: #6b7280; font-size: 11px; margin-bottom: 2px;">Δ Value</div>
-                    <div style="font-weight: 700; color: #111827; font-family: 'Courier New', monospace;">${seriesData.deltaY.toFixed(2)}</div>
+                    <div style="font-weight: 700; color: #111827; font-family: 'Courier New', monospace;">${seriesData.deltaY.toFixed(
+                      2
+                    )}</div>
                   </div>
                   <div style="flex: 1;">
                     <div style="color: #6b7280; font-size: 11px; margin-bottom: 2px;">Δ %</div>
-                    <div style="font-weight: 700; color: #111827;">${seriesData.percentage}%</div>
+                    <div style="font-weight: 700; color: #111827;">${
+                      seriesData.percentage
+                    }%</div>
                   </div>
                 </div>
               </div>
@@ -441,23 +462,22 @@ export function createDeltaDrawer() {
    * Ensures only one sidebar is visible at a time
    */
   api.registerWithStore = () => {
-    sidebarStore.register('delta-drawer', {
+    sidebarStore.register("delta-drawer", {
       show: api.show,
       hide: api.hide,
       isOpen: api.isOpen,
       isClosedByDefault: true,
     });
-    console.log('[DeltaDrawer] Registered with sidebar store');
+    console.log("[DeltaDrawer] Registered with sidebar store");
   };
 
   /**
    * Unregister this drawer from the global sidebar store
    */
   api.unregisterFromStore = () => {
-    sidebarStore.unregister('delta-drawer');
-    console.log('[DeltaDrawer] Unregistered from sidebar store');
+    sidebarStore.unregister("delta-drawer");
+    console.log("[DeltaDrawer] Unregistered from sidebar store");
   };
 
   return api;
 }
-

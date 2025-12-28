@@ -1,25 +1,30 @@
 # Global Sidebar Store - Quick Start Guide
 
 ## Overview
+
 Created a centralized **Global Sidebar Store** that manages the visibility of all sidebars and drawers in the application. This ensures that **only ONE sidebar is visible at a time** and prevents overlapping UI elements.
 
 ## Key Features
 
 ✅ **Only One Sidebar Visible at a Time**
+
 - When you show one sidebar, all others automatically close
 - No more overlapping panels fighting for screen space
 
 ✅ **Closed by Default**
+
 - Analysis sidebar (Phasor Diagram) starts CLOSED
 - Delta drawer starts CLOSED
 - User gets a clean interface on page load
 
 ✅ **Centralized Management**
+
 - Single source of truth for sidebar visibility
 - Easy to add new sidebars to the system
 - No scattered DOM manipulation code
 
 ✅ **Simple API**
+
 - `sidebarStore.show('sidebar-id')` - Show a sidebar, hide others
 - `sidebarStore.hide('sidebar-id')` - Close a sidebar
 - `sidebarStore.toggle('sidebar-id')` - Toggle visibility
@@ -28,7 +33,9 @@ Created a centralized **Global Sidebar Store** that manages the visibility of al
 ## Files Created/Modified
 
 ### New Files:
+
 1. **`src/utils/sidebarStore.js`**
+
    - Core SidebarStore class
    - Manages all sidebar state and visibility
    - Exported as `sidebarStore` singleton
@@ -39,7 +46,9 @@ Created a centralized **Global Sidebar Store** that manages the visibility of al
    - Best practices and troubleshooting
 
 ### Modified Files:
+
 1. **`src/main.js`**
+
    - Added import: `import { sidebarStore } from './utils/sidebarStore.js'`
    - Added `initSidebarSystem()` function to register all sidebars
    - Registers "analysis-sidebar" and calls `deltaWindow.registerWithStore()`
@@ -53,6 +62,7 @@ Created a centralized **Global Sidebar Store** that manages the visibility of al
 ## Registered Sidebars
 
 ### 1. Analysis Sidebar (Phasor Diagram)
+
 - **ID:** `"analysis-sidebar"`
 - **Location:** Left sidebar
 - **Default:** CLOSED
@@ -60,6 +70,7 @@ Created a centralized **Global Sidebar Store** that manages the visibility of al
 - **Show:** `sidebarStore.show('analysis-sidebar')`
 
 ### 2. Delta Drawer
+
 - **ID:** `"delta-drawer"`
 - **Location:** Right slide-out drawer
 - **Default:** CLOSED
@@ -69,6 +80,7 @@ Created a centralized **Global Sidebar Store** that manages the visibility of al
 ## How It Works
 
 ### Initialization (Page Load)
+
 ```
 1. initSidebarSystem() called in main.js
    ↓
@@ -84,6 +96,7 @@ Created a centralized **Global Sidebar Store** that manages the visibility of al
 ```
 
 ### User Opens a Sidebar
+
 ```
 1. User clicks button to show analysis sidebar
    ↓
@@ -99,6 +112,7 @@ Created a centralized **Global Sidebar Store** that manages the visibility of al
 ```
 
 ### User Switches to Another Sidebar
+
 ```
 1. User clicks button to show delta-drawer
    ↓
@@ -116,53 +130,58 @@ Created a centralized **Global Sidebar Store** that manages the visibility of al
 ## Usage Examples
 
 ### Example 1: Show Analysis Sidebar
+
 ```javascript
-import { sidebarStore } from './utils/sidebarStore.js';
+import { sidebarStore } from "./utils/sidebarStore.js";
 
 // Show analysis sidebar
-sidebarStore.show('analysis-sidebar');
+sidebarStore.show("analysis-sidebar");
 // Delta drawer automatically hides if it was open
 ```
 
 ### Example 2: Show Delta Drawer
+
 ```javascript
-import { sidebarStore } from './utils/sidebarStore.js';
+import { sidebarStore } from "./utils/sidebarStore.js";
 
 // Show delta drawer
-sidebarStore.show('delta-drawer');
+sidebarStore.show("delta-drawer");
 // Analysis sidebar automatically hides if it was open
 ```
 
 ### Example 3: Check What's Currently Visible
+
 ```javascript
-import { sidebarStore } from './utils/sidebarStore.js';
+import { sidebarStore } from "./utils/sidebarStore.js";
 
 const active = sidebarStore.getActiveSidebar();
 
-if (active === 'delta-drawer') {
-  console.log('Delta measurements are visible');
-} else if (active === 'analysis-sidebar') {
-  console.log('Phasor diagram is visible');
+if (active === "delta-drawer") {
+  console.log("Delta measurements are visible");
+} else if (active === "analysis-sidebar") {
+  console.log("Phasor diagram is visible");
 } else {
-  console.log('No sidebar is currently visible');
+  console.log("No sidebar is currently visible");
 }
 ```
 
 ### Example 4: Close All Sidebars
+
 ```javascript
-import { sidebarStore } from './utils/sidebarStore.js';
+import { sidebarStore } from "./utils/sidebarStore.js";
 
 // Hide everything
 sidebarStore.hideAll();
 ```
 
 ### Example 5: Toggle a Sidebar
+
 ```javascript
-import { sidebarStore } from './utils/sidebarStore.js';
+import { sidebarStore } from "./utils/sidebarStore.js";
 
 // If analysis sidebar is open, close it
 // If analysis sidebar is closed, open it and hide others
-sidebarStore.toggle('analysis-sidebar');
+sidebarStore.toggle("analysis-sidebar");
 ```
 
 ## Adding a New Sidebar
@@ -170,43 +189,43 @@ sidebarStore.toggle('analysis-sidebar');
 If you want to add another sidebar to the system:
 
 ```javascript
-import { sidebarStore } from './utils/sidebarStore.js';
+import { sidebarStore } from "./utils/sidebarStore.js";
 
 // Get references to your sidebar elements
-const mySidebar = document.getElementById('my-sidebar');
-const toggleBtn = document.getElementById('my-toggle-btn');
+const mySidebar = document.getElementById("my-sidebar");
+const toggleBtn = document.getElementById("my-toggle-btn");
 
 // Define what "show" means for your sidebar
 const showMySidebar = () => {
-  mySidebar.style.display = 'flex';
-  mySidebar.style.visibility = 'visible';
-  toggleBtn.style.display = 'none';
-  console.log('My sidebar is now visible');
+  mySidebar.style.display = "flex";
+  mySidebar.style.visibility = "visible";
+  toggleBtn.style.display = "none";
+  console.log("My sidebar is now visible");
 };
 
 // Define what "hide" means for your sidebar
 const hideMySidebar = () => {
-  mySidebar.style.display = 'none';
-  mySidebar.style.visibility = 'hidden';
-  toggleBtn.style.display = 'flex';
-  console.log('My sidebar is now hidden');
+  mySidebar.style.display = "none";
+  mySidebar.style.visibility = "hidden";
+  toggleBtn.style.display = "flex";
+  console.log("My sidebar is now hidden");
 };
 
 // Define how to check if it's open
 const isOpen = () => {
-  return mySidebar.style.display !== 'none';
+  return mySidebar.style.display !== "none";
 };
 
 // Register it with the store
-sidebarStore.register('my-sidebar', {
+sidebarStore.register("my-sidebar", {
   show: showMySidebar,
   hide: hideMySidebar,
   isOpen: isOpen,
-  isClosedByDefault: true,  // Start closed
+  isClosedByDefault: true, // Start closed
 });
 
 // Now use it like any other sidebar
-sidebarStore.show('my-sidebar'); // Shows your sidebar, hides others
+sidebarStore.show("my-sidebar"); // Shows your sidebar, hides others
 ```
 
 ## Console Logging

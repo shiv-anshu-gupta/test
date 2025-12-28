@@ -60,7 +60,8 @@ export default function verticalLinePlugin(
                 if (allDeltaData.length > 0) {
                   try {
                     const { deltaWindow } = await import("../main.js");
-                    const linesLength = verticalLinesXState?.asArray?.()?.length || 0;
+                    const linesLength =
+                      verticalLinesXState?.asArray?.()?.length || 0;
                     if (deltaWindow) {
                       deltaWindow.update(allDeltaData, linesLength);
                     }

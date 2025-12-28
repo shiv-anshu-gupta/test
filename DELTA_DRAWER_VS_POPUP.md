@@ -3,6 +3,7 @@
 ## 🔄 What Changed
 
 ### Before: Popup Window ❌
+
 ```
 ┌─────────────────────────────────┐
 │ Main Chart Window               │  ← User can't interact
@@ -19,6 +20,7 @@
 ```
 
 **Issues:**
+
 - ❌ Blocks user interaction with main chart
 - ❌ Hard to position/resize
 - ❌ Popup blocker issues
@@ -26,6 +28,7 @@
 - ❌ Distracting modal behavior
 
 ### After: Drawer Panel ✅
+
 ```
 ┌──────────────────────────────────────┬──────────┐
 │ Main Chart Window                    │ Δ Data ◄─┤
@@ -49,6 +52,7 @@
 ```
 
 **Benefits:**
+
 - ✅ Non-blocking side panel
 - ✅ User can still interact with chart
 - ✅ Smooth slide-in/out animation
@@ -59,24 +63,25 @@
 
 ## 📊 Feature Comparison Table
 
-| Feature | Popup Window | Drawer Panel |
-|---------|--------------|--------------|
-| **Blocks Chart** | ❌ Yes | ✅ No |
-| **Slide Animation** | ❌ No | ✅ Yes |
-| **Non-modal** | ❌ No | ✅ Yes |
-| **Toggle Button** | ❌ No | ✅ Yes |
-| **Screen Space** | ❌ Fixed 550x700 | ✅ Responsive |
-| **Mobile Friendly** | ❌ Poor | ✅ Good |
-| **Smooth UX** | ❌ Jarring | ✅ Fluid |
-| **Popup Blockers** | ❌ Issues | ✅ No issues |
-| **Can Add Lines** | ❌ Hard | ✅ Easy |
-| **Professional** | ❌ Dated | ✅ Modern |
+| Feature             | Popup Window     | Drawer Panel  |
+| ------------------- | ---------------- | ------------- |
+| **Blocks Chart**    | ❌ Yes           | ✅ No         |
+| **Slide Animation** | ❌ No            | ✅ Yes        |
+| **Non-modal**       | ❌ No            | ✅ Yes        |
+| **Toggle Button**   | ❌ No            | ✅ Yes        |
+| **Screen Space**    | ❌ Fixed 550x700 | ✅ Responsive |
+| **Mobile Friendly** | ❌ Poor          | ✅ Good       |
+| **Smooth UX**       | ❌ Jarring       | ✅ Fluid      |
+| **Popup Blockers**  | ❌ Issues        | ✅ No issues  |
+| **Can Add Lines**   | ❌ Hard          | ✅ Easy       |
+| **Professional**    | ❌ Dated         | ✅ Modern     |
 
 ## 🎯 User Workflow Comparison
 
 ### Scenario: Add 3 Vertical Lines and View Deltas
 
 #### Old Way (Popup Window) ❌
+
 ```
 1. Add vertical line 1 → OK
 2. Add vertical line 2 → Delta popup appears (BLOCKING!)
@@ -87,6 +92,7 @@
 ```
 
 #### New Way (Drawer Panel) ✅
+
 ```
 1. Add vertical line 1 → OK
 2. Add vertical line 2 → Drawer slides open on right
@@ -100,6 +106,7 @@
 ## 🎨 Visual Behavior
 
 ### Drawer Animation
+
 ```
 Closed (initial state):
 └─────────────────────────────────┤[Δ]
@@ -127,19 +134,21 @@ Closed state (final):
 ## 🔧 Technical Implementation
 
 ### API Compatibility
+
 ```javascript
 // The API is 100% compatible!
 // Old code: const deltaWindow = createDeltaWindow();
 // New code: const deltaWindow = createDeltaDrawer();
 
 // All methods work the same:
-deltaWindow.show();        // ✅ Works
-deltaWindow.hide();        // ✅ Works  
-deltaWindow.update(data);  // ✅ Works
-deltaWindow.isOpen();      // ✅ Works
+deltaWindow.show(); // ✅ Works
+deltaWindow.hide(); // ✅ Works
+deltaWindow.update(data); // ✅ Works
+deltaWindow.isOpen(); // ✅ Works
 ```
 
 ### DOM Structure
+
 ```
 <div id="delta-drawer">
   ├─ Backdrop (semi-transparent overlay)
@@ -156,6 +165,7 @@ deltaWindow.isOpen();      // ✅ Works
 ## 📱 Responsive Behavior
 
 ### Desktop (Wide)
+
 ```
 ┌──────────────────────────────────┬──────────┐
 │ Charts                           │ Drawer   │
@@ -164,6 +174,7 @@ deltaWindow.isOpen();      // ✅ Works
 ```
 
 ### Tablet/Mobile (Narrow)
+
 ```
 ┌──────────────────────┬──────────┐
 │ Charts               │ Drawer   │
@@ -172,6 +183,7 @@ deltaWindow.isOpen();      // ✅ Works
 ```
 
 The drawer automatically adjusts because:
+
 - Uses `max-w-md` (384px) fixed width
 - Charts flex to fill remaining space
 - Drawer always visible on right
@@ -179,6 +191,7 @@ The drawer automatically adjusts because:
 ## ✨ Key Advantages
 
 ### For Users
+
 1. **Better workflow** - Add lines without obstruction
 2. **More professional** - Modern UI pattern
 3. **Less annoying** - Not intrusive modal
@@ -186,6 +199,7 @@ The drawer automatically adjusts because:
 5. **Always recoverable** - Toggle button always available
 
 ### For Developers
+
 1. **Simpler code** - No popup management
 2. **No popup blocker issues** - Native DOM elements
 3. **Easier to test** - No window.open() complexity
