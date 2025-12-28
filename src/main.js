@@ -1999,41 +1999,26 @@ function setupAnalysisSidebarHandlers() {
 function setupHtmlButtonHandlers() {
   console.log("[main.js] Setting up HTML button handlers");
 
-  // Analysis button (left edge)
+  // Analysis button (opens analysis sidebar)
   const analysisBtn = document.getElementById("Analysis");
   if (analysisBtn) {
     analysisBtn.addEventListener("click", () => {
-      console.log(
-        "[main.js] Analysis button clicked, analysisSidebar:",
-        analysisSidebar
-      );
-      if (analysisSidebar && analysisSidebar.toggle) {
-        analysisSidebar.toggle();
-        console.log("[main.js] Analysis sidebar toggled");
-      } else {
-        console.error(
-          "[main.js] analysisSidebar is not available or has no toggle method"
-        );
-      }
+      console.log("[main.js] Analysis button clicked");
+      sidebarStore.show("analysis-sidebar");
+      console.log("[main.js] Analysis sidebar shown via sidebarStore");
     });
     console.log("[main.js] Analysis button handler attached");
   } else {
     console.warn("[main.js] Analysis button not found in DOM");
   }
 
-  // Delta/Data button (right edge)
+  // Delta button (opens delta drawer)
   const deltaBtn = document.getElementById("delta-values");
   if (deltaBtn) {
     deltaBtn.addEventListener("click", () => {
-      console.log("[main.js] Delta button clicked, deltaWindow:", deltaWindow);
-      if (deltaWindow && deltaWindow.toggle) {
-        deltaWindow.toggle();
-        console.log("[main.js] Delta drawer toggled");
-      } else {
-        console.error(
-          "[main.js] deltaWindow is not available or has no toggle method"
-        );
-      }
+      console.log("[main.js] Delta button clicked");
+      sidebarStore.show("delta-drawer");
+      console.log("[main.js] Delta drawer shown via sidebarStore");
     });
     console.log("[main.js] Delta button handler attached");
   } else {
