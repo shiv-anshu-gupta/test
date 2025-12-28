@@ -20,7 +20,7 @@ export function createAnalysisSidebar() {
         height: 100%;
         z-index: 997;
         display: none;
-        pointer-events: none;
+        pointer-events: none;  /* Always none - let clicks pass through */
       }
 
       #analysis-sidebar-backdrop {
@@ -37,15 +37,15 @@ export function createAnalysisSidebar() {
       #analysis-sidebar-panel {
         position: fixed;
         top: 0;
-        left: 0;
+        right: 0;
         height: 100%;
         width: 320px;
         max-width: 90vw;
         background-color: #ffffff;
-        box-shadow: 4px 0 12px rgba(0, 0, 0, 0.15);
+        box-shadow: -4px 0 12px rgba(0, 0, 0, 0.15);
         display: flex;
         flex-direction: column;
-        transform: translateX(-100%);
+        transform: translateX(100%);
         transition: transform 0.5s ease-in-out;
         z-index: 998;
         pointer-events: auto;
@@ -197,11 +197,6 @@ export function createAnalysisSidebar() {
         </div>
       </div>
     </div>
-
-    <!-- Toggle Button -->
-    <button id="analysis-sidebar-toggle" title="Analysis & Phasor">
-      ANALYSIS
-    </button>
   `;
 
   function injectSidebarHTML() {
@@ -272,7 +267,10 @@ export function createAnalysisSidebar() {
 
       isOpen = true;
       sidebar.style.display = "block";
+      // Force reflow to ensure display change is applied before adding open class
+      void sidebar.offsetWidth;
       panel.classList.add("open");
+      console.log("[AnalysisSidebar] ✅ Sidebar shown with smooth transition");
     },
 
     hide: () => {
@@ -283,8 +281,14 @@ export function createAnalysisSidebar() {
       if (!sidebar) return;
 
       isOpen = false;
-      sidebar.style.display = "none";
       if (panel) panel.classList.remove("open");
+
+      // Wait for transform animation to complete before hiding
+      setTimeout(() => {
+        sidebar.style.display = "none";
+      }, 500); // Match the CSS transition duration (0.5s)
+
+      console.log("[AnalysisSidebar] ✅ Sidebar hidden with smooth transition");
     },
 
     isOpen: () => isOpen,

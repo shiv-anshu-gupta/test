@@ -19,7 +19,12 @@ export function createDeltaDrawer() {
         height: 100%;
         z-index: 999;
         display: none;
-        pointer-events: none;
+        pointer-events: none;  /* Always none - let clicks pass through to content below */
+      }
+
+      #delta-drawer.open {
+        /* Do NOT change pointer-events here - keep it as none */
+        /* This allows clicks to pass through to the main window */
       }
 
       #delta-drawer-backdrop {
@@ -43,7 +48,12 @@ export function createDeltaDrawer() {
         height: 100%;
         display: none;
         outline: none;
-        pointer-events: none;
+        pointer-events: none;  /* Always none - only the panel needs pointer events */
+      }
+
+      #delta-drawer-scrim.open {
+        /* Do NOT change pointer-events here - keep it as none */
+        /* This allows clicks to pass through to the main window */
       }
 
       #delta-drawer-panel {
@@ -232,17 +242,40 @@ export function createDeltaDrawer() {
   `;
 
   function injectDrawerHTML() {
-    if (document.getElementById("delta-drawer")) return; // Already injected
+    if (document.getElementById("delta-drawer")) {
+      console.log("[DeltaDrawer] HTML already injected, skipping");
+      return; // Already injected
+    }
+
+    console.log("[DeltaDrawer] Injecting drawer HTML...");
 
     // Inject styles
     const styleContainer = document.createElement("div");
     styleContainer.innerHTML = styleHTML;
     document.head.appendChild(styleContainer.firstElementChild);
+    console.log("[DeltaDrawer] Styles injected");
 
     // Inject drawer HTML (without button - using HTML button from index.html instead)
     const container = document.createElement("div");
     container.innerHTML = drawerHTML;
     document.body.appendChild(container.firstElementChild);
+    console.log("[DeltaDrawer] Drawer HTML injected into body");
+
+    // Verify injection
+    const drawer = document.getElementById("delta-drawer");
+    const panel = document.getElementById("delta-drawer-panel");
+    if (drawer && panel) {
+      console.log(
+        "[DeltaDrawer] ✅ Injection verified - drawer and panel found in DOM"
+      );
+    } else {
+      console.error(
+        "[DeltaDrawer] ❌ Injection failed - drawer:",
+        !!drawer,
+        "panel:",
+        !!panel
+      );
+    }
 
     setupEventListeners();
   }
@@ -288,20 +321,28 @@ export function createDeltaDrawer() {
       const scrim = document.getElementById("delta-drawer-scrim");
 
       if (!drawer) {
-        console.error("[DeltaDrawer] Failed to inject drawer HTML");
+        console.error("[DeltaDrawer] ❌ Failed to inject drawer HTML");
         return;
       }
 
       isOpen = true;
       drawer.style.display = "block";
+      // Force reflow to ensure display change is applied before adding open class
+      void drawer.offsetWidth;
       drawer.classList.add("open");
-      if (backdrop) backdrop.style.opacity = "1";
-      if (scrim) scrim.style.display = "block";
+
+      if (backdrop) {
+        backdrop.style.display = "block";
+        backdrop.style.opacity = "1";
+      }
+      if (scrim) {
+        scrim.style.display = "block";
+        scrim.classList.add("open");
+      }
       if (panel) {
         panel.classList.add("open");
-        panel.style.transform = "translateX(0)";
       }
-      console.log("[DeltaDrawer] Drawer shown successfully");
+      console.log("[DeltaDrawer] ✅ Drawer shown with smooth transition");
     },
 
     hide: () => {
@@ -319,14 +360,24 @@ export function createDeltaDrawer() {
 
       isOpen = false;
       drawer.classList.remove("open");
-      drawer.style.display = "none";
-      if (backdrop) backdrop.style.opacity = "0";
-      if (scrim) scrim.style.display = "none";
+      if (backdrop) {
+        backdrop.style.opacity = "0";
+      }
+      if (scrim) {
+        scrim.classList.remove("open");
+      }
       if (panel) {
         panel.classList.remove("open");
-        panel.style.transform = "translateX(100%)";
       }
-      console.log("[DeltaDrawer] Drawer hidden successfully");
+
+      // Wait for transform animation to complete before hiding
+      setTimeout(() => {
+        drawer.style.display = "none";
+        if (backdrop) backdrop.style.display = "none";
+        if (scrim) scrim.style.display = "none";
+      }, 500); // Match the CSS transition duration (0.5s)
+
+      console.log("[DeltaDrawer] ✅ Drawer hidden with smooth transition");
     },
 
     update: (deltaData = [], verticalLinesCount = 0) => {
