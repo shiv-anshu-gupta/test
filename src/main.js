@@ -2003,8 +2003,9 @@ function setupHtmlButtonHandlers() {
   if (analysisBtn) {
     analysisBtn.addEventListener("click", () => {
       console.log("[main.js] Analysis button clicked");
-      sidebarStore.show("analysis-sidebar");
-      console.log("[main.js] Analysis sidebar shown via sidebarStore");
+      // Ensure sidebar HTML is injected first
+      analysisSidebar.show();
+      console.log("[main.js] Analysis sidebar opened");
     });
     console.log("[main.js] Analysis button handler attached");
   } else {
@@ -2016,8 +2017,14 @@ function setupHtmlButtonHandlers() {
   if (deltaBtn) {
     deltaBtn.addEventListener("click", () => {
       console.log("[main.js] Delta button clicked");
-      sidebarStore.show("delta-drawer");
-      console.log("[main.js] Delta drawer shown via sidebarStore");
+      // Check if drawer is open, if so close it, if closed open it
+      if (deltaWindow.isOpen()) {
+        deltaWindow.hide();
+        console.log("[main.js] Delta drawer closed");
+      } else {
+        deltaWindow.show();
+        console.log("[main.js] Delta drawer opened");
+      }
     });
     console.log("[main.js] Delta button handler attached");
   } else {
