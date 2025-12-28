@@ -25,154 +25,6 @@
   </head>
 
   <body>
-    <!-- Sidebar -->
-    <aside class="sidebar" id="sidebar">
-      <div class="sidebar-header" style="display: flex; justify-content: space-between; align-items: center;">
-        <h2 style="margin: 0; font-size: 1rem; color: var(--text-primary);">Analysis</h2>
-        <div style="display: flex; gap: 8px; align-items: center;">
-          <button id="floatingWindowBtn" title="Display as floating window" style="background: var(--bg-tertiary); border: 1px solid var(--border-color); color: var(--text-secondary); cursor: pointer; font-size: 0.75rem; padding: 4px 8px; border-radius: 4px; transition: all 0.2s;">
-            ▦ Floating
-          </button>
-          <button id="belowChartBtn" title="Display below chart" style="background: var(--bg-tertiary); border: 1px solid var(--border-color); color: var(--text-secondary); cursor: pointer; font-size: 0.75rem; padding: 4px 8px; border-radius: 4px; transition: all 0.2s;">
-            📦 Below
-          </button>
-          <button id="returnSidebarBtn" title="Return to sidebar" style="background: var(--bg-tertiary); border: 1px solid var(--border-color); color: var(--text-secondary); cursor: pointer; font-size: 0.75rem; padding: 4px 8px; border-radius: 4px; transition: all 0.2s; display: none;">
-            ⬅ Sidebar
-          </button>
-          <button id="closeSidebarBtn" style="background: none; border: none; color: var(--text-secondary); cursor: pointer; font-size: 1.4rem; padding: 0; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center;">
-            ✕
-          </button>
-        </div>
-      </div>
-
-      <!-- Polar Chart Section -->
-      <div class="polar-chart-section" id="polarChartSection">
-        <div class="polar-section-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-          <h3 style="font-size: 0.85rem; font-weight: 600; color: var(--text-secondary); margin: 0;">Phasor Diagram</h3>
-          <button id="returnSidebarFromBelowBtn" title="Return to sidebar" style="background: var(--bg-tertiary); border: 1px solid var(--border-color); color: var(--text-secondary); cursor: pointer; font-size: 0.75rem; padding: 4px 8px; border-radius: 4px; transition: all 0.2s; display: none;">
-            ⬅ Sidebar
-          </button>
-        </div>
-        <div id="polarChartContainer" class="polar-chart-container" style="width: 100%; height: 400px; background: var(--bg-tertiary); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: var(--text-secondary);">
-          <span>Polar Chart</span>
-        </div>
-      </div>
-    </aside>
-
-    <!-- Sidebar (Hidden Channels Section - for future use) -->
-    <div style="display: none;">
-
-        <div class="channel-group">
-          <p
-            style="
-              font-size: 0.85rem;
-              color: var(--text-secondary);
-              margin-bottom: 8px;
-              font-weight: 600;
-            "
-          >
-            Currents
-          </p>
-          <div class="channel-item">
-            <input
-              type="checkbox"
-              class="channel-checkbox"
-              checked
-              id="ch-ia"
-            />
-            <span class="channel-indicator" style="background: #00d9ff"></span>
-            <label for="ch-ia" class="channel-label">IA</label>
-          </div>
-          <div class="channel-item">
-            <input
-              type="checkbox"
-              class="channel-checkbox"
-              checked
-              id="ch-ib"
-            />
-            <span class="channel-indicator" style="background: #2196f3"></span>
-            <label for="ch-ib" class="channel-label">IB</label>
-          </div>
-          <div class="channel-item">
-            <input
-              type="checkbox"
-              class="channel-checkbox"
-              checked
-              id="ch-ic"
-            />
-            <span class="channel-indicator" style="background: #10b981"></span>
-            <label for="ch-ic" class="channel-label">IC</label>
-          </div>
-        </div>
-
-        <div class="channel-group" style="margin-top: 20px">
-          <p
-            style="
-              font-size: 0.85rem;
-              color: var(--text-secondary);
-              margin-bottom: 8px;
-              font-weight: 600;
-            "
-          >
-            Voltages
-          </p>
-          <div class="channel-item">
-            <input
-              type="checkbox"
-              class="channel-checkbox"
-              checked
-              id="ch-va"
-            />
-            <span class="channel-indicator" style="background: #ff6b35"></span>
-            <label for="ch-va" class="channel-label">VA</label>
-          </div>
-          <div class="channel-item">
-            <input
-              type="checkbox"
-              class="channel-checkbox"
-              checked
-              id="ch-vb"
-            />
-            <span class="channel-indicator" style="background: #00d9ff"></span>
-            <label for="ch-vb" class="channel-label">VB</label>
-          </div>
-          <div class="channel-item">
-            <input
-              type="checkbox"
-              class="channel-checkbox"
-              checked
-              id="ch-vc"
-            />
-            <span class="channel-indicator" style="background: #ef4444"></span>
-            <label for="ch-vc" class="channel-label">VC</label>
-          </div>
-        </div>
-
-        <div class="channel-group" style="margin-top: 20px">
-          <p
-            style="
-              font-size: 0.85rem;
-              color: var(--text-secondary);
-              margin-bottom: 8px;
-              font-weight: 600;
-            "
-          >
-            Other
-          </p>
-          <div class="channel-item">
-            <input
-              type="checkbox"
-              class="channel-checkbox"
-              checked
-              id="ch-in"
-            />
-            <span class="channel-indicator" style="background: #7c3aed"></span>
-            <label for="ch-in" class="channel-label">IN</label>
-          </div>
-        </div>
-      </div>
-    </div>
-
     <!-- Main Content -->
     <main>
       <!-- Top Header -->
@@ -209,7 +61,11 @@
             <span>📄</span>
             <span>CSV</span>
           </button>
-          <button class="icon-button" id="themeToggleBtn" title="Toggle Light/Dark Theme">
+          <button
+            class="icon-button"
+            id="themeToggleBtn"
+            title="Toggle Light/Dark Theme"
+          >
             <span id="themeIcon">🌙</span>
             <span id="themeName">Dark</span>
           </button>
@@ -241,7 +97,13 @@
               </label>
               <input type="file" id="cfgFile" accept=".cfg,.dat" multiple />
               <button class="btn-secondary" id="loadBtn">Load Files</button>
-              <button class="btn-secondary" id="mergeMultipleFilesBtn" title="Open file merger to combine multiple COMTRADE files">🔗 Merge Multiple Files</button>
+              <button
+                class="btn-secondary"
+                id="mergeMultipleFilesBtn"
+                title="Open file merger to combine multiple COMTRADE files"
+              >
+                🔗 Merge Multiple Files
+              </button>
             </div>
           </section>
 
@@ -400,88 +262,91 @@
         </div>
       </div>
     </div>
+    <div
+      id="buttons"
+      style="
+        position: fixed;
+        right: 0;
+        top: 0;
+        width: auto;
+        height: 100%;
+        z-index: 1000;
+      "
+    >
+      <button
+        id="delta-values"
+        style="
+          writing-mode: vertical-rl;
+          text-orientation: sideways;
+          transform: rotate(180deg);
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          color: white;
+          border: none;
+          border-radius: 0 8px 8px 0;
+          padding: 16px 8px;
+          font-size: 12px;
+          font-weight: 600;
+          cursor: pointer;
+          box-shadow: -2px 4px 12px rgba(102, 126, 234, 0.4);
+          transition: all 0.3s ease;
+          min-height: 100px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          letter-spacing: 1px;
+          position: fixed;
+          right: -3px;
+          top: 50%;
+          margin: 0;
+          pointer-events: auto;
+        "
+        onmouseover="this.style.right='0px';"
+        onmouseout="this.style.right='-3px';"
+      >
+        Delta's
+      </button>
+      <button
+        id="Analysis"
+        style="
+          writing-mode: vertical-rl;
+          text-orientation: sideways;
+          transform: rotate(180deg);
+          background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+          color: white;
+          border: none;
+          border-radius: 0 8px 8px 0;
+          padding: 16px 8px;
+          font-size: 12px;
+          font-weight: 600;
+          cursor: pointer;
+          box-shadow: -2px 4px 12px rgba(245, 87, 108, 0.4);
+          transition: all 0.3s ease;
+          min-height: 100px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          letter-spacing: 1px;
+          position: fixed;
+          right: -3px;
+          top: calc(50% + 120px);
+          margin: 0;
+          pointer-events: auto;
+        "
+        onmouseover="this.style.right='0px';"
+        onmouseout="this.style.right='-3px'; "
+      >
+        Analysis
+      </button>
+    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/uplot@1.6.32/dist/uPlot.iife.js"></script>
-    
-    <!-- Sidebar Toggle Button for Analysis/Phasor Chart -->
-    <button id="sidebarToggleBtn" class="sidebar-toggle-btn" style="
-      position: fixed;
-      right: 0;
-      top: 50%;
-      transform: translateY(-50%);
-      background: var(--bg-secondary);
-      border: 2px solid var(--border-color);
-      color: var(--text-primary);
-      cursor: pointer;
-      padding: 12px 6px;
-      border-radius: 8px 0 0 8px;
-      z-index: 999;
-      display: none;
-      font-size: 0.85rem;
-      transition: all 0.3s ease;
-      writing-mode: vertical-rl;
-      text-orientation: mixed;
-      font-weight: 600;
-      letter-spacing: 1px;
-      min-width: 40px;
-    " title="Phasor Diagram & Analysis">
-      ANALYSIS
-    </button>
-    
-    <!-- Detached Analysis Window (Floating) -->
-    <div id="detachedWindow" class="detached-window" style="
-      display: none;
-      position: fixed;
-      width: 450px;
-      height: 600px;
-      background: var(--bg-sidebar);
-      border: 1px solid var(--border-color);
-      border-radius: 12px;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-      z-index: 2000;
-      top: 100px;
-      right: 50px;
-      flex-direction: column;
-      overflow: hidden;
-    ">
-      <!-- Window Title Bar (Draggable) -->
-      <div id="windowTitleBar" class="window-title-bar" style="
-        background: var(--bg-secondary);
-        border-bottom: 1px solid var(--border-color);
-        padding: 12px 16px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        cursor: move;
-        user-select: none;
-      ">
-        <h3 style="margin: 0; font-size: 0.95rem; color: var(--text-primary);">Analysis - Phasor Diagram</h3>
-        <div style="display: flex; gap: 8px;">
-          <button id="attachWindowBtn" style="background: none; border: none; color: var(--text-secondary); cursor: pointer; font-size: 1.1rem; padding: 0; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center;" title="Attach to sidebar">
-            ⬇
-          </button>
-          <button id="closeWindowBtn" style="background: none; border: none; color: var(--text-secondary); cursor: pointer; font-size: 1.2rem; padding: 0; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center;">
-            ✕
-          </button>
-        </div>
-      </div>
-      
-      <!-- Window Content (scrollable) -->
-      <div id="detachedWindowContent" style="
-        flex: 1;
-        overflow-y: auto;
-        padding: 16px;
-      ">
-        <!-- Content will be cloned here -->
-      </div>
-    </div>
-    
+
     <!-- ✅ Cache-buster: Add timestamp to prevent stale cached files -->
     <script>
       // Add cache-buster to module import
       const timestamp = new Date().getTime();
-      const mainScript = document.createElement('script');
-      mainScript.type = 'module';
+      const mainScript = document.createElement("script");
+      mainScript.type = "module";
       mainScript.src = `src/main.js?v=${timestamp}`;
       document.body.appendChild(mainScript);
     </script>

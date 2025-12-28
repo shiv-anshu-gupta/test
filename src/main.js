@@ -8,7 +8,9 @@ import {
   calculateDeltas,
   collectChartDeltas,
 } from "./utils/calculateDeltas.js";
-import { createDeltaWindow } from "./components/DeltaWindow.js";
+import { createDeltaDrawer } from "./components/DeltaDrawer.js";
+import { createAnalysisSidebar } from "./components/AnalysisSidebar.js";
+import { sidebarStore } from "./utils/sidebarStore.js";
 import { createDragBar } from "./components/createDragBar.js";
 import { setupChartDragAndDrop } from "./components/setupChartDragAndDrop.js";
 import { handleVerticalLineShortcuts } from "./components/handleVerticalLineShortcuts.js";
@@ -212,11 +214,34 @@ function convertLatexToMathJs(latex) {
 export const verticalLinesX = createState([]);
 export const dataState = createState({ analog: [], digital: [] });
 
-// Initialize delta display window
-export const deltaWindow = createDeltaWindow();
+// Initialize delta display drawer (replaces popup window)
+export const deltaWindow = createDeltaDrawer();
 
-// Export calculateDeltas utils for fast access
-export { collectChartDeltas };
+// Initialize analysis sidebar (phasor diagram - dynamically injected)
+export const analysisSidebar = createAnalysisSidebar();
+
+/**
+ * Initialize sidebar/drawer registry
+ * Ensures only one sidebar is visible at a time
+ * By default, the phasor diagram (analysis) sidebar is closed
+ */
+function initializeSidebarRegistry() {
+  // Register the analysis sidebar with the store
+  analysisSidebar.registerWithStore();
+
+  // Register delta drawer with the store
+  deltaWindow.registerWithStore();
+
+  // Initialize all sidebars to their default closed state
+  sidebarStore.initializeDefaults();
+
+  console.log("[SidebarRegistry] Sidebar registry initialized. Active sidebars:", sidebarStore.getRegisteredSidebars());
+}
+
+// Export registry initializer so it can be called after DOM is ready
+export function initSidebarSystem() {
+  initializeSidebarRegistry();
+}
 
 // Getter functions for global state
 export function getCfg() {
@@ -1664,23 +1689,20 @@ window.addEventListener("mergedFilesReceived", async (event) => {
 });
 console.log("[main.js] mergedFilesReceived event listener attached");
 
-// Sidebar Toggle Functionality
-const sidebar = document.getElementById("sidebar");
-const closeSidebarBtn = document.getElementById("closeSidebarBtn");
-const sidebarToggleBtn = document.getElementById("sidebarToggleBtn");
+// Initialize sidebar registry system - ensures only one sidebar visible at a time
+// Both Analysis sidebar and Delta drawer start closed by default
+initSidebarSystem();
+
+// DOM Elements for Phasor/Analysis Controls
 const mainContent = document.querySelector("main");
-const floatingWindowBtn = document.getElementById("floatingWindowBtn");
-const belowChartBtn = document.getElementById("belowChartBtn");
-const returnSidebarBtn = document.getElementById("returnSidebarBtn");
-const returnSidebarFromBelowBtn = document.getElementById(
-  "returnSidebarFromBelowBtn"
-);
 const detachedWindow = document.getElementById("detachedWindow");
 const windowTitleBar = document.getElementById("windowTitleBar");
 const attachWindowBtn = document.getElementById("attachWindowBtn");
 const closeWindowBtn = document.getElementById("closeWindowBtn");
 const detachedWindowContent = document.getElementById("detachedWindowContent");
 
+// Note: Sidebar buttons are now dynamically created in AnalysisSidebar.js
+// They will be available after analysisSidebar.show() is called
 // Create analysis container for detached sidebar in charts area
 let analysisContainer = null;
 function getOrCreateAnalysisContainer() {
@@ -1840,84 +1862,90 @@ function movePolarChartSection(targetMode) {
   }
 }
 
-// Handle floating window button
-if (floatingWindowBtn) {
-  floatingWindowBtn.addEventListener("click", (e) => {
-    e.stopPropagation();
-    sidebarLayoutMode = "floating";
-    movePolarChartSection("floating");
-    updateLayoutButtonVisibility();
-  });
+// Setup handlers for floating/below chart buttons (created dynamically in AnalysisSidebar)
+function setupLayoutButtonHandlers() {
+  const floatingWindowBtn = document.getElementById("floatingWindowBtn");
+  const belowChartBtn = document.getElementById("belowChartBtn");
+  const returnSidebarBtn = document.getElementById("returnSidebarBtn");
+  const returnSidebarFromBelowBtn = document.getElementById("returnSidebarFromBelowBtn");
 
-  floatingWindowBtn.addEventListener("mouseenter", () => {
-    floatingWindowBtn.style.background = "var(--bg-secondary)";
-    floatingWindowBtn.style.opacity = "0.8";
-  });
-  floatingWindowBtn.addEventListener("mouseleave", () => {
-    floatingWindowBtn.style.background = "var(--bg-tertiary)";
-    floatingWindowBtn.style.opacity = "1";
-  });
+  // Handle floating window button
+  if (floatingWindowBtn && !floatingWindowBtn.__hasListener) {
+    floatingWindowBtn.__hasListener = true;
+    floatingWindowBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      sidebarLayoutMode = "floating";
+      movePolarChartSection("floating");
+      updateLayoutButtonVisibility();
+    });
+
+    floatingWindowBtn.addEventListener("mouseenter", () => {
+      floatingWindowBtn.style.background = "var(--bg-secondary)";
+      floatingWindowBtn.style.opacity = "0.8";
+    });
+    floatingWindowBtn.addEventListener("mouseleave", () => {
+      floatingWindowBtn.style.background = "var(--bg-tertiary)";
+      floatingWindowBtn.style.opacity = "1";
+    });
+  }
+
+  // Handle below chart button
+  if (belowChartBtn && !belowChartBtn.__hasListener) {
+    belowChartBtn.__hasListener = true;
+    belowChartBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      sidebarLayoutMode = "charts-below";
+      movePolarChartSection("charts-below");
+      updateLayoutButtonVisibility();
+    });
+
+    belowChartBtn.addEventListener("mouseenter", () => {
+      belowChartBtn.style.background = "var(--bg-secondary)";
+      belowChartBtn.style.opacity = "0.8";
+    });
+    belowChartBtn.addEventListener("mouseleave", () => {
+      belowChartBtn.style.background = "var(--bg-tertiary)";
+      belowChartBtn.style.opacity = "1";
+    });
+  }
+
+  // Handle return sidebar buttons
+  if (returnSidebarBtn && !returnSidebarBtn.__hasListener) {
+    returnSidebarBtn.__hasListener = true;
+    returnSidebarBtn.addEventListener("click", () => {
+      sidebarLayoutMode = "sidebar";
+      movePolarChartSection("sidebar");
+      updateLayoutButtonVisibility();
+    });
+  }
+
+  if (returnSidebarFromBelowBtn && !returnSidebarFromBelowBtn.__hasListener) {
+    returnSidebarFromBelowBtn.__hasListener = true;
+    returnSidebarFromBelowBtn.addEventListener("click", () => {
+      sidebarLayoutMode = "sidebar";
+      movePolarChartSection("sidebar");
+      updateLayoutButtonVisibility();
+    });
+  }
 }
 
-// Handle below chart button
-if (belowChartBtn) {
-  belowChartBtn.addEventListener("click", (e) => {
-    e.stopPropagation();
-    sidebarLayoutMode = "charts-below";
-    movePolarChartSection("charts-below");
-    updateLayoutButtonVisibility();
-  });
+// Call setup when sidebar is shown
+const originalAnalysisSidebarShow = analysisSidebar.show;
+analysisSidebar.show = function() {
+  originalAnalysisSidebarShow.call(this);
+  setupLayoutButtonHandlers();
+};
 
-  belowChartBtn.addEventListener("mouseenter", () => {
-    belowChartBtn.style.background = "var(--bg-secondary)";
-    belowChartBtn.style.opacity = "0.8";
-  });
-  belowChartBtn.addEventListener("mouseleave", () => {
-    belowChartBtn.style.background = "var(--bg-tertiary)";
-    belowChartBtn.style.opacity = "1";
-  });
-}
-
-// Handle return to sidebar button
-if (returnSidebarBtn) {
-  returnSidebarBtn.addEventListener("click", (e) => {
-    e.stopPropagation();
-    sidebarLayoutMode = "sidebar";
-    movePolarChartSection("sidebar");
-    updateLayoutButtonVisibility();
-  });
-
-  returnSidebarBtn.addEventListener("mouseenter", () => {
-    returnSidebarBtn.style.background = "var(--bg-secondary)";
-    returnSidebarBtn.style.opacity = "0.8";
-  });
-  returnSidebarBtn.addEventListener("mouseleave", () => {
-    returnSidebarBtn.style.background = "var(--bg-tertiary)";
-    returnSidebarBtn.style.opacity = "1";
-  });
-}
-
-// Handle return to sidebar button from below chart mode
-if (returnSidebarFromBelowBtn) {
-  returnSidebarFromBelowBtn.addEventListener("click", (e) => {
-    e.stopPropagation();
-    sidebarLayoutMode = "sidebar";
-    movePolarChartSection("sidebar");
-    updateLayoutButtonVisibility();
-  });
-
-  returnSidebarFromBelowBtn.addEventListener("mouseenter", () => {
-    returnSidebarFromBelowBtn.style.background = "var(--bg-secondary)";
-    returnSidebarFromBelowBtn.style.opacity = "0.8";
-  });
-  returnSidebarFromBelowBtn.addEventListener("mouseleave", () => {
-    returnSidebarFromBelowBtn.style.background = "var(--bg-tertiary)";
-    returnSidebarFromBelowBtn.style.opacity = "1";
-  });
-}
+// Button handlers are now setup via setupLayoutButtonHandlers() 
+// called when sidebar is shown
 
 // Helper function to update button visibility based on layout mode
 function updateLayoutButtonVisibility() {
+  const floatingWindowBtn = document.getElementById("floatingWindowBtn");
+  const belowChartBtn = document.getElementById("belowChartBtn");
+  const returnSidebarBtn = document.getElementById("returnSidebarBtn");
+  const returnSidebarFromBelowBtn = document.getElementById("returnSidebarFromBelowBtn");
+
   if (
     floatingWindowBtn &&
     belowChartBtn &&
@@ -1948,133 +1976,76 @@ function updateLayoutButtonVisibility() {
   }
 }
 
-// Handle close sidebar
-if (closeSidebarBtn) {
-  closeSidebarBtn.addEventListener("click", () => {
-    sidebar.style.display = "none";
-    sidebarToggleBtn.style.display = "flex";
-    sidebarToggleBtn.style.alignItems = "center";
-    sidebarToggleBtn.style.justifyContent = "center";
-    if (mainContent) {
-      mainContent.classList.add("sidebar-closed");
-    }
-    // Reset layout mode when closing sidebar
-    sidebarLayoutMode = "sidebar";
-    console.log("[main.js] Sidebar closed, main content expanded");
-  });
-
-  closeSidebarBtn.addEventListener("mouseenter", () => {
-    closeSidebarBtn.style.opacity = "0.7";
-  });
-  closeSidebarBtn.addEventListener("mouseleave", () => {
-    closeSidebarBtn.style.opacity = "1";
-  });
+// Handle sidebar toggle button (for Analysis Sidebar)
+// Note: This button is now dynamically created in AnalysisSidebar.js
+// Get reference to it after sidebar is injected
+function setupAnalysisSidebarHandlers() {
+  const sidebarToggleBtn = document.getElementById("analysis-sidebar-toggle");
+  if (sidebarToggleBtn) {
+    sidebarToggleBtn.addEventListener("click", () => {
+      analysisSidebar.toggle();
+    });
+  }
 }
 
-// Handle sidebar toggle button
-if (sidebarToggleBtn) {
-  sidebarToggleBtn.addEventListener("click", () => {
-    // Only open sidebar if currently in sidebar mode
-    // If in floating or below mode, clicking toggle should close that mode instead
-    if (sidebarLayoutMode === "floating") {
-      // Close floating window and return to sidebar
-      detachedWindow.classList.remove("show");
-      sidebarLayoutMode = "sidebar";
-      movePolarChartSection("sidebar");
-      updateLayoutButtonVisibility();
-      console.log("[main.js] Floating window closed via toggle button");
-    } else if (sidebarLayoutMode === "charts-below") {
-      // Close below mode and return to sidebar
-      sidebarLayoutMode = "sidebar";
-      movePolarChartSection("sidebar");
-      updateLayoutButtonVisibility();
-      console.log("[main.js] Below chart mode closed via toggle button");
-    } else {
-      // In sidebar mode - this shouldn't happen as toggle is hidden, but for safety
-      sidebar.style.display = "flex";
-      sidebar.style.flexDirection = "column";
-      sidebarToggleBtn.style.display = "none";
-      if (mainContent) {
-        mainContent.classList.remove("sidebar-closed");
+// Connect HTML buttons to sidebars
+function setupHtmlButtonHandlers() {
+  console.log("[main.js] Setting up HTML button handlers");
+  
+  // Analysis button (left edge)
+  const analysisBtn = document.getElementById("Analysis");
+  if (analysisBtn) {
+    analysisBtn.addEventListener("click", () => {
+      console.log("[main.js] Analysis button clicked, analysisSidebar:", analysisSidebar);
+      if (analysisSidebar && analysisSidebar.toggle) {
+        analysisSidebar.toggle();
+        console.log("[main.js] Analysis sidebar toggled");
+      } else {
+        console.error("[main.js] analysisSidebar is not available or has no toggle method");
       }
-      console.log("[main.js] Sidebar opened via toggle button");
-    }
-  });
+    });
+    console.log("[main.js] Analysis button handler attached");
+  } else {
+    console.warn("[main.js] Analysis button not found in DOM");
+  }
 
-  sidebarToggleBtn.addEventListener("mouseenter", () => {
-    sidebarToggleBtn.style.backgroundColor = "var(--bg-tertiary)";
-  });
-  sidebarToggleBtn.addEventListener("mouseleave", () => {
-    sidebarToggleBtn.style.backgroundColor = "var(--bg-secondary)";
-  });
+  // Delta/Data button (right edge)
+  const deltaBtn = document.getElementById("delta-values");
+  if (deltaBtn) {
+    deltaBtn.addEventListener("click", () => {
+      console.log("[main.js] Delta button clicked, deltaWindow:", deltaWindow);
+      if (deltaWindow && deltaWindow.toggle) {
+        deltaWindow.toggle();
+        console.log("[main.js] Delta drawer toggled");
+      } else {
+        console.error("[main.js] deltaWindow is not available or has no toggle method");
+      }
+    });
+    console.log("[main.js] Delta button handler attached");
+  } else {
+    console.warn("[main.js] Delta button (delta-values) not found in DOM");
+  }
 }
 
-// Handle attach floating window back to sidebar
-if (attachWindowBtn) {
-  attachWindowBtn.addEventListener("click", () => {
-    // Re-attach content to sidebar
-    const polarChartSection = document.querySelector(".polar-chart-section");
-    if (polarChartSection) {
-      polarChartSection.innerHTML = detachedWindowContent.innerHTML;
-    }
-    detachedWindow.classList.remove("show");
-    sidebar.style.display = "flex";
-    sidebar.style.flexDirection = "column";
-    sidebarToggleBtn.style.display = "none";
-    if (mainContent) {
-      mainContent.classList.remove("sidebar-closed");
-    }
-    sidebarLayoutMode = "sidebar";
-    console.log("[main.js] Floating window attached back to sidebar");
-  });
-}
+// Setup handlers after first render
+document.addEventListener("DOMContentLoaded", () => {
+  setupAnalysisSidebarHandlers();
+  setupHtmlButtonHandlers();
+});
 
-// Handle close floating window
-if (closeWindowBtn) {
-  closeWindowBtn.addEventListener("click", () => {
-    detachedWindow.classList.remove("show");
-    console.log("[main.js] Floating window closed");
-  });
-}
+// Also setup when sidebar is first shown
+const originalShow = analysisSidebar.show;
+analysisSidebar.show = function() {
+  originalShow.call(this);
+  setupAnalysisSidebarHandlers();
+  setupLayoutButtonHandlers();
+};
 
-// Handle dragging for floating window
-if (windowTitleBar) {
-  windowTitleBar.addEventListener("mousedown", (e) => {
-    isDragging = true;
-    const rect = detachedWindow.getBoundingClientRect();
-    dragOffsetX = e.clientX - rect.left;
-    dragOffsetY = e.clientY - rect.top;
-    detachedWindow.style.cursor = "grabbing";
-  });
-
-  document.addEventListener("mousemove", (e) => {
-    if (isDragging) {
-      const newX = e.clientX - dragOffsetX;
-      const newY = e.clientY - dragOffsetY;
-
-      // Constrain to viewport
-      const constrainedX = Math.max(
-        0,
-        Math.min(newX, window.innerWidth - detachedWindow.offsetWidth)
-      );
-      const constrainedY = Math.max(
-        0,
-        Math.min(newY, window.innerHeight - detachedWindow.offsetHeight)
-      );
-
-      detachedWindow.style.left = constrainedX + "px";
-      detachedWindow.style.top = constrainedY + "px";
-      detachedWindow.style.right = "auto";
-    }
-  });
-
-  document.addEventListener("mouseup", () => {
-    if (isDragging) {
-      isDragging = false;
-      detachedWindow.style.cursor = "move";
-    }
-  });
-}
+// OLD CODE - detached window functionality now handled in floating mode via movePolarChartSection
+// Keeping references but commenting out the broken event listeners
+// if (attachWindowBtn) { ... }
+// if (closeWindowBtn) { ... }
+// if (windowTitleBar) { ... }
 
 document.addEventListener("keydown", (e) => {
   handleVerticalLineShortcuts(

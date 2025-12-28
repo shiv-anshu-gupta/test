@@ -288,12 +288,12 @@ export async function calculateDeltas(
   }
 
   // Update delta window if available
-  // Only show delta window if there are 2 or more vertical lines
+  // Show drawer whenever there are vertical lines (even if just 1)
   try {
     const { deltaWindow } = await import("../main.js");
-    if (deltaWindow && deltaData.length > 0 && verticalLinesX.length > 1) {
-      deltaWindow.show(); // Open the popup window
-      deltaWindow.update(deltaData);
+    if (deltaWindow && verticalLinesX.length > 0) {
+      deltaWindow.show(); // Open the drawer
+      deltaWindow.update(deltaData, verticalLinesX.length);
     }
   } catch (e) {
     // Delta window not available yet, that's okay

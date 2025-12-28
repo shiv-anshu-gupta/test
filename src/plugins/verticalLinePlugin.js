@@ -60,8 +60,9 @@ export default function verticalLinePlugin(
                 if (allDeltaData.length > 0) {
                   try {
                     const { deltaWindow } = await import("../main.js");
+                    const linesLength = verticalLinesXState?.asArray?.()?.length || 0;
                     if (deltaWindow) {
-                      deltaWindow.update(allDeltaData);
+                      deltaWindow.update(allDeltaData, linesLength);
                     }
                   } catch (e) {
                     // Silent fail
@@ -149,12 +150,13 @@ export default function verticalLinePlugin(
                     ? linesArray.length
                     : 0;
 
-                  if (allDeltaData.length > 0 && linesLength > 1) {
+                  // Show drawer whenever vertical lines exist (even if just 1)
+                  if (linesLength > 0) {
                     try {
                       const { deltaWindow } = await import("../main.js");
                       if (deltaWindow) {
                         deltaWindow.show();
-                        deltaWindow.update(allDeltaData);
+                        deltaWindow.update(allDeltaData, linesLength);
                       }
                     } catch (e) {
                       // Silent fail

@@ -91,13 +91,13 @@ export async function handleVerticalLineShortcuts(
     }
 
     // Update delta window with all data
-    // Only show delta window if there are 2 or more vertical lines
-    if (allDeltaData.length > 0 && verticalLinesX.length > 1) {
+    // Show drawer whenever there are vertical lines (even if just 1)
+    if (verticalLinesX.length > 0) {
       try {
         const { deltaWindow } = await import("../main.js");
         if (deltaWindow) {
-          deltaWindow.show(); // OPEN THE POPUP WINDOW
-          deltaWindow.update(allDeltaData);
+          deltaWindow.show(); // OPEN THE DRAWER
+          deltaWindow.update(allDeltaData, verticalLinesX.length);
         }
       } catch (e) {
         // Failed to update delta window, continue
@@ -123,13 +123,13 @@ export async function handleVerticalLineShortcuts(
       }
 
       // Update delta window with all data
-      // Only show delta window if there are 2 or more vertical lines
-      if (allDeltaData.length > 0 && verticalLinesX.length > 1) {
+      // Show drawer whenever there are vertical lines (even if just 1)
+      if (verticalLinesX.length > 0) {
         try {
           const { deltaWindow } = await import("../main.js");
           if (deltaWindow) {
-            deltaWindow.show(); // OPEN THE POPUP WINDOW
-            deltaWindow.update(allDeltaData);
+            deltaWindow.show(); // OPEN THE DRAWER
+            deltaWindow.update(allDeltaData, verticalLinesX.length);
           }
         } catch (e) {
           // Failed to update delta window, continue

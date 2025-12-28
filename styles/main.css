@@ -42,6 +42,60 @@
 }
 }
 
+/* === Edge Toggle Buttons === */
+.edge-toggle-btn {
+  position: fixed;
+  top: 50%;
+  transform: translateY(-50%);
+  padding: 12px 6px;
+  border-radius: 0;
+  background: var(--bg-secondary);
+  border: 2px solid var(--border-color);
+  color: var(--text-primary);
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 600;
+  z-index: 999;
+  transition: all 0.3s ease;
+  writing-mode: vertical-rl;
+  text-orientation: sideways;
+  letter-spacing: 1px;
+  min-width: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  word-break: break-word;
+  white-space: nowrap;
+}
+
+/* Analysis button (left edge) */
+#analysis-sidebar-toggle {
+  left: 0;
+  border-radius: 0 8px 8px 0;
+  border-left: none;
+}
+
+#analysis-sidebar-toggle:hover {
+  background: var(--bg-tertiary);
+  transform: translateY(-50%) translateX(4px);
+}
+
+/* Data button (right edge) */
+#delta-drawer-toggle {
+  right: 0;
+  background-color: #4f46e5;
+  color: #ffffff;
+  border-radius: 8px 0 0 8px;
+  border-right: none;
+  box-shadow: -2px 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+#delta-drawer-toggle:hover {
+  background-color: #4338ca;
+  transform: translateY(-50%) translateX(-4px);
+}
+
 /* === Reset & Base === */
 * {
   margin: 0;
@@ -224,10 +278,10 @@ body {
 
 /* === Main Content Area === */
 main {
-  margin-right: 420px;
+  margin-right: 0;
   flex: 1;
   padding: 0;
-  width: calc(100% - 420px);
+  width: 100%;
   transition: all 0.3s ease;
 }
 

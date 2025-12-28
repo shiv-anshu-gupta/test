@@ -122,9 +122,10 @@ export function renderComtradeCharts(
 
         if (allDeltaData.length > 0) {
           try {
-            const { deltaWindow } = await import("../main.js");
+            const { deltaWindow, verticalLinesX } = await import("../main.js");
             if (deltaWindow) {
-              deltaWindow.update(allDeltaData);
+              const linesLength = verticalLinesX?.length || 0;
+              deltaWindow.update(allDeltaData, linesLength);
             }
           } catch (e) {
             console.warn(
