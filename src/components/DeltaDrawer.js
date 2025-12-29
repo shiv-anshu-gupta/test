@@ -5,6 +5,7 @@
  */
 
 import { sidebarStore } from "../utils/sidebarStore.js";
+import { adjustMainContent } from "../utils/sidebarResize.js";
 
 export function createDeltaDrawer() {
   let isOpen = false;
@@ -94,30 +95,6 @@ export function createDeltaDrawer() {
         font-weight: 600;
         color: #111827;
         margin: 0;
-      }
-
-      #delta-drawer-close {
-        background: none;
-        border: none;
-        cursor: pointer;
-        padding: 8px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: #9ca3af;
-        transition: color 0.2s ease;
-        border-radius: 6px;
-      }
-
-      #delta-drawer-close:hover {
-        color: #6b7280;
-        background-color: #f3f4f6;
-      }
-
-      #delta-drawer-close svg {
-        width: 24px;
-        height: 24px;
-        stroke-width: 2;
       }
 
       #delta-drawer-content {
@@ -226,11 +203,6 @@ export function createDeltaDrawer() {
           <div class="delta-drawer-header">
             <div class="delta-drawer-header-content">
               <h2 id="delta-drawer-title">Delta Measurements</h2>
-              <button id="delta-drawer-close" title="Close (ESC)">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                  <path d="M6 18 18 6M6 6l12 12" stroke-linecap="round" stroke-linejoin="round" />
-                </svg>
-              </button>
             </div>
           </div>
           <div id="delta-drawer-content">
@@ -282,11 +254,10 @@ export function createDeltaDrawer() {
 
   function setupEventListeners() {
     const drawer = document.getElementById("delta-drawer");
-    const closeBtn = document.getElementById("delta-drawer-close");
     const panel = document.getElementById("delta-drawer-panel");
     const scrim = document.getElementById("delta-drawer-scrim");
 
-    if (!drawer || !closeBtn) return;
+    if (!drawer) return;
 
     // Close drawer
     const closeDrawer = () => {
@@ -297,7 +268,6 @@ export function createDeltaDrawer() {
       panel.classList.remove("open");
     };
 
-    closeBtn.addEventListener("click", closeDrawer);
     // Don't close on backdrop click - portal should not block parent
     // backdrop.addEventListener("click", closeDrawer);
 
@@ -342,6 +312,10 @@ export function createDeltaDrawer() {
       if (panel) {
         panel.classList.add("open");
       }
+
+      // ✅ Adjust main content layout to make room for drawer (384px on the right)
+      adjustMainContent("right", 384);
+
       console.log("[DeltaDrawer] ✅ Drawer shown with smooth transition");
     },
 
@@ -369,6 +343,9 @@ export function createDeltaDrawer() {
       if (panel) {
         panel.classList.remove("open");
       }
+
+      // ✅ Reset main content layout (remove right margin)
+      adjustMainContent("right", 0);
 
       // Wait for transform animation to complete before hiding
       setTimeout(() => {
