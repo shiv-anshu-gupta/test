@@ -1177,9 +1177,16 @@ function saveComputedChannelToGlobals(computedChannelData, channelName, win) {
     detectedGroup = detectGroupFromExpression(expression, cfg);
   }
 
+  // ✅ CALCULATE STABLE ID (once, stored forever)
+  const stableId =
+    cfg.analogChannels.length +
+    cfg.digitalChannels.length +
+    cfg.computedChannels.length +
+    1;
+
   // Register in cfg (modify the actual reference)
   cfg.computedChannels.push({
-    id: cfg.computedChannels.length + 1, // Sequential ID like 1, 2, 3
+    id: stableId, // ✅ NOW STORING THE CALCULATED ID!
     name: channelName,
     equation: computedChannelData.equation,
     mathJsExpression: computedChannelData.mathJsExpression,
@@ -1869,7 +1876,8 @@ export function createChannelList(
       invert: ch.invert || "",
     })),
     ...(cfg.computedChannels || []).map((ch, i) => ({
-      id: i + 1,
+      id:
+        ch.id || cfg.analogChannels.length + cfg.digitalChannels.length + i + 1, // ✅ USE STORED ID!
       channelID: ch.channelID,
       originalIndex: i,
       type: ch.type || "Analog", // ✅ Use type from cfg (defaults to Analog)
@@ -2619,13 +2627,31 @@ export function createChannelList(
             const computedCh =
               cfg.computedChannels[cfg.computedChannels.length - 1];
 
+            // ✅ CHECK: Does this channel already exist?
+            const existingRows = table.getRows();
+            const alreadyExists = existingRows.some((row) => {
+              const rowData = row.getData();
+              return (
+                rowData.type === "Analog" &&
+                (rowData.name === computedCh.name ||
+                  rowData.channelID === computedCh.channelID ||
+                  rowData.id === computedCh.id)
+              );
+            });
+
+            if (alreadyExists) {
+              console.log(
+                "[ChannelList] ℹ️ Channel already exists, skipping:",
+                computedCh.name
+              );
+              return;
+            }
+
             console.log("[ChannelList] 📝 Creating newRow from:", computedCh);
 
+            // ✅ USE STORED ID FROM cfg.computedChannels
             const newRow = {
-              id:
-                cfg.analogChannels.length +
-                cfg.digitalChannels.length +
-                cfg.computedChannels.length,
+              id: computedCh.id, // ✅ SIMPLE! Just use the stored ID!
               channelID: computedCh.channelID,
               originalIndex: cfg.computedChannels.length - 1,
               type: computedCh.type || "Analog", // ✅ Use stored type from cfg
@@ -2642,11 +2668,16 @@ export function createChannelList(
             };
 
             console.log("[ChannelList] ✅ newRow created:", newRow);
+            console.log("[ChannelList] 🔍 newRow.id:", newRow.id);
             console.log("[ChannelList] 🔍 newRow.type:", newRow.type);
             console.log("[ChannelList] 🔍 newRow.group:", newRow.group);
 
             // Add row to table
             table.addRow(newRow, true);
+            console.log(
+              "[ChannelList] ✅ Computed channel added with ID:",
+              newRow.id
+            );
 
             console.log(
               "[ChannelList] ✅ Row added! Current table rows:",
