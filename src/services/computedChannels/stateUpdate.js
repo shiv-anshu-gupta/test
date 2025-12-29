@@ -2,6 +2,7 @@
 // Single Responsibility: Update application state
 
 import { getComputedChannelsState } from "../../utils/computedChannelsState.js";
+import { saveComputedChannelsToStorage } from "../../utils/computedChannelStorage.js";
 
 /**
  * Save channel to global data
@@ -28,8 +29,14 @@ export const saveToCfg = (channelData, cfgData) => {
     mathJsExpression: channelData.mathJsExpression,
     unit: channelData.unit,
     type: "Analog", // ✅ Set type to Analog so it displays with analog channels
-    group: "Analog", // ✅ Add to Analog group instead of Computed group
+    group: "G0", // ✅ Use numeric group G0 (not word "Analog") to group with analog channels
     index: window.globalData.computedData.length - 1,
+  });
+
+  // 💾 PERSIST to localStorage for persistence across popup close/reopen
+  saveComputedChannelsToStorage(cfgData.computedChannels, {
+    source: "ChannelList",
+    timestamp: new Date().toISOString(),
   });
 };
 
@@ -53,7 +60,7 @@ export const updateStateStore = (channelData) => {
     analog.yLabels.push(channelData.name || channelData.id);
     analog.lineColors.push("#FF6B6B"); // Default computed channel color
     analog.yUnits.push(channelData.unit || "");
-    analog.groups.push("Analog"); // ✅ Add to Analog group
+    analog.groups.push("G0"); // ✅ Use numeric group G0 (not word "Analog") to group with analog channels
     analog.scales.push(1);
     analog.starts.push(0);
     analog.durations.push("");

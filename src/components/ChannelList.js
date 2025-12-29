@@ -1,6 +1,7 @@
 // src/components/ChannelList.js
 // import { createCustomElement } from '../utils/helpers.js';
 import { autoGroupChannels } from "../utils/autoGroupChannels.js";
+import { loadComputedChannelsFromStorage } from "../utils/computedChannelStorage.js";
 
 /**
  * ✅ HELPER: Detect group from expression by analyzing used channel references
@@ -1820,6 +1821,18 @@ export function createChannelList(
   // Create mapping of analog channel indices to their numeric group IDs
   const analogGroupMap = createAnalogChannelGroupMap(cfg.analogChannels || []);
 
+  // 💾 LOAD persisted computed channels from localStorage if not already in cfg
+  if (!cfg.computedChannels || cfg.computedChannels.length === 0) {
+    const storedChannels = loadComputedChannelsFromStorage();
+    if (storedChannels && storedChannels.length > 0) {
+      console.log(
+        "[ChannelList] 💾 Loading persisted computed channels from localStorage:",
+        storedChannels
+      );
+      cfg.computedChannels = storedChannels;
+    }
+  }
+
   // Merge analog + digital + computed channel data
   const tableData = [
     ...cfg.analogChannels.map((ch, i) => ({
@@ -1870,6 +1883,25 @@ export function createChannelList(
       invert: ch.invert || "",
     })),
   ];
+
+  // 🔍 DEBUG: Check computed channels state when popup opens
+  console.log("[ChannelList] 🔍 COMPUTED CHANNELS DEBUG (on popup open):", {
+    computedChannelsExists: !!cfg.computedChannels,
+    computedChannelsLength: cfg.computedChannels?.length || 0,
+    computedChannels: cfg.computedChannels,
+    tableDataLength: tableData.length,
+    tableDataTypes: tableData.map((r) => r.type),
+    tableDataSummary: {
+      analogCount: tableData.filter((r) => r.type === "Analog").length,
+      digitalCount: tableData.filter((r) => r.type === "Digital").length,
+      computedCount: tableData.filter(
+        (r) =>
+          r.type === "Analog" &&
+          r.originalIndex !== undefined &&
+          cfg.computedChannels?.some((c) => c.name === r.name)
+      ).length,
+    },
+  });
 
   // Debug: Log first few channels with their units
   console.log(
@@ -2347,10 +2379,10 @@ export function createChannelList(
                   table.addRow(
                     {
                       id: table.getRows().length + 1,
-                      type: "Computed",
+                      type: "Analog", // ✅ CHANGE: Show with Analog channels (not Computed)
                       name: ch.name,
                       unit: ch.unit || "",
-                      group: ch.group || "Computed",
+                      group: ch.group || "G0", // ✅ Use numeric group G0
                       color: ch.color || "#FF6B6B",
                       scale: 1,
                       start: 0,
@@ -2476,15 +2508,15 @@ export function createChannelList(
               // After user saves expression, CREATE the actual row with the computed channel name
               const computedRows = table
                 .getRows()
-                .filter((r) => r.getData().type === "Computed");
+                .filter((r) => r.getData().type === "Analog"); // ✅ Filter by Analog type
               const nextComputedId = computedRows.length + 1;
 
               const newRow = {
                 id: nextComputedId,
-                type: "Computed",
+                type: "Analog", // ✅ CHANGE: Show with Analog channels (not Computed)
                 name: channelName,
                 unit: "",
-                group: "Computed",
+                group: "G0", // ✅ Use numeric group G0 to display with analog channels
                 color: "#888",
                 scale: 1,
                 start: 0,
@@ -2567,9 +2599,16 @@ export function createChannelList(
     // Listen for computed channel updates and refresh table
     if (window && window.addEventListener) {
       window.addEventListener("computedChannelSaved", (event) => {
+        console.log("[ChannelList] 🎯 computedChannelSaved event FIRED!");
         console.log(
-          "[ChannelList] Computed channel saved event received, refreshing table"
+          "[ChannelList] cfg.computedChannels:",
+          cfg.computedChannels
         );
+        console.log(
+          "[ChannelList] cfg.computedChannels.length:",
+          cfg.computedChannels?.length
+        );
+
         try {
           if (
             table &&
@@ -2579,6 +2618,9 @@ export function createChannelList(
             // Create new row data for the computed channel
             const computedCh =
               cfg.computedChannels[cfg.computedChannels.length - 1];
+
+            console.log("[ChannelList] 📝 Creating newRow from:", computedCh);
+
             const newRow = {
               id:
                 cfg.analogChannels.length +
@@ -2599,18 +2641,34 @@ export function createChannelList(
               invert: computedCh.invert || "",
             };
 
+            console.log("[ChannelList] ✅ newRow created:", newRow);
+            console.log("[ChannelList] 🔍 newRow.type:", newRow.type);
+            console.log("[ChannelList] 🔍 newRow.group:", newRow.group);
+
             // Add row to table
             table.addRow(newRow, true);
+
+            console.log(
+              "[ChannelList] ✅ Row added! Current table rows:",
+              table.getRows().length
+            );
+            console.log("[ChannelList] 📊 All table data:", table.getData());
             console.log(
               "[ChannelList] Computed channel added to table:",
               newRow.name
             );
+          } else {
+            console.warn(
+              "[ChannelList] ⚠️ Cannot add row - conditions not met:",
+              {
+                tableExists: !!table,
+                computedChannelsExists: !!cfg.computedChannels,
+                computedChannelsLength: cfg.computedChannels?.length || 0,
+              }
+            );
           }
         } catch (err) {
-          console.warn(
-            "[ChannelList] Error adding computed channel to table:",
-            err
-          );
+          console.error("[ChannelList] ❌ Error adding computed channel:", err);
         }
       });
     }
