@@ -28,18 +28,21 @@ export const saveToCfg = (channelData, cfgData) => {
     cfgData.computedChannels[cfgData.computedChannels.length - 1];
 
   if (existingChannel && existingChannel.id) {
-    // ✅ Channel already exists with stable ID - just save it to localStorage
-    console.log("[stateUpdate] 💾 Saving existing channel to localStorage:", {
-      id: existingChannel.id,
-      name: existingChannel.name,
-    });
+    // ✅ Channel already exists with stable ID
+    console.log(
+      "[stateUpdate] 💾 Saving channel with stable ID to localStorage:",
+      {
+        id: existingChannel.id,
+        name: existingChannel.name,
+      }
+    );
 
-    // 💾 PERSIST to localStorage - use the channel with stable ID from cfg!
+    // 💾 PERSIST to localStorage - use cfg.computedChannels (has correct numeric IDs)
     appendComputedChannelToStorage(existingChannel);
   } else {
     // ❌ Fallback: if no existing channel, create new one (shouldn't happen normally)
     console.warn(
-      "[stateUpdate] ⚠️ No existing channel found, creating new entry"
+      "[stateUpdate] ⚠️ No existing channel found in cfg, creating new entry"
     );
 
     const newChannel = {

@@ -2932,8 +2932,16 @@ function setupComputedChannelsListener() {
           window.globalData.computedData.push(computedChannelObj);
         }
 
-        // Save to localStorage for persistence
-        saveComputedChannelsToStorage(data.computedData);
+        // 💾 SAVE cfg.computedChannels (has correct numeric IDs) instead of data.computedData
+        if (window.globalCfg && window.globalCfg.computedChannels) {
+          console.log(
+            "[Main] 💾 Saving to localStorage from cfg.computedChannels:",
+            window.globalCfg.computedChannels[
+              window.globalCfg.computedChannels.length - 1
+            ]
+          );
+          saveComputedChannelsToStorage(window.globalCfg.computedChannels);
+        }
       }
       const eventProcessTime = performance.now() - eventProcessStart;
       console.log(
