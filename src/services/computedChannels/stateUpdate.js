@@ -27,7 +27,8 @@ export const saveToCfg = (channelData, cfgData) => {
     equation: channelData.equation,
     mathJsExpression: channelData.mathJsExpression,
     unit: channelData.unit,
-    group: "Computed",
+    type: "Analog", // ✅ Set type to Analog so it displays with analog channels
+    group: "Analog", // ✅ Add to Analog group instead of Computed group
     index: window.globalData.computedData.length - 1,
   });
 };
@@ -42,25 +43,27 @@ export const updateStateStore = (channelData) => {
   }
 
   // Update reactive channelState for tabulator
-  if (typeof window !== "undefined" && window.channelState?.computed) {
+  // ✅ Add computed channels to ANALOG group so they display with analog channels
+  if (typeof window !== "undefined" && window.channelState?.analog) {
     const { channelState } = window;
-    const computed = channelState.computed;
+    const analog = channelState.analog;
 
-    // Add channel to reactive state
-    computed.channelIDs.push(channelData.id);
-    computed.yLabels.push(channelData.name || channelData.id);
-    computed.lineColors.push("#FF6B6B"); // Default computed channel color
-    computed.yUnits.push(channelData.unit || "");
-    computed.groups.push("Computed");
-    computed.scales.push(1);
-    computed.starts.push(0);
-    computed.durations.push("");
-    computed.inverts.push(false);
-    computed.equations.push(channelData.equation || "");
+    // Add channel to analog reactive state
+    analog.channelIDs.push(channelData.id);
+    analog.yLabels.push(channelData.name || channelData.id);
+    analog.lineColors.push("#FF6B6B"); // Default computed channel color
+    analog.yUnits.push(channelData.unit || "");
+    analog.groups.push("Analog"); // ✅ Add to Analog group
+    analog.scales.push(1);
+    analog.starts.push(0);
+    analog.durations.push("");
+    analog.inverts.push(false);
+    analog.equations.push(channelData.equation || "");
+    analog.types.push("Analog"); // ✅ Mark as Analog type
 
-    console.log("[stateUpdate] ✅ Updated channelState.computed:", {
-      channelIDs: computed.channelIDs.length,
-      id: channelData.id,
+    console.log("[stateUpdate] ✅ Added computed channel to analog group:", {
+      analogChannelCount: analog.channelIDs.length,
+      newChannelId: channelData.id,
     });
   }
 };

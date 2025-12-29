@@ -1819,7 +1819,7 @@ export function createChannelList(
       id: i + 1,
       channelID: ch.channelID,
       originalIndex: i,
-      type: "Analog",
+      type: "Computed",
       name: ch.name || ch.id || `Computed ${i + 1}`,
       unit: ch.unit || "",
       group:
@@ -1827,8 +1827,8 @@ export function createChannelList(
         typeof ch.group === "string" &&
         ch.group.startsWith("G")
           ? ch.group
-          : "G10",
-      color: ch.color || "#4ECDC4",
+          : "G9",
+      color: ch.color || "#FF6B6B",
       scale: ch.scale || 1,
       start: ch.start || 0,
       duration: ch.duration || "",
@@ -2446,10 +2446,10 @@ export function createChannelList(
 
               const newRow = {
                 id: nextComputedId,
-                type: "Analog",
+                type: "Computed",
                 name: channelName,
                 unit: "",
-                group: "G10",
+                group: "Computed",
                 color: "#888",
                 scale: 1,
                 start: 0,
@@ -2551,11 +2551,11 @@ export function createChannelList(
                 cfg.computedChannels.length,
               channelID: computedCh.channelID,
               originalIndex: cfg.computedChannels.length - 1,
-              type: "Analog",
+              type: "Computed",
               name: computedCh.id || `Computed ${cfg.computedChannels.length}`,
               unit: computedCh.unit || "",
-              group: "G10",
-              color: computedCh.color || "#4ECDC4",
+              group: "Computed Channels",
+              color: computedCh.color || "#FF6B6B",
               scale: computedCh.scale || 1,
               start: computedCh.start || 0,
               duration: computedCh.duration || "",
