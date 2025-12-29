@@ -203,7 +203,7 @@ body,
 #charts,
 .charts-container,
 .content-wrapper {
-  transition: margin-left 0.3s ease, margin-right 0.3s ease;
+  transition: margin-left 0.3s ease, margin-right 0.3s ease, width 0.3s ease;
 }
 
 /* === Charts Container Base Styles === */
@@ -213,6 +213,7 @@ body,
   gap: 24px;
   width: 100%;
   box-sizing: border-box;
+  transition: width 0.3s ease, margin-left 0.3s ease, margin-right 0.3s ease;
 }
 
 /* === Polar Chart in Charts Container (Inline Mode) === */
