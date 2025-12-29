@@ -2196,7 +2196,10 @@ const themeIcon = document.getElementById("themeIcon");
 const themeName = document.getElementById("themeName");
 
 if (themeToggleBtn) {
-  themeToggleBtn.addEventListener("click", () => {
+  themeToggleBtn.addEventListener("click", (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+
     const newTheme = toggleGlobalTheme();
     updateThemeButton(newTheme);
     console.log(`[main.js] Theme switched to: ${newTheme}`);
@@ -2207,13 +2210,11 @@ if (themeToggleBtn) {
 }
 
 function updateThemeButton(theme) {
-  if (themeIcon && themeName) {
+  if (themeIcon) {
     if (theme === "light") {
       themeIcon.textContent = "🌙";
-      themeName.textContent = "Dark";
     } else {
       themeIcon.textContent = "☀️";
-      themeName.textContent = "Light";
     }
   }
 }

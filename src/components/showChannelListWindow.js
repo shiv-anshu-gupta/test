@@ -100,7 +100,20 @@ export function showChannelListWindow(
     return false;
   }
 
+  // ✅ Store reference for theme sync
+  window.__channelListWindow = win;
+
+  // ✅ Clean up when popup closes
+  win.addEventListener("beforeunload", () => {
+    console.log("[ChannelList] Popup closing, cleaning up reference");
+    window.__channelListWindow = null;
+  });
+
   win.document.title = "Channel List";
+
+  // ✅ Apply current theme to popup immediately
+  const currentTheme = localStorage.getItem("comtrade-theme") || "dark";
+  win.document.documentElement.setAttribute("data-theme", currentTheme);
 
   // Bind full cfg/data to the popup for module scripts to consume
   try {
@@ -544,6 +557,29 @@ export function showChannelListWindow(
 
     win.document.body.appendChild(moduleScript);
   }
+
+  // ✅ Listen for theme changes from parent
+  win.addEventListener("message", (event) => {
+    // Only accept from parent
+    if (event.source !== window) return;
+
+    const { source, type, payload } = event.data || {};
+
+    if (source === "MainApp" && type === "theme_change") {
+      const { theme, colors } = payload;
+      console.log(`[ChannelList] Received theme change: ${theme}`);
+
+      // Apply theme
+      win.document.documentElement.setAttribute("data-theme", theme);
+
+      // Apply CSS variables if needed
+      if (colors) {
+        Object.entries(colors).forEach(([key, value]) => {
+          win.document.documentElement.style.setProperty(key, value);
+        });
+      }
+    }
+  });
 
   return true;
 }

@@ -12,21 +12,16 @@ import { getMergerWindow } from "../utils/mergerWindowLauncher.js";
 let globalThemeState = null;
 
 /**
- * Get reference to the ChannelList window
+ * Get reference to the ChannelList window (without creating new tab)
  * @function getChannelListWindow
  * @returns {Window|null} Reference to ChannelList window or null
  */
 export function getChannelListWindow() {
-  try {
-    // Try to access the named ChannelList window
-    const channelListWindow = window.open("", "ChannelListWindow");
-    if (channelListWindow && !channelListWindow.closed) {
-      return channelListWindow;
-    }
-  } catch (err) {
-    // Window might not exist or be accessible
+  // ✅ Only return stored reference (DON'T call window.open)
+  if (window.__channelListWindow && !window.__channelListWindow.closed) {
+    return window.__channelListWindow;
   }
-  return null;
+  return null; // ✅ Safe - no blank tab
 }
 
 /**
