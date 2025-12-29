@@ -1,6 +1,37 @@
 // src/components/ChannelList.js
 // import { createCustomElement } from '../utils/helpers.js';
 import { autoGroupChannels } from "../utils/autoGroupChannels.js";
+
+/**
+ * ✅ HELPER: Detect group from expression by analyzing used channel references
+ */
+function detectGroupFromExpression(expression, cfg) {
+  if (!expression) return "G0";
+
+  const channelRefPattern = /\b([A-Z][A-Z0-9_]*|[ad]\d+)\b/g;
+  const matches = expression.match(channelRefPattern) || [];
+  const uniqueRefs = [...new Set(matches)];
+  const usedGroups = [];
+
+  uniqueRefs.forEach((ref) => {
+    cfg?.analogChannels?.forEach((ch) => {
+      if (ch.id === ref && ch.group) {
+        usedGroups.push(ch.group);
+      }
+    });
+  });
+
+  if (usedGroups.length === 0) return "G0";
+
+  const groupCounts = {};
+  usedGroups.forEach((g) => {
+    groupCounts[g] = (groupCounts[g] || 0) + 1;
+  });
+
+  return Object.keys(groupCounts).reduce((a, b) =>
+    groupCounts[a] > groupCounts[b] ? a : b
+  );
+}
 /**
  * ChannelList component: lists all analog and digital channels with drag-and-drop support.
  * @param {Object} cfg - COMTRADE config object with analogChannels and digitalChannels arrays.
@@ -1137,6 +1168,14 @@ function saveComputedChannelToGlobals(computedChannelData, channelName, win) {
   // Save to data (modify the actual reference)
   data.computedData.push(channelData);
 
+  // ✅ AUTO-DETECT GROUP FROM EXPRESSION
+  let detectedGroup = "G0";
+  if (computedChannelData.equation || computedChannelData.mathJsExpression) {
+    const expression =
+      computedChannelData.equation || computedChannelData.mathJsExpression;
+    detectedGroup = detectGroupFromExpression(expression, cfg);
+  }
+
   // Register in cfg (modify the actual reference)
   cfg.computedChannels.push({
     id: cfg.computedChannels.length + 1, // Sequential ID like 1, 2, 3
@@ -1144,7 +1183,8 @@ function saveComputedChannelToGlobals(computedChannelData, channelName, win) {
     equation: computedChannelData.equation,
     mathJsExpression: computedChannelData.mathJsExpression,
     unit: "",
-    group: "Computed",
+    group: detectedGroup, // ✅ AUTO-DETECTED FROM EXPRESSION
+    type: "Analog", // ✅ SET AS ANALOG TYPE
     index: data.computedData.length - 1,
   });
 
@@ -1819,16 +1859,11 @@ export function createChannelList(
       id: i + 1,
       channelID: ch.channelID,
       originalIndex: i,
-      type: "Computed",
+      type: ch.type || "Analog", // ✅ Use type from cfg (defaults to Analog)
       name: ch.name || ch.id || `Computed ${i + 1}`,
       unit: ch.unit || "",
-      group:
-        ch.group !== undefined &&
-        typeof ch.group === "string" &&
-        ch.group.startsWith("G")
-          ? ch.group
-          : "G9",
-      color: ch.color || "#FF6B6B",
+      group: ch.group || detectGroupFromExpression(ch.equation, cfg), // ✅ Smart group detection
+      color: ch.color || "#4ECDC4",
       scale: ch.scale || 1,
       start: ch.start || 0,
       duration: ch.duration || "",
@@ -2551,11 +2586,13 @@ export function createChannelList(
                 cfg.computedChannels.length,
               channelID: computedCh.channelID,
               originalIndex: cfg.computedChannels.length - 1,
-              type: "Computed",
+              type: computedCh.type || "Analog", // ✅ Use stored type from cfg
               name: computedCh.id || `Computed ${cfg.computedChannels.length}`,
               unit: computedCh.unit || "",
-              group: "Computed Channels",
-              color: computedCh.color || "#FF6B6B",
+              group:
+                computedCh.group ||
+                detectGroupFromExpression(computedCh.equation, cfg), // ✅ Use stored or detected group
+              color: computedCh.color || "#4ECDC4", // ✅ Match Analog color
               scale: computedCh.scale || 1,
               start: computedCh.start || 0,
               duration: computedCh.duration || "",
