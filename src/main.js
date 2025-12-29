@@ -11,6 +11,7 @@ import {
 import { createDeltaDrawer } from "./components/DeltaDrawer.js";
 import { createAnalysisSidebar } from "./components/AnalysisSidebar.js";
 import { sidebarStore } from "./utils/sidebarStore.js";
+import { adjustMainContent } from "./utils/sidebarResize.js";
 import { createDragBar } from "./components/createDragBar.js";
 import { setupChartDragAndDrop } from "./components/setupChartDragAndDrop.js";
 import { handleVerticalLineShortcuts } from "./components/handleVerticalLineShortcuts.js";
@@ -220,53 +221,113 @@ export const deltaWindow = createDeltaDrawer();
 // Initialize analysis sidebar (phasor diagram - dynamically injected)
 export const analysisSidebar = createAnalysisSidebar();
 
-// ✅ Global handler for Delta button (called from index.html onclick)
-window.handleDeltaButtonClick = function (event) {
-  console.log("[main.js] ⚡⚡⚡ DELTA BUTTON CLICKED (via onclick) ⚡⚡⚡");
-  if (event) {
-    event.preventDefault();
-    event.stopPropagation();
-  }
-  try {
-    // Safety check: ensure sidebar system is initialized
-    if (!sidebarStore.getRegisteredSidebars().includes("delta-drawer")) {
-      console.log(
-        "[main.js] ⚠️ delta-drawer not registered, registering now..."
-      );
-      deltaWindow.registerWithStore();
+// ✅ Define global handlers FIRST (before any module code runs)
+// These are called by onclick attributes in index.html
+if (!window.handleDeltaButtonClick) {
+  window.handleDeltaButtonClick = function (event) {
+    console.log("[main.js] ⚡⚡⚡ DELTA BUTTON CLICKED (via onclick) ⚡⚡⚡");
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
     }
+    try {
+      // Import at call time to ensure module is loaded
+      const { adjustMainContent } = window.__sidebarResize || {};
+      if (!adjustMainContent) {
+        console.warn(
+          "[handleDeltaButtonClick] adjustMainContent not available yet"
+        );
+        return;
+      }
 
-    console.log("[main.js] Toggling delta drawer via sidebarStore");
-    sidebarStore.toggle("delta-drawer");
-    console.log("[main.js] ✅ Delta drawer toggled successfully");
-  } catch (err) {
-    console.error("[main.js] Error toggling delta drawer:", err);
-  }
-};
+      // Safety check: ensure sidebar system is initialized
+      if (!sidebarStore.getRegisteredSidebars().includes("delta-drawer")) {
+        console.log(
+          "[main.js] ⚠️ delta-drawer not registered, registering now..."
+        );
+        deltaWindow.registerWithStore();
+      }
 
-// ✅ Global handler for Analysis button (called from index.html onclick)
-window.handleAnalysisButtonClick = function (event) {
-  console.log("[main.js] ⚡⚡⚡ ANALYSIS BUTTON CLICKED (via onclick) ⚡⚡⚡");
-  if (event) {
-    event.preventDefault();
-    event.stopPropagation();
-  }
-  try {
-    // Safety check: ensure sidebar system is initialized
-    if (!sidebarStore.getRegisteredSidebars().includes("analysis-sidebar")) {
+      // Check current state and toggle
+      const isDeltaOpen = sidebarStore.isOpen("delta-drawer");
       console.log(
-        "[main.js] ⚠️ analysis-sidebar not registered, registering now..."
+        `[handleDeltaButtonClick] Delta currently open: ${isDeltaOpen}`
       );
-      analysisSidebar.registerWithStore();
-    }
 
-    console.log("[main.js] Toggling analysis sidebar via sidebarStore");
-    sidebarStore.toggle("analysis-sidebar");
-    console.log("[main.js] ✅ Analysis sidebar toggled successfully");
-  } catch (err) {
-    console.error("[main.js] Error toggling analysis sidebar:", err);
-  }
-};
+      // Toggle first, then adjust margins based on new state
+      sidebarStore.toggle("delta-drawer");
+      const isDeltaNowOpen = sidebarStore.isOpen("delta-drawer");
+
+      // Adjust main content width based on NEW state
+      // Delta drawer opens on RIGHT side (width: 384px), so use 'right' parameter
+      if (isDeltaNowOpen) {
+        // Delta is now open - adjust right margin
+        adjustMainContent("right", 384);
+      } else {
+        // Delta is now closed - remove right margin
+        adjustMainContent("right", 0);
+      }
+
+      console.log("[main.js] ✅ Delta drawer toggled successfully");
+    } catch (err) {
+      console.error("[main.js] Error toggling delta drawer:", err);
+    }
+  };
+}
+
+if (!window.handleAnalysisButtonClick) {
+  window.handleAnalysisButtonClick = function (event) {
+    console.log(
+      "[main.js] ⚡⚡⚡ ANALYSIS BUTTON CLICKED (via onclick) ⚡⚡⚡"
+    );
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+    try {
+      // Import at call time to ensure module is loaded
+      const { adjustMainContent } = window.__sidebarResize || {};
+      if (!adjustMainContent) {
+        console.warn(
+          "[handleAnalysisButtonClick] adjustMainContent not available yet"
+        );
+        return;
+      }
+
+      // Safety check: ensure sidebar system is initialized
+      if (!sidebarStore.getRegisteredSidebars().includes("analysis-sidebar")) {
+        console.log(
+          "[main.js] ⚠️ analysis-sidebar not registered, registering now..."
+        );
+        analysisSidebar.registerWithStore();
+      }
+
+      // Check current state and toggle
+      const isAnalysisOpen = sidebarStore.isOpen("analysis-sidebar");
+      console.log(
+        `[handleAnalysisButtonClick] Analysis currently open: ${isAnalysisOpen}`
+      );
+
+      // Toggle first, then adjust margins based on new state
+      sidebarStore.toggle("analysis-sidebar");
+      const isAnalysisNowOpen = sidebarStore.isOpen("analysis-sidebar");
+
+      // Adjust main content width based on NEW state
+      // Analysis sidebar opens on RIGHT side (width: 320px), so use 'right' parameter
+      if (isAnalysisNowOpen) {
+        // Analysis is now open - adjust right margin
+        adjustMainContent("right", 320);
+      } else {
+        // Analysis is now closed - remove right margin
+        adjustMainContent("right", 0);
+      }
+
+      console.log("[main.js] ✅ Analysis sidebar toggled successfully");
+    } catch (err) {
+      console.error("[main.js] Error toggling analysis sidebar:", err);
+    }
+  };
+}
 
 /**
  * Initialize sidebar/drawer registry
@@ -2042,63 +2103,14 @@ function setupAnalysisSidebarHandlers() {
   }
 }
 
-// Connect HTML buttons to sidebars
 function setupHtmlButtonHandlers() {
   console.log("[main.js] Setting up HTML button handlers");
 
-  // Analysis button (left sidebar - opens Phasor Diagram)
-  const analysisBtn = document.getElementById("Analysis");
-  if (analysisBtn) {
-    analysisBtn.addEventListener("click", () => {
-      console.log("[main.js] ⚡ Analysis button clicked");
-      sidebarStore.toggle("analysis-sidebar");
-      console.log("[main.js] ✅ Analysis sidebar toggled via sidebarStore");
-    });
-    console.log("[main.js] ✓ Analysis button handler attached");
-  } else {
-    console.warn("[main.js] ⚠️ Analysis button not found in DOM");
-  }
+  // Note: Analysis and Delta button handlers are now defined as global functions
+  // (handleAnalysisButtonClick and handleDeltaButtonClick in onclick attributes)
+  // See index.html for button definitions
 
-  // Delta button (right drawer - opens Delta Measurements)
-  // ✅ FIX: Use sidebar store instead of direct deltaWindow calls
-  const deltaBtn = document.getElementById("delta-values");
-  console.log("[main.js] Looking for delta button with id='delta-values'");
-  console.log("[main.js] deltaBtn found:", !!deltaBtn);
-
-  if (deltaBtn) {
-    console.log("[main.js] Adding click event listener to delta button");
-
-    // Use both addEventListener and onclick to ensure it works
-    const handleDeltaClick = (e) => {
-      console.log("[main.js] ⚡⚡⚡ DELTA BUTTON CLICKED ⚡⚡⚡");
-      if (e) {
-        e.preventDefault();
-        e.stopPropagation();
-      }
-      console.log("[main.js] ⚡ Delta's button clicked");
-      console.log("[main.js] sidebarStore exists:", !!sidebarStore);
-      console.log(
-        "[main.js] sidebarStore.toggle exists:",
-        typeof sidebarStore?.toggle
-      );
-      try {
-        // ✅ USE SIDEBAR STORE - ensures proper coordination with Analysis sidebar
-        const result = sidebarStore.toggle("delta-drawer");
-        console.log(
-          "[main.js] ✅ Delta drawer toggled via sidebarStore, result:",
-          result
-        );
-      } catch (err) {
-        console.error("[main.js] Error toggling delta drawer:", err);
-      }
-    };
-
-    deltaBtn.addEventListener("click", handleDeltaClick, true); // Use capture phase
-    deltaBtn.onclick = handleDeltaClick; // Also set onclick directly
-    console.log("[main.js] ✓ Delta button handler attached successfully");
-  } else {
-    console.warn("[main.js] ⚠️ Delta button (delta-values) not found in DOM");
-  }
+  // Keep this function for any other HTML button handlers that may be needed later
 }
 
 // Setup handlers after first render
@@ -2112,11 +2124,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   setupAnalysisSidebarHandlers();
 
-  // Use a small delay to ensure DOM is fully ready for button attachment
-  setTimeout(() => {
-    console.log("[main.js] Attaching HTML button handlers with delay...");
-    setupHtmlButtonHandlers();
-  }, 100);
+  // Note: Button handlers are now attached via onclick attributes in HTML
+  // No need to call setupHtmlButtonHandlers() anymore
 });
 
 // Also setup when sidebar is first shown

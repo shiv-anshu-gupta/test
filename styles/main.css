@@ -197,6 +197,24 @@ body {
   height: 100%;
 }
 
+/* === Main Content Margin Transitions (for sidebar resizing) === */
+body,
+#main-content,
+#charts,
+.charts-container,
+.content-wrapper {
+  transition: margin-left 0.3s ease, margin-right 0.3s ease;
+}
+
+/* === Charts Container Base Styles === */
+#charts {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
 /* === Polar Chart in Charts Container (Inline Mode) === */
 #charts .polar-chart-section {
   background: var(--bg-secondary);
