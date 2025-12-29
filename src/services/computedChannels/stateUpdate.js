@@ -2,7 +2,7 @@
 // Single Responsibility: Update application state
 
 import { getComputedChannelsState } from "../../utils/computedChannelsState.js";
-import { saveComputedChannelsToStorage } from "../../utils/computedChannelStorage.js";
+import { appendComputedChannelToStorage } from "../../utils/computedChannelStorage.js";
 
 /**
  * Save channel to global data
@@ -22,22 +22,40 @@ export const saveToCfg = (channelData, cfgData) => {
     cfgData.computedChannels = [];
   }
 
-  cfgData.computedChannels.push({
-    id: channelData.id,
-    name: channelData.name,
-    equation: channelData.equation,
-    mathJsExpression: channelData.mathJsExpression,
-    unit: channelData.unit,
-    type: "Analog", // ✅ Set type to Analog so it displays with analog channels
-    group: "G0", // ✅ Use numeric group G0 (not word "Analog") to group with analog channels
-    index: window.globalData.computedData.length - 1,
-  });
+  // ✅ IMPORTANT: The stable ID was already calculated and stored in ChannelList.js
+  // So we just use the LAST entry in cfg.computedChannels which has the correct stable ID
+  const existingChannel =
+    cfgData.computedChannels[cfgData.computedChannels.length - 1];
 
-  // 💾 PERSIST to localStorage for persistence across popup close/reopen
-  saveComputedChannelsToStorage(cfgData.computedChannels, {
-    source: "ChannelList",
-    timestamp: new Date().toISOString(),
-  });
+  if (existingChannel && existingChannel.id) {
+    // ✅ Channel already exists with stable ID - just save it to localStorage
+    console.log("[stateUpdate] 💾 Saving existing channel to localStorage:", {
+      id: existingChannel.id,
+      name: existingChannel.name,
+    });
+
+    // 💾 PERSIST to localStorage - use the channel with stable ID from cfg!
+    appendComputedChannelToStorage(existingChannel);
+  } else {
+    // ❌ Fallback: if no existing channel, create new one (shouldn't happen normally)
+    console.warn(
+      "[stateUpdate] ⚠️ No existing channel found, creating new entry"
+    );
+
+    const newChannel = {
+      id: channelData.id,
+      name: channelData.name,
+      equation: channelData.equation,
+      mathJsExpression: channelData.mathJsExpression,
+      unit: channelData.unit,
+      type: "Analog",
+      group: "G0",
+      index: window.globalData.computedData.length - 1,
+    };
+
+    cfgData.computedChannels.push(newChannel);
+    appendComputedChannelToStorage(newChannel);
+  }
 };
 
 /**
