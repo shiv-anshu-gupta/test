@@ -301,7 +301,10 @@ main {
   flex: 1;
   padding: 0;
   width: 100%;
-  transition: all 0.3s ease;
+  max-width: 100vw;
+  box-sizing: border-box;
+  overflow-x: hidden;
+  transition: margin-left 0.3s ease, margin-right 0.3s ease;
 }
 
 /* When sidebar is closed, expand main content to full width */
@@ -387,8 +390,11 @@ main.sidebar-closed {
 /* === Content Area === */
 .content-wrapper {
   padding: 24px;
-  max-width: 1800px;
+  max-width: 100%;
+  width: 100%;
   margin: 0 auto;
+  box-sizing: border-box;
+  overflow-x: hidden;
 }
 
 /* === Upload Section === */

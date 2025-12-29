@@ -12,15 +12,15 @@ let rightSidebarWidth = 0;
 
 /**
  * Adjust entire application layout when sidebar opens/closes
- * Reduces chart container width and applies margin to create space for sidebars
+ * Only adjusts margins on main element, lets CSS handle the rest
+ * Charts are resized to fit their actual container width
  * @param {string} position - 'left' or 'right'
  * @param {number} sidebarWidth - Width of sidebar in pixels (0 to close)
  */
 export function adjustMainContent(position, sidebarWidth) {
-  // Target the main element and charts container
+  // Target the main element
   const main = document.querySelector("main");
-  const chartsContainer = document.getElementById("charts");
-  const contentWrapper = document.querySelector(".content-wrapper");
+  const buttons = document.getElementById("buttons");
 
   if (!main) {
     console.warn("[adjustMainContent] Main element not found");
@@ -30,40 +30,24 @@ export function adjustMainContent(position, sidebarWidth) {
   // Update tracked widths
   if (position === "left") {
     leftSidebarWidth = sidebarWidth;
+    main.style.marginLeft = `${sidebarWidth}px`;
   } else if (position === "right") {
     rightSidebarWidth = sidebarWidth;
+    main.style.marginRight = `${sidebarWidth}px`;
+
+    // Move fixed buttons if they exist
+    if (buttons) {
+      buttons.style.right = `${sidebarWidth}px`;
+    }
   }
 
   console.log(
-    `[adjustMainContent] Position: ${position}, Left: ${leftSidebarWidth}px, Right: ${rightSidebarWidth}px`
+    `[adjustMainContent] Position: ${position}, Sidebar width: ${sidebarWidth}px`
   );
 
-  // Calculate available width (viewport minus sidebars)
-  const viewportWidth = window.innerWidth;
-  const availableWidth = viewportWidth - leftSidebarWidth - rightSidebarWidth;
-
-  // Apply margin to main element to create space for sidebars
-  main.style.marginLeft = `${leftSidebarWidth}px`;
-  main.style.marginRight = `${rightSidebarWidth}px`;
-  console.log(
-    `[adjustMainContent] Applied margins to main. Available width: ${availableWidth}px`
-  );
-
-  // ✅ KEY FIX: Set explicit width on charts container to prevent overlap
-  if (chartsContainer) {
-    chartsContainer.style.width = `${availableWidth}px`;
-    chartsContainer.style.paddingLeft = "0";
-    chartsContainer.style.paddingRight = "0";
-  }
-
-  // Also set width on content wrapper if it exists
-  if (contentWrapper) {
-    contentWrapper.style.width = `${availableWidth}px`;
-  }
-
-  // Resize charts after CSS transition completes
+  // ✅ Wait for CSS transition, then resize charts to their container width
   setTimeout(() => {
-    resizeAllCharts(availableWidth);
+    resizeChartsToContainers();
   }, 350); // Match CSS transition duration
 }
 
@@ -71,40 +55,30 @@ export function adjustMainContent(position, sidebarWidth) {
 window.__sidebarResize.adjustMainContent = adjustMainContent;
 
 /**
- * Resize all uPlot charts to fit available width
- * @param {number} availableWidth - Available width in pixels
+ * Resize all uPlot charts to fit their actual container width
+ * Measures each chart's parent container and resizes accordingly
  */
-function resizeAllCharts(availableWidth) {
-  // If no width provided, calculate it from main element
-  if (!availableWidth) {
-    const main = document.querySelector("main");
-    const chartsContainer = document.getElementById("charts");
-
-    if (main) {
-      const mainRect = main.getBoundingClientRect();
-      availableWidth = mainRect.width;
-    } else if (chartsContainer) {
-      availableWidth = chartsContainer.clientWidth;
-    } else {
-      availableWidth = window.innerWidth;
-    }
-  }
-
-  console.log(`[resizeAllCharts] Resizing charts to ${availableWidth}px`);
+function resizeChartsToContainers() {
+  let resizedCount = 0;
 
   // Resize main analog/digital charts
   if (window.charts && Array.isArray(window.charts)) {
     window.charts.forEach((chart, idx) => {
       if (chart && typeof chart.setSize === "function") {
-        const containerHeight = 300; // Default height
+        const container = chart.root?.parentElement;
+        if (container) {
+          const containerWidth = container.clientWidth;
+          const containerHeight = container.clientHeight || 300;
 
-        chart.setSize({
-          width: availableWidth,
-          height: containerHeight,
-        });
-        console.log(
-          `[resizeAllCharts] Chart ${idx}: ${availableWidth}px × ${containerHeight}px`
-        );
+          chart.setSize({
+            width: containerWidth,
+            height: containerHeight,
+          });
+          console.log(
+            `[resizeChartsToContainers] Chart ${idx}: ${containerWidth}px × ${containerHeight}px`
+          );
+          resizedCount++;
+        }
       }
     });
   }
@@ -113,20 +87,25 @@ function resizeAllCharts(availableWidth) {
   if (window.__chartsComputed && Array.isArray(window.__chartsComputed)) {
     window.__chartsComputed.forEach((chart, idx) => {
       if (chart && typeof chart.setSize === "function") {
-        const containerHeight = 300; // Default height
+        const container = chart.root?.parentElement;
+        if (container) {
+          const containerWidth = container.clientWidth;
+          const containerHeight = container.clientHeight || 300;
 
-        chart.setSize({
-          width: availableWidth,
-          height: containerHeight,
-        });
-        console.log(
-          `[resizeAllCharts] Computed chart ${idx}: ${availableWidth}px × ${containerHeight}px`
-        );
+          chart.setSize({
+            width: containerWidth,
+            height: containerHeight,
+          });
+          console.log(
+            `[resizeChartsToContainers] Computed chart ${idx}: ${containerWidth}px × ${containerHeight}px`
+          );
+          resizedCount++;
+        }
       }
     });
   }
 
-  console.log("[resizeAllCharts] ✅ All charts resized successfully");
+  console.log(`[resizeChartsToContainers] ✅ Resized ${resizedCount} charts`);
 }
 
 /**
