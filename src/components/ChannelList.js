@@ -1154,20 +1154,12 @@ function saveComputedChannelToGlobals(computedChannelData, channelName, win) {
   if (!data.computedData) data.computedData = [];
   if (!cfg.computedChannels) cfg.computedChannels = [];
 
-  // Create channel object
-  const channelData = {
-    id: channelName,
-    equation: computedChannelData.equation,
-    mathJsExpression: computedChannelData.mathJsExpression,
-    data: computedChannelData.results,
-    stats: computedChannelData.stats,
-    scaledStats: computedChannelData.scaledStats,
-    scalingFactor: computedChannelData.scalingFactor,
-    index: data.computedData.length,
-  };
-
-  // Save to data (modify the actual reference)
-  data.computedData.push(channelData);
+  // ✅ CALCULATE STABLE ID FIRST (before creating channelData)
+  const stableId =
+    cfg.analogChannels.length +
+    cfg.digitalChannels.length +
+    cfg.computedChannels.length +
+    1;
 
   // ✅ AUTO-DETECT GROUP FROM EXPRESSION
   let detectedGroup = "G0";
@@ -1177,16 +1169,28 @@ function saveComputedChannelToGlobals(computedChannelData, channelName, win) {
     detectedGroup = detectGroupFromExpression(expression, cfg);
   }
 
-  // ✅ CALCULATE STABLE ID (once, stored forever)
-  const stableId =
-    cfg.analogChannels.length +
-    cfg.digitalChannels.length +
-    cfg.computedChannels.length +
-    1;
+  // ✅ FIXED: Use stableId (numeric) instead of channelName (string)
+  const channelData = {
+    id: stableId, // ✅ CHANGED: Use numeric stable ID
+    name: channelName, // ✅ ADDED: Include name field
+    equation: computedChannelData.equation,
+    mathJsExpression: computedChannelData.mathJsExpression,
+    data: computedChannelData.results,
+    stats: computedChannelData.stats,
+    scaledStats: computedChannelData.scaledStats,
+    scalingFactor: computedChannelData.scalingFactor,
+    group: detectedGroup, // ✅ ADDED: Include group
+    type: "Analog", // ✅ ADDED: Include type
+    unit: "", // ✅ ADDED: Include unit
+    index: data.computedData.length,
+  };
+
+  // Save to data (modify the actual reference)
+  data.computedData.push(channelData);
 
   // Register in cfg (modify the actual reference)
   cfg.computedChannels.push({
-    id: stableId, // ✅ NOW STORING THE CALCULATED ID!
+    id: stableId, // ✅ SAME numeric ID as channelData
     name: channelName,
     equation: computedChannelData.equation,
     mathJsExpression: computedChannelData.mathJsExpression,

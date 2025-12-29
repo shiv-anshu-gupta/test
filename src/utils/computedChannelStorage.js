@@ -59,6 +59,7 @@ export function saveComputedChannelsToStorage(computedData, metadata = {}) {
 
     // ✅ STEP 3: Prepare data for storage (exclude large uPlot references)
     const dataToStore = mergedData.map((channel) => ({
+      id: channel.id, // ✅ FIRST: Stable numeric ID for table S.No.
       name: channel.name || channel.id,
       data: channel.data, // Array of numeric values
       unit: channel.unit,
@@ -69,7 +70,6 @@ export function saveComputedChannelsToStorage(computedData, metadata = {}) {
       min: channel.min,
       max: channel.max,
       samples: channel.samples || (channel.data ? channel.data.length : 0),
-      id: channel.id, // ✅ Include ID for stable identification
     }));
 
     // ✅ STEP 4: Save merged data
