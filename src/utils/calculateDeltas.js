@@ -10,6 +10,51 @@ import { crosshairColors } from "./constants.js";
 import { getNearestIndex, createCustomElement } from "./helpers.js";
 
 /**
+ * Apply unit scaling and format value with SI prefix
+ * @param {number} value - Raw value from data
+ * @param {number} scaleFactor - Scale factor from axesScales (e.g., 0.001)
+ * @param {string} unit - Unit string (e.g., "A", "V", "W")
+ * @returns {string} Formatted value with SI prefix (e.g., "1.91 kA")
+ */
+function formatScaledValue(value, scaleFactor = 1, unit = "") {
+  // Apply scale factor (e.g., 0.001 converts mA → A)
+  const scaled = value * scaleFactor;
+
+  // Determine SI prefix based on magnitude
+  const absScaled = Math.abs(scaled);
+  let siPrefix = "";
+  let divisor = 1;
+
+  if (absScaled >= 1e9) {
+    siPrefix = "G";
+    divisor = 1e9;
+  } else if (absScaled >= 1e6) {
+    siPrefix = "M";
+    divisor = 1e6;
+  } else if (absScaled >= 1e3) {
+    siPrefix = "k";
+    divisor = 1e3;
+  } else if (absScaled >= 1) {
+    siPrefix = "";
+    divisor = 1;
+  } else if (absScaled >= 1e-3) {
+    siPrefix = "m";
+    divisor = 1e-3;
+  } else if (absScaled >= 1e-6) {
+    siPrefix = "μ";
+    divisor = 1e-6;
+  } else if (absScaled >= 1e-9) {
+    siPrefix = "n";
+    divisor = 1e-9;
+  }
+
+  const finalValue = scaled / divisor;
+
+  // Format with 2 decimal places
+  return `${finalValue.toFixed(2)} ${siPrefix}${unit}`;
+}
+
+/**
  * Collect delta data from a single chart (without updating UI)
  * @param {number[]} verticalLinesX - X positions of vertical lines
  * @param {uPlot} chart - Chart instance
@@ -38,6 +83,10 @@ export function collectChartDeltas(
     return deltaData;
   }
 
+  // Get scale factors and units from chart configuration
+  const axesScales = chart._axesScales || [];
+  const yUnits = chart._yUnits || [];
+
   // Handle single line: show position values
   if (verticalLinesX.length === 1) {
     const idx = getNearestIndex(timeArr, verticalLinesX[0]);
@@ -58,6 +107,11 @@ export function collectChartDeltas(
         ? chart._seriesColors[j]
         : series.stroke || "black";
 
+      // Apply scaling for display
+      const scaleFactor = axesScales[j + 1] || 1;
+      const channelUnit = yUnits[j] || "";
+      const formattedValue = formatScaledValue(value, scaleFactor, channelUnit);
+
       section.series.push({
         name: series.label || `Series ${j + 1}`,
         color: seriesColor,
@@ -65,6 +119,10 @@ export function collectChartDeltas(
         v2: value,
         deltaY: 0,
         percentage: 0,
+        v1Formatted: formattedValue,
+        v2Formatted: formattedValue,
+        deltaFormatted: `0.00 ${channelUnit}`,
+        unit: channelUnit,
       });
     });
 
@@ -143,14 +201,30 @@ export function collectChartDeltas(
         ? chart._seriesColors[j]
         : series.stroke || "black";
 
+      // Apply scaling for display
+      const scaleFactor = axesScales[j + 1] || 1;
+      const channelUnit = yUnits[j] || "";
+
+      const v1Formatted = formatScaledValue(v1, scaleFactor, channelUnit);
+      const v2Formatted = formatScaledValue(v2, scaleFactor, channelUnit);
+      const deltaFormatted = formatScaledValue(
+        deltaY,
+        scaleFactor,
+        channelUnit
+      );
+
       // Add to delta data
       section.series.push({
         name: seriesLabel,
         color: seriesColor,
-        v1,
+        v1, // Keep raw values for calculations
         v2,
         deltaY,
         percentage,
+        v1Formatted, // Add formatted values for display
+        v2Formatted,
+        deltaFormatted,
+        unit: channelUnit,
       });
     });
 

@@ -433,21 +433,27 @@ export function createDeltaDrawer() {
                 <div style="display: flex; justify-content: space-between; gap: 16px; font-size: 12px;">
                   <div style="flex: 1;">
                     <div style="color: #6b7280; font-size: 11px; margin-bottom: 2px;">Values</div>
-                    <div style="font-weight: 700; color: #111827; font-family: 'Courier New', monospace;">${seriesData.v1.toFixed(
-                      2
-                    )} → ${seriesData.v2.toFixed(2)}</div>
+                    <div style="font-weight: 700; color: #111827; font-family: 'Courier New', monospace;">${
+                      seriesData.v1Formatted || seriesData.v1.toFixed(2)
+                    } → ${
+              seriesData.v2Formatted || seriesData.v2.toFixed(2)
+            }</div>
                   </div>
                   <div style="flex: 1;">
                     <div style="color: #6b7280; font-size: 11px; margin-bottom: 2px;">Δ Value</div>
-                    <div style="font-weight: 700; color: #111827; font-family: 'Courier New', monospace;">${seriesData.deltaY.toFixed(
-                      2
-                    )}</div>
+                    <div style="font-weight: 700; color: #111827; font-family: 'Courier New', monospace;">${
+                      seriesData.deltaFormatted || seriesData.deltaY.toFixed(2)
+                    }</div>
                   </div>
                   <div style="flex: 1;">
                     <div style="color: #6b7280; font-size: 11px; margin-bottom: 2px;">Δ %</div>
-                    <div style="font-weight: 700; color: #111827;">${
-                      seriesData.percentage
-                    }%</div>
+                    <div style="font-weight: 700; ${
+                      seriesData.percentage < 0
+                        ? "color: #dc2626;"
+                        : "color: #16a34a;"
+                    } font-family: 'Courier New', monospace;">${
+              seriesData.percentage
+            }%</div>
                   </div>
                 </div>
               </div>

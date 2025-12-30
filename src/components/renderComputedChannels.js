@@ -206,6 +206,11 @@ export function renderComputedChannels(
   chart._computedIds = computedChannels.map((ch) => ch.id);
   chart._type = "computed";
 
+  // Attach metadata for delta calculation scaling
+  chart._axesScales = [1, ...computedChannels.map(() => 1)];
+  chart._yUnits = groupYUnits || [];
+  chart._seriesColors = groupLineColors || [];
+
   console.log(
     `[renderComputedChannels] ✅ Chart created with ${computedChannels.length} series`
   );

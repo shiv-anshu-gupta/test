@@ -224,6 +224,10 @@ export function renderDigitalCharts(
   const chartEndTime = performance.now();
 
   chart._seriesColors = opts.series.slice(1).map((s) => s.stroke);
+
+  // Attach metadata for delta calculation scaling
+  chart._axesScales = axesScales || [];
+  chart._yUnits = yUnits || [];
   charts.push(chart);
   try {
     // store mapping from chart series -> global channel indices

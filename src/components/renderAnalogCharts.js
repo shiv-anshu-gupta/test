@@ -246,6 +246,11 @@ export function renderAnalogCharts(
 
     const chart = initUPlotChart(opts, chartData, chartDiv, charts);
 
+    // Attach metadata for delta calculation scaling
+    chart._axesScales = groupAxesScales || [];
+    chart._yUnits = groupYUnits || [];
+    chart._seriesColors = groupLineColors || [];
+
     // store mapping from chart series -> global channel indices so chartManager can map updates
     try {
       chart._channelIndices = resolvedIndices.slice();
