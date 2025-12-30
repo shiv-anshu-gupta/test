@@ -1,6 +1,6 @@
 /**
  * Delta Display Drawer Component
- * Shows detailed delta measurements in a slide-out drawer (sidebar)
+ * Shows detailed crosshair values in a slide-out drawer (sidebar)
  * Uses plain HTML and CSS - no Tailwind
  */
 
@@ -202,11 +202,11 @@ export function createDeltaDrawer() {
         <div id="delta-drawer-panel">
           <div class="delta-drawer-header">
             <div class="delta-drawer-header-content">
-              <h2 id="delta-drawer-title">Delta Measurements</h2>
+              <h2 id="delta-drawer-title">Crosshair Data</h2>
             </div>
           </div>
           <div id="delta-drawer-content">
-            <p class="delta-empty-state">No delta data available</p>
+            <p class="delta-empty-state">No crosshair data available</p>
           </div>
         </div>
       </div>

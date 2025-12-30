@@ -34,7 +34,7 @@
   2. "delta-drawer"
      - Location: Right-side slide-out drawer
      - Default state: CLOSED
-     - Contains: Delta measurements between vertical lines
+     - Contains: crosshair data between vertical lines
 */
 
 // ============================================================================

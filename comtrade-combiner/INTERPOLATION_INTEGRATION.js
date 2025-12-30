@@ -240,7 +240,7 @@ function createCombinedChartConfig(combinedData, seriesColors) {
  * File 2: 500 Hz (0.002s interval) - Current measurement
  * File 3: 50 Hz (0.02s interval)   - Frequency measurement
  *
- * All three placed on same chart with vertical lines for delta measurement
+ * All three placed on same chart with vertical lines for crosshair data
  */
 function exampleMultiRateCombination() {
   // Sample data from different files
