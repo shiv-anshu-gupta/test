@@ -167,6 +167,135 @@ export function createDeltaDrawer() {
         padding: 32px 16px;
       }
 
+      /* Tabulator Table Container */
+      .delta-table-container {
+        margin-bottom: 20px;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        overflow: hidden;
+        background-color: #ffffff;
+      }
+
+      .delta-table-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px 16px;
+        background: linear-gradient(to bottom, #f9fafb, #f3f4f6);
+        border-bottom: 2px solid #e5e7eb;
+      }
+
+      .delta-table-title {
+        font-size: 14px;
+        font-weight: 600;
+        color: #111827;
+        margin: 0;
+      }
+
+      .delta-table-time {
+        font-size: 12px;
+        font-family: 'Courier New', monospace;
+        color: #6b7280;
+        font-weight: 600;
+      }
+
+      /* Tabulator Theme Overrides */
+      .tabulator {
+        font-size: 13px;
+        border: none !important;
+        background-color: transparent;
+      }
+
+      .tabulator .tabulator-header {
+        background-color: #f9fafb;
+        border-bottom: 2px solid #d1d5db;
+        font-weight: 600;
+      }
+
+      .tabulator .tabulator-header .tabulator-col {
+        background-color: transparent;
+        border-right: 1px solid #e5e7eb;
+        padding: 10px 12px;
+      }
+
+      .tabulator .tabulator-header .tabulator-col-title {
+        font-weight: 600;
+        color: #374151;
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .tabulator .tabulator-tableholder {
+        background-color: #ffffff;
+      }
+
+      .tabulator .tabulator-row {
+        border-bottom: 1px solid #f3f4f6;
+        min-height: 40px;
+      }
+
+      .tabulator .tabulator-row:hover {
+        background-color: #f9fafb !important;
+      }
+
+      .tabulator .tabulator-row.tabulator-row-even {
+        background-color: #fafafa;
+      }
+
+      .tabulator .tabulator-cell {
+        border-right: 1px solid #f3f4f6;
+        padding: 10px 12px;
+        vertical-align: middle;
+      }
+
+      /* Custom Cell Styles */
+      .cell-channel {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .cell-color-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        flex-shrink: 0;
+        border: 1px solid rgba(0, 0, 0, 0.1);
+      }
+
+      .cell-channel-name {
+        font-weight: 600;
+        color: #111827;
+      }
+
+      .cell-value {
+        font-family: 'Courier New', monospace;
+        font-weight: 600;
+        color: #111827;
+        text-align: right;
+        display: block;
+      }
+
+      .cell-percentage {
+        font-family: 'Courier New', monospace;
+        font-weight: 700;
+        text-align: right;
+        display: block;
+      }
+
+      .cell-percentage-positive {
+        color: #16a34a;
+      }
+
+      .cell-percentage-negative {
+        color: #dc2626;
+      }
+
+      .cell-percentage-zero {
+        color: #6b7280;
+      }
+
       /* Scrollbar styling */
       #delta-drawer-content::-webkit-scrollbar {
         width: 8px;
@@ -250,6 +379,153 @@ export function createDeltaDrawer() {
     }
 
     setupEventListeners();
+  }
+
+  /**
+   * Dynamically load Tabulator library from CDN
+   * @returns {Promise<boolean>} True if Tabulator is ready to use
+   */
+  async function loadTabulator() {
+    // Return immediately if already loaded
+    if (window.Tabulator) {
+      console.log("[DeltaDrawer] Tabulator already loaded");
+      return true;
+    }
+
+    return new Promise((resolve, reject) => {
+      // Load CSS (check if not already loaded)
+      if (!document.querySelector('link[href*="tabulator"]')) {
+        const cssLink = document.createElement("link");
+        cssLink.rel = "stylesheet";
+        cssLink.href =
+          "https://unpkg.com/tabulator-tables@5.5.0/dist/css/tabulator_simple.min.css";
+        document.head.appendChild(cssLink);
+        console.log("[DeltaDrawer] Tabulator CSS loaded");
+      }
+
+      // Load JavaScript
+      if (!document.querySelector('script[src*="tabulator"]')) {
+        const script = document.createElement("script");
+        script.src =
+          "https://unpkg.com/tabulator-tables@5.5.0/dist/js/tabulator.min.js";
+        script.onload = () => {
+          console.log("[DeltaDrawer] Tabulator JS loaded successfully");
+          resolve(true);
+        };
+        script.onerror = (error) => {
+          console.error("[DeltaDrawer] Failed to load Tabulator:", error);
+          reject(new Error("Tabulator load failed"));
+        };
+        document.head.appendChild(script);
+      } else {
+        resolve(true);
+      }
+    });
+  }
+
+  /**
+   * Build Tabulator column configuration
+   * @returns {Array} Tabulator columns definition
+   */
+  function buildTableColumns() {
+    return [
+      {
+        title: "Channel",
+        field: "channel",
+        minWidth: 130,
+        headerSort: false,
+        formatter: function (cell) {
+          const data = cell.getRow().getData();
+          return `
+            <div class="cell-channel">
+              <span class="cell-color-dot" style="background-color: ${
+                data.color
+              };"></span>
+              <span class="cell-channel-name">${cell.getValue()}</span>
+            </div>
+          `;
+        },
+      },
+      {
+        title: "Value 1",
+        field: "v1",
+        minWidth: 110,
+        hozAlign: "right",
+        headerSort: false,
+        formatter: function (cell) {
+          return `<span class="cell-value">${cell.getValue()}</span>`;
+        },
+      },
+      {
+        title: "Value 2",
+        field: "v2",
+        minWidth: 110,
+        hozAlign: "right",
+        headerSort: false,
+        formatter: function (cell) {
+          return `<span class="cell-value">${cell.getValue()}</span>`;
+        },
+      },
+      {
+        title: "Δ Value",
+        field: "delta",
+        minWidth: 110,
+        hozAlign: "right",
+        headerSort: false,
+        formatter: function (cell) {
+          return `<span class="cell-value">${cell.getValue()}</span>`;
+        },
+      },
+      {
+        title: "Δ %",
+        field: "percentage",
+        minWidth: 90,
+        hozAlign: "right",
+        sorter: "number",
+        formatter: function (cell) {
+          const value = cell.getValue();
+          const numValue = parseFloat(value);
+          let className = "cell-percentage";
+
+          if (numValue < 0) {
+            className += " cell-percentage-negative";
+          } else if (numValue > 0) {
+            className += " cell-percentage-positive";
+          } else {
+            className += " cell-percentage-zero";
+          }
+
+          return `<span class="${className}">${value}%</span>`;
+        },
+      },
+    ];
+  }
+
+  /**
+   * Transform delta data into Tabulator-compatible format
+   * @param {Array} seriesArray - Array of series data objects
+   * @returns {Array} Tabulator data array
+   */
+  function formatTableData(seriesArray) {
+    if (!Array.isArray(seriesArray)) {
+      console.warn("[DeltaDrawer] Invalid series data:", seriesArray);
+      return [];
+    }
+
+    return seriesArray.map((seriesData) => ({
+      channel: seriesData.name || "Unknown",
+      color: seriesData.color || "#000000",
+      v1:
+        seriesData.v1Formatted ||
+        (seriesData.v1 != null ? seriesData.v1.toFixed(2) : "N/A"),
+      v2:
+        seriesData.v2Formatted ||
+        (seriesData.v2 != null ? seriesData.v2.toFixed(2) : "N/A"),
+      delta:
+        seriesData.deltaFormatted ||
+        (seriesData.deltaY != null ? seriesData.deltaY.toFixed(2) : "N/A"),
+      percentage: seriesData.percentage != null ? seriesData.percentage : 0,
+    }));
   }
 
   function setupEventListeners() {
@@ -357,7 +633,7 @@ export function createDeltaDrawer() {
       console.log("[DeltaDrawer] ✅ Drawer hidden with smooth transition");
     },
 
-    update: (deltaData = [], verticalLinesCount = 0) => {
+    update: async (deltaData = [], verticalLinesCount = 0) => {
       console.log(
         "[DeltaDrawer] update() called with",
         deltaData.length,
@@ -368,9 +644,12 @@ export function createDeltaDrawer() {
       injectDrawerHTML();
 
       const content = document.getElementById("delta-drawer-content");
-      if (!content) return;
+      if (!content) {
+        console.error("[DeltaDrawer] Content element not found");
+        return;
+      }
 
-      // Show message if less than 2 vertical lines
+      // Show empty state if insufficient data
       if (!deltaData || deltaData.length === 0 || verticalLinesCount < 2) {
         const message =
           verticalLinesCount < 1
@@ -378,11 +657,11 @@ export function createDeltaDrawer() {
             : "Add another vertical line using <strong>Alt + 1</strong> to see delta values between them";
 
         content.innerHTML = `
-          <div class="delta-empty-state" style="text-align: center; padding: 24px 16px; color: var(--text-secondary);">
+          <div class="delta-empty-state">
             <div style="font-size: 14px; line-height: 1.5; margin-bottom: 12px;">
               ${message}
             </div>
-            <div style="font-size: 12px; color: var(--text-tertiary); margin-top: 16px;">
+            <div style="font-size: 12px; color: #9ca3af; margin-top: 16px;">
               💡 Place markers on the chart to measure values and differences
             </div>
           </div>
@@ -390,84 +669,82 @@ export function createDeltaDrawer() {
         return;
       }
 
-      // Build HTML from the old DeltaWindow format
-      let html = "";
+      // Load Tabulator library
+      try {
+        await loadTabulator();
+      } catch (error) {
+        console.error(
+          "[DeltaDrawer] Tabulator load failed, falling back to HTML:",
+          error
+        );
+        // Fallback to displaying an error message
+        content.innerHTML =
+          '<p style="padding: 16px; color: #dc2626; text-align: center;">Error loading data visualization</p>';
+        return;
+      }
 
+      // Clear content
+      content.innerHTML = "";
+
+      // Create Tabulator tables for each delta section
       deltaData.forEach((section, sectionIdx) => {
-        // Time delta box
-        if (section.deltaTime !== undefined) {
-          html += `
-            <div style="background-color: #f3f4f6; border: 1px solid #d1d5db; padding: 12px; margin-bottom: 16px; border-radius: 6px; text-align: center;">
-              <div style="font-size: 12px; color: #6b7280; margin-bottom: 4px;">Time Difference (T${
-                sectionIdx + 1
-              } → T${sectionIdx + 2})</div>
-              <div style="font-size: 16px; font-weight: 700; color: #111827; font-family: 'Courier New', monospace;">${
-                section.deltaTime
-              }</div>
-            </div>
-          `;
+        // Create container
+        const tableContainer = document.createElement("div");
+        tableContainer.className = "delta-table-container";
+
+        // Create header
+        const header = document.createElement("div");
+        header.className = "delta-table-header";
+        header.innerHTML = `
+          <div class="delta-table-title">Line Pair: T${sectionIdx + 1} → T${
+          sectionIdx + 2
+        }</div>
+          <div class="delta-table-time">${section.deltaTime || ""}</div>
+        `;
+        tableContainer.appendChild(header);
+
+        // Create table div
+        const tableDiv = document.createElement("div");
+        tableDiv.id = `delta-table-${sectionIdx}`;
+        tableContainer.appendChild(tableDiv);
+
+        content.appendChild(tableContainer);
+
+        // Format data for Tabulator
+        const tableData = formatTableData(section.series);
+
+        // Verify we have valid data
+        if (tableData.length === 0) {
+          console.warn(`[DeltaDrawer] No valid data for section ${sectionIdx}`);
+          tableDiv.innerHTML =
+            '<p style="padding: 16px; color: #9ca3af; text-align: center;">No data available</p>';
+          return;
         }
 
-        // Series deltas
-        if (section.series && section.series.length > 0) {
-          html += `
-            <div class="delta-section">
-              <div class="delta-section-header">
-                <h3 class="delta-section-title">Line Pair: T${
-                  sectionIdx + 1
-                } → T${sectionIdx + 2}</h3>
-              </div>
-              <div class="delta-items">
-          `;
-
-          section.series.forEach((seriesData) => {
-            const color = seriesData.color || "#000000";
-            html += `
-              <div style="margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px solid #e5e7eb;">
-                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
-                  <div style="width: 12px; height: 12px; border-radius: 50%; background-color: ${color};"></div>
-                  <span style="font-weight: 600; color: ${color}; font-size: 13px;">${
-              seriesData.name
-            }</span>
-                </div>
-                <div style="display: flex; justify-content: space-between; gap: 16px; font-size: 12px;">
-                  <div style="flex: 1;">
-                    <div style="color: #6b7280; font-size: 11px; margin-bottom: 2px;">Values</div>
-                    <div style="font-weight: 700; color: #111827; font-family: 'Courier New', monospace;">${
-                      seriesData.v1Formatted || seriesData.v1.toFixed(2)
-                    } → ${
-              seriesData.v2Formatted || seriesData.v2.toFixed(2)
-            }</div>
-                  </div>
-                  <div style="flex: 1;">
-                    <div style="color: #6b7280; font-size: 11px; margin-bottom: 2px;">Δ Value</div>
-                    <div style="font-weight: 700; color: #111827; font-family: 'Courier New', monospace;">${
-                      seriesData.deltaFormatted || seriesData.deltaY.toFixed(2)
-                    }</div>
-                  </div>
-                  <div style="flex: 1;">
-                    <div style="color: #6b7280; font-size: 11px; margin-bottom: 2px;">Δ %</div>
-                    <div style="font-weight: 700; ${
-                      seriesData.percentage < 0
-                        ? "color: #dc2626;"
-                        : "color: #16a34a;"
-                    } font-family: 'Courier New', monospace;">${
-              seriesData.percentage
-            }%</div>
-                  </div>
-                </div>
-              </div>
-            `;
+        // Create Tabulator instance
+        try {
+          new window.Tabulator(`#delta-table-${sectionIdx}`, {
+            data: tableData,
+            columns: buildTableColumns(),
+            layout: "fitColumns",
+            height: "auto",
+            responsiveLayout: "hide",
+            headerSort: true,
+            placeholder: "No Data Available",
           });
 
-          html += `
-              </div>
-            </div>
-          `;
+          console.log(
+            `[DeltaDrawer] ✅ Table ${sectionIdx} created with ${tableData.length} rows`
+          );
+        } catch (error) {
+          console.error(
+            `[DeltaDrawer] Failed to create table ${sectionIdx}:`,
+            error
+          );
+          tableDiv.innerHTML =
+            '<p style="padding: 16px; color: #dc2626;">Error creating table</p>';
         }
       });
-
-      content.innerHTML = html;
     },
 
     isOpen: () => isOpen,
