@@ -426,120 +426,158 @@ export function createDeltaDrawer() {
   }
 
   /**
-   * Build Tabulator column configuration
-   * @returns {Array} Tabulator columns definition
+   * Build dynamic Tabulator columns based on number of vertical lines
+   * @param {number} verticalLinesCount - Number of vertical lines
+   * @returns {Array} Tabulator column definitions
    */
-  function buildTableColumns() {
-    return [
-      {
-        title: "Channel",
-        field: "channel",
-        width: 140,
-        frozen: true,
-        headerSort: false,
-        formatter: function (cell) {
-          const data = cell.getRow().getData();
-          return `
-            <div style="display: flex; align-items: center; gap: 8px;">
-              <span style="
-                width: 10px; 
-                height: 10px; 
-                border-radius: 50%; 
-                background-color: ${data.color}; 
-                display: inline-block;
-                border: 1px solid rgba(0,0,0,0.2);
-              "></span>
-              <span style="font-weight: 600; color: #111827;">${cell.getValue()}</span>
-            </div>
-          `;
-        },
+  function buildTableColumns(verticalLinesCount) {
+    const columns = [];
+
+    // First column: Channel name (frozen/pinned)
+    columns.push({
+      title: "Channel",
+      field: "channel",
+      width: 120,
+      frozen: true,
+      headerSort: false,
+      formatter: function (cell) {
+        const data = cell.getRow().getData();
+        return `
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span style="
+              width: 10px;
+              height: 10px;
+              border-radius: 50%;
+              background-color: ${data.color};
+              display: inline-block;
+              border: 1px solid rgba(0,0,0,0.2);
+            "></span>
+            <span style="font-weight: 600; color: #111827;">${cell.getValue()}</span>
+          </div>
+        `;
       },
-      {
-        title: "Value 1",
-        field: "v1",
-        width: 120,
+    });
+
+    // Add a column for each vertical line value
+    for (let i = 0; i < verticalLinesCount; i++) {
+      const lineColor = crosshairColors[i % crosshairColors.length];
+      const colorHex = getColorHex(lineColor);
+
+      columns.push({
+        title: `<span style="display: inline-block; width: 12px; height: 12px; border-radius: 50%; background-color: ${colorHex}; border: 1px solid #fff; box-shadow: 0 0 0 1px rgba(0,0,0,0.2);"></span>`,
+        field: `v${i}`,
+        width: 110,
         hozAlign: "right",
         headerSort: false,
         formatter: function (cell) {
-          return `<span style="font-family: 'Courier New', monospace; font-weight: 600;">${cell.getValue()}</span>`;
+          return `<span style="font-family: 'Courier New', monospace; font-weight: 600;">${cell.getValue() || "N/A"}</span>`;
         },
-      },
-      {
-        title: "Value 2",
-        field: "v2",
-        width: 120,
-        hozAlign: "right",
-        headerSort: false,
-        formatter: function (cell) {
-          return `<span style="font-family: 'Courier New', monospace; font-weight: 600;">${cell.getValue()}</span>`;
-        },
-      },
-      {
-        title: "Δ Value",
-        field: "delta",
-        width: 120,
-        hozAlign: "right",
-        headerSort: false,
-        formatter: function (cell) {
-          return `<span style="font-family: 'Courier New', monospace; font-weight: 600;">${cell.getValue()}</span>`;
-        },
-      },
-      {
-        title: "Δ %",
-        field: "percentage",
+      });
+    }
+
+    // Add delta columns for each consecutive pair
+    for (let i = 0; i < verticalLinesCount - 1; i++) {
+      const line1Color = crosshairColors[i % crosshairColors.length];
+      const line2Color = crosshairColors[(i + 1) % crosshairColors.length];
+      const color1Hex = getColorHex(line1Color);
+      const color2Hex = getColorHex(line2Color);
+
+      // Delta value column
+      columns.push({
+        title: `<span style="display: inline-flex; align-items: center; gap: 4px;">
+          <span style="width: 10px; height: 10px; border-radius: 50%; background-color: ${color1Hex};"></span>
+          <span style="font-size: 10px;">→</span>
+          <span style="width: 10px; height: 10px; border-radius: 50%; background-color: ${color2Hex};"></span>
+          <span style="font-size: 11px; margin-left: 2px;">Δ</span>
+        </span>`,
+        field: `delta${i}`,
         width: 100,
+        hozAlign: "right",
+        headerSort: false,
+        formatter: function (cell) {
+          return `<span style="font-family: 'Courier New', monospace; font-weight: 600;">${cell.getValue() || "N/A"}</span>`;
+        },
+      });
+
+      // Delta percentage column
+      columns.push({
+        title: `<span style="display: inline-flex; align-items: center; gap: 4px;">
+          <span style="width: 10px; height: 10px; border-radius: 50%; background-color: ${color1Hex};"></span>
+          <span style="font-size: 10px;">→</span>
+          <span style="width: 10px; height: 10px; border-radius: 50%; background-color: ${color2Hex};"></span>
+          <span style="font-size: 11px; margin-left: 2px;">%</span>
+        </span>`,
+        field: `percentage${i}`,
+        width: 90,
         hozAlign: "right",
         sorter: "number",
         formatter: function (cell) {
           const value = parseFloat(cell.getValue());
+          if (isNaN(value)) return "N/A";
+
           let color = "#6b7280";
+          if (value < 0) color = "#dc2626";
+          else if (value > 0) color = "#16a34a";
 
-          if (value < 0) {
-            color = "#dc2626";
-          } else if (value > 0) {
-            color = "#16a34a";
-          }
-
-          return `<span style="font-family: 'Courier New', monospace; font-weight: 700; color: ${color};">${value.toFixed(
-            1
-          )}%</span>`;
+          return `<span style="font-family: 'Courier New', monospace; font-weight: 700; color: ${color};">${value.toFixed(1)}%</span>`;
         },
-      },
-    ];
+      });
+    }
+
+    return columns;
   }
 
   /**
-   * Transform delta data into Tabulator-compatible format
-   * @param {Array} seriesArray - Array of series data objects
-   * @returns {Array} Tabulator data array
+   * Transform deltaData into a single consolidated table format
+   * @param {Array} deltaData - Array of delta sections (one per line pair)
+   * @param {number} verticalLinesCount - Number of vertical lines
+   * @returns {Array} Consolidated Tabulator data
    */
-  function formatTableData(seriesArray) {
-    if (!Array.isArray(seriesArray)) {
-      console.warn(
-        "[DeltaDrawer] ⚠️ Invalid series data, expected array:",
-        seriesArray
-      );
+  function formatTableData(deltaData, verticalLinesCount) {
+    if (!Array.isArray(deltaData) || deltaData.length === 0) {
+      console.warn("[DeltaDrawer] No delta data to format");
       return [];
     }
 
-    console.log(
-      "[DeltaDrawer] 📊 Formatting table data for",
-      seriesArray.length,
-      "series"
-    );
+    // Build a map of channel data: { channelName: { color, v0, v1, v2, delta0, delta1, ... } }
+    const channelMap = new Map();
 
-    return seriesArray.map((seriesData, index) => {
-      const row = {
-        channel: seriesData.name || `Series ${index + 1}`,
-        color: seriesData.color || "#000000",
-        v1: seriesData.v1Formatted || "N/A",
-        v2: seriesData.v2Formatted || "N/A",
-        delta: seriesData.deltaFormatted || "N/A",
-        percentage: seriesData.percentage != null ? seriesData.percentage : 0,
-      };
-      console.log(`[DeltaDrawer] 📋 Row ${index}:`, row);
-      return row;
+    // Process each delta section (line pair)
+    deltaData.forEach((section, pairIdx) => {
+      if (!section.series || !Array.isArray(section.series)) return;
+
+      section.series.forEach((seriesData) => {
+        const channelName = seriesData.name || `Series ${pairIdx}`;
+
+        // Initialize channel if not exists
+        if (!channelMap.has(channelName)) {
+          channelMap.set(channelName, {
+            channel: channelName,
+            color: seriesData.color || "#000000",
+          });
+        }
+
+        const channelData = channelMap.get(channelName);
+
+        // Add v1 value (first line of this pair)
+        if (pairIdx === 0) {
+          channelData[`v${pairIdx}`] = seriesData.v1Formatted || "N/A";
+        }
+
+        // Add v2 value (second line of this pair)
+        channelData[`v${pairIdx + 1}`] = seriesData.v2Formatted || "N/A";
+
+        // Add delta and percentage for this pair
+        channelData[`delta${pairIdx}`] = seriesData.deltaFormatted || "N/A";
+        channelData[`percentage${pairIdx}`] = seriesData.percentage != null ? seriesData.percentage : 0;
+      });
     });
+
+    // Convert map to array
+    const tableData = Array.from(channelMap.values());
+
+    console.log("[DeltaDrawer] 📊 Consolidated table data:", tableData);
+    return tableData;
   }
 
   /**
@@ -684,9 +722,9 @@ export function createDeltaDrawer() {
         return;
       }
 
-      // ✅ Destroy old tables to allow updates
+      // Destroy old table instance
       console.log(
-        `[DeltaDrawer] 🧹 Destroying ${tabulatorInstances.length} old tables`
+        `[DeltaDrawer] 🧹 Destroying ${tabulatorInstances.length} old table(s)`
       );
       tabulatorInstances.forEach((table, idx) => {
         try {
@@ -701,7 +739,7 @@ export function createDeltaDrawer() {
           );
         }
       });
-      tabulatorInstances = []; // Clear array
+      tabulatorInstances = [];
 
       // Show empty state if insufficient data
       if (!deltaData || deltaData.length === 0 || verticalLinesCount < 2) {
@@ -731,7 +769,6 @@ export function createDeltaDrawer() {
           "[DeltaDrawer] Tabulator load failed, falling back to HTML:",
           error
         );
-        // Fallback to displaying an error message
         content.innerHTML =
           '<p style="padding: 16px; color: #dc2626; text-align: center;">Error loading data visualization</p>';
         return;
@@ -740,124 +777,85 @@ export function createDeltaDrawer() {
       // Clear content
       content.innerHTML = "";
 
-      // ✅ ADD DEBUG LOGGING
-      console.log(
-        "[DeltaDrawer] 🐛 DEBUG: Raw deltaData:",
-        JSON.stringify(deltaData, null, 2)
-      );
+      // Create single table container
+      const tableContainer = document.createElement("div");
+      tableContainer.className = "delta-table-container";
 
-      // Create Tabulator tables for each delta section
-      deltaData.forEach((section, sectionIdx) => {
-        console.log(`[DeltaDrawer] 🐛 DEBUG Section ${sectionIdx}:`, {
-          deltaTime: section.deltaTime,
-          seriesCount: section.series?.length,
-          firstSeries: section.series?.[0],
-        });
-        // Create container
-        const tableContainer = document.createElement("div");
-        tableContainer.className = "delta-table-container";
+      // Create header showing all line pairs
+      const header = document.createElement("div");
+      header.className = "delta-table-header";
 
-        // Create header
-        const header = document.createElement("div");
-        header.className = "delta-table-header";
-
-        // ✅ Get colors for this line pair
-        const line1Color = crosshairColors[sectionIdx % crosshairColors.length];
-        const line2Color =
-          crosshairColors[(sectionIdx + 1) % crosshairColors.length];
-        const line1Hex = getColorHex(line1Color);
-        const line2Hex = getColorHex(line2Color);
-
-        // ✅ Create header with colored dots
-        header.innerHTML = `
-          <div class="delta-table-title">
-            <span style="display: inline-flex; align-items: center; gap: 8px;">
-              <span style="color: #6b7280; font-size: 13px; font-weight: 500;">Line Pair:</span>
-              <span style="
-                display: inline-block;
-                width: 16px;
-                height: 16px;
-                border-radius: 50%;
-                background-color: ${line1Hex};
-                border: 2px solid #ffffff;
-                box-shadow: 0 1px 3px rgba(0,0,0,0.2);
-              "></span>
-              <span style="color: #9ca3af; font-weight: 600;">→</span>
-              <span style="
-                display: inline-block;
-                width: 16px;
-                height: 16px;
-                border-radius: 50%;
-                background-color: ${line2Hex};
-                border: 2px solid #ffffff;
-                box-shadow: 0 1px 3px rgba(0,0,0,0.2);
-              "></span>
-            </span>
-          </div>
-          <div class="delta-table-time">${section.deltaTime || ""}</div>
-        `;
-        tableContainer.appendChild(header);
-
-        // Create table div
-        const tableDiv = document.createElement("div");
-        tableDiv.id = `delta-table-${sectionIdx}`;
-        tableContainer.appendChild(tableDiv);
-
-        content.appendChild(tableContainer);
-
-        // Format data for Tabulator
-        const tableData = formatTableData(section.series);
-        console.log(
-          `[DeltaDrawer] 🐛 DEBUG Table data for section ${sectionIdx}:`,
-          tableData
+      let pairsHTML = "";
+      for (let i = 0; i < verticalLinesCount - 1; i++) {
+        const color1 = getColorHex(
+          crosshairColors[i % crosshairColors.length]
+        );
+        const color2 = getColorHex(
+          crosshairColors[(i + 1) % crosshairColors.length]
         );
 
-        // Verify we have valid data
-        if (tableData.length === 0) {
-          console.warn(`[DeltaDrawer] No valid data for section ${sectionIdx}`);
-          tableDiv.innerHTML =
-            '<p style="padding: 16px; color: #9ca3af; text-align: center;">No data available</p>';
-          return;
-        }
+        if (i > 0) pairsHTML += '<span style="margin: 0 8px; color: #d1d5db;">|</span>';
 
-        // Create Tabulator instance
-        try {
-          const table = new window.Tabulator(`#delta-table-${sectionIdx}`, {
-            data: tableData,
-            columns: buildTableColumns(),
-            layout: "fitColumns",
-            height: "auto",
-            autoColumns: false,
-            responsiveLayout: false,
-            headerSort: true,
-            placeholder: "No Data Available",
-            printAsHtml: true,
-            printStyled: true,
-          });
+        pairsHTML += `
+          <span style="display: inline-flex; align-items: center; gap: 6px;">
+            <span style="width: 14px; height: 14px; border-radius: 50%; background-color: ${color1}; border: 2px solid #fff; box-shadow: 0 1px 2px rgba(0,0,0,0.2);"></span>
+            <span style="color: #9ca3af; font-size: 12px;">→</span>
+            <span style="width: 14px; height: 14px; border-radius: 50%; background-color: ${color2}; border: 2px solid #fff; box-shadow: 0 1px 2px rgba(0,0,0,0.2);"></span>
+          </span>
+        `;
+      }
 
-          // ✅ Track instance for cleanup
-          tabulatorInstances.push(table);
+      header.innerHTML = `
+        <div class="delta-table-title">
+          <span style="display: inline-flex; align-items: center; gap: 8px;">
+            <span style="color: #6b7280; font-size: 13px; font-weight: 500;">${verticalLinesCount} Lines: </span>
+            ${pairsHTML}
+          </span>
+        </div>
+        <div class="delta-table-time">${deltaData[0]?.deltaTime || ""}</div>
+      `;
+      tableContainer.appendChild(header);
 
-          console.log(
-            `[DeltaDrawer] ✅ Table ${sectionIdx} created with ${
-              tableData.length
-            } rows and ${buildTableColumns().length} columns`
-          );
+      // Create table div
+      const tableDiv = document.createElement("div");
+      tableDiv.id = "delta-table-main";
+      tableContainer.appendChild(tableDiv);
 
-          const columnCount = table.getColumns().length;
-          console.log(
-            `[DeltaDrawer] 🔍 Table has ${columnCount} columns: `,
-            table.getColumns().map((c) => c.getField())
-          );
-        } catch (error) {
-          console.error(
-            `[DeltaDrawer] ❌ Failed to create table ${sectionIdx}:`,
-            error
-          );
-          tableDiv.innerHTML =
-            '<p style="padding: 16px; color: #dc2626;">Error creating table</p>';
-        }
-      });
+      content.appendChild(tableContainer);
+
+      // Format consolidated data
+      const tableData = formatTableData(deltaData, verticalLinesCount);
+
+      if (tableData.length === 0) {
+        console.warn("[DeltaDrawer] No valid table data");
+        tableDiv.innerHTML =
+          '<p style="padding: 16px; color: #9ca3af; text-align: center;">No data available</p>';
+        return;
+      }
+
+      // Create single expanding table
+      try {
+        const table = new window.Tabulator("#delta-table-main", {
+          data: tableData,
+          columns: buildTableColumns(verticalLinesCount),
+          layout: "fitColumns",
+          height: "auto",
+          autoColumns: false,
+          responsiveLayout: "collapse",
+          headerSort: true,
+          placeholder: "No Data Available",
+        });
+
+        tabulatorInstances.push(table);
+
+        console.log(
+          `[DeltaDrawer] ✅ Single expanding table created with ${tableData.length} rows and ${buildTableColumns(verticalLinesCount).length} columns`
+        );
+      } catch (error) {
+        console.error("[DeltaDrawer] ❌ Failed to create table:", error);
+        tableDiv.innerHTML =
+          '<p style="padding: 16px; color: #dc2626;">Error creating table</p>';
+      }
     },
 
     isOpen: () => isOpen,
