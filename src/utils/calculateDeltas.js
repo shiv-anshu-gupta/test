@@ -50,8 +50,13 @@ function formatScaledValue(value, scaleFactor = 1, unit = "") {
 
   const finalValue = scaled / divisor;
 
-  // Format with 2 decimal places
-  return `${finalValue.toFixed(2)} ${siPrefix}${unit}`;
+  // Format with 2 decimal places - add space between number and unit
+  const formatted = `${finalValue.toFixed(2)} ${siPrefix}${unit}`;
+  
+  // Debug logging
+  console.log(`[formatScaledValue] value=${value}, scaleFactor=${scaleFactor}, scaled=${scaled}, absScaled=${absScaled}, siPrefix='${siPrefix}', divisor=${divisor}, result='${formatted}'`);
+  
+  return formatted;
 }
 
 /**
