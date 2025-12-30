@@ -36,7 +36,7 @@ class ThemeContext {
     this._broadcastChannel = null;
     this._isInitialized = false;
 
-    this._isInitialized();
+    this._init();
   }
 
   _init() {

@@ -4,6 +4,7 @@ import {
 } from "./components/chartComponent.js";
 import { parseCFG, parseDAT } from "./components/comtradeUtils.js";
 import { createState } from "./components/createState.js";
+import { themeContext } from "./Context/ThemeContext.js";
 import {
   calculateDeltas,
   collectChartDeltas,
@@ -57,18 +58,10 @@ import {
   updateProgress,
   hideProgress,
 } from "./components/ProgressBar.js";
-import {
-  initTheme,
-  toggleTheme,
-  getCurrentTheme,
-} from "./utils/themeManager.js";
+
 import { initGlobalDOMUpdateQueue } from "./utils/domUpdateQueueInit.js";
 import { openMergerWindow } from "./utils/mergerWindowLauncher.js";
-import {
-  initGlobalThemeState,
-  toggleGlobalTheme,
-  listenForChildThemeRequests,
-} from "./utils/globalThemeState.js";
+
 import {
   initComputedChannelsState,
   getComputedChannelsState,
@@ -77,6 +70,11 @@ import {
 
 // Initialize global DOM update queue for selectiveUpdate feature
 initGlobalDOMUpdateQueue();
+
+// Export sidebarResize functions to window for onclick handlers
+window.__sidebarResize = {
+  adjustMainContent,
+};
 
 /**
  * Simple file reader utility for loading text files
@@ -2156,9 +2154,7 @@ document.addEventListener("keydown", (e) => {
 });
 
 // === Theme Toggle ===
-// Initialize global theme state and listen for child window requests
-initGlobalThemeState();
-listenForChildThemeRequests();
+// ThemeContext is now initialized globally and handles theme management
 
 // === Computed Channels State ===
 // Initialize global computed channels state for reactive updates
@@ -2193,21 +2189,45 @@ try {
 
 const themeToggleBtn = document.getElementById("themeToggleBtn");
 const themeIcon = document.getElementById("themeIcon");
-const themeName = document.getElementById("themeName");
 
-if (themeToggleBtn) {
+// ✅ Initialize theme button with ThemeContext
+if (themeToggleBtn && themeIcon) {
+  // Set initial icon
+  themeIcon.textContent = themeContext.isDark() ? "🌙" : "☀️";
+
+  // Toggle on click
   themeToggleBtn.addEventListener("click", (event) => {
     event.preventDefault();
     event.stopPropagation();
 
-    const newTheme = toggleGlobalTheme();
-    updateThemeButton(newTheme);
+    const newTheme = themeContext.toggle();
+    themeIcon.textContent = newTheme === "dark" ? "🌙" : "☀️";
     console.log(`[main.js] Theme switched to: ${newTheme}`);
 
     // Update all chart colors with the new theme
     updateAllChartAxisColors(charts);
   });
 }
+
+// ✅ Subscribe to global theme changes
+const themeUnsubscribe = themeContext.subscribe(({ theme, isDark, colors }) => {
+  console.log(`[Main] Global theme changed to: ${theme}`);
+
+  // Update icon
+  if (themeIcon) {
+    themeIcon.textContent = isDark ? "🌙" : "☀️";
+  }
+
+  // Update body class for additional styling
+  document.body.classList.toggle("dark-theme", isDark);
+
+  // Dispatch event for legacy components
+  window.dispatchEvent(
+    new CustomEvent("app-theme-changed", {
+      detail: { theme, isDark, colors },
+    })
+  );
+});
 
 function updateThemeButton(theme) {
   if (themeIcon) {
@@ -2220,7 +2240,7 @@ function updateThemeButton(theme) {
 }
 
 // Update button on load
-updateThemeButton(getCurrentTheme());
+updateThemeButton(themeContext.isDark() ? "dark" : "light");
 
 // Listen for theme changes from other sources
 window.addEventListener("themeChanged", (e) => {

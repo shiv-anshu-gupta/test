@@ -63,7 +63,6 @@
 
 import { createChannelList } from "./ChannelList.js";
 import { autoGroupChannels } from "../utils/autoGroupChannels.js";
-import { THEMES } from "../utils/themeManager.js";
 
 /**
  * Open a Channel List popup and initialize the child UI.
