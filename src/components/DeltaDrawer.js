@@ -64,7 +64,7 @@ export function createDeltaDrawer() {
         top: 0;
         right: 0;
         height: 100%;
-        width: 384px;
+        width: 600px;
         max-width: 90vw;
         background-color: #ffffff;
         box-shadow: -4px 0 12px rgba(0, 0, 0, 0.15);
@@ -101,6 +101,7 @@ export function createDeltaDrawer() {
 
       #delta-drawer-content {
         flex: 1;
+        overflow-x: auto;
         overflow-y: auto;
         padding: 24px;
         background-color: #ffffff;
@@ -176,6 +177,7 @@ export function createDeltaDrawer() {
         border-radius: 8px;
         overflow: hidden;
         background-color: #ffffff;
+        min-width: 100%;
       }
 
       .delta-table-header {
@@ -206,6 +208,18 @@ export function createDeltaDrawer() {
         font-size: 13px;
         border: none !important;
         background-color: transparent;
+        width: 100% !important;
+        display: table !important;
+      }
+
+      .tabulator .tabulator-tableholder {
+        background-color: #ffffff;
+        overflow-x: auto !important;
+      }
+
+      .tabulator .tabulator-table {
+        display: table !important;
+        width: auto !important;
       }
 
       .tabulator .tabulator-header {
@@ -228,11 +242,8 @@ export function createDeltaDrawer() {
         letter-spacing: 0.5px;
       }
 
-      .tabulator .tabulator-tableholder {
-        background-color: #ffffff;
-      }
-
       .tabulator .tabulator-row {
+        display: table-row !important;
         border-bottom: 1px solid #f3f4f6;
         min-height: 40px;
       }
@@ -246,9 +257,11 @@ export function createDeltaDrawer() {
       }
 
       .tabulator .tabulator-cell {
+        display: table-cell !important;
         border-right: 1px solid #f3f4f6;
         padding: 10px 12px;
         vertical-align: middle;
+        white-space: nowrap;
       }
 
       /* Custom Cell Styles */
@@ -437,13 +450,15 @@ export function createDeltaDrawer() {
     columns.push({
       title: "Channel",
       field: "channel",
+      minWidth: 120,
       width: 120,
       frozen: true,
       headerSort: false,
+      responsive: 0,
       formatter: function (cell) {
         const data = cell.getRow().getData();
         return `
-          <div style="display: flex; align-items: center; gap: 8px;">
+          <div style="display: flex; align-items: center; gap: 8px; white-space: nowrap;">
             <span style="
               width: 10px;
               height: 10px;
@@ -466,11 +481,13 @@ export function createDeltaDrawer() {
       columns.push({
         title: `<span style="display: inline-block; width: 12px; height: 12px; border-radius: 50%; background-color: ${colorHex}; border: 1px solid #fff; box-shadow: 0 0 0 1px rgba(0,0,0,0.2);"></span>`,
         field: `v${i}`,
+        minWidth: 110,
         width: 110,
         hozAlign: "right",
         headerSort: false,
+        responsive: i + 1,
         formatter: function (cell) {
-          return `<span style="font-family: 'Courier New', monospace; font-weight: 600;">${
+          return `<span style="font-family: 'Courier New', monospace; font-weight: 600; white-space: nowrap;">${
             cell.getValue() || "N/A"
           }</span>`;
         },
@@ -493,11 +510,13 @@ export function createDeltaDrawer() {
           <span style="font-size: 11px; margin-left: 2px;">Δ</span>
         </span>`,
         field: `delta${i}`,
+        minWidth: 100,
         width: 100,
         hozAlign: "right",
         headerSort: false,
+        responsive: verticalLinesCount + i * 2 + 1,
         formatter: function (cell) {
-          return `<span style="font-family: 'Courier New', monospace; font-weight: 600;">${
+          return `<span style="font-family: 'Courier New', monospace; font-weight: 600; white-space: nowrap;">${
             cell.getValue() || "N/A"
           }</span>`;
         },
@@ -512,9 +531,11 @@ export function createDeltaDrawer() {
           <span style="font-size: 11px; margin-left: 2px;">%</span>
         </span>`,
         field: `percentage${i}`,
+        minWidth: 90,
         width: 90,
         hozAlign: "right",
         sorter: "number",
+        responsive: verticalLinesCount + i * 2 + 2,
         formatter: function (cell) {
           const value = parseFloat(cell.getValue());
           if (isNaN(value)) return "N/A";
@@ -523,7 +544,7 @@ export function createDeltaDrawer() {
           if (value < 0) color = "#dc2626";
           else if (value > 0) color = "#16a34a";
 
-          return `<span style="font-family: 'Courier New', monospace; font-weight: 700; color: ${color};">${value.toFixed(
+          return `<span style="font-family: 'Courier New', monospace; font-weight: 700; color: ${color}; white-space: nowrap;">${value.toFixed(
             1
           )}%</span>`;
         },
@@ -669,8 +690,8 @@ export function createDeltaDrawer() {
         panel.classList.add("open");
       }
 
-      // ✅ Adjust main content layout to make room for drawer (384px on the right)
-      adjustMainContent("right", 384);
+      // ✅ Adjust main content layout to make room for drawer (600px on the right)
+      adjustMainContent("right", 600);
 
       console.log("[DeltaDrawer] ✅ Drawer shown with smooth transition");
     },
@@ -844,15 +865,22 @@ export function createDeltaDrawer() {
         const table = new window.Tabulator("#delta-table-main", {
           data: tableData,
           columns: buildTableColumns(verticalLinesCount),
-          layout: "fitColumns",
+          layout: "fitDataTable",
           height: "auto",
           autoColumns: false,
-          responsiveLayout: "collapse",
+          responsiveLayout: false,
+          layoutColumnsOnNewData: false,
+          persistentLayout: true,
           headerSort: true,
           placeholder: "No Data Available",
         });
 
         tabulatorInstances.push(table);
+
+        // Force redraw to ensure proper layout
+        setTimeout(() => {
+          table.redraw(true);
+        }, 100);
 
         console.log(
           `[DeltaDrawer] ✅ Single expanding table created with ${
