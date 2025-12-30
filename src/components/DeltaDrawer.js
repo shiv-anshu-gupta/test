@@ -6,9 +6,11 @@
 
 import { sidebarStore } from "../utils/sidebarStore.js";
 import { adjustMainContent } from "../utils/sidebarResize.js";
+import { crosshairColors } from "../utils/constants.js";
 
 export function createDeltaDrawer() {
   let isOpen = false;
+  let tabulatorInstances = []; // Track table instances for cleanup
 
   const styleHTML = `
     <style id="delta-drawer-styles">
@@ -540,6 +542,27 @@ export function createDeltaDrawer() {
     });
   }
 
+  /**
+   * Convert color name to hex value
+   * @param {string} colorName - Color from crosshairColors array
+   * @returns {string} Hex color code
+   */
+  function getColorHex(colorName) {
+    const colorMap = {
+      red: "#ef4444",
+      blue: "#3b82f6",
+      green: "#22c55e",
+      magenta: "#d946ef",
+      purple: "#a855f7",
+      orange: "#f97316",
+      brown: "#92400e",
+      black: "#000000",
+      pink: "#ec4899",
+      yellow: "#eab308",
+    };
+    return colorMap[colorName] || "#6b7280";
+  }
+
   function setupEventListeners() {
     const drawer = document.getElementById("delta-drawer");
     const panel = document.getElementById("delta-drawer-panel");
@@ -661,6 +684,25 @@ export function createDeltaDrawer() {
         return;
       }
 
+      // ✅ Destroy old tables to allow updates
+      console.log(
+        `[DeltaDrawer] 🧹 Destroying ${tabulatorInstances.length} old tables`
+      );
+      tabulatorInstances.forEach((table, idx) => {
+        try {
+          if (table && typeof table.destroy === "function") {
+            table.destroy();
+            console.log(`[DeltaDrawer] ✅ Destroyed table ${idx}`);
+          }
+        } catch (error) {
+          console.warn(
+            `[DeltaDrawer] ⚠️ Error destroying table ${idx}:`,
+            error
+          );
+        }
+      });
+      tabulatorInstances = []; // Clear array
+
       // Show empty state if insufficient data
       if (!deltaData || deltaData.length === 0 || verticalLinesCount < 2) {
         const message =
@@ -718,10 +760,40 @@ export function createDeltaDrawer() {
         // Create header
         const header = document.createElement("div");
         header.className = "delta-table-header";
+
+        // ✅ Get colors for this line pair
+        const line1Color = crosshairColors[sectionIdx % crosshairColors.length];
+        const line2Color =
+          crosshairColors[(sectionIdx + 1) % crosshairColors.length];
+        const line1Hex = getColorHex(line1Color);
+        const line2Hex = getColorHex(line2Color);
+
+        // ✅ Create header with colored dots
         header.innerHTML = `
-          <div class="delta-table-title">Line Pair: T${sectionIdx + 1} → T${
-          sectionIdx + 2
-        }</div>
+          <div class="delta-table-title">
+            <span style="display: inline-flex; align-items: center; gap: 8px;">
+              <span style="color: #6b7280; font-size: 13px; font-weight: 500;">Line Pair:</span>
+              <span style="
+                display: inline-block;
+                width: 16px;
+                height: 16px;
+                border-radius: 50%;
+                background-color: ${line1Hex};
+                border: 2px solid #ffffff;
+                box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+              "></span>
+              <span style="color: #9ca3af; font-weight: 600;">→</span>
+              <span style="
+                display: inline-block;
+                width: 16px;
+                height: 16px;
+                border-radius: 50%;
+                background-color: ${line2Hex};
+                border: 2px solid #ffffff;
+                box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+              "></span>
+            </span>
+          </div>
           <div class="delta-table-time">${section.deltaTime || ""}</div>
         `;
         tableContainer.appendChild(header);
@@ -762,6 +834,9 @@ export function createDeltaDrawer() {
             printAsHtml: true,
             printStyled: true,
           });
+
+          // ✅ Track instance for cleanup
+          tabulatorInstances.push(table);
 
           console.log(
             `[DeltaDrawer] ✅ Table ${sectionIdx} created with ${
