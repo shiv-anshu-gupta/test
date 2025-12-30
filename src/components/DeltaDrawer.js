@@ -178,15 +178,21 @@ export function createDeltaDrawer() {
         overflow: hidden;
         background-color: #ffffff;
         min-width: 100%;
+        display: block !important;
       }
 
       .delta-table-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 12px 16px;
-        background: linear-gradient(to bottom, #f9fafb, #f3f4f6);
-        border-bottom: 2px solid #e5e7eb;
+        display: flex !important;
+        flex-direction: row !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+        padding: 12px 16px !important;
+        background: linear-gradient(to bottom, #f9fafb, #f3f4f6) !important;
+        border-bottom: 2px solid #e5e7eb !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+        position: relative !important;
+        z-index: 10 !important;
       }
 
       .delta-table-title {
@@ -209,7 +215,7 @@ export function createDeltaDrawer() {
         border: none !important;
         background-color: transparent;
         width: 100% !important;
-        display: table !important;
+        display: block !important;
       }
 
       .tabulator .tabulator-tableholder {
@@ -219,27 +225,15 @@ export function createDeltaDrawer() {
 
       .tabulator .tabulator-table {
         display: table !important;
-        width: auto !important;
+        width: 100% !important;
       }
 
+      /* Hide the default Tabulator header - we use our custom header instead */
       .tabulator .tabulator-header {
-        background-color: #f9fafb;
-        border-bottom: 2px solid #d1d5db;
-        font-weight: 600;
-      }
-
-      .tabulator .tabulator-header .tabulator-col {
-        background-color: transparent;
-        border-right: 1px solid #e5e7eb;
-        padding: 10px 12px;
-      }
-
-      .tabulator .tabulator-header .tabulator-col-title {
-        font-weight: 600;
-        color: #374151;
-        font-size: 12px;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
+        display: none !important;
+        visibility: hidden !important;
+        height: 0 !important;
+        overflow: hidden !important;
       }
 
       .tabulator .tabulator-row {
@@ -439,24 +433,32 @@ export function createDeltaDrawer() {
   }
 
   /**
-   * Build dynamic Tabulator columns based on number of vertical lines
+   * Build dynamic Tabulator columns with time values
+   * ✅ FIX: Added time display and special time row handling
    * @param {number} verticalLinesCount - Number of vertical lines
+   * @param {Array} verticalLineTimes - Time values for each line
    * @returns {Array} Tabulator column definitions
    */
-  function buildTableColumns(verticalLinesCount) {
+  function buildTableColumns(verticalLinesCount, verticalLineTimes = []) {
     const columns = [];
 
     // First column: Channel name (frozen/pinned)
     columns.push({
       title: "Channel",
       field: "channel",
-      minWidth: 120,
-      width: 120,
+      minWidth: 130,
+      width: 130,
       frozen: true,
       headerSort: false,
       responsive: 0,
       formatter: function (cell) {
         const data = cell.getRow().getData();
+
+        // ✅ SPECIAL: If this is the time row, show "Time (T)"
+        if (data.channel === "__TIME_ROW__") {
+          return '<span style="font-weight: 700; color: #6b7280; font-style: italic;">Time (T)</span>';
+        }
+
         return `
           <div style="display: flex; align-items: center; gap: 8px; white-space: nowrap;">
             <span style="
@@ -473,28 +475,42 @@ export function createDeltaDrawer() {
       },
     });
 
-    // Add a column for each vertical line value
+    // Value columns (one per vertical line)
     for (let i = 0; i < verticalLinesCount; i++) {
       const lineColor = crosshairColors[i % crosshairColors.length];
       const colorHex = getColorHex(lineColor);
+      const timeValue = verticalLineTimes[i] || "N/A";
 
       columns.push({
-        title: `<span style="display: inline-block; width: 12px; height: 12px; border-radius: 50%; background-color: ${colorHex}; border: 1px solid #fff; box-shadow: 0 0 0 1px rgba(0,0,0,0.2);"></span>`,
+        title: `<div style="display: flex; flex-direction: column; align-items: center; gap: 4px;">
+          <span style="width: 12px; height: 12px; border-radius: 50%; background-color: ${colorHex}; border: 1px solid #fff; box-shadow: 0 0 0 1px rgba(0,0,0,0.2);"></span>
+          <span style="font-size: 10px; color: #6b7280; font-weight: 500;">T${
+            i + 1
+          }</span>
+        </div>`,
         field: `v${i}`,
-        minWidth: 110,
-        width: 110,
+        minWidth: 120,
+        width: 120,
         hozAlign: "right",
         headerSort: false,
         responsive: i + 1,
         formatter: function (cell) {
+          const data = cell.getRow().getData();
+
+          // ✅ SPECIAL: If this is the time row, show time value with blue styling
+          if (data.channel === "__TIME_ROW__") {
+            return `<span style="font-family: 'Courier New', monospace; font-weight: 700; color: #3b82f6;">${cell.getValue()}</span>`;
+          }
+
+          const val = cell.getValue();
           return `<span style="font-family: 'Courier New', monospace; font-weight: 600; white-space: nowrap;">${
-            cell.getValue() || "N/A"
+            val || "N/A"
           }</span>`;
         },
       });
     }
 
-    // Add delta columns for each consecutive pair
+    // Delta columns (one pair per consecutive vertical lines)
     for (let i = 0; i < verticalLinesCount - 1; i++) {
       const line1Color = crosshairColors[i % crosshairColors.length];
       const line2Color = crosshairColors[(i + 1) % crosshairColors.length];
@@ -503,31 +519,39 @@ export function createDeltaDrawer() {
 
       // Delta value column
       columns.push({
-        title: `<span style="display: inline-flex; align-items: center; gap: 4px;">
-          <span style="width: 10px; height: 10px; border-radius: 50%; background-color: ${color1Hex};"></span>
+        title: `<span style="display: inline-flex; align-items: center; gap: 3px; white-space: nowrap;">
+          <span style="width: 8px; height: 8px; border-radius: 50%; background-color: ${color1Hex};"></span>
           <span style="font-size: 10px;">→</span>
-          <span style="width: 10px; height: 10px; border-radius: 50%; background-color: ${color2Hex};"></span>
+          <span style="width: 8px; height: 8px; border-radius: 50%; background-color: ${color2Hex};"></span>
           <span style="font-size: 11px; margin-left: 2px;">Δ</span>
         </span>`,
         field: `delta${i}`,
-        minWidth: 100,
-        width: 100,
+        minWidth: 110,
+        width: 110,
         hozAlign: "right",
         headerSort: false,
         responsive: verticalLinesCount + i * 2 + 1,
         formatter: function (cell) {
+          const data = cell.getRow().getData();
+
+          // ✅ SPECIAL: If this is the time row, show delta time in green
+          if (data.channel === "__TIME_ROW__") {
+            return `<span style="font-family: 'Courier New', monospace; font-weight: 700; color: #10b981;">${cell.getValue()}</span>`;
+          }
+
+          const val = cell.getValue();
           return `<span style="font-family: 'Courier New', monospace; font-weight: 600; white-space: nowrap;">${
-            cell.getValue() || "N/A"
+            val || "N/A"
           }</span>`;
         },
       });
 
       // Delta percentage column
       columns.push({
-        title: `<span style="display: inline-flex; align-items: center; gap: 4px;">
-          <span style="width: 10px; height: 10px; border-radius: 50%; background-color: ${color1Hex};"></span>
+        title: `<span style="display: inline-flex; align-items: center; gap: 3px; white-space: nowrap;">
+          <span style="width: 8px; height: 8px; border-radius: 50%; background-color: ${color1Hex};"></span>
           <span style="font-size: 10px;">→</span>
-          <span style="width: 10px; height: 10px; border-radius: 50%; background-color: ${color2Hex};"></span>
+          <span style="width: 8px; height: 8px; border-radius: 50%; background-color: ${color2Hex};"></span>
           <span style="font-size: 11px; margin-left: 2px;">%</span>
         </span>`,
         field: `percentage${i}`,
@@ -537,8 +561,16 @@ export function createDeltaDrawer() {
         sorter: "number",
         responsive: verticalLinesCount + i * 2 + 2,
         formatter: function (cell) {
+          const data = cell.getRow().getData();
+
+          // ✅ SPECIAL: Time row doesn't have percentages
+          if (data.channel === "__TIME_ROW__") {
+            return '<span style="color: #d1d5db;">—</span>';
+          }
+
           const value = parseFloat(cell.getValue());
-          if (isNaN(value)) return "N/A";
+          if (isNaN(value))
+            return '<span style="white-space: nowrap;">N/A</span>';
 
           let color = "#6b7280";
           if (value < 0) color = "#dc2626";
@@ -560,51 +592,157 @@ export function createDeltaDrawer() {
    * @param {number} verticalLinesCount - Number of vertical lines
    * @returns {Array} Consolidated Tabulator data
    */
-  function formatTableData(deltaData, verticalLinesCount) {
+  /**
+   * Transform deltaData from multiple charts into a single consolidated table
+   * ✅ FIX: Properly handle data structure where deltaData is an array of sections,
+   * each containing only series from ONE chart. We need to collect ALL series
+   * across all sections into a single merged table.
+   * @param {Array} deltaData - Array of delta sections (one per chart per pair)
+   * @param {number} verticalLinesCount - Number of vertical lines
+   * @param {Array} verticalLineTimes - Array of time values for each vertical line
+   * @returns {Array} Consolidated Tabulator data
+   */
+  function formatTableData(
+    deltaData,
+    verticalLinesCount,
+    verticalLineTimes = []
+  ) {
     if (!Array.isArray(deltaData) || deltaData.length === 0) {
       console.warn("[DeltaDrawer] No delta data to format");
       return [];
     }
 
-    // Build a map of channel data: { channelName: { color, v0, v1, v2, delta0, delta1, ... } }
+    console.log(
+      `[DeltaDrawer] 📊 Formatting data for ${verticalLinesCount} lines from ${deltaData.length} delta sections`
+    );
+
+    // Build a map: { channelName: { color, v0, v1, v2, ..., delta0, delta1, ..., percentage0, percentage1, ... } }
     const channelMap = new Map();
 
-    // Process each delta section (line pair)
-    deltaData.forEach((section, pairIdx) => {
-      if (!section.series || !Array.isArray(section.series)) return;
+    // ✅ KEY FIX: When you have N charts with M vertical lines:
+    // - deltaData has N sections (one per chart)
+    // - Each section has series from ONE chart only
+    // - All sections represent the SAME pair indices
+    // We need to iterate through ALL sections and collect series from each
 
+    // Group sections by their pair index (pairIdx)
+    // ✅ CRITICAL FIX: All sections represent the SAME pair index!
+    // Multiple sections = multiple charts, NOT multiple pairs
+    // Each chart has the same pair (pair 0 when there are 2 vertical lines)
+    const pairGroups = {};
+
+    deltaData.forEach((section, sectionIdx) => {
+      if (!section.series || !Array.isArray(section.series)) {
+        console.warn(
+          `[DeltaDrawer] ⚠️ Section ${sectionIdx} has no series data`
+        );
+        return;
+      }
+
+      // ✅ KEY FIX: All sections are from DIFFERENT CHARTS but represent the SAME PAIR
+      // The pair index is always 0 (or constant based on verticalLinesCount)
+      // Not based on sectionIdx!
+      const pairIdx = 0; // All sections share the same pair index!
+
+      if (!pairGroups[pairIdx]) {
+        pairGroups[pairIdx] = {
+          deltaTime: section.deltaTime || "",
+          allSeries: [],
+        };
+      }
+
+      // Collect ALL series from this section (different chart, same pair)
       section.series.forEach((seriesData) => {
-        const channelName = seriesData.name || `Series ${pairIdx}`;
+        pairGroups[pairIdx].allSeries.push(seriesData);
+      });
+
+      console.log(
+        `[DeltaDrawer] Section ${sectionIdx} (Chart ${sectionIdx}): ${section.series.length} channels for pair ${pairIdx}`
+      );
+    });
+
+    console.log(
+      `[DeltaDrawer] Total pair groups: ${Object.keys(pairGroups).length}`
+    );
+
+    // ✅ NOW: Process each pair group and build channel map
+    Object.entries(pairGroups).forEach(([pairIdx, pairGroup]) => {
+      pairIdx = parseInt(pairIdx);
+
+      pairGroup.allSeries.forEach((seriesData) => {
+        const channelName = seriesData.name || `Unknown_${pairIdx}`;
 
         // Initialize channel if not exists
         if (!channelMap.has(channelName)) {
           channelMap.set(channelName, {
             channel: channelName,
-            color: seriesData.color || "#000000",
+            color: seriesData.color || "#6b7280",
           });
+          console.log(`[DeltaDrawer] ✨ New channel: ${channelName}`);
         }
 
         const channelData = channelMap.get(channelName);
 
-        // Add v1 value (first line of this pair)
-        if (pairIdx === 0) {
-          channelData[`v${pairIdx}`] = seriesData.v1Formatted || "N/A";
+        // ✅ FIX: Add v0 value only for the FIRST pair (index 0)
+        if (pairIdx === 0 && !channelData.hasOwnProperty("v0")) {
+          channelData.v0 = seriesData.v1Formatted || "N/A";
+          console.log(
+            `[DeltaDrawer] Channel ${channelName}: v0 = ${channelData.v0}`
+          );
         }
 
-        // Add v2 value (second line of this pair)
-        channelData[`v${pairIdx + 1}`] = seriesData.v2Formatted || "N/A";
+        // ✅ FIX: Always add v(pairIdx+1) value for this pair
+        const vKey = `v${pairIdx + 1}`;
+        channelData[vKey] = seriesData.v2Formatted || "N/A";
+        console.log(
+          `[DeltaDrawer] Channel ${channelName}: ${vKey} = ${channelData[vKey]}`
+        );
 
-        // Add delta and percentage for this pair
+        // ✅ FIX: Add delta and percentage for this pair
         channelData[`delta${pairIdx}`] = seriesData.deltaFormatted || "N/A";
         channelData[`percentage${pairIdx}`] =
           seriesData.percentage != null ? seriesData.percentage : 0;
+
+        console.log(
+          `[DeltaDrawer] Channel ${channelName}: delta${pairIdx} = ${
+            channelData[`delta${pairIdx}`]
+          }, percentage${pairIdx} = ${channelData[`percentage${pairIdx}`]}%`
+        );
       });
     });
 
-    // Convert map to array
+    // ✅ FIX: Fill in missing values with "N/A" for channels that don't exist in all charts
+    channelMap.forEach((channelData, channelName) => {
+      for (let i = 0; i < verticalLinesCount; i++) {
+        const vKey = `v${i}`;
+        if (!channelData.hasOwnProperty(vKey)) {
+          channelData[vKey] = "N/A";
+          console.log(
+            `[DeltaDrawer] ⚠️ Channel ${channelName}: ${vKey} missing, set to N/A`
+          );
+        }
+      }
+
+      for (let i = 0; i < verticalLinesCount - 1; i++) {
+        if (!channelData.hasOwnProperty(`delta${i}`)) {
+          channelData[`delta${i}`] = "N/A";
+          channelData[`percentage${i}`] = 0;
+          console.log(
+            `[DeltaDrawer] ⚠️ Channel ${channelName}: delta${i} missing, set to N/A`
+          );
+        }
+      }
+    });
+
     const tableData = Array.from(channelMap.values());
 
-    console.log("[DeltaDrawer] 📊 Consolidated table data:", tableData);
+    console.log(
+      `[DeltaDrawer] ✅ Consolidated ${
+        tableData.length
+      } channels with ${verticalLinesCount} value columns and ${
+        verticalLinesCount - 1
+      } delta pairs`
+    );
     return tableData;
   }
 
@@ -802,8 +940,127 @@ export function createDeltaDrawer() {
         return;
       }
 
-      // Clear content
+      // Completely clear content and remove all previous table containers
       content.innerHTML = "";
+
+      // Also ensure old tables are completely removed from DOM
+      const oldTables = content.querySelectorAll(".delta-table-container");
+      oldTables.forEach((table) => table.remove());
+
+      // ✅ FIX: Extract time values from vertical lines
+      let verticalLineTimes = [];
+
+      // Try to get time values from verticalLinesX state
+      try {
+        // First try: import from main.js and access the state value
+        let linesArray = [];
+        try {
+          const mainModule = await import("../main.js");
+          const verticalLinesXState = mainModule.verticalLinesX;
+
+          // Handle createState object - it has a .value property
+          if (verticalLinesXState && typeof verticalLinesXState === "object") {
+            // Try to get value property (for createState)
+            linesArray = verticalLinesXState.value || [];
+
+            // If still empty, try calling asArray if it exists
+            if (
+              (!Array.isArray(linesArray) || linesArray.length === 0) &&
+              typeof verticalLinesXState.asArray === "function"
+            ) {
+              linesArray = verticalLinesXState.asArray();
+            }
+
+            // Last resort: if it's directly an array
+            if (!Array.isArray(linesArray)) {
+              linesArray = Array.isArray(verticalLinesXState)
+                ? verticalLinesXState
+                : [];
+            }
+          }
+
+          if (Array.isArray(linesArray) && linesArray.length > 0) {
+            linesArray.forEach((timeValue) => {
+              if (typeof timeValue === "number") {
+                verticalLineTimes.push(`${timeValue.toFixed(2)} μs`);
+              }
+            });
+            console.log(
+              "[DeltaDrawer] ✅ Got time values from verticalLinesX state:",
+              verticalLineTimes
+            );
+          }
+        } catch (importErr) {
+          console.warn(
+            "[DeltaDrawer] Could not import verticalLinesX from main.js:",
+            importErr.message
+          );
+        }
+
+        // Fallback: Try to get from window object
+        if (verticalLineTimes.length === 0) {
+          try {
+            const verticalLinesXState = window.verticalLinesX;
+            let linesArray = [];
+
+            if (
+              verticalLinesXState &&
+              typeof verticalLinesXState === "object"
+            ) {
+              linesArray = verticalLinesXState.value || [];
+
+              if (
+                (!Array.isArray(linesArray) || linesArray.length === 0) &&
+                typeof verticalLinesXState.asArray === "function"
+              ) {
+                linesArray = verticalLinesXState.asArray();
+              }
+
+              if (!Array.isArray(linesArray)) {
+                linesArray = Array.isArray(verticalLinesXState)
+                  ? verticalLinesXState
+                  : [];
+              }
+            }
+
+            if (Array.isArray(linesArray) && linesArray.length > 0) {
+              linesArray.forEach((timeValue) => {
+                if (typeof timeValue === "number") {
+                  verticalLineTimes.push(`${timeValue.toFixed(2)} μs`);
+                }
+              });
+              console.log(
+                "[DeltaDrawer] ✅ Got time values from window.verticalLinesX:",
+                verticalLineTimes
+              );
+            }
+          } catch (windowErr) {
+            console.warn(
+              "[DeltaDrawer] Could not get verticalLinesX from window:",
+              windowErr.message
+            );
+          }
+        }
+
+        // Last fallback: Generate placeholder time values if none available
+        if (verticalLineTimes.length === 0) {
+          console.warn(
+            "[DeltaDrawer] ⚠️ No vertical line times available, generating placeholders"
+          );
+          for (let i = 0; i < verticalLinesCount; i++) {
+            verticalLineTimes.push(`T${i + 1}`);
+          }
+        }
+      } catch (error) {
+        console.error(
+          "[DeltaDrawer] Error extracting vertical line times:",
+          error
+        );
+        // Use placeholder values
+        for (let i = 0; i < verticalLinesCount; i++) {
+          verticalLineTimes.push(`T${i + 1}`);
+        }
+      }
 
       // Create single table container
       const tableContainer = document.createElement("div");
@@ -835,11 +1092,15 @@ export function createDeltaDrawer() {
       header.innerHTML = `
         <div class="delta-table-title">
           <span style="display: inline-flex; align-items: center; gap: 8px;">
-            <span style="color: #6b7280; font-size: 13px; font-weight: 500;">${verticalLinesCount} Lines: </span>
+            <span style="color: #6b7280; font-size: 13px; font-weight: 500;">${verticalLinesCount} Lines - ${
+        verticalLinesCount - 1
+      } ${verticalLinesCount - 1 === 1 ? "Pair" : "Pairs"}: </span>
             ${pairsHTML}
           </span>
         </div>
-        <div class="delta-table-time">${deltaData[0]?.deltaTime || ""}</div>
+        <div class="delta-table-time">${deltaData.length} Chart${
+        deltaData.length > 1 ? "s" : ""
+      }</div>
       `;
       tableContainer.appendChild(header);
 
@@ -850,8 +1111,12 @@ export function createDeltaDrawer() {
 
       content.appendChild(tableContainer);
 
-      // Format consolidated data
-      const tableData = formatTableData(deltaData, verticalLinesCount);
+      // ✅ FIX: Format data with time values
+      const tableData = formatTableData(
+        deltaData,
+        verticalLinesCount,
+        verticalLineTimes
+      );
 
       if (tableData.length === 0) {
         console.warn("[DeltaDrawer] No valid table data");
@@ -860,19 +1125,52 @@ export function createDeltaDrawer() {
         return;
       }
 
+      // ✅ FIX: Add time row as first row
+      const timeRow = {
+        channel: "__TIME_ROW__",
+        color: "#3b82f6",
+      };
+
+      // Add time values
+      verticalLineTimes.forEach((timeVal, idx) => {
+        timeRow[`v${idx}`] = timeVal;
+      });
+
+      // Add delta times - only for the actual delta PAIRS (not for each chart)
+      // Number of delta pairs = verticalLinesCount - 1
+      for (let i = 0; i < verticalLinesCount - 1; i++) {
+        // Use the first section's deltaTime (all sections for same pair have same deltaTime)
+        timeRow[`delta${i}`] = deltaData[0]?.deltaTime || "N/A";
+        timeRow[`percentage${i}`] = 0; // No percentage for time row
+      }
+
+      // Insert time row at the beginning
+      tableData.unshift(timeRow);
+
       // Create single expanding table
       try {
         const table = new window.Tabulator("#delta-table-main", {
           data: tableData,
-          columns: buildTableColumns(verticalLinesCount),
+          columns: buildTableColumns(verticalLinesCount, verticalLineTimes),
           layout: "fitDataTable",
           height: "auto",
           autoColumns: false,
           responsiveLayout: false,
-          layoutColumnsOnNewData: false,
-          persistentLayout: true,
           headerSort: true,
           placeholder: "No Data Available",
+          printAsHtml: true,
+          printStyled: true,
+          layoutColumnsOnNewData: false,
+          persistentLayout: true,
+          rowFormatter: function (row) {
+            // ✅ SPECIAL: Style the time row
+            const data = row.getData();
+            if (data.channel === "__TIME_ROW__") {
+              row.getElement().style.backgroundColor = "#f9fafb";
+              row.getElement().style.fontWeight = "700";
+              row.getElement().style.borderBottom = "2px solid #3b82f6";
+            }
+          },
         });
 
         tabulatorInstances.push(table);
@@ -883,9 +1181,11 @@ export function createDeltaDrawer() {
         }, 100);
 
         console.log(
-          `[DeltaDrawer] ✅ Single expanding table created with ${
+          `[DeltaDrawer] ✅ Table created with ${
             tableData.length
-          } rows and ${buildTableColumns(verticalLinesCount).length} columns`
+          } rows (including time row) and ${
+            buildTableColumns(verticalLinesCount).length
+          } columns`
         );
       } catch (error) {
         console.error("[DeltaDrawer] ❌ Failed to create table:", error);
