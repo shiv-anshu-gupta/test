@@ -470,7 +470,9 @@ export function createDeltaDrawer() {
         hozAlign: "right",
         headerSort: false,
         formatter: function (cell) {
-          return `<span style="font-family: 'Courier New', monospace; font-weight: 600;">${cell.getValue() || "N/A"}</span>`;
+          return `<span style="font-family: 'Courier New', monospace; font-weight: 600;">${
+            cell.getValue() || "N/A"
+          }</span>`;
         },
       });
     }
@@ -495,7 +497,9 @@ export function createDeltaDrawer() {
         hozAlign: "right",
         headerSort: false,
         formatter: function (cell) {
-          return `<span style="font-family: 'Courier New', monospace; font-weight: 600;">${cell.getValue() || "N/A"}</span>`;
+          return `<span style="font-family: 'Courier New', monospace; font-weight: 600;">${
+            cell.getValue() || "N/A"
+          }</span>`;
         },
       });
 
@@ -519,7 +523,9 @@ export function createDeltaDrawer() {
           if (value < 0) color = "#dc2626";
           else if (value > 0) color = "#16a34a";
 
-          return `<span style="font-family: 'Courier New', monospace; font-weight: 700; color: ${color};">${value.toFixed(1)}%</span>`;
+          return `<span style="font-family: 'Courier New', monospace; font-weight: 700; color: ${color};">${value.toFixed(
+            1
+          )}%</span>`;
         },
       });
     }
@@ -569,7 +575,8 @@ export function createDeltaDrawer() {
 
         // Add delta and percentage for this pair
         channelData[`delta${pairIdx}`] = seriesData.deltaFormatted || "N/A";
-        channelData[`percentage${pairIdx}`] = seriesData.percentage != null ? seriesData.percentage : 0;
+        channelData[`percentage${pairIdx}`] =
+          seriesData.percentage != null ? seriesData.percentage : 0;
       });
     });
 
@@ -787,14 +794,13 @@ export function createDeltaDrawer() {
 
       let pairsHTML = "";
       for (let i = 0; i < verticalLinesCount - 1; i++) {
-        const color1 = getColorHex(
-          crosshairColors[i % crosshairColors.length]
-        );
+        const color1 = getColorHex(crosshairColors[i % crosshairColors.length]);
         const color2 = getColorHex(
           crosshairColors[(i + 1) % crosshairColors.length]
         );
 
-        if (i > 0) pairsHTML += '<span style="margin: 0 8px; color: #d1d5db;">|</span>';
+        if (i > 0)
+          pairsHTML += '<span style="margin: 0 8px; color: #d1d5db;">|</span>';
 
         pairsHTML += `
           <span style="display: inline-flex; align-items: center; gap: 6px;">
@@ -849,7 +855,9 @@ export function createDeltaDrawer() {
         tabulatorInstances.push(table);
 
         console.log(
-          `[DeltaDrawer] ✅ Single expanding table created with ${tableData.length} rows and ${buildTableColumns(verticalLinesCount).length} columns`
+          `[DeltaDrawer] ✅ Single expanding table created with ${
+            tableData.length
+          } rows and ${buildTableColumns(verticalLinesCount).length} columns`
         );
       } catch (error) {
         console.error("[DeltaDrawer] ❌ Failed to create table:", error);

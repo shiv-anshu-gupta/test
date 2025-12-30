@@ -7,14 +7,18 @@ The Delta Drawer component has been successfully refactored to display a **singl
 ## What Changed
 
 ### Problem Statement
+
 Users were frustrated with the previous implementation where:
+
 - Adding 2 vertical lines showed 1 table
 - Adding a 3rd line showed a **2nd separate table** below the first
 - Users had to scroll down to see all delta pairs
 - No clear visual relationship between tables
 
 ### Solution Implemented
+
 Now when adding vertical lines:
+
 - **All data appears in ONE table**
 - Table **expands horizontally** to show all values and deltas
 - All channels visible simultaneously
@@ -23,6 +27,7 @@ Now when adding vertical lines:
 ## Technical Summary
 
 ### Files Modified: 1
+
 - **src/components/DeltaDrawer.js**
   - 3 functions completely rewritten
   - 630 new lines added / 201 lines removed
@@ -32,9 +37,11 @@ Now when adding vertical lines:
 ### Functions Rewritten
 
 #### 1. `buildTableColumns(verticalLinesCount)`
+
 **Purpose:** Dynamically generate Tabulator column definitions based on the number of vertical lines
 
 **Logic:**
+
 ```
 For N vertical lines, create:
 1. Channel column (frozen, width: 120px)
@@ -52,9 +59,11 @@ Examples:
 ```
 
 #### 2. `formatTableData(deltaData, verticalLinesCount)`
+
 **Purpose:** Consolidate all delta sections (one per line pair) into a single table dataset
 
 **Logic:**
+
 ```
 For each delta section (line pair):
   For each series (channel):
@@ -67,9 +76,11 @@ Return: Single array of channel rows
 ```
 
 #### 3. `update(deltaData, verticalLinesCount)`
+
 **Purpose:** Render a single expanding table instead of multiple tables
 
 **Logic:**
+
 ```
 1. Destroy old table instance (cleanup)
 2. Show empty state if < 2 lines
@@ -85,6 +96,7 @@ Return: Single array of channel rows
 ## Architecture Change
 
 ### Data Flow: Before (Multiple Tables)
+
 ```
 deltaData (array of sections)
     ↓
@@ -97,6 +109,7 @@ Problem: Each table shows only one line pair
 ```
 
 ### Data Flow: After (Single Expanding Table)
+
 ```
 deltaData (array of sections)
     ↓
@@ -112,6 +125,7 @@ Benefit: All line pairs in one table
 ## Column Structure Examples
 
 ### 2 Vertical Lines (Red, Blue)
+
 ```
 ┌──────────┬──────────┬──────────┬──────────┬────────────┐
 │ Channel  │    🔴    │    🔵    │ 🔴→🔵 Δ  │  🔴→🔵 %  │
@@ -122,6 +136,7 @@ Benefit: All line pairs in one table
 ```
 
 ### 3 Vertical Lines (Red, Blue, Green)
+
 ```
 ┌──────────┬──────────┬──────────┬──────────┬──────────┬────────┬──────────┬────────┐
 │ Channel  │    🔴    │    🔵    │   🟢     │ 🔴→🔵 Δ  │ 🔴→🔵% │ 🔵→🟢 Δ  │ 🔵→🟢% │
@@ -132,6 +147,7 @@ Benefit: All line pairs in one table
 ```
 
 ### 4 Vertical Lines (Red, Blue, Green, Magenta)
+
 ```
 More columns... (continues expanding pattern)
 ```
@@ -139,30 +155,32 @@ More columns... (continues expanding pattern)
 ## Integration Status
 
 ### ✅ All Call Sites Already Compatible
+
 No changes needed to any calling code:
 
-| File | Line | Call | Status |
-|------|------|------|--------|
-| calculateDeltas.js | 377 | `deltaWindow.update(deltaData, verticalLinesX.length)` | ✅ |
-| verticalLinePlugin.js | 66, 160 | `deltaWindow.update(allDeltaData, linesLength)` | ✅ |
-| handleVerticalLineShortcuts.js | 100, 132 | `deltaWindow.update(allDeltaData, verticalLinesX.length)` | ✅ |
-| renderComtradeCharts.js | 128 | `deltaWindow.update(allDeltaData, linesLength)` | ✅ |
+| File                           | Line     | Call                                                      | Status |
+| ------------------------------ | -------- | --------------------------------------------------------- | ------ |
+| calculateDeltas.js             | 377      | `deltaWindow.update(deltaData, verticalLinesX.length)`    | ✅     |
+| verticalLinePlugin.js          | 66, 160  | `deltaWindow.update(allDeltaData, linesLength)`           | ✅     |
+| handleVerticalLineShortcuts.js | 100, 132 | `deltaWindow.update(allDeltaData, verticalLinesX.length)` | ✅     |
+| renderComtradeCharts.js        | 128      | `deltaWindow.update(allDeltaData, linesLength)`           | ✅     |
 
 **Result:** Drop-in replacement, zero changes needed elsewhere!
 
 ## Performance Impact
 
-| Aspect | Before | After | Improvement |
-|--------|--------|-------|-------------|
-| Memory Usage | Multiple instances | Single instance | Lower ✓ |
-| Rendering | Multiple redraws | Single redraw | Faster ✓ |
-| DOM Elements | Multiple tables | One table | Cleaner ✓ |
-| User Experience | Scroll between tables | Scroll within table | Better ✓ |
-| Load Time | Multiple Tabulator inits | Single Tabulator init | Faster ✓ |
+| Aspect          | Before                   | After                 | Improvement |
+| --------------- | ------------------------ | --------------------- | ----------- |
+| Memory Usage    | Multiple instances       | Single instance       | Lower ✓     |
+| Rendering       | Multiple redraws         | Single redraw         | Faster ✓    |
+| DOM Elements    | Multiple tables          | One table             | Cleaner ✓   |
+| User Experience | Scroll between tables    | Scroll within table   | Better ✓    |
+| Load Time       | Multiple Tabulator inits | Single Tabulator init | Faster ✓    |
 
 ## Testing Recommendations
 
 ### Quick Test (2 minutes)
+
 ```
 1. Load COMTRADE file
 2. Alt+1 twice to add 2 vertical lines
@@ -171,6 +189,7 @@ No changes needed to any calling code:
 ```
 
 ### Full Test (5 minutes)
+
 ```
 1. Load COMTRADE file
 2. Alt+1 to add lines one by one: 2, 3, 4, 5 lines
@@ -182,6 +201,7 @@ No changes needed to any calling code:
 ```
 
 ### Edge Cases
+
 ```
 1. Start with 0 lines (empty state)
 2. Add 1 line (empty state)
@@ -195,6 +215,7 @@ No changes needed to any calling code:
 ## Console Logging
 
 ### Expected Output (When Adding 3rd Line)
+
 ```
 [DeltaDrawer] update() called with 2 sections and 3 vertical lines
 [DeltaDrawer] 🧹 Destroying 1 old table(s)
@@ -204,11 +225,13 @@ No changes needed to any calling code:
 ```
 
 ### Debugging
+
 Open browser DevTools (F12) → Console tab to see detailed logs
 
 ## Documentation Provided
 
 1. **SINGLE_EXPANDING_TABLE_IMPLEMENTATION.md** (850+ lines)
+
    - Technical architecture
    - Column generation algorithm
    - Data consolidation logic
@@ -216,12 +239,14 @@ Open browser DevTools (F12) → Console tab to see detailed logs
    - Comprehensive testing guide
 
 2. **SINGLE_EXPANDING_TABLE_VISUAL_GUIDE.md** (500+ lines)
+
    - Visual examples with ASCII diagrams
    - Expected outputs for 2, 3, 4 lines
    - Console output samples
    - Troubleshooting table
 
 3. **SINGLE_EXPANDING_TABLE_SUMMARY.md** (200+ lines)
+
    - Quick overview of changes
    - Before/after comparison
    - Code snippets
@@ -235,15 +260,15 @@ Open browser DevTools (F12) → Console tab to see detailed logs
 
 ## Deployment Status
 
-| Checkpoint | Status |
-|-----------|--------|
-| Code Implementation | ✅ Complete |
-| Compilation | ✅ Zero Errors |
-| Git Commit | ✅ edc2795 |
-| Git Push | ✅ Pushed to main |
-| Documentation | ✅ Comprehensive |
-| Backward Compatibility | ✅ 100% |
-| Testing Ready | ✅ Yes |
+| Checkpoint             | Status            |
+| ---------------------- | ----------------- |
+| Code Implementation    | ✅ Complete       |
+| Compilation            | ✅ Zero Errors    |
+| Git Commit             | ✅ edc2795        |
+| Git Push               | ✅ Pushed to main |
+| Documentation          | ✅ Comprehensive  |
+| Backward Compatibility | ✅ 100%           |
+| Testing Ready          | ✅ Yes            |
 
 ## Next Steps
 

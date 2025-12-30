@@ -3,7 +3,9 @@
 ## Code Changes Verification
 
 ### ✅ buildTableColumns() Rewrite
+
 Location: `src/components/DeltaDrawer.js` lines 433-534
+
 - [x] Function signature changed to accept `verticalLinesCount` parameter
 - [x] Removes static 5-column layout
 - [x] Dynamically creates value columns (v0, v1, v2, ..., vN)
@@ -15,7 +17,9 @@ Location: `src/components/DeltaDrawer.js` lines 433-534
 - [x] Modulo operator for cycling through 10 colors
 
 ### ✅ formatTableData() Rewrite
+
 Location: `src/components/DeltaDrawer.js` lines 536-585
+
 - [x] Function signature changed to accept both `deltaData` and `verticalLinesCount`
 - [x] Uses Map for consolidating channel data
 - [x] Processes each delta section and its series
@@ -27,7 +31,9 @@ Location: `src/components/DeltaDrawer.js` lines 536-585
 - [x] Console logging for debugging
 
 ### ✅ update() Method Rewrite
+
 Location: `src/components/DeltaDrawer.js` lines 663-859
+
 - [x] Still accepts `deltaData` and `verticalLinesCount` parameters
 - [x] Destroys old table instance(s) before creating new one
 - [x] Shows empty state when insufficient data
@@ -43,6 +49,7 @@ Location: `src/components/DeltaDrawer.js` lines 663-859
 ## Compilation Verification
 
 ### ✅ Zero Errors
+
 ```
 ERROR CHECK RESULT: No errors found in DeltaDrawer.js ✅
 ```
@@ -50,19 +57,23 @@ ERROR CHECK RESULT: No errors found in DeltaDrawer.js ✅
 ## Integration Verification
 
 ### ✅ Call Site Compatibility
+
 All these files already pass `verticalLinesCount` as second parameter:
 
 1. [x] `src/utils/calculateDeltas.js` line 377
+
    ```javascript
    deltaWindow.update(deltaData, verticalLinesX.length);
    ```
 
 2. [x] `src/plugins/verticalLinePlugin.js` lines 66, 160
+
    ```javascript
    deltaWindow.update(allDeltaData, linesLength);
    ```
 
 3. [x] `src/components/handleVerticalLineShortcuts.js` lines 100, 132
+
    ```javascript
    deltaWindow.update(allDeltaData, verticalLinesX.length);
    ```
@@ -77,12 +88,14 @@ All these files already pass `verticalLinesCount` as second parameter:
 ## Feature Verification
 
 ### ✅ Single Table Creation
+
 - [x] Old code created multiple tables in forEach loop
 - [x] New code creates one table outside loop
 - [x] Container ID changed from `delta-table-${idx}` to `delta-table-main`
 - [x] Only one Tabulator instance created
 
 ### ✅ Dynamic Column Generation
+
 - [x] Columns scale with number of lines
 - [x] 2 lines = 5 columns (Channel, 🔴, 🔵, Δ, %)
 - [x] 3 lines = 8 columns (adds 🟢, second Δ, second %)
@@ -90,6 +103,7 @@ All these files already pass `verticalLinesCount` as second parameter:
 - [x] Pattern: 1 + N + (N-1)×2
 
 ### ✅ Data Consolidation
+
 - [x] All channels collected from all delta sections
 - [x] Values indexed correctly (v0, v1, v2, ...)
 - [x] Deltas indexed correctly (delta0, delta1, ...)
@@ -97,6 +111,7 @@ All these files already pass `verticalLinesCount` as second parameter:
 - [x] One row per channel (not one row per series per section)
 
 ### ✅ Color Management
+
 - [x] `getColorHex()` function available
 - [x] Maps all 10 color names to hex values
 - [x] Modulo operator ensures cycling: `crosshairColors[i % length]`
@@ -104,6 +119,7 @@ All these files already pass `verticalLinesCount` as second parameter:
 - [x] Colors used in data cells
 
 ### ✅ Instance Management
+
 - [x] `tabulatorInstances` array exists for tracking
 - [x] Old instances destroyed before new creation
 - [x] New instance pushed to array after creation
@@ -111,6 +127,7 @@ All these files already pass `verticalLinesCount` as second parameter:
 - [x] Error handling on destroy
 
 ### ✅ Header Display
+
 - [x] Shows line count: "3 Lines:"
 - [x] Shows all line pairs with colored circles
 - [x] Format: "🔴 → 🔵 | 🔵 → 🟢 | 🟢 → 🟣"
@@ -120,6 +137,7 @@ All these files already pass `verticalLinesCount` as second parameter:
 ## Documentation Verification
 
 ### ✅ Created Files
+
 1. [x] `SINGLE_EXPANDING_TABLE_IMPLEMENTATION.md` - Technical reference (850+ lines)
 2. [x] `SINGLE_EXPANDING_TABLE_VISUAL_GUIDE.md` - Visual guide with examples (500+ lines)
 3. [x] `SINGLE_EXPANDING_TABLE_SUMMARY.md` - Quick summary (200+ lines)
@@ -128,6 +146,7 @@ All these files already pass `verticalLinesCount` as second parameter:
 ## Git Verification
 
 ### ✅ Commit & Push
+
 ```
 Commit: [main edc2795] Implement single expanding table for Delta Drawer
 Files:  3 files changed, 630 insertions(+), 201 deletions(-)
@@ -137,6 +156,7 @@ Status: Pushed to origin/main ✅
 ## Console Output Verification
 
 ### ✅ Expected Logging (when 3rd line added)
+
 ```
 [DeltaDrawer] update() called with 2 sections and 3 vertical lines
 [DeltaDrawer] 🧹 Destroying 1 old table(s)
@@ -148,16 +168,19 @@ Status: Pushed to origin/main ✅
 ## Performance Characteristics
 
 ### ✅ Memory Usage
+
 - **Before:** Multiple Tabulator instances (one per table)
 - **After:** Single Tabulator instance
 - **Improvement:** Reduced memory footprint ✓
 
 ### ✅ Rendering
+
 - **Before:** Multiple table redraws
 - **After:** Single table redraw with dynamic columns
 - **Improvement:** Faster updates ✓
 
 ### ✅ User Experience
+
 - **Before:** Multiple tables requiring scrolling between them
 - **After:** Single table expanding horizontally
 - **Improvement:** All data visible at once (horizontal scroll only) ✓
@@ -165,6 +188,7 @@ Status: Pushed to origin/main ✅
 ## Backward Compatibility
 
 ### ✅ No Breaking Changes
+
 - [x] All existing call sites compatible
 - [x] API signature preserved (takes deltaData and verticalLinesCount)
 - [x] All CSS styles preserved
@@ -176,21 +200,26 @@ Status: Pushed to origin/main ✅
 ## Edge Cases Handled
 
 ### ✅ Zero Lines
+
 - [x] Shows empty state: "Add vertical lines using Alt+1..."
 
 ### ✅ One Line
+
 - [x] Shows empty state: "Add another vertical line..."
 
 ### ✅ Two Lines
+
 - [x] Creates 5-column table
 - [x] No delta columns yet (need pairs)
 
 ### ✅ Three+ Lines
+
 - [x] Creates expanding table with all values and deltas
 - [x] Proper column calculation
 - [x] Correct data mapping
 
 ### ✅ Rapid Line Addition
+
 - [x] Proper cleanup of previous instance
 - [x] Fresh creation of new instance
 - [x] No memory leaks
@@ -198,6 +227,7 @@ Status: Pushed to origin/main ✅
 ## Tabulator Configuration
 
 ### ✅ Settings Used
+
 ```javascript
 {
   data: tableData,
@@ -214,6 +244,7 @@ Status: Pushed to origin/main ✅
 ## Ready for Testing ✅
 
 All implementation verified. Ready for:
+
 1. Manual testing with COMTRADE files
 2. Verification of visual output
 3. Validation of data accuracy
@@ -227,6 +258,7 @@ None. Implementation fully addresses all requirements.
 ## Future Enhancements
 
 Possible additions (not in scope):
+
 - Column reordering (drag-drop)
 - Column visibility toggle
 - CSV/PDF export

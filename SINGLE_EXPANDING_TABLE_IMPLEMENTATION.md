@@ -11,6 +11,7 @@ The Delta Drawer has been completely rewritten to display a **single expanding t
 **File:** `src/components/DeltaDrawer.js` (lines 433-534)
 
 **Changes:**
+
 - Now accepts `verticalLinesCount` parameter
 - Dynamically creates columns based on the number of vertical lines
 - Creates value columns (v0, v1, v2, ..., vN) for each line
@@ -19,6 +20,7 @@ The Delta Drawer has been completely rewritten to display a **single expanding t
 - Each column header includes colored circle dots matching the vertical line colors
 
 **Column Structure:**
+
 ```
 Channel (frozen) | 🔴 | 🔵 | 🟢 | ... | 🔴→🔵 Δ | 🔴→🔵 % | 🔵→🟢 Δ | 🔵→🟢 % | ...
 ```
@@ -28,6 +30,7 @@ Channel (frozen) | 🔴 | 🔵 | 🟢 | ... | 🔴→🔵 Δ | 🔴→🔵 % | �
 **File:** `src/components/DeltaDrawer.js` (lines 536-585)
 
 **Changes:**
+
 - Now accepts both `deltaData` and `verticalLinesCount` parameters
 - Consolidates all delta sections into a single table format
 - Uses a Map to collect channel data from all line pairs
@@ -35,6 +38,7 @@ Channel (frozen) | 🔴 | 🔵 | 🟢 | ... | 🔴→🔵 Δ | 🔴→🔵 % | �
 - Returns a single unified array of row objects
 
 **Data Structure:**
+
 ```javascript
 {
   channel: "IA",
@@ -54,6 +58,7 @@ Channel (frozen) | 🔴 | 🔵 | 🟢 | ... | 🔴→🔵 Δ | 🔴→🔵 % | �
 **File:** `src/components/DeltaDrawer.js` (lines 663-859)
 
 **Key Changes:**
+
 - **Single Table Creation:** Destroys old table and creates one new table for all data
 - **Dynamic Header:** Shows all line pairs in the header
   ```
@@ -66,6 +71,7 @@ Channel (frozen) | 🔴 | 🔵 | 🟢 | ... | 🔴→🔵 Δ | 🔴→🔵 % | �
 ## Behavior Changes
 
 ### Before Implementation
+
 ```
 Add 2 lines (Red, Blue):
 ┌─────────────────────────────┐
@@ -95,6 +101,7 @@ Add 3rd line (Green):
 ```
 
 ### After Implementation
+
 ```
 Add 2 lines (Red, Blue):
 ┌──────────────────────────────────────┐
@@ -122,6 +129,7 @@ Add 3rd line (Green):
 ### Column Generation Algorithm
 
 **For 3 vertical lines:**
+
 1. **Channel Column** (frozen) - width: 120px
 2. **Value Columns** (3 total) - width: 110px each
    - v0: 🔴 (first line)
@@ -136,6 +144,7 @@ Add 3rd line (Green):
 **Total Columns:** 1 + 3 + 4 = **8 columns**
 
 ### Table Width
+
 - Base: 120px (Channel) + (3 × 110px) values = 450px
 - Plus: (2 × 100px) deltas + (2 × 90px) percentages = 380px
 - **Total: ~830px** (responsive, scrollable in drawer)
@@ -143,17 +152,21 @@ Add 3rd line (Green):
 ## Integration Points
 
 ### Call Sites
+
 The following files already call `deltaWindow.update(deltaData, verticalLinesX.length)` with the correct parameters:
 
 1. **src/utils/calculateDeltas.js** (line 377)
+
    - Primary calculation engine
    - Passes `verticalLinesX.length` as second parameter ✅
 
 2. **src/plugins/verticalLinePlugin.js** (lines 66, 160)
+
    - Vertical line interaction handler
    - Passes `linesLength` as second parameter ✅
 
 3. **src/components/handleVerticalLineShortcuts.js** (lines 100, 132)
+
    - Alt+1 keyboard shortcut handler
    - Passes `verticalLinesX.length` as second parameter ✅
 
@@ -210,6 +223,7 @@ The implementation includes comprehensive console logging:
 ## Backward Compatibility
 
 ✅ Fully compatible with existing code:
+
 - All call sites already pass `verticalLinesCount` as second parameter
 - No changes needed in calculateDeltas.js, verticalLinePlugin.js, or any caller
 - All existing CSS styles preserved

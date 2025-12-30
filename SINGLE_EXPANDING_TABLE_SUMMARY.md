@@ -7,6 +7,7 @@ The Delta Drawer has been completely rewritten to display **one expanding table*
 ## The Problem (Before)
 
 When adding vertical lines:
+
 - **2 lines** → 1 table showing only those 2 lines
 - **3 lines** → Still showing only 2 tables (Red→Blue, Blue→Green)
 - **4 lines** → 3 tables
@@ -15,6 +16,7 @@ When adding vertical lines:
 ## The Solution (After)
 
 Now when adding vertical lines:
+
 - **2 lines** → 1 table with columns: Channel | 🔴 | 🔵 | Δ | %
 - **3 lines** → 1 table with columns: Channel | 🔴 | 🔵 | 🟢 | Δ | % | Δ | %
 - **4 lines** → 1 table with columns: Channel | 🔴 | 🔵 | 🟢 | 🟣 | Δ | % | Δ | % | Δ | %
@@ -25,23 +27,29 @@ Now when adding vertical lines:
 ### File: `src/components/DeltaDrawer.js`
 
 #### 1. `buildTableColumns(verticalLinesCount)` - Lines 433-534
+
 **Before:** Static 5-column layout (Channel, Value 1, Value 2, Δ Value, Δ %)
 **After:** Dynamic columns based on number of lines
+
 - Adds value column for each line (v0, v1, v2, ...)
 - Adds delta column for each pair (delta0, delta1, ...)
 - Adds percentage column for each pair (percentage0, percentage1, ...)
 - Each column header shows colored circle matching line color
 
 #### 2. `formatTableData(deltaData, verticalLinesCount)` - Lines 536-585
+
 **Before:** Converted `section.series` to rows (one section per table)
 **After:** Consolidates all delta sections into one unified table
+
 - Creates a Map of channels
 - Stores all values and deltas for each channel in indexed fields
 - Returns single array of consolidated row objects
 
 #### 3. `update()` method - Lines 663-859
+
 **Before:** Created separate table for each delta section (loop with forEach)
 **After:** Creates single table for all data
+
 - Single `delta-table-main` container instead of `delta-table-0`, `delta-table-1`, etc.
 - Header shows all line pairs: "3 Lines: 🔴 → 🔵 | 🔵 → 🟢"
 - One Tabulator instance tracks and updates properly
@@ -49,6 +57,7 @@ Now when adding vertical lines:
 ## Visual Comparison
 
 ### Before Implementation
+
 ```
 User adds 3rd line...
 
@@ -69,6 +78,7 @@ BEFORE (Wrong - Multiple Tables):
 ```
 
 ### After Implementation
+
 ```
 User adds 3rd line...
 
@@ -86,17 +96,19 @@ All data in ONE table - horizontal scroll only (no table jumping)
 ## Technical Implementation Details
 
 ### Column Count Formula
+
 ```
 Total Columns = 1 (Channel) + N (values) + (N-1) × 2 (deltas + percentages)
 
 Examples:
 - 2 lines:   1 + 2 + (1×2) = 5 columns
-- 3 lines:   1 + 3 + (2×2) = 8 columns  
+- 3 lines:   1 + 3 + (2×2) = 8 columns
 - 4 lines:   1 + 4 + (3×2) = 11 columns
 - 5 lines:   1 + 5 + (4×2) = 14 columns
 ```
 
 ### Data Structure
+
 ```javascript
 // Old format (one row per series in a section)
 [
@@ -123,6 +135,7 @@ Examples:
 ## All Call Sites Already Compatible
 
 ✅ **No changes needed in:**
+
 - `src/utils/calculateDeltas.js` - already calls `deltaWindow.update(deltaData, verticalLinesX.length)`
 - `src/plugins/verticalLinePlugin.js` - already calls `deltaWindow.update(allDeltaData, linesLength)`
 - `src/components/handleVerticalLineShortcuts.js` - already calls `deltaWindow.update(allDeltaData, verticalLinesX.length)`
@@ -133,6 +146,7 @@ All code is **100% compatible** with existing implementation!
 ## Console Output
 
 When adding the 3rd vertical line, you'll see:
+
 ```
 [DeltaDrawer] update() called with 2 sections and 3 vertical lines
 [DeltaDrawer] 🧹 Destroying 1 old table(s)
@@ -144,6 +158,7 @@ When adding the 3rd vertical line, you'll see:
 ## Testing
 
 Load a COMTRADE file and:
+
 1. Add 2 vertical lines (Alt+1) - verify 5-column table
 2. Add 3rd line - verify table expands to 8 columns (no new table created)
 3. Add 4th line - verify table continues to expand (14 columns total)
@@ -153,6 +168,7 @@ Load a COMTRADE file and:
 ## Files Modified
 
 1. **src/components/DeltaDrawer.js** (3 major functions rewritten)
+
    - `buildTableColumns()` - now accepts `verticalLinesCount` and generates dynamic columns
    - `formatTableData()` - now consolidates all delta sections into single table
    - `update()` method - now creates single expanding table instead of multiple tables
