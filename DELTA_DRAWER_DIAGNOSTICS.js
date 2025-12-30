@@ -7,16 +7,19 @@ console.log("========== DELTA DRAWER DIAGNOSTICS ==========\n");
 
 // 1. Check Tabulator library
 console.log("1️⃣ TABULATOR LIBRARY:");
-console.log("   window.Tabulator:", typeof window.Tabulator !== 'undefined' ? "✅ LOADED" : "❌ NOT LOADED");
-if (typeof window.Tabulator !== 'undefined') {
+console.log(
+  "   window.Tabulator:",
+  typeof window.Tabulator !== "undefined" ? "✅ LOADED" : "❌ NOT LOADED"
+);
+if (typeof window.Tabulator !== "undefined") {
   console.log("   Tabulator version:", window.Tabulator.version || "unknown");
 }
 
 // 2. Check Delta Drawer
 console.log("\n2️⃣ DELTA DRAWER ELEMENTS:");
-const drawer = document.getElementById('delta-drawer');
-const panel = document.getElementById('delta-drawer-panel');
-const content = document.getElementById('delta-drawer-content');
+const drawer = document.getElementById("delta-drawer");
+const panel = document.getElementById("delta-drawer-panel");
+const content = document.getElementById("delta-drawer-content");
 console.log("   Drawer element:", drawer ? "✅ EXISTS" : "❌ MISSING");
 console.log("   Panel element:", panel ? "✅ EXISTS" : "❌ MISSING");
 console.log("   Content element:", content ? "✅ EXISTS" : "❌ MISSING");
@@ -28,14 +31,24 @@ console.log("   Found tables:", tables.length);
 tables.forEach((table, idx) => {
   const rows = table.querySelectorAll('[role="row"]');
   const cols = table.querySelectorAll('[role="columnheader"]');
-  console.log(`   Table ${idx}: ${cols.length} columns, ${rows.length - 1} data rows`);
-  console.log(`     Column names: ${Array.from(cols).map(c => c.textContent).join(", ")}`);
+  console.log(
+    `   Table ${idx}: ${cols.length} columns, ${rows.length - 1} data rows`
+  );
+  console.log(
+    `     Column names: ${Array.from(cols)
+      .map((c) => c.textContent)
+      .join(", ")}`
+  );
 });
 
 // 4. Check CSS loaded
 console.log("\n4️⃣ STYLESHEETS:");
-const tabulatorCSS = Array.from(document.styleSheets).find(s => s.href?.includes('tabulator'));
-const deltaCSS = Array.from(document.styleSheets).find(s => s.href?.includes('delta'));
+const tabulatorCSS = Array.from(document.styleSheets).find((s) =>
+  s.href?.includes("tabulator")
+);
+const deltaCSS = Array.from(document.styleSheets).find((s) =>
+  s.href?.includes("delta")
+);
 console.log("   Tabulator CSS:", tabulatorCSS ? "✅ LOADED" : "❌ MISSING");
 console.log("   Delta CSS:", deltaCSS ? "✅ LOADED" : "❌ MISSING");
 
@@ -44,7 +57,7 @@ console.log("\n5️⃣ CHANNEL STATE & SCALE FACTORS:");
 try {
   // Note: This depends on how channelState is exposed
   console.log("   (Check browser's global channelState object)");
-  if (typeof window.channelState !== 'undefined') {
+  if (typeof window.channelState !== "undefined") {
     console.log("   Analog scales:", window.channelState.analog?.axesScales);
     console.log("   Digital scales:", window.channelState.digital?.axesScales);
   }
@@ -61,19 +74,27 @@ console.log("   (Check console logs for formatScaledValue output above)");
 // 7. DOM Tree for Delta Drawer
 console.log("\n7️⃣ DELTA DRAWER DOM STRUCTURE:");
 if (content) {
-  console.log("   Content HTML length:", content.innerHTML.length, "characters");
+  console.log(
+    "   Content HTML length:",
+    content.innerHTML.length,
+    "characters"
+  );
   const sections = content.querySelectorAll('[class*="delta-table-container"]');
   console.log("   Table containers:", sections.length);
   sections.forEach((section, idx) => {
     const title = section.querySelector('[class*="delta-table-title"]');
     const table = section.querySelector('[role="table"]');
-    console.log(`   Section ${idx}: Title="${title?.textContent}" Has_table=${!!table}`);
+    console.log(
+      `   Section ${idx}: Title="${title?.textContent}" Has_table=${!!table}`
+    );
   });
 }
 
 // 8. Console error count
 console.log("\n8️⃣ ERRORS & WARNINGS:");
-console.log("   (Check browser console for [DeltaDrawer] and [formatScaledValue] messages)");
+console.log(
+  "   (Check browser console for [DeltaDrawer] and [formatScaledValue] messages)"
+);
 console.log("   Filter console by: 'DeltaDrawer' or 'formatScaledValue'");
 
 // 9. Test data structure
@@ -86,7 +107,9 @@ if (table) {
     console.log("   First row cells:");
     cells.forEach((cell, idx) => {
       const header = table.querySelectorAll('[role="columnheader"]')[idx];
-      console.log(`     ${header?.textContent || `Col ${idx}`}: "${cell.textContent}"`);
+      console.log(
+        `     ${header?.textContent || `Col ${idx}`}: "${cell.textContent}"`
+      );
     });
   }
 }
@@ -103,27 +126,48 @@ console.log("   6. Verify Tabulator CDN is accessible");
 console.log("\n========== END DIAGNOSTICS ==========\n");
 
 // Export function to test SI prefix calculation
-window.testSIPrefix = function(value, scaleFactor = 0.001, unit = "A") {
+window.testSIPrefix = function (value, scaleFactor = 0.001, unit = "A") {
   const scaled = value * scaleFactor;
   const absScaled = Math.abs(scaled);
-  
+
   let siPrefix = "";
   let divisor = 1;
-  
-  if (absScaled >= 1e9) { siPrefix = "G"; divisor = 1e9; }
-  else if (absScaled >= 1e6) { siPrefix = "M"; divisor = 1e6; }
-  else if (absScaled >= 1e3) { siPrefix = "k"; divisor = 1e3; }
-  else if (absScaled >= 1) { siPrefix = ""; divisor = 1; }
-  else if (absScaled >= 1e-3) { siPrefix = "m"; divisor = 1e-3; }
-  else if (absScaled >= 1e-6) { siPrefix = "μ"; divisor = 1e-6; }
-  else if (absScaled >= 1e-9) { siPrefix = "n"; divisor = 1e-9; }
-  
+
+  if (absScaled >= 1e9) {
+    siPrefix = "G";
+    divisor = 1e9;
+  } else if (absScaled >= 1e6) {
+    siPrefix = "M";
+    divisor = 1e6;
+  } else if (absScaled >= 1e3) {
+    siPrefix = "k";
+    divisor = 1e3;
+  } else if (absScaled >= 1) {
+    siPrefix = "";
+    divisor = 1;
+  } else if (absScaled >= 1e-3) {
+    siPrefix = "m";
+    divisor = 1e-3;
+  } else if (absScaled >= 1e-6) {
+    siPrefix = "μ";
+    divisor = 1e-6;
+  } else if (absScaled >= 1e-9) {
+    siPrefix = "n";
+    divisor = 1e-9;
+  }
+
   const finalValue = scaled / divisor;
   const result = `${finalValue.toFixed(2)} ${siPrefix}${unit}`;
-  
-  console.log(`✓ testSIPrefix(${value}, ${scaleFactor}, "${unit}") = "${result}"`);
-  console.log(`  Steps: ${value} × ${scaleFactor} = ${scaled} → ${absScaled} abs → prefix='${siPrefix}' → ${finalValue.toFixed(2)} ${siPrefix}${unit}`);
-  
+
+  console.log(
+    `✓ testSIPrefix(${value}, ${scaleFactor}, "${unit}") = "${result}"`
+  );
+  console.log(
+    `  Steps: ${value} × ${scaleFactor} = ${scaled} → ${absScaled} abs → prefix='${siPrefix}' → ${finalValue.toFixed(
+      2
+    )} ${siPrefix}${unit}`
+  );
+
   return result;
 };
 

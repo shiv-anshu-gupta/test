@@ -491,14 +491,16 @@ export function createDeltaDrawer() {
         formatter: function (cell) {
           const value = parseFloat(cell.getValue());
           let color = "#6b7280";
-          
+
           if (value < 0) {
             color = "#dc2626";
           } else if (value > 0) {
             color = "#16a34a";
           }
-          
-          return `<span style="font-family: 'Courier New', monospace; font-weight: 700; color: ${color};">${value.toFixed(1)}%</span>`;
+
+          return `<span style="font-family: 'Courier New', monospace; font-weight: 700; color: ${color};">${value.toFixed(
+            1
+          )}%</span>`;
         },
       },
     ];
@@ -511,11 +513,18 @@ export function createDeltaDrawer() {
    */
   function formatTableData(seriesArray) {
     if (!Array.isArray(seriesArray)) {
-      console.warn("[DeltaDrawer] ⚠️ Invalid series data, expected array:", seriesArray);
+      console.warn(
+        "[DeltaDrawer] ⚠️ Invalid series data, expected array:",
+        seriesArray
+      );
       return [];
     }
 
-    console.log("[DeltaDrawer] 📊 Formatting table data for", seriesArray.length, "series");
+    console.log(
+      "[DeltaDrawer] 📊 Formatting table data for",
+      seriesArray.length,
+      "series"
+    );
 
     return seriesArray.map((seriesData, index) => {
       const row = {
@@ -690,14 +699,17 @@ export function createDeltaDrawer() {
       content.innerHTML = "";
 
       // ✅ ADD DEBUG LOGGING
-      console.log("[DeltaDrawer] 🐛 DEBUG: Raw deltaData:", JSON.stringify(deltaData, null, 2));
+      console.log(
+        "[DeltaDrawer] 🐛 DEBUG: Raw deltaData:",
+        JSON.stringify(deltaData, null, 2)
+      );
 
       // Create Tabulator tables for each delta section
       deltaData.forEach((section, sectionIdx) => {
         console.log(`[DeltaDrawer] 🐛 DEBUG Section ${sectionIdx}:`, {
           deltaTime: section.deltaTime,
           seriesCount: section.series?.length,
-          firstSeries: section.series?.[0]
+          firstSeries: section.series?.[0],
         });
         // Create container
         const tableContainer = document.createElement("div");
@@ -723,7 +735,10 @@ export function createDeltaDrawer() {
 
         // Format data for Tabulator
         const tableData = formatTableData(section.series);
-        console.log(`[DeltaDrawer] 🐛 DEBUG Table data for section ${sectionIdx}:`, tableData);
+        console.log(
+          `[DeltaDrawer] 🐛 DEBUG Table data for section ${sectionIdx}:`,
+          tableData
+        );
 
         // Verify we have valid data
         if (tableData.length === 0) {
@@ -749,13 +764,15 @@ export function createDeltaDrawer() {
           });
 
           console.log(
-            `[DeltaDrawer] ✅ Table ${sectionIdx} created with ${tableData.length} rows and ${buildTableColumns().length} columns`
+            `[DeltaDrawer] ✅ Table ${sectionIdx} created with ${
+              tableData.length
+            } rows and ${buildTableColumns().length} columns`
           );
 
           const columnCount = table.getColumns().length;
           console.log(
             `[DeltaDrawer] 🔍 Table has ${columnCount} columns: `,
-            table.getColumns().map(c => c.getField())
+            table.getColumns().map((c) => c.getField())
           );
         } catch (error) {
           console.error(

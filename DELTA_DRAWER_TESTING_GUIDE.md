@@ -3,30 +3,34 @@
 ## 🎯 What Was Fixed
 
 ### Critical Bug #1: Table Layout Completely Broken
+
 - **Problem**: Only 2 columns showing instead of 5 (Channel, Value1, Value2, Δ Value, Δ %)
 - **Cause**: `responsiveLayout: "hide"` was collapsing columns + `minWidth` instead of `width`
-- **Solution**: 
+- **Solution**:
   - ✅ Changed to `responsiveLayout: false`
   - ✅ Changed to `width: 140/120/120/120/100` (instead of minWidth)
   - ✅ Added `autoColumns: false` to prevent auto-generation
 
 ### Critical Bug #2: Wrong Units (GA/MA instead of kA/A)
+
 - **Problem**: Values showing as "1.91 GA" and "235.53 MA" instead of "1.91 kA" and "235.53 A"
 - **Cause**: SI prefix logic may be receiving incorrect scale factors
-- **Solution**: 
+- **Solution**:
   - ✅ Added comprehensive debug logging to `formatScaledValue()`
   - ✅ Logs show: raw value → scale factor → scaled value → SI prefix selection
   - ✅ Can now diagnose exactly where the wrong unit is applied
 
 ### Critical Bug #3: Field Name Mismatch
+
 - **Problem**: Data object fields didn't match Tabulator column definitions
 - **Cause**: `formatTableData()` was creating `v1`, `v2`, `delta` fields correctly, but other logic may have interfered
-- **Solution**: 
+- **Solution**:
   - ✅ Rewrote `formatTableData()` to use ONLY formatted values
   - ✅ Direct mapping: `v1: seriesData.v1Formatted`
   - ✅ Fallback: `"N/A"` if formatted value missing
 
 ### Enhancement: Complete Debug Logging
+
 - ✅ Raw deltaData structure logged
 - ✅ Per-section metadata logged (time, series count)
 - ✅ Per-row data transformation logged
@@ -55,25 +59,30 @@
 ### Quick Start (5 minutes)
 
 1. **Clear Browser Cache**
+
    ```
    Ctrl+Shift+Delete → Clear all → Confirm
    ```
 
 2. **Hard Reload**
+
    ```
    Ctrl+F5 (or Command+Shift+R on Mac)
    ```
 
 3. **Open DevTools Console**
+
    ```
    F12 → Console tab
    ```
 
 4. **Load COMTRADE File**
+
    - Open a COMTRADE file with current data
    - Verify chart loads
 
 5. **Add Vertical Lines**
+
    ```
    Press: Alt+1 (three times to add 3 lines)
    ```
@@ -85,6 +94,7 @@
 ### Detailed Verification (15 minutes)
 
 #### Test 1: Verify Table Structure
+
 ```
 Expected Console Output:
 ───────────────────────────────────────────────────────
@@ -123,6 +133,7 @@ Expected Console Output:
 ```
 
 #### Test 2: Verify Visual Display
+
 ```
 Expected Table Layout:
 ┌──────────────────────────────────────────────────────────────┐
@@ -145,6 +156,7 @@ Expected Table Layout:
 ```
 
 #### Test 3: Multiple Line Pairs
+
 ```
 Add more vertical lines:
   Alt+1 four times (4 lines) → Should show 3 tables (T1→T2, T2→T3, T3→T4)
@@ -152,6 +164,7 @@ Add more vertical lines:
 ```
 
 #### Test 4: SI Prefix Calculation
+
 ```
 Monitor console for [formatScaledValue] logs:
 
@@ -165,6 +178,7 @@ Should show:
 ```
 
 #### Test 5: Empty States
+
 ```
 Test 1: No vertical lines
   • Delta Drawer shows: "Add vertical lines using Alt+1"
@@ -184,11 +198,12 @@ Test 3: Two or more vertical lines
 ### Issue: Still Showing GA/MA Instead of kA/A
 
 **Step 1: Check Scale Factor Values**
+
 ```javascript
 // Paste in browser console:
-Object.values(window.channelState || {}).forEach(ch => {
+Object.values(window.channelState || {}).forEach((ch) => {
   if (ch.axesScales) {
-    console.log(`${ch.type || 'unknown'} scales:`, ch.axesScales);
+    console.log(`${ch.type || "unknown"} scales:`, ch.axesScales);
   }
 });
 
@@ -197,6 +212,7 @@ Object.values(window.channelState || {}).forEach(ch => {
 ```
 
 **Step 2: Check formatScaledValue Logs**
+
 ```
 Expected:
   value=1911112, scaleFactor=0.001, scaled=1911.112, siPrefix='k'
@@ -208,11 +224,12 @@ Problem indicators:
 ```
 
 **Step 3: Verify Unit Values**
+
 ```javascript
 // In console:
-Object.values(window.channelState || {}).forEach(ch => {
+Object.values(window.channelState || {}).forEach((ch) => {
   if (ch.yUnits) {
-    console.log(`${ch.type || 'unknown'} units:`, ch.yUnits);
+    console.log(`${ch.type || "unknown"} units:`, ch.yUnits);
   }
 });
 
@@ -223,21 +240,24 @@ Object.values(window.channelState || {}).forEach(ch => {
 ### Issue: Table Still Showing 2 Columns
 
 **Step 1: Check Tabulator Library**
+
 ```javascript
 // In console:
-window.Tabulator  // Should NOT be undefined
-window.Tabulator.version  // Should show version like 5.5.2
+window.Tabulator; // Should NOT be undefined
+window.Tabulator.version; // Should show version like 5.5.2
 ```
 
 **Step 2: Inspect Table Element**
+
 ```javascript
 // In console:
 const table = document.querySelector('[role="table"]');
-console.log('Columns:', table.querySelectorAll('[role="columnheader"]').length);
+console.log("Columns:", table.querySelectorAll('[role="columnheader"]').length);
 // Expected: 5 columns
 ```
 
 **Step 3: Check for Errors**
+
 ```
 Look for messages like:
   ❌ [DeltaDrawer] Failed to create table 0
@@ -248,13 +268,15 @@ Look for messages like:
 ### Issue: No Tables Showing At All
 
 **Step 1: Verify Drawer Content**
+
 ```javascript
 // In console:
-document.getElementById('delta-drawer-content').innerHTML.length
+document.getElementById("delta-drawer-content").innerHTML.length;
 // Should be > 1000 if tables exist
 ```
 
 **Step 2: Check for Errors**
+
 ```
 Filter console by [DeltaDrawer]:
   • "update() called with" - should appear
@@ -263,6 +285,7 @@ Filter console by [DeltaDrawer]:
 ```
 
 **Step 3: Force Drawer Update**
+
 ```javascript
 // If deltaWindow available:
 window.deltaWindow?.show();
@@ -282,10 +305,10 @@ Or use the diagnostic function:
 
 ```javascript
 // Test SI prefix calculation:
-window.testSIPrefix(1911112, 0.001, 'A');
+window.testSIPrefix(1911112, 0.001, "A");
 // Output: "1.91 kA"
 
-window.testSIPrefix(1911112000, 0.001, 'A');
+window.testSIPrefix(1911112000, 0.001, "A");
 // Output: "1.91 MA" (1 million+ amperes = megaamperes)
 ```
 
@@ -309,6 +332,7 @@ window.testSIPrefix(1911112000, 0.001, 'A');
 ## 📊 Expected Output Summary
 
 ### Console Logs
+
 ```
 [DeltaDrawer] update() called with 2 sections and 3 vertical lines
 [DeltaDrawer] 🐛 DEBUG: Raw deltaData: [{ deltaTime: "0.05 s", series: [...] }, ...]
@@ -323,6 +347,7 @@ window.testSIPrefix(1911112000, 0.001, 'A');
 ```
 
 ### Visual Display
+
 ```
 Line Pair: T1 → T2        Δ time: 0.05 s
 ┌──────────┬──────────┬──────────┬──────────┬─────────┐
