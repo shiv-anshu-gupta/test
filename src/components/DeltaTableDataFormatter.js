@@ -1,6 +1,7 @@
 /**
  * @file DeltaTableDataFormatter.js
  * @description Pure function to format delta data for table rendering
+ * ✅ FIXED: Now correctly handles 3+ vertical lines by detecting pairs from deltaTime
  */
 
 /**
@@ -22,16 +23,29 @@ export function formatTableData(
   }
 
   console.log(
-    `[formatTableData] Formatting data for ${verticalLinesCount} lines from ${deltaData.length} sections`
+    `[formatTableData] 🔄 Formatting data for ${verticalLinesCount} lines from ${deltaData.length} sections`
   );
 
   // Build a map: { channelName: { color, v0, v1, v2, ..., delta0, delta1, ..., percentage0, percentage1, ... } }
   const channelMap = new Map();
 
-  // Group sections by their pair index (pairIdx)
-  // ✅ CRITICAL FIX: All sections represent the SAME pair index!
-  // Multiple sections = multiple charts, NOT multiple pairs
-  // Each chart has the same pair (pair 0 when there are 2 vertical lines)
+  // ✅ FIX STEP 1: Detect unique delta times (each represents a different pair)
+  const uniqueDeltaTimes = new Set();
+  deltaData.forEach((section) => {
+    if (section.deltaTime) {
+      uniqueDeltaTimes.add(section.deltaTime);
+    }
+  });
+
+  const deltaTimesArray = Array.from(uniqueDeltaTimes);
+  const numPairs = deltaTimesArray.length;
+
+  console.log(
+    `[formatTableData] 📊 Detected ${numPairs} unique delta pairs: `,
+    deltaTimesArray
+  );
+
+  // ✅ FIX STEP 2: Group sections by their delta time (pair index)
   const pairGroups = {};
 
   deltaData.forEach((section, sectionIdx) => {
@@ -42,14 +56,19 @@ export function formatTableData(
       return;
     }
 
-    // ✅ KEY FIX: All sections are from DIFFERENT CHARTS but represent the SAME PAIR
-    // The pair index is always 0 (or constant based on verticalLinesCount)
-    // Not based on sectionIdx!
-    const pairIdx = 0; // All sections share the same pair index!
+    // ✅ KEY FIX: Find pair index by matching deltaTime
+    const pairIdx = deltaTimesArray.indexOf(section.deltaTime);
+
+    if (pairIdx === -1) {
+      console.warn(
+        `[formatTableData] ⚠️ Could not find pair for deltaTime: ${section.deltaTime}`
+      );
+      return;
+    }
 
     if (!pairGroups[pairIdx]) {
       pairGroups[pairIdx] = {
-        deltaTime: section.deltaTime || "",
+        deltaTime: section.deltaTime,
         allSeries: [],
       };
     }
@@ -60,7 +79,7 @@ export function formatTableData(
     });
 
     console.log(
-      `[formatTableData] Section ${sectionIdx} (Chart ${sectionIdx}): ${section.series.length} channels for pair ${pairIdx}`
+      `[formatTableData] Section ${sectionIdx} → Pair ${pairIdx} (${section.deltaTime}): ${section.series.length} channels`
     );
   });
 
@@ -68,12 +87,12 @@ export function formatTableData(
     `[formatTableData] Total pair groups: ${Object.keys(pairGroups).length}`
   );
 
-  // ✅ NOW: Process each pair group and build channel map
+  // ✅ FIX STEP 3: Process each pair group and build channel map
   Object.entries(pairGroups).forEach(([pairIdx, pairGroup]) => {
     pairIdx = parseInt(pairIdx);
 
     pairGroup.allSeries.forEach((seriesData) => {
-      const channelName = seriesData.name || `Unknown_${pairIdx}`;
+      const channelName = seriesData.name || `Unknown`;
 
       // Initialize channel if not exists
       if (!channelMap.has(channelName)) {
@@ -86,7 +105,8 @@ export function formatTableData(
 
       const channelData = channelMap.get(channelName);
 
-      // ✅ FIX: Add v0 value only for the FIRST pair (index 0)
+      // ✅ FIX: Add v0 value (first vertical line value)
+      // Only set from FIRST pair's v1 (starting value)
       if (pairIdx === 0 && !channelData.hasOwnProperty("v0")) {
         channelData.v0 = seriesData.v1Formatted || "N/A";
         console.log(
@@ -94,17 +114,20 @@ export function formatTableData(
         );
       }
 
-      // ✅ FIX: Always add v(pairIdx+1) value for this pair
+      // ✅ FIX: Add v(pairIdx+1) value
+      // Pair 0: adds v1 (second line) from v2Formatted
+      // Pair 1: adds v2 (third line) from v2Formatted
+      // Pair 2: adds v3 (fourth line) from v2Formatted, etc.
       const vKey = `v${pairIdx + 1}`;
       channelData[vKey] = seriesData.v2Formatted || "N/A";
       console.log(
         `[formatTableData] Channel ${channelName}: ${vKey} = ${channelData[vKey]}`
       );
 
-      // ✅ FIX: Add delta and percentage for this pair
+      // ✅ Add delta and percentage for this pair
       channelData[`delta${pairIdx}`] = seriesData.deltaFormatted || "N/A";
       channelData[`percentage${pairIdx}`] =
-        seriesData.percentage != null ? seriesData.percentage : 0;
+        seriesData.percentage != null ? parseFloat(seriesData.percentage) : 0;
 
       console.log(
         `[formatTableData] Channel ${channelName}: delta${pairIdx} = ${
@@ -114,8 +137,9 @@ export function formatTableData(
     });
   });
 
-  // ✅ FIX: Fill in missing values with "N/A" for channels that don't exist in all charts
+  // ✅ Fill in missing values with "N/A" for channels that don't exist in all charts
   channelMap.forEach((channelData, channelName) => {
+    // Ensure all v columns exist (v0, v1, v2, ..., v[verticalLinesCount-1])
     for (let i = 0; i < verticalLinesCount; i++) {
       const vKey = `v${i}`;
       if (!channelData.hasOwnProperty(vKey)) {
@@ -126,7 +150,8 @@ export function formatTableData(
       }
     }
 
-    for (let i = 0; i < verticalLinesCount - 1; i++) {
+    // Ensure all delta columns exist (delta0, delta1, ... delta[numPairs-1])
+    for (let i = 0; i < numPairs; i++) {
       if (!channelData.hasOwnProperty(`delta${i}`)) {
         channelData[`delta${i}`] = "N/A";
         channelData[`percentage${i}`] = 0;
@@ -140,29 +165,25 @@ export function formatTableData(
   const tableData = Array.from(channelMap.values());
 
   console.log(
-    `[formatTableData] ✅ Consolidated ${
-      tableData.length
-    } channels with ${verticalLinesCount} value columns and ${
-      verticalLinesCount - 1
-    } delta pairs`
+    `[formatTableData] ✅ Consolidated ${tableData.length} channels with ${verticalLinesCount} value columns and ${numPairs} delta pairs`
   );
 
-  // ✅ FIX: Add time row as first row
+  // ✅ Add time row as first row
   const timeRow = {
     channel: "__TIME_ROW__",
     color: "#3b82f6",
   };
 
-  // Add time values
+  // Add time values (T1, T2, T3, ...)
   verticalLineTimes.forEach((timeVal, idx) => {
     timeRow[`v${idx}`] = timeVal;
   });
 
-  // Add delta times - only for the actual delta PAIRS
-  for (let i = 0; i < verticalLinesCount - 1; i++) {
-    timeRow[`delta${i}`] = deltaData[0]?.deltaTime || "N/A";
-    timeRow[`percentage${i}`] = 0; // No percentage for time row
-  }
+  // Add delta times for each pair
+  deltaTimesArray.forEach((deltaTime, pairIdx) => {
+    timeRow[`delta${pairIdx}`] = deltaTime;
+    timeRow[`percentage${pairIdx}`] = 0; // No percentage for time row
+  });
 
   // Insert time row at the beginning
   tableData.unshift(timeRow);
