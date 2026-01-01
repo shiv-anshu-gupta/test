@@ -873,6 +873,7 @@ export function createDeltaDrawer() {
     },
 
     update: async (deltaData = [], verticalLinesCount = 0) => {
+      // ✅ DEBUG: Add trace to see if update() is called multiple times
       console.log(
         "[DeltaDrawer] update() called with",
         deltaData.length,
@@ -880,6 +881,7 @@ export function createDeltaDrawer() {
         verticalLinesCount,
         "vertical lines"
       );
+      console.trace("[DeltaDrawer] 📍 Update() call stack:");
       injectDrawerHTML();
 
       const content = document.getElementById("delta-drawer-content");
@@ -946,37 +948,31 @@ export function createDeltaDrawer() {
       // Also ensure old tables are completely removed from DOM
       const oldTables = content.querySelectorAll(".delta-table-container");
       oldTables.forEach((table) => table.remove());
+      console.log(
+        "[DeltaDrawer] ✨ Content cleared, creating single table container"
+      );
 
-      // ✅ FIX: Extract time values from vertical lines
+      // ✅ EXTRACT: Time values BEFORE creating container
       let verticalLineTimes = [];
 
-      // Try to get time values from verticalLinesX state
       try {
-        // First try: import from main.js and access the state value
-        let linesArray = [];
-        try {
-          const mainModule = await import("../main.js");
-          const verticalLinesXState = mainModule.verticalLinesX;
+        const mainModule = await import("../main.js");
+        const verticalLinesXState = mainModule.verticalLinesX;
 
-          // Handle createState object - it has a .value property
-          if (verticalLinesXState && typeof verticalLinesXState === "object") {
-            // Try to get value property (for createState)
-            linesArray = verticalLinesXState.value || [];
+        if (verticalLinesXState && typeof verticalLinesXState === "object") {
+          let linesArray = verticalLinesXState.value || [];
 
-            // If still empty, try calling asArray if it exists
-            if (
-              (!Array.isArray(linesArray) || linesArray.length === 0) &&
-              typeof verticalLinesXState.asArray === "function"
-            ) {
-              linesArray = verticalLinesXState.asArray();
-            }
+          if (
+            (!Array.isArray(linesArray) || linesArray.length === 0) &&
+            typeof verticalLinesXState.asArray === "function"
+          ) {
+            linesArray = verticalLinesXState.asArray();
+          }
 
-            // Last resort: if it's directly an array
-            if (!Array.isArray(linesArray)) {
-              linesArray = Array.isArray(verticalLinesXState)
-                ? verticalLinesXState
-                : [];
-            }
+          if (!Array.isArray(linesArray)) {
+            linesArray = Array.isArray(verticalLinesXState)
+              ? verticalLinesXState
+              : [];
           }
 
           if (Array.isArray(linesArray) && linesArray.length > 0) {
@@ -985,78 +981,19 @@ export function createDeltaDrawer() {
                 verticalLineTimes.push(`${timeValue.toFixed(2)} μs`);
               }
             });
-            console.log(
-              "[DeltaDrawer] ✅ Got time values from verticalLinesX state:",
-              verticalLineTimes
-            );
-          }
-        } catch (importErr) {
-          console.warn(
-            "[DeltaDrawer] Could not import verticalLinesX from main.js:",
-            importErr.message
-          );
-        }
-
-        // Fallback: Try to get from window object
-        if (verticalLineTimes.length === 0) {
-          try {
-            const verticalLinesXState = window.verticalLinesX;
-            let linesArray = [];
-
-            if (
-              verticalLinesXState &&
-              typeof verticalLinesXState === "object"
-            ) {
-              linesArray = verticalLinesXState.value || [];
-
-              if (
-                (!Array.isArray(linesArray) || linesArray.length === 0) &&
-                typeof verticalLinesXState.asArray === "function"
-              ) {
-                linesArray = verticalLinesXState.asArray();
-              }
-
-              if (!Array.isArray(linesArray)) {
-                linesArray = Array.isArray(verticalLinesXState)
-                  ? verticalLinesXState
-                  : [];
-              }
-            }
-
-            if (Array.isArray(linesArray) && linesArray.length > 0) {
-              linesArray.forEach((timeValue) => {
-                if (typeof timeValue === "number") {
-                  verticalLineTimes.push(`${timeValue.toFixed(2)} μs`);
-                }
-              });
-              console.log(
-                "[DeltaDrawer] ✅ Got time values from window.verticalLinesX:",
-                verticalLineTimes
-              );
-            }
-          } catch (windowErr) {
-            console.warn(
-              "[DeltaDrawer] Could not get verticalLinesX from window:",
-              windowErr.message
-            );
-          }
-        }
-
-        // Last fallback: Generate placeholder time values if none available
-        if (verticalLineTimes.length === 0) {
-          console.warn(
-            "[DeltaDrawer] ⚠️ No vertical line times available, generating placeholders"
-          );
-          for (let i = 0; i < verticalLinesCount; i++) {
-            verticalLineTimes.push(`T${i + 1}`);
+            console.log("[DeltaDrawer] ✅ Got time values:", verticalLineTimes);
           }
         }
       } catch (error) {
-        console.error(
-          "[DeltaDrawer] Error extracting vertical line times:",
-          error
+        console.warn(
+          "[DeltaDrawer] Could not extract time values:",
+          error.message
         );
-        // Use placeholder values
+      }
+
+      // Fallback to placeholders if no time values
+      if (verticalLineTimes.length === 0) {
+        console.warn("[DeltaDrawer] ⚠️ Using placeholder time values");
         for (let i = 0; i < verticalLinesCount; i++) {
           verticalLineTimes.push(`T${i + 1}`);
         }
@@ -1103,13 +1040,18 @@ export function createDeltaDrawer() {
       }</div>
       `;
       tableContainer.appendChild(header);
+      console.log("[DeltaDrawer] ✅ Header created and appended (ONCE)");
 
       // Create table div
       const tableDiv = document.createElement("div");
       tableDiv.id = "delta-table-main";
       tableContainer.appendChild(tableDiv);
+      console.log("[DeltaDrawer] ✅ Table div created (ONCE)");
 
       content.appendChild(tableContainer);
+      console.log(
+        "[DeltaDrawer] ✅ Table container appended to content (ONCE)"
+      );
 
       // ✅ FIX: Format data with time values
       const tableData = formatTableData(
