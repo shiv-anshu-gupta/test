@@ -85,10 +85,8 @@ export function createDeltaDrawer() {
 
       .delta-drawer-header {
         padding: 20px 24px;
-        border-bottom: 1px solid #e5e7eb;
-        background-color: #ffffff;
-      }
-
+      border-bottom: 1px solid var(--border-color, #e5e7eb);
+      background-color: var(--bg-secondary, #ffffff);
       .delta-drawer-header-content {
         display: flex;
         align-items: center;
@@ -98,25 +96,14 @@ export function createDeltaDrawer() {
       #delta-drawer-title {
         font-size: 18px;
         font-weight: 600;
-        color: #111827;
-        margin: 0;
-      }
-
+      color: var(--text-primary, #111827);
       #delta-drawer-content {
         flex: 1;
         overflow-x: auto;
         overflow-y: auto;
         padding: 24px;
-        background-color: #ffffff;
-      }
-
-      .delta-section {
-        margin-bottom: 24px;
-        padding-bottom: 16px;
-        border-bottom: 1px solid #e5e7eb;
-      }
-
-      .delta-section:last-child {
+      background-color: var(--bg-secondary, #ffffff);
+      border-bottom: 1px solid var(--border-color, #e5e7eb);
         border-bottom: none;
         margin-bottom: 0;
       }
@@ -138,10 +125,7 @@ export function createDeltaDrawer() {
       .delta-section-title {
         font-size: 14px;
         font-weight: 600;
-        color: #111827;
-        margin: 0;
-      }
-
+      color: var(--text-primary, #111827);
       .delta-items {
         display: flex;
         flex-direction: column;
@@ -156,19 +140,17 @@ export function createDeltaDrawer() {
       }
 
       .delta-label {
-        color: #6b7280;
-        font-weight: 500;
-      }
+      color: var(--text-secondary, #6b7280);
+      font-weight: 500;
+    }
 
-      .delta-value {
-        color: #111827;
-        font-family: 'Courier New', monospace;
+    .delta-value {
+      color: var(--text-primary, #111827);
         font-weight: 600;
       }
 
       .delta-empty-state {
-        color: #9ca3af;
-        font-size: 14px;
+      color: var(--text-muted, #9ca3af);
         text-align: center;
         padding: 32px 16px;
       }
@@ -176,21 +158,18 @@ export function createDeltaDrawer() {
       /* Tabulator Table Container */
       .delta-table-container {
         margin-bottom: 20px;
-        border: 1px solid #e5e7eb;
-        border-radius: 8px;
-        overflow: auto;
-        background-color: #ffffff;
-        display: block !important;
-      }
-
+      border: 1px solid var(--border-color, #e5e7eb);
+      border-radius: 8px;
+      overflow: auto;
+      background-color: var(--bg-secondary, #ffffff);
       .delta-table-header {
         display: flex !important;
         flex-direction: row !important;
         justify-content: space-between !important;
         align-items: center !important;
         padding: 12px 16px !important;
-        background: linear-gradient(to bottom, #f9fafb, #f3f4f6) !important;
-        border-bottom: 2px solid #e5e7eb !important;
+      background: var(--bg-tertiary, linear-gradient(to bottom, #f9fafb, #f3f4f6)) !important;
+      border-bottom: 2px solid var(--border-color, #e5e7eb) !important;
         width: 100% !important;
         box-sizing: border-box !important;
         position: relative !important;
@@ -200,17 +179,11 @@ export function createDeltaDrawer() {
       .delta-table-title {
         font-size: 14px;
         font-weight: 600;
-        color: #111827;
-        margin: 0;
-      }
-
+      color: var(--text-primary, #111827);
       .delta-table-time {
         font-size: 12px;
         font-family: 'Courier New', monospace;
-        color: #6b7280;
-        font-weight: 600;
-      }
-
+      color: var(--text-secondary, #6b7280);
       /* Plain HTML Table Styles */
       .delta-table {
         width: 100%;
@@ -221,13 +194,10 @@ export function createDeltaDrawer() {
       .delta-th {
         padding: 12px;
         text-align: left;
-        background: linear-gradient(to bottom, #f9fafb, #f3f4f6);
-        border-bottom: 2px solid #e5e7eb;
-        font-weight: 600;
-        color: #111827;
-        white-space: nowrap;
-      }
-
+      background: var(--bg-tertiary, linear-gradient(to bottom, #f9fafb, #f3f4f6));
+      border-bottom: 2px solid var(--border-color, #e5e7eb);
+      font-weight: 600;
+      color: var(--text-primary, #111827);
       .delta-th-content {
         display: flex;
         align-items: center;
@@ -238,52 +208,38 @@ export function createDeltaDrawer() {
       .delta-th-channel {
         position: sticky;
         left: 0;
-        background: #f9fafb;
-        z-index: 2;
-      }
-
+      background: var(--bg-tertiary, #f9fafb);
       .delta-color-dot {
         width: 10px;
         height: 10px;
         border-radius: 50%;
-        border: 1px solid rgba(0, 0, 0, 0.2);
-        flex-shrink: 0;
-      }
+      border: 1px solid var(--border-color, rgba(0, 0, 0, 0.2));
+      flex-shrink: 0;
+    }
 
-      .delta-arrow {
-        font-size: 10px;
-        color: #9ca3af;
-      }
-
-      .delta-td {
-        padding: 10px 12px;
-        border-bottom: 1px solid #f3f4f6;
-        vertical-align: middle;
-        white-space: nowrap;
-        font-family: 'Courier New', monospace;
-      }
-
+    .delta-arrow {
+      font-size: 10px;
+      color: var(--text-muted, #9ca3af);
+      border-bottom: 1px solid var(--border-color, #f3f4f6);
+      vertical-align: middle;
+      white-space: nowrap;
+      font-family: 'Courier New', monospace;
+      color: var(--text-primary, #111827);
       .delta-table tbody tr:hover {
-        background-color: #f9fafb;
-      }
+      background-color: var(--bg-tertiary, #f9fafb);
 
       .delta-row-time {
-        background-color: #f9fafb;
-        font-weight: 700;
+      background-color: var(--bg-tertiary, #f9fafb);
         border-bottom: 2px solid #3b82f6;
       }
 
       .delta-td-channel {
         position: sticky;
         left: 0;
-        background: #ffffff;
-        font-weight: 600;
-        font-family: inherit;
-      }
+      background: var(--bg-secondary, #ffffff);
 
       .delta-table tbody tr:hover .delta-td-channel {
-        background-color: #f9fafb;
-      }
+      background-color: var(--bg-tertiary, #f9fafb);
 
       .delta-channel-content {
         display: flex;
@@ -293,17 +249,12 @@ export function createDeltaDrawer() {
 
       .delta-channel-name {
         font-weight: 600;
-        color: #111827;
-      }
-
+      color: var(--text-primary, #111827);
       .delta-td-value,
       .delta-td-delta {
         font-weight: 600;
         text-align: right;
-      }
-
-      .delta-time-row {
-        color: #3b82f6;
+      color: var(--text-primary, #111827);
         font-weight: 700;
       }
 
@@ -324,32 +275,27 @@ export function createDeltaDrawer() {
       }
 
       .delta-percentage.zero {
-        color: #6b7280;
-      }
+      color: var(--text-muted, #6b7280);
 
       .delta-empty {
         text-align: center;
         padding: 32px;
-        color: #9ca3af;
-      }
-
-      /* Scrollbar styling */
+      color: var(--text-muted, #9ca3af);
       #delta-drawer-content::-webkit-scrollbar {
         width: 8px;
       }
 
       #delta-drawer-content::-webkit-scrollbar-track {
-        background: #f3f4f6;
-      }
+      background: var(--bg-tertiary, #f3f4f6);
+    }
 
-      #delta-drawer-content::-webkit-scrollbar-thumb {
-        background: #d1d5db;
-        border-radius: 4px;
-      }
+    #delta-drawer-content::-webkit-scrollbar-thumb {
+      background: var(--border-color, #d1d5db);
+      border-radius: 4px;
+    }
 
-      #delta-drawer-content::-webkit-scrollbar-thumb:hover {
-        background: #9ca3af;
-      }
+    #delta-drawer-content::-webkit-scrollbar-thumb:hover {
+      background: var(--text-muted, #9ca3af);
 
       /* Responsive for mobile */
       @media (max-width: 768px) {
