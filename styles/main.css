@@ -1,100 +1,30 @@
-/* ============================================
-   COMTRADE Viewer - Modern Light UI
-   ============================================ */
+/**
+ * Main CSS Entry Point
+ * Imports all other stylesheets in correct order
+ * This is the ONLY CSS file you need to import in HTML!
+ */
 
-/* === CSS Variables === */
-:root {
-  /* Light theme colors */
-  --bg-primary: #f8fafc;
-  --bg-secondary: #ffffff;
-  --bg-tertiary: #f1f5f9;
-  --bg-card: #f8fafc;
-  --bg-sidebar: #ffffff;
+/* Step 1: Reset browser defaults */
+@import url("./reset.css");
 
-  /* Accent colors (kept vibrant for light theme) */
-  --accent-primary: #0ea5e9;
-  --accent-cyan: #0ea5e9;
-  --accent-blue: #2563eb;
-  --accent-purple: #7c3aed;
-  --accent-orange: #f97316;
-  --accent-green: #10b981;
-  --accent-red: #ef4444;
+/* Step 2: Theme variables (colors) */
+@import url("./theme.css");
 
-  /* Text colors */
-  --text-primary: #1e293b;
-  --text-secondary: #64748b;
-  --text-muted: #94a3b8;
+/* Step 3: Layout */
+@import url("./layout.css");
 
-  /* Border and shadow */
-  --border-color: #e2e8f0;
-  --border-radius: 12px;
-  --border-radius-sm: 8px;
+/* Step 4: Components */
+@import url("./components/buttons.css");
+@import url("./components/drawer.css");
+@import url("./components/table.css");
+@import url("./components/progress.css");
+@import url("./components/debug-panel.css");
+@import url("./components/sidebar.css");
+@import url("./components/charts.css");
 
-  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
-  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.1);
-  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.12);
-
-  /* Chart colors (uPlot axes, grid, text) */
-  --chart-text: #1e293b;       /* Axis labels and text - light theme */
-  --chart-grid: #cbd5e1;       /* Grid lines - light theme */
-  --chart-bg: #ffffff;         /* Chart background */
-  --chart-axis: #64748b;       /* Axis line color */
-}
-}
-
-/* === Edge Toggle Buttons === */
-.edge-toggle-btn {
-  position: fixed;
-  top: 50%;
-  transform: translateY(-50%);
-  padding: 12px 6px;
-  border-radius: 0;
-  background: var(--bg-secondary);
-  border: 2px solid var(--border-color);
-  color: var(--text-primary);
-  cursor: pointer;
-  font-size: 0.85rem;
-  font-weight: 600;
-  z-index: 999;
-  transition: all 0.3s ease;
-  writing-mode: vertical-rl;
-  text-orientation: sideways;
-  letter-spacing: 1px;
-  min-width: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  word-break: break-word;
-  white-space: nowrap;
-}
-
-/* Analysis button (left edge) */
-#analysis-sidebar-toggle {
-  left: 0;
-  border-radius: 0 8px 8px 0;
-  border-left: none;
-}
-
-#analysis-sidebar-toggle:hover {
-  background: var(--bg-tertiary);
-  transform: translateY(-50%) translateX(4px);
-}
-
-/* Data button (right edge) */
-#delta-drawer-toggle {
-  right: 0;
-  background-color: #4f46e5;
-  color: #ffffff;
-  border-radius: 8px 0 0 8px;
-  border-right: none;
-  box-shadow: -2px 4px 8px rgba(0, 0, 0, 0.2);
-}
-
-#delta-drawer-toggle:hover {
-  background-color: #4338ca;
-  transform: translateY(-50%) translateX(-4px);
-}
+/* Step 5: Utilities */
+@import url("./utilities/animations.css");
+@import url("./utilities/helpers.css");
 
 /* === Reset & Base === */
 * {
