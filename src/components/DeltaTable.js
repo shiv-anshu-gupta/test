@@ -114,8 +114,15 @@ export function buildTableBody(tableData, verticalLinesCount) {
     // Delta and percentage cells
     for (let i = 0; i < verticalLinesCount - 1; i++) {
       const deltaValue = row[`delta${i}`] || "N/A";
-      const percentage =
+      let percentage =
         row[`percentage${i}`] != null ? row[`percentage${i}`] : 0;
+
+      // Ensure percentage is a number
+      if (typeof percentage === "string") {
+        percentage = parseFloat(percentage) || 0;
+      } else if (typeof percentage !== "number") {
+        percentage = 0;
+      }
 
       // Delta cell
       const deltaCellClass = isTimeRow
