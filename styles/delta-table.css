@@ -1,0 +1,138 @@
+/* Delta Table Styles */
+
+.delta-table-container {
+  margin-bottom: 20px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  overflow: auto;
+  background-color: #ffffff;
+}
+
+.delta-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  min-width: 600px;
+}
+
+.delta-th {
+  padding: 12px;
+  text-align: left;
+  background: linear-gradient(to bottom, #f9fafb, #f3f4f6);
+  border-bottom: 2px solid #e5e7eb;
+  font-weight: 600;
+  color: #111827;
+  white-space: nowrap;
+}
+
+.delta-th-content {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  justify-content: center;
+}
+
+.delta-th-channel {
+  position: sticky;
+  left: 0;
+  background: #f9fafb;
+  z-index: 2;
+}
+
+.delta-th-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: #6b7280;
+}
+
+.delta-color-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  flex-shrink: 0;
+}
+
+.delta-arrow {
+  font-size: 10px;
+  color: #9ca3af;
+}
+
+.delta-td {
+  padding: 10px 12px;
+  border-bottom: 1px solid #f3f4f6;
+  vertical-align: middle;
+  white-space: nowrap;
+  font-family: "Courier New", monospace;
+}
+
+.delta-table tbody tr:hover {
+  background-color: #f9fafb;
+}
+
+.delta-row-time {
+  background-color: #f9fafb;
+  font-weight: 700;
+  border-bottom: 2px solid #3b82f6;
+}
+
+.delta-td-channel {
+  position: sticky;
+  left: 0;
+  background: #ffffff;
+  font-weight: 600;
+  font-family: inherit;
+}
+
+.delta-table tbody tr:hover .delta-td-channel {
+  background-color: #f9fafb;
+}
+
+.delta-channel-content {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.delta-channel-name {
+  font-weight: 600;
+  color: #111827;
+}
+
+.delta-td-value,
+.delta-td-delta {
+  font-weight: 600;
+  text-align: right;
+}
+
+.delta-time-row {
+  color: #3b82f6;
+  font-weight: 700;
+}
+
+.delta-td-percentage {
+  text-align: right;
+}
+
+.delta-percentage {
+  font-weight: 700;
+}
+
+.delta-percentage.positive {
+  color: #16a34a;
+}
+
+.delta-percentage.negative {
+  color: #dc2626;
+}
+
+.delta-percentage.zero {
+  color: #6b7280;
+}
+
+.delta-empty {
+  text-align: center;
+  padding: 32px;
+  color: #9ca3af;
+  font-family: inherit;
+}

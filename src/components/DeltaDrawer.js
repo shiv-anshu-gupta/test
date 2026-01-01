@@ -1,16 +1,18 @@
 /**
  * Delta Display Drawer Component
  * Shows detailed crosshair values in a slide-out drawer (sidebar)
- * Uses plain HTML and CSS - no Tailwind
+ * Uses plain HTML table with createState subscriptions for auto-updates
  */
 
 import { sidebarStore } from "../utils/sidebarStore.js";
 import { adjustMainContent } from "../utils/sidebarResize.js";
 import { crosshairColors } from "../utils/constants.js";
+import { createDeltaTableRenderer } from "./DeltaTableRenderer.js";
+import { formatTableData } from "./DeltaTableDataFormatter.js";
 
 export function createDeltaDrawer() {
   let isOpen = false;
-  let tabulatorInstances = []; // Track table instances for cleanup
+  let tableRenderer = null; // Replace tabulatorInstances with single renderer
 
   const styleHTML = `
     <style id="delta-drawer-styles">
@@ -175,9 +177,8 @@ export function createDeltaDrawer() {
         margin-bottom: 20px;
         border: 1px solid #e5e7eb;
         border-radius: 8px;
-        overflow: hidden;
+        overflow: auto;
         background-color: #ffffff;
-        min-width: 100%;
         display: block !important;
       }
 
@@ -209,100 +210,126 @@ export function createDeltaDrawer() {
         font-weight: 600;
       }
 
-      /* Tabulator Theme Overrides */
-      .tabulator {
+      /* Plain HTML Table Styles */
+      .delta-table {
+        width: 100%;
+        border-collapse: collapse;
         font-size: 13px;
-        border: none !important;
-        background-color: transparent;
-        width: 100% !important;
-        display: block !important;
       }
 
-      .tabulator .tabulator-tableholder {
-        background-color: #ffffff;
-        overflow-x: auto !important;
-      }
-
-      .tabulator .tabulator-table {
-        display: table !important;
-        width: 100% !important;
-      }
-
-      /* Hide the default Tabulator header - we use our custom header instead */
-      .tabulator .tabulator-header {
-        display: none !important;
-        visibility: hidden !important;
-        height: 0 !important;
-        overflow: hidden !important;
-      }
-
-      .tabulator .tabulator-row {
-        display: table-row !important;
-        border-bottom: 1px solid #f3f4f6;
-        min-height: 40px;
-      }
-
-      .tabulator .tabulator-row:hover {
-        background-color: #f9fafb !important;
-      }
-
-      .tabulator .tabulator-row.tabulator-row-even {
-        background-color: #fafafa;
-      }
-
-      .tabulator .tabulator-cell {
-        display: table-cell !important;
-        border-right: 1px solid #f3f4f6;
-        padding: 10px 12px;
-        vertical-align: middle;
+      .delta-th {
+        padding: 12px;
+        text-align: left;
+        background: linear-gradient(to bottom, #f9fafb, #f3f4f6);
+        border-bottom: 2px solid #e5e7eb;
+        font-weight: 600;
+        color: #111827;
         white-space: nowrap;
       }
 
-      /* Custom Cell Styles */
-      .cell-channel {
+      .delta-th-content {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        justify-content: center;
+      }
+
+      .delta-th-channel {
+        position: sticky;
+        left: 0;
+        background: #f9fafb;
+        z-index: 2;
+      }
+
+      .delta-color-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        border: 1px solid rgba(0, 0, 0, 0.2);
+        flex-shrink: 0;
+      }
+
+      .delta-arrow {
+        font-size: 10px;
+        color: #9ca3af;
+      }
+
+      .delta-td {
+        padding: 10px 12px;
+        border-bottom: 1px solid #f3f4f6;
+        vertical-align: middle;
+        white-space: nowrap;
+        font-family: 'Courier New', monospace;
+      }
+
+      .delta-table tbody tr:hover {
+        background-color: #f9fafb;
+      }
+
+      .delta-row-time {
+        background-color: #f9fafb;
+        font-weight: 700;
+        border-bottom: 2px solid #3b82f6;
+      }
+
+      .delta-td-channel {
+        position: sticky;
+        left: 0;
+        background: #ffffff;
+        font-weight: 600;
+        font-family: inherit;
+      }
+
+      .delta-table tbody tr:hover .delta-td-channel {
+        background-color: #f9fafb;
+      }
+
+      .delta-channel-content {
         display: flex;
         align-items: center;
         gap: 8px;
       }
 
-      .cell-color-dot {
-        width: 10px;
-        height: 10px;
-        border-radius: 50%;
-        flex-shrink: 0;
-        border: 1px solid rgba(0, 0, 0, 0.1);
-      }
-
-      .cell-channel-name {
+      .delta-channel-name {
         font-weight: 600;
         color: #111827;
       }
 
-      .cell-value {
-        font-family: 'Courier New', monospace;
+      .delta-td-value,
+      .delta-td-delta {
         font-weight: 600;
-        color: #111827;
         text-align: right;
-        display: block;
       }
 
-      .cell-percentage {
-        font-family: 'Courier New', monospace;
+      .delta-time-row {
+        color: #3b82f6;
         font-weight: 700;
-        text-align: right;
-        display: block;
       }
 
-      .cell-percentage-positive {
+      .delta-td-percentage {
+        text-align: right;
+      }
+
+      .delta-percentage {
+        font-weight: 700;
+      }
+
+      .delta-percentage.positive {
         color: #16a34a;
       }
 
-      .cell-percentage-negative {
+      .delta-percentage.negative {
         color: #dc2626;
       }
 
-      .cell-percentage-zero {
+      .delta-percentage.zero {
         color: #6b7280;
+      }
+
+      .delta-empty {
+        text-align: center;
+        padding: 32px;
+        color: #9ca3af;
       }
 
       /* Scrollbar styling */
@@ -430,320 +457,6 @@ export function createDeltaDrawer() {
         resolve(true);
       }
     });
-  }
-
-  /**
-   * Build dynamic Tabulator columns with time values
-   * ✅ FIX: Added time display and special time row handling
-   * @param {number} verticalLinesCount - Number of vertical lines
-   * @param {Array} verticalLineTimes - Time values for each line
-   * @returns {Array} Tabulator column definitions
-   */
-  function buildTableColumns(verticalLinesCount, verticalLineTimes = []) {
-    const columns = [];
-
-    // First column: Channel name (frozen/pinned)
-    columns.push({
-      title: "Channel",
-      field: "channel",
-      minWidth: 130,
-      width: 130,
-      frozen: true,
-      headerSort: false,
-      responsive: 0,
-      formatter: function (cell) {
-        const data = cell.getRow().getData();
-
-        // ✅ SPECIAL: If this is the time row, show "Time (T)"
-        if (data.channel === "__TIME_ROW__") {
-          return '<span style="font-weight: 700; color: #6b7280; font-style: italic;">Time (T)</span>';
-        }
-
-        return `
-          <div style="display: flex; align-items: center; gap: 8px; white-space: nowrap;">
-            <span style="
-              width: 10px;
-              height: 10px;
-              border-radius: 50%;
-              background-color: ${data.color};
-              display: inline-block;
-              border: 1px solid rgba(0,0,0,0.2);
-            "></span>
-            <span style="font-weight: 600; color: #111827;">${cell.getValue()}</span>
-          </div>
-        `;
-      },
-    });
-
-    // Value columns (one per vertical line)
-    for (let i = 0; i < verticalLinesCount; i++) {
-      const lineColor = crosshairColors[i % crosshairColors.length];
-      const colorHex = getColorHex(lineColor);
-      const timeValue = verticalLineTimes[i] || "N/A";
-
-      columns.push({
-        title: `<div style="display: flex; flex-direction: column; align-items: center; gap: 4px;">
-          <span style="width: 12px; height: 12px; border-radius: 50%; background-color: ${colorHex}; border: 1px solid #fff; box-shadow: 0 0 0 1px rgba(0,0,0,0.2);"></span>
-          <span style="font-size: 10px; color: #6b7280; font-weight: 500;">T${
-            i + 1
-          }</span>
-        </div>`,
-        field: `v${i}`,
-        minWidth: 120,
-        width: 120,
-        hozAlign: "right",
-        headerSort: false,
-        responsive: i + 1,
-        formatter: function (cell) {
-          const data = cell.getRow().getData();
-
-          // ✅ SPECIAL: If this is the time row, show time value with blue styling
-          if (data.channel === "__TIME_ROW__") {
-            return `<span style="font-family: 'Courier New', monospace; font-weight: 700; color: #3b82f6;">${cell.getValue()}</span>`;
-          }
-
-          const val = cell.getValue();
-          return `<span style="font-family: 'Courier New', monospace; font-weight: 600; white-space: nowrap;">${
-            val || "N/A"
-          }</span>`;
-        },
-      });
-    }
-
-    // Delta columns (one pair per consecutive vertical lines)
-    for (let i = 0; i < verticalLinesCount - 1; i++) {
-      const line1Color = crosshairColors[i % crosshairColors.length];
-      const line2Color = crosshairColors[(i + 1) % crosshairColors.length];
-      const color1Hex = getColorHex(line1Color);
-      const color2Hex = getColorHex(line2Color);
-
-      // Delta value column
-      columns.push({
-        title: `<span style="display: inline-flex; align-items: center; gap: 3px; white-space: nowrap;">
-          <span style="width: 8px; height: 8px; border-radius: 50%; background-color: ${color1Hex};"></span>
-          <span style="font-size: 10px;">→</span>
-          <span style="width: 8px; height: 8px; border-radius: 50%; background-color: ${color2Hex};"></span>
-          <span style="font-size: 11px; margin-left: 2px;">Δ</span>
-        </span>`,
-        field: `delta${i}`,
-        minWidth: 110,
-        width: 110,
-        hozAlign: "right",
-        headerSort: false,
-        responsive: verticalLinesCount + i * 2 + 1,
-        formatter: function (cell) {
-          const data = cell.getRow().getData();
-
-          // ✅ SPECIAL: If this is the time row, show delta time in green
-          if (data.channel === "__TIME_ROW__") {
-            return `<span style="font-family: 'Courier New', monospace; font-weight: 700; color: #10b981;">${cell.getValue()}</span>`;
-          }
-
-          const val = cell.getValue();
-          return `<span style="font-family: 'Courier New', monospace; font-weight: 600; white-space: nowrap;">${
-            val || "N/A"
-          }</span>`;
-        },
-      });
-
-      // Delta percentage column
-      columns.push({
-        title: `<span style="display: inline-flex; align-items: center; gap: 3px; white-space: nowrap;">
-          <span style="width: 8px; height: 8px; border-radius: 50%; background-color: ${color1Hex};"></span>
-          <span style="font-size: 10px;">→</span>
-          <span style="width: 8px; height: 8px; border-radius: 50%; background-color: ${color2Hex};"></span>
-          <span style="font-size: 11px; margin-left: 2px;">%</span>
-        </span>`,
-        field: `percentage${i}`,
-        minWidth: 90,
-        width: 90,
-        hozAlign: "right",
-        sorter: "number",
-        responsive: verticalLinesCount + i * 2 + 2,
-        formatter: function (cell) {
-          const data = cell.getRow().getData();
-
-          // ✅ SPECIAL: Time row doesn't have percentages
-          if (data.channel === "__TIME_ROW__") {
-            return '<span style="color: #d1d5db;">—</span>';
-          }
-
-          const value = parseFloat(cell.getValue());
-          if (isNaN(value))
-            return '<span style="white-space: nowrap;">N/A</span>';
-
-          let color = "#6b7280";
-          if (value < 0) color = "#dc2626";
-          else if (value > 0) color = "#16a34a";
-
-          return `<span style="font-family: 'Courier New', monospace; font-weight: 700; color: ${color}; white-space: nowrap;">${value.toFixed(
-            1
-          )}%</span>`;
-        },
-      });
-    }
-
-    return columns;
-  }
-
-  /**
-   * Transform deltaData into a single consolidated table format
-   * @param {Array} deltaData - Array of delta sections (one per line pair)
-   * @param {number} verticalLinesCount - Number of vertical lines
-   * @returns {Array} Consolidated Tabulator data
-   */
-  /**
-   * Transform deltaData from multiple charts into a single consolidated table
-   * ✅ FIX: Properly handle data structure where deltaData is an array of sections,
-   * each containing only series from ONE chart. We need to collect ALL series
-   * across all sections into a single merged table.
-   * @param {Array} deltaData - Array of delta sections (one per chart per pair)
-   * @param {number} verticalLinesCount - Number of vertical lines
-   * @param {Array} verticalLineTimes - Array of time values for each vertical line
-   * @returns {Array} Consolidated Tabulator data
-   */
-  function formatTableData(
-    deltaData,
-    verticalLinesCount,
-    verticalLineTimes = []
-  ) {
-    if (!Array.isArray(deltaData) || deltaData.length === 0) {
-      console.warn("[DeltaDrawer] No delta data to format");
-      return [];
-    }
-
-    console.log(
-      `[DeltaDrawer] 📊 Formatting data for ${verticalLinesCount} lines from ${deltaData.length} delta sections`
-    );
-
-    // Build a map: { channelName: { color, v0, v1, v2, ..., delta0, delta1, ..., percentage0, percentage1, ... } }
-    const channelMap = new Map();
-
-    // ✅ KEY FIX: When you have N charts with M vertical lines:
-    // - deltaData has N sections (one per chart)
-    // - Each section has series from ONE chart only
-    // - All sections represent the SAME pair indices
-    // We need to iterate through ALL sections and collect series from each
-
-    // Group sections by their pair index (pairIdx)
-    // ✅ CRITICAL FIX: All sections represent the SAME pair index!
-    // Multiple sections = multiple charts, NOT multiple pairs
-    // Each chart has the same pair (pair 0 when there are 2 vertical lines)
-    const pairGroups = {};
-
-    deltaData.forEach((section, sectionIdx) => {
-      if (!section.series || !Array.isArray(section.series)) {
-        console.warn(
-          `[DeltaDrawer] ⚠️ Section ${sectionIdx} has no series data`
-        );
-        return;
-      }
-
-      // ✅ KEY FIX: All sections are from DIFFERENT CHARTS but represent the SAME PAIR
-      // The pair index is always 0 (or constant based on verticalLinesCount)
-      // Not based on sectionIdx!
-      const pairIdx = 0; // All sections share the same pair index!
-
-      if (!pairGroups[pairIdx]) {
-        pairGroups[pairIdx] = {
-          deltaTime: section.deltaTime || "",
-          allSeries: [],
-        };
-      }
-
-      // Collect ALL series from this section (different chart, same pair)
-      section.series.forEach((seriesData) => {
-        pairGroups[pairIdx].allSeries.push(seriesData);
-      });
-
-      console.log(
-        `[DeltaDrawer] Section ${sectionIdx} (Chart ${sectionIdx}): ${section.series.length} channels for pair ${pairIdx}`
-      );
-    });
-
-    console.log(
-      `[DeltaDrawer] Total pair groups: ${Object.keys(pairGroups).length}`
-    );
-
-    // ✅ NOW: Process each pair group and build channel map
-    Object.entries(pairGroups).forEach(([pairIdx, pairGroup]) => {
-      pairIdx = parseInt(pairIdx);
-
-      pairGroup.allSeries.forEach((seriesData) => {
-        const channelName = seriesData.name || `Unknown_${pairIdx}`;
-
-        // Initialize channel if not exists
-        if (!channelMap.has(channelName)) {
-          channelMap.set(channelName, {
-            channel: channelName,
-            color: seriesData.color || "#6b7280",
-          });
-          console.log(`[DeltaDrawer] ✨ New channel: ${channelName}`);
-        }
-
-        const channelData = channelMap.get(channelName);
-
-        // ✅ FIX: Add v0 value only for the FIRST pair (index 0)
-        if (pairIdx === 0 && !channelData.hasOwnProperty("v0")) {
-          channelData.v0 = seriesData.v1Formatted || "N/A";
-          console.log(
-            `[DeltaDrawer] Channel ${channelName}: v0 = ${channelData.v0}`
-          );
-        }
-
-        // ✅ FIX: Always add v(pairIdx+1) value for this pair
-        const vKey = `v${pairIdx + 1}`;
-        channelData[vKey] = seriesData.v2Formatted || "N/A";
-        console.log(
-          `[DeltaDrawer] Channel ${channelName}: ${vKey} = ${channelData[vKey]}`
-        );
-
-        // ✅ FIX: Add delta and percentage for this pair
-        channelData[`delta${pairIdx}`] = seriesData.deltaFormatted || "N/A";
-        channelData[`percentage${pairIdx}`] =
-          seriesData.percentage != null ? seriesData.percentage : 0;
-
-        console.log(
-          `[DeltaDrawer] Channel ${channelName}: delta${pairIdx} = ${
-            channelData[`delta${pairIdx}`]
-          }, percentage${pairIdx} = ${channelData[`percentage${pairIdx}`]}%`
-        );
-      });
-    });
-
-    // ✅ FIX: Fill in missing values with "N/A" for channels that don't exist in all charts
-    channelMap.forEach((channelData, channelName) => {
-      for (let i = 0; i < verticalLinesCount; i++) {
-        const vKey = `v${i}`;
-        if (!channelData.hasOwnProperty(vKey)) {
-          channelData[vKey] = "N/A";
-          console.log(
-            `[DeltaDrawer] ⚠️ Channel ${channelName}: ${vKey} missing, set to N/A`
-          );
-        }
-      }
-
-      for (let i = 0; i < verticalLinesCount - 1; i++) {
-        if (!channelData.hasOwnProperty(`delta${i}`)) {
-          channelData[`delta${i}`] = "N/A";
-          channelData[`percentage${i}`] = 0;
-          console.log(
-            `[DeltaDrawer] ⚠️ Channel ${channelName}: delta${i} missing, set to N/A`
-          );
-        }
-      }
-    });
-
-    const tableData = Array.from(channelMap.values());
-
-    console.log(
-      `[DeltaDrawer] ✅ Consolidated ${
-        tableData.length
-      } channels with ${verticalLinesCount} value columns and ${
-        verticalLinesCount - 1
-      } delta pairs`
-    );
-    return tableData;
   }
 
   /**
@@ -890,24 +603,11 @@ export function createDeltaDrawer() {
         return;
       }
 
-      // Destroy old table instance
-      console.log(
-        `[DeltaDrawer] 🧹 Destroying ${tabulatorInstances.length} old table(s)`
-      );
-      tabulatorInstances.forEach((table, idx) => {
-        try {
-          if (table && typeof table.destroy === "function") {
-            table.destroy();
-            console.log(`[DeltaDrawer] ✅ Destroyed table ${idx}`);
-          }
-        } catch (error) {
-          console.warn(
-            `[DeltaDrawer] ⚠️ Error destroying table ${idx}:`,
-            error
-          );
-        }
-      });
-      tabulatorInstances = [];
+      // Destroy old renderer
+      if (tableRenderer) {
+        tableRenderer.destroy();
+        tableRenderer = null;
+      }
 
       // Show empty state if insufficient data
       if (!deltaData || deltaData.length === 0 || verticalLinesCount < 2) {
@@ -929,30 +629,22 @@ export function createDeltaDrawer() {
         return;
       }
 
-      // Load Tabulator library
-      try {
-        await loadTabulator();
-      } catch (error) {
-        console.error(
-          "[DeltaDrawer] Tabulator load failed, falling back to HTML:",
-          error
-        );
-        content.innerHTML =
-          '<p style="padding: 16px; color: #dc2626; text-align: center;">Error loading data visualization</p>';
-        return;
-      }
-
-      // Completely clear content and remove all previous table containers
+      // Completely clear content
       content.innerHTML = "";
-
-      // Also ensure old tables are completely removed from DOM
-      const oldTables = content.querySelectorAll(".delta-table-container");
-      oldTables.forEach((table) => table.remove());
       console.log(
         "[DeltaDrawer] ✨ Content cleared, creating single table container"
       );
 
-      // ✅ EXTRACT: Time values BEFORE creating container
+      // Create table container
+      const tableContainer = document.createElement("div");
+      tableContainer.className = "delta-table-container";
+      tableContainer.id = "delta-table-main";
+      content.appendChild(tableContainer);
+      console.log(
+        "[DeltaDrawer] ✅ Table container appended to content (ONCE)"
+      );
+
+      // ✅ EXTRACT: Time values BEFORE creating renderer
       let verticalLineTimes = [];
 
       try {
@@ -999,61 +691,7 @@ export function createDeltaDrawer() {
         }
       }
 
-      // Create single table container
-      const tableContainer = document.createElement("div");
-      tableContainer.className = "delta-table-container";
-
-      // Create header showing all line pairs
-      const header = document.createElement("div");
-      header.className = "delta-table-header";
-
-      let pairsHTML = "";
-      for (let i = 0; i < verticalLinesCount - 1; i++) {
-        const color1 = getColorHex(crosshairColors[i % crosshairColors.length]);
-        const color2 = getColorHex(
-          crosshairColors[(i + 1) % crosshairColors.length]
-        );
-
-        if (i > 0)
-          pairsHTML += '<span style="margin: 0 8px; color: #d1d5db;">|</span>';
-
-        pairsHTML += `
-          <span style="display: inline-flex; align-items: center; gap: 6px;">
-            <span style="width: 14px; height: 14px; border-radius: 50%; background-color: ${color1}; border: 2px solid #fff; box-shadow: 0 1px 2px rgba(0,0,0,0.2);"></span>
-            <span style="color: #9ca3af; font-size: 12px;">→</span>
-            <span style="width: 14px; height: 14px; border-radius: 50%; background-color: ${color2}; border: 2px solid #fff; box-shadow: 0 1px 2px rgba(0,0,0,0.2);"></span>
-          </span>
-        `;
-      }
-
-      header.innerHTML = `
-        <div class="delta-table-title">
-          <span style="display: inline-flex; align-items: center; gap: 8px;">
-            <span style="color: #6b7280; font-size: 13px; font-weight: 500;">${verticalLinesCount} Lines - ${
-        verticalLinesCount - 1
-      } ${verticalLinesCount - 1 === 1 ? "Pair" : "Pairs"}: </span>
-            ${pairsHTML}
-          </span>
-        </div>
-        <div class="delta-table-time">${deltaData.length} Chart${
-        deltaData.length > 1 ? "s" : ""
-      }</div>
-      `;
-      tableContainer.appendChild(header);
-      console.log("[DeltaDrawer] ✅ Header created and appended (ONCE)");
-
-      // Create table div
-      const tableDiv = document.createElement("div");
-      tableDiv.id = "delta-table-main";
-      tableContainer.appendChild(tableDiv);
-      console.log("[DeltaDrawer] ✅ Table div created (ONCE)");
-
-      content.appendChild(tableContainer);
-      console.log(
-        "[DeltaDrawer] ✅ Table container appended to content (ONCE)"
-      );
-
-      // ✅ FIX: Format data with time values
+      // Format data with time values
       const tableData = formatTableData(
         deltaData,
         verticalLinesCount,
@@ -1062,76 +700,29 @@ export function createDeltaDrawer() {
 
       if (tableData.length === 0) {
         console.warn("[DeltaDrawer] No valid table data");
-        tableDiv.innerHTML =
+        tableContainer.innerHTML =
           '<p style="padding: 16px; color: #9ca3af; text-align: center;">No data available</p>';
         return;
       }
 
-      // ✅ FIX: Add time row as first row
-      const timeRow = {
-        channel: "__TIME_ROW__",
-        color: "#3b82f6",
-      };
-
-      // Add time values
-      verticalLineTimes.forEach((timeVal, idx) => {
-        timeRow[`v${idx}`] = timeVal;
-      });
-
-      // Add delta times - only for the actual delta PAIRS (not for each chart)
-      // Number of delta pairs = verticalLinesCount - 1
-      for (let i = 0; i < verticalLinesCount - 1; i++) {
-        // Use the first section's deltaTime (all sections for same pair have same deltaTime)
-        timeRow[`delta${i}`] = deltaData[0]?.deltaTime || "N/A";
-        timeRow[`percentage${i}`] = 0; // No percentage for time row
-      }
-
-      // Insert time row at the beginning
-      tableData.unshift(timeRow);
-
-      // Create single expanding table
+      // Get verticalLinesX state for subscription
       try {
-        const table = new window.Tabulator("#delta-table-main", {
-          data: tableData,
-          columns: buildTableColumns(verticalLinesCount, verticalLineTimes),
-          layout: "fitDataTable",
-          height: "auto",
-          autoColumns: false,
-          responsiveLayout: false,
-          headerSort: true,
-          placeholder: "No Data Available",
-          printAsHtml: true,
-          printStyled: true,
-          layoutColumnsOnNewData: false,
-          persistentLayout: true,
-          rowFormatter: function (row) {
-            // ✅ SPECIAL: Style the time row
-            const data = row.getData();
-            if (data.channel === "__TIME_ROW__") {
-              row.getElement().style.backgroundColor = "#f9fafb";
-              row.getElement().style.fontWeight = "700";
-              row.getElement().style.borderBottom = "2px solid #3b82f6";
-            }
-          },
-        });
+        const mainModule = await import("../main.js");
+        const verticalLinesXState = mainModule.verticalLinesX;
 
-        tabulatorInstances.push(table);
-
-        // Force redraw to ensure proper layout
-        setTimeout(() => {
-          table.redraw(true);
-        }, 100);
+        // Create renderer and subscribe to state changes
+        tableRenderer = createDeltaTableRenderer(
+          tableContainer,
+          verticalLinesXState
+        );
+        tableRenderer.render(tableData, verticalLinesCount);
 
         console.log(
-          `[DeltaDrawer] ✅ Table created with ${
-            tableData.length
-          } rows (including time row) and ${
-            buildTableColumns(verticalLinesCount).length
-          } columns`
+          `[DeltaDrawer] ✅ Table rendered with ${tableData.length} rows (including time row) and ${verticalLinesCount} columns`
         );
       } catch (error) {
         console.error("[DeltaDrawer] ❌ Failed to create table:", error);
-        tableDiv.innerHTML =
+        tableContainer.innerHTML =
           '<p style="padding: 16px; color: #dc2626;">Error creating table</p>';
       }
     },
