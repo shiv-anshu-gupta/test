@@ -4,6 +4,7 @@
  */
 import { crosshairColors } from "../utils/constants.js";
 import { getNearestIndex } from "../utils/helpers.js";
+import { debounce } from "../utils/computedChannelOptimization.js";
 
 export default function verticalLinePlugin(
   verticalLinesXState,
@@ -33,20 +34,18 @@ export default function verticalLinePlugin(
           const overlay = u.over;
           overlayRef = overlay;
 
-          // Subscribe to state changes
-          if (
-            verticalLinesXState &&
-            typeof verticalLinesXState.subscribe === "function"
-          ) {
-            unsubscribe = verticalLinesXState.subscribe(async () => {
-              if (getCharts) {
-                const charts = getCharts();
-                const { collectChartDeltas } = await import(
-                  "../utils/calculateDeltas.js"
-                );
-                const allDeltaData = [];
+          // ✅ Debounce the update function to prevent multiple rapid calls
+          const debouncedDeltaUpdate = debounce(async () => {
+            if (getCharts) {
+              const charts = getCharts();
+              const { collectChartDeltas } = await import(
+                "../utils/calculateDeltas.js"
+              );
+              const allDeltaData = [];
 
-                for (const chart of charts) {
+              // ✅ Collect all chart deltas in ONE batch
+              for (const chart of charts) {
+                try {
                   const chartDeltas = collectChartDeltas(
                     verticalLinesXState.asArray(),
                     chart,
@@ -55,21 +54,45 @@ export default function verticalLinePlugin(
                   if (chartDeltas.length > 0) {
                     allDeltaData.push(...chartDeltas);
                   }
-                }
-
-                if (allDeltaData.length > 0) {
-                  try {
-                    const { deltaWindow } = await import("../main.js");
-                    const linesLength =
-                      verticalLinesXState?.asArray?.()?.length || 0;
-                    if (deltaWindow) {
-                      deltaWindow.update(allDeltaData, linesLength);
-                    }
-                  } catch (e) {
-                    // Silent fail
-                  }
+                } catch (error) {
+                  console.error(
+                    "[verticalLinePlugin] Error collecting chart deltas:",
+                    error
+                  );
                 }
               }
+
+              if (allDeltaData.length > 0) {
+                try {
+                  const { deltaWindow } = await import("../main.js");
+                  const linesLength =
+                    verticalLinesXState?.asArray?.()?.length || 0;
+                  if (deltaWindow) {
+                    console.log(
+                      "[verticalLinePlugin] 🔄 Calling deltaWindow.update() with debounce"
+                    );
+                    deltaWindow.update(allDeltaData, linesLength);
+                  }
+                } catch (e) {
+                  console.error(
+                    "[verticalLinePlugin] Error updating delta window:",
+                    e
+                  );
+                }
+              }
+            }
+          }, 100); // ✅ 100ms debounce to batch rapid state changes
+
+          // Subscribe to state changes with debounced update
+          if (
+            verticalLinesXState &&
+            typeof verticalLinesXState.subscribe === "function"
+          ) {
+            unsubscribe = verticalLinesXState.subscribe(async () => {
+              console.log(
+                "[verticalLinePlugin] Subscription triggered, calling debounced update"
+              );
+              debouncedDeltaUpdate();
             });
           }
 

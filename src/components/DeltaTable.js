@@ -82,9 +82,25 @@ export function buildTableBody(tableData, verticalLinesCount) {
     return `<tbody><tr><td colspan="100" class="delta-empty">No data available</td></tr></tbody>`;
   }
 
+  // ✅ Debug: Log first row to inspect structure
+  console.log("[DeltaTable] First row structure:", tableData[0]);
+  console.log("[DeltaTable] Total rows:", tableData.length);
+  console.log("[DeltaTable] VerticalLinesCount:", verticalLinesCount);
+
   const rows = tableData.map((row, rowIndex) => {
     const cells = [];
     const isTimeRow = row.channel === "__TIME_ROW__";
+
+    // ✅ Debug: Log values being extracted for first non-time row
+    if (rowIndex === 1 || (rowIndex === 0 && !isTimeRow)) {
+      console.log(`[DeltaTable] Row ${rowIndex} values:`, {
+        channel: row.channel,
+        v0: row.v0,
+        v1: row.v1,
+        delta0: row.delta0,
+        percentage0: row.percentage0,
+      });
+    }
 
     // Channel name cell
     if (isTimeRow) {

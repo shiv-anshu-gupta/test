@@ -30,6 +30,13 @@ export function createDeltaTableRenderer(
     currentTableData = tableData;
     currentVerticalLinesCount = verticalLinesCount;
 
+    // ✅ Debug: Log data being rendered
+    console.log("[DeltaTableRenderer] render() called with:", {
+      rowCount: tableData.length,
+      linesCount: verticalLinesCount,
+      firstRow: tableData[0],
+    });
+
     // Extract time values from verticalLinesX state
     const verticalLineTimes = [];
     try {

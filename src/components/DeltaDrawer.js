@@ -13,6 +13,7 @@ import { formatTableData } from "./DeltaTableDataFormatter.js";
 export function createDeltaDrawer() {
   let isOpen = false;
   let tableRenderer = null; // Replace tabulatorInstances with single renderer
+  let lastUpdateHash = null; // Track last update to prevent duplicate renders
 
   const styleHTML = `
     <style id="delta-drawer-styles">
@@ -586,7 +587,19 @@ export function createDeltaDrawer() {
     },
 
     update: async (deltaData = [], verticalLinesCount = 0) => {
-      // ✅ DEBUG: Add trace to see if update() is called multiple times
+      // ✅ Generate hash of current data to prevent duplicate renders
+      const currentHash = JSON.stringify({ deltaData, verticalLinesCount });
+
+      // ✅ Skip if data hasn't changed
+      if (currentHash === lastUpdateHash) {
+        console.log(
+          "[DeltaDrawer] ⏭️ Skipping duplicate update (data unchanged)"
+        );
+        return;
+      }
+
+      lastUpdateHash = currentHash;
+
       console.log(
         "[DeltaDrawer] update() called with",
         deltaData.length,
@@ -594,7 +607,6 @@ export function createDeltaDrawer() {
         verticalLinesCount,
         "vertical lines"
       );
-      console.trace("[DeltaDrawer] 📍 Update() call stack:");
       injectDrawerHTML();
 
       const content = document.getElementById("delta-drawer-content");

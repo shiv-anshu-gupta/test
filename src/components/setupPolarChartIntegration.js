@@ -2,6 +2,7 @@
  * Phasor Chart Integration with Vertical Lines
  * Updates polar chart when vertical line moves on the timeline
  */
+import { debounce } from "../utils/computedChannelOptimization.js";
 
 export function setupPolarChartWithVerticalLines(
   polarChart,
@@ -76,6 +77,18 @@ export function setupPolarChartWithVerticalLines(
     return nearestIndex;
   }
 
+  // ✅ Debounce the polar chart update
+  const debouncedUpdatePolar = debounce((newLines) => {
+    console.log(
+      "[setupPolarChartWithVerticalLines] Debounced subscription triggered with lines:",
+      newLines
+    );
+    if (newLines && newLines.length > 0) {
+      // Use the first vertical line (primary reference)
+      updatePolarFromVerticalLine(newLines[0]);
+    }
+  }, 100); // 100ms debounce
+
   // Subscribe to vertical line changes
   console.log("[setupPolarChartWithVerticalLines] Attempting subscription...");
   console.log(
@@ -88,13 +101,9 @@ export function setupPolarChartWithVerticalLines(
     console.log("[setupPolarChartWithVerticalLines] Using .subscribe() method");
     verticalLinesX.subscribe((newLines) => {
       console.log(
-        "[setupPolarChartWithVerticalLines] Subscription triggered with lines:",
-        newLines
+        "[setupPolarChartWithVerticalLines] Subscription triggered, calling debounced update"
       );
-      if (newLines && newLines.length > 0) {
-        // Use the first vertical line (primary reference)
-        updatePolarFromVerticalLine(newLines[0]);
-      }
+      debouncedUpdatePolar(newLines);
     });
 
     console.log(
