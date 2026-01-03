@@ -11,6 +11,7 @@
 const themeBroadcast = {
   channel: null,
   currentTheme: "dark",
+  childWindows: new Map(), // ✅ Store references to child windows
 
   /**
    * Initialize - Call once in main window
@@ -100,6 +101,43 @@ const themeBroadcast = {
   },
 
   /**
+   * Register a child window
+   * ✅ Call this IMMEDIATELY after creating a popup window
+   * @param {string} name - Window identifier
+   * @param {Window} windowRef - Reference to the window
+   */
+  registerWindow(name, windowRef) {
+    if (windowRef && !windowRef.closed) {
+      this.childWindows.set(name, windowRef);
+      console.log(`[themeBroadcast] ✅ Registered window: ${name}`);
+
+      // Send current theme immediately
+      try {
+        windowRef.postMessage({ theme: this.currentTheme }, "*");
+        console.log(
+          `[themeBroadcast] Sent initial theme to ${name}:`,
+          this.currentTheme
+        );
+      } catch (e) {
+        console.warn(
+          `[themeBroadcast] Failed to send theme to ${name}:`,
+          e.message
+        );
+      }
+    }
+  },
+
+  /**
+   * Unregister a child window
+   * ✅ Call this when closing a popup window
+   * @param {string} name - Window identifier
+   */
+  unregisterWindow(name) {
+    this.childWindows.delete(name);
+    console.log(`[themeBroadcast] Unregistered window: ${name}`);
+  },
+
+  /**
    * Load theme.css in child window
    * @param {Window} childWindow - Popup window reference
    */
@@ -132,29 +170,23 @@ const themeBroadcast = {
   },
 
   /**
-   * Broadcast theme to all known child windows
-   * ✅ FIXED: Only send to ACTUAL popup windows (not drawers/sidebars)
-   * DeltaWindow is a drawer (sidebar), NOT a popup window!
+   * Broadcast theme to child windows
+   * ✅ FIXED: Only send to registered windows (never uses window.open to find them)
    * @param {string} theme - 'light' or 'dark'
    */
   broadcastToChildren(theme) {
-    // ✅ REMOVED 'DeltaWindow' - it's a drawer/sidebar, not a popup!
-    // Only actual popup windows: ChannelListWindow, COMTRADE_Merger
-    const windowNames = ["ChannelListWindow", "COMTRADE_Merger"];
-
-    windowNames.forEach((name) => {
+    this.childWindows.forEach((win, name) => {
       try {
-        const win = window.open("", name);
-        if (win && !win.closed && win.location.href !== "about:blank") {
+        if (win && !win.closed) {
           win.postMessage({ theme }, "*");
           console.log(`[themeBroadcast] Theme sent to ${name}:`, theme);
+        } else {
+          // Window was closed, remove it
+          this.childWindows.delete(name);
+          console.log(`[themeBroadcast] Removed closed window: ${name}`);
         }
       } catch (e) {
-        // Window doesn't exist or is blocked by CORS - ignore silently
-        console.log(
-          `[themeBroadcast] Window '${name}' not accessible:`,
-          e.message
-        );
+        console.warn(`[themeBroadcast] Failed to send to ${name}:`, e.message);
       }
     });
   },

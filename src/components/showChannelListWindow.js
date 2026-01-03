@@ -63,6 +63,7 @@
 
 import { createChannelList } from "./ChannelList.js";
 import { autoGroupChannels } from "../utils/autoGroupChannels.js";
+import themeBroadcast from "../utils/themeBroadcast.js";
 
 /**
  * Open a Channel List popup and initialize the child UI.
@@ -99,12 +100,21 @@ export function showChannelListWindow(
     return false;
   }
 
-  // ✅ Store reference for theme sync
+  // ✅ REGISTER window immediately (before other setup)
+  themeBroadcast.registerWindow("ChannelListWindow", win);
+
+  // ✅ Load theme CSS
+  themeBroadcast.loadThemeCSS(win);
+
+  // ✅ Store reference for cleanup
   window.__channelListWindow = win;
 
-  // ✅ Clean up when popup closes
+  // ✅ Unregister when popup closes
   win.addEventListener("beforeunload", () => {
-    console.log("[ChannelList] Popup closing, cleaning up reference");
+    console.log(
+      "[ChannelList] Popup closing, unregistering from theme broadcast"
+    );
+    themeBroadcast.unregisterWindow("ChannelListWindow");
     window.__channelListWindow = null;
   });
 
@@ -113,24 +123,6 @@ export function showChannelListWindow(
   // ✅ Apply current theme to popup immediately
   const currentTheme = localStorage.getItem("comtrade-theme") || "dark";
   win.document.documentElement.setAttribute("data-theme", currentTheme);
-
-  // ✅ Load theme CSS in child window
-  try {
-    const themeCssLink = win.document.createElement("link");
-    themeCssLink.rel = "stylesheet";
-    themeCssLink.href = new URL(
-      "/styles/theme.css",
-      window.location.origin
-    ).href;
-    themeCssLink.crossOrigin = "anonymous";
-    win.document.head.appendChild(themeCssLink);
-    console.log("[showChannelListWindow] ✅ Theme CSS loaded in child window");
-  } catch (e) {
-    console.warn(
-      "[showChannelListWindow] Failed to load theme CSS:",
-      e.message
-    );
-  }
 
   // ✅ Listen for theme changes from parent window
   win.addEventListener("message", (ev) => {

@@ -23,6 +23,8 @@
  * // Main app receives and processes them automatically
  */
 
+import themeBroadcast from "./themeBroadcast.js";
+
 let mergerWindow = null;
 let mergerWindowInterval = null;
 
@@ -71,6 +73,20 @@ export function openMergerWindow() {
   }
 
   console.log("[mergerWindowLauncher] ✅ Merger window opened successfully");
+
+  // ✅ REGISTER window immediately (before other setup)
+  themeBroadcast.registerWindow("COMTRADE_Merger", mergerWindow);
+
+  // ✅ Load theme CSS
+  themeBroadcast.loadThemeCSS(mergerWindow);
+
+  // ✅ Unregister when window closes
+  const closeCheckInterval = setInterval(() => {
+    if (mergerWindow && mergerWindow.closed) {
+      themeBroadcast.unregisterWindow("COMTRADE_Merger");
+      clearInterval(closeCheckInterval);
+    }
+  }, 1000);
 
   // ✅ Setup theme synchronization (wait for window to load)
   setTimeout(() => {
