@@ -3,9 +3,13 @@
 
 /**
  * Create and configure worker
+ * ✅ FIXED: Using new URL() for Parcel compatibility
  */
 export const createComputedChannelWorker = () => {
-  return new Worker("./src/workers/computedChannelWorker.js");
+  return new Worker(
+    new URL("../../../src/workers/computedChannelWorker.js", import.meta.url),
+    { type: "module" }
+  );
 };
 
 /**

@@ -2,13 +2,39 @@
  * Web Worker for computing channel expressions
  * Uses Transferable Objects (ArrayBuffers) for efficient data transfer
  * Runs in separate thread to avoid blocking UI
+ * ✅ FIXED: Uses dynamic import instead of importScripts for Parcel compatibility
  */
 
-importScripts(
-  "https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.11.0/math.min.js"
-);
+// Import math.js dynamically for module compatibility
+let math = null;
+
+// Load math.js when worker starts
+(async () => {
+  try {
+    const mathModule = await import("mathjs");
+    math = mathModule;
+    console.log("[Worker] math.js loaded successfully");
+    // Signal ready
+    self.postMessage({ type: "ready" });
+  } catch (error) {
+    console.error("[Worker] Failed to load math.js:", error);
+    self.postMessage({
+      type: "error",
+      message: "Failed to load math.js",
+      error: error.message,
+    });
+  }
+})();
 
 self.onmessage = function (e) {
+  // Wait for math.js to be loaded
+  if (!math) {
+    console.warn("[Worker] math.js not loaded yet, retrying...");
+    // Retry after a short delay
+    setTimeout(() => self.onmessage(e), 50);
+    return;
+  }
+
   const {
     mathJsExpr,
     analogBuffers, // ✅ ArrayBuffers instead of arrays
@@ -41,7 +67,7 @@ self.onmessage = function (e) {
     console.log("[Worker] Loaded digital channels:", digitalArray.length);
 
     // Compile expression once (not in loop)
-    const compiled = self.math.compile(mathJsExpr);
+    const compiled = math.compile(mathJsExpr);
 
     // Use typed array for results
     const results = new Float64Array(sampleCount);
