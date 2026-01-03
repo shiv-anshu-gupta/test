@@ -114,6 +114,33 @@ export function showChannelListWindow(
   const currentTheme = localStorage.getItem("comtrade-theme") || "dark";
   win.document.documentElement.setAttribute("data-theme", currentTheme);
 
+  // ✅ Load theme CSS in child window
+  try {
+    const themeCssLink = win.document.createElement("link");
+    themeCssLink.rel = "stylesheet";
+    themeCssLink.href = new URL(
+      "/styles/theme.css",
+      window.location.origin
+    ).href;
+    themeCssLink.crossOrigin = "anonymous";
+    win.document.head.appendChild(themeCssLink);
+    console.log("[showChannelListWindow] ✅ Theme CSS loaded in child window");
+  } catch (e) {
+    console.warn(
+      "[showChannelListWindow] Failed to load theme CSS:",
+      e.message
+    );
+  }
+
+  // ✅ Listen for theme changes from parent window
+  win.addEventListener("message", (ev) => {
+    if (ev.data && ev.data.theme) {
+      win.document.documentElement.setAttribute("data-theme", ev.data.theme);
+      localStorage.setItem("comtrade-theme", ev.data.theme);
+      console.log("[ChannelList] Theme updated:", ev.data.theme);
+    }
+  });
+
   // Bind full cfg/data to the popup for module scripts to consume
   try {
     win.globalCfg = cfg;

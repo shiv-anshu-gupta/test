@@ -11,6 +11,7 @@
  * - Receives combined/merged COMTRADE files from merger app
  * - Passes merged data to main app for standard processing
  * - Handles window close and messaging errors gracefully
+ * - ✅ Synchronizes theme with merger window
  *
  * @example
  * import { openMergerWindow, closeMergerWindow } from './mergerWindowLauncher.js';
@@ -70,6 +71,31 @@ export function openMergerWindow() {
   }
 
   console.log("[mergerWindowLauncher] ✅ Merger window opened successfully");
+
+  // ✅ Setup theme synchronization (wait for window to load)
+  setTimeout(() => {
+    if (mergerWindow && !mergerWindow.closed) {
+      // Send initial theme
+      const currentTheme = localStorage.getItem("comtrade-theme") || "dark";
+      mergerWindow.postMessage({ theme: currentTheme }, "*");
+      console.log(
+        "[mergerWindowLauncher] ✅ Initial theme sent to merger:",
+        currentTheme
+      );
+
+      // Set up listener for theme changes in main window
+      // When theme changes in main window, send it to merger window
+      window.addEventListener("message", (ev) => {
+        if (ev.data && ev.data.theme && mergerWindow && !mergerWindow.closed) {
+          mergerWindow.postMessage({ theme: ev.data.theme }, "*");
+          console.log(
+            "[mergerWindowLauncher] Theme updated in merger:",
+            ev.data.theme
+          );
+        }
+      });
+    }
+  }, 500);
 
   // Monitor window status
   monitorMergerWindow();

@@ -69,69 +69,6 @@ export function createDeltaDrawer() {
     setupEventListeners();
   }
 
-  /**
-   * Dynamically load Tabulator library from CDN
-   * @returns {Promise<boolean>} True if Tabulator is ready to use
-   */
-  async function loadTabulator() {
-    // Return immediately if already loaded
-    if (window.Tabulator) {
-      console.log("[DeltaDrawer] Tabulator already loaded");
-      return true;
-    }
-
-    return new Promise((resolve, reject) => {
-      // Load CSS (check if not already loaded)
-      if (!document.querySelector('link[href*="tabulator"]')) {
-        const cssLink = document.createElement("link");
-        cssLink.rel = "stylesheet";
-        cssLink.href =
-          "https://unpkg.com/tabulator-tables@5.5.0/dist/css/tabulator_simple.min.css";
-        document.head.appendChild(cssLink);
-        console.log("[DeltaDrawer] Tabulator CSS loaded");
-      }
-
-      // Load JavaScript
-      if (!document.querySelector('script[src*="tabulator"]')) {
-        const script = document.createElement("script");
-        script.src =
-          "https://unpkg.com/tabulator-tables@5.5.0/dist/js/tabulator.min.js";
-        script.onload = () => {
-          console.log("[DeltaDrawer] Tabulator JS loaded successfully");
-          resolve(true);
-        };
-        script.onerror = (error) => {
-          console.error("[DeltaDrawer] Failed to load Tabulator:", error);
-          reject(new Error("Tabulator load failed"));
-        };
-        document.head.appendChild(script);
-      } else {
-        resolve(true);
-      }
-    });
-  }
-
-  /**
-   * Convert color name to hex value
-   * @param {string} colorName - Color from crosshairColors array
-   * @returns {string} Hex color code
-   */
-  function getColorHex(colorName) {
-    const colorMap = {
-      red: "#ef4444",
-      blue: "#3b82f6",
-      green: "#22c55e",
-      magenta: "#d946ef",
-      purple: "#a855f7",
-      orange: "#f97316",
-      brown: "#92400e",
-      black: "#000000",
-      pink: "#ec4899",
-      yellow: "#eab308",
-    };
-    return colorMap[colorName] || "#6b7280";
-  }
-
   function setupEventListeners() {
     const drawer = document.getElementById("delta-drawer");
     const panel = document.getElementById("delta-drawer-panel");

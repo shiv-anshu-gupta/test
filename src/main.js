@@ -2187,36 +2187,23 @@ try {
   console.warn("[main.js] Failed to setup computed channels listener:", e);
 }
 
-const themeToggleBtn = document.getElementById("themeToggleBtn");
-const themeIcon = document.getElementById("themeIcon");
+import themeBroadcast from "./utils/themeBroadcast.js";
 
-// ✅ Initialize theme button with ThemeContext
-if (themeToggleBtn && themeIcon) {
-  // Set initial icon
-  themeIcon.textContent = themeContext.isDark() ? "🌙" : "☀️";
+// ✅ Initialize unified theme broadcast system
+themeBroadcast.init();
 
-  // Toggle on click
-  themeToggleBtn.addEventListener("click", (event) => {
-    event.preventDefault();
-    event.stopPropagation();
-
-    const newTheme = themeContext.toggle();
-    themeIcon.textContent = newTheme === "dark" ? "🌙" : "☀️";
-    console.log(`[main.js] Theme switched to: ${newTheme}`);
-
-    // Update all chart colors with the new theme
+// ✅ Listen for theme changes to update charts
+window.addEventListener("message", (ev) => {
+  if (ev.data && ev.data.theme) {
+    console.log("[main.js] Theme change received, updating charts");
     updateAllChartAxisColors(charts);
-  });
-}
+  }
+});
 
-// ✅ Subscribe to global theme changes
+// ✅ Keep ThemeContext for backward compatibility
+// Subscribe to global theme changes
 const themeUnsubscribe = themeContext.subscribe(({ theme, isDark, colors }) => {
   console.log(`[Main] Global theme changed to: ${theme}`);
-
-  // Update icon
-  if (themeIcon) {
-    themeIcon.textContent = isDark ? "🌙" : "☀️";
-  }
 
   // Update body class for additional styling
   document.body.classList.toggle("dark-theme", isDark);
@@ -2227,25 +2214,6 @@ const themeUnsubscribe = themeContext.subscribe(({ theme, isDark, colors }) => {
       detail: { theme, isDark, colors },
     })
   );
-});
-
-function updateThemeButton(theme) {
-  if (themeIcon) {
-    if (theme === "light") {
-      themeIcon.textContent = "🌙";
-    } else {
-      themeIcon.textContent = "☀️";
-    }
-  }
-}
-
-// Update button on load
-updateThemeButton(themeContext.isDark() ? "dark" : "light");
-
-// Listen for theme changes from other sources
-window.addEventListener("themeChanged", (e) => {
-  updateThemeButton(e.detail.theme);
-  console.log("[main.js] Theme changed event received:", e.detail.theme);
 });
 
 // Reference existing buttons from header
