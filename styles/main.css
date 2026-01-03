@@ -26,6 +26,9 @@
 @import url("./utilities/animations.css");
 @import url("./utilities/helpers.css");
 
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 /* === Reset & Base === */
 * {
   margin: 0;
