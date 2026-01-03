@@ -133,10 +133,14 @@ const themeBroadcast = {
 
   /**
    * Broadcast theme to all known child windows
+   * ✅ FIXED: Only send to ACTUAL popup windows (not drawers/sidebars)
+   * DeltaWindow is a drawer (sidebar), NOT a popup window!
    * @param {string} theme - 'light' or 'dark'
    */
   broadcastToChildren(theme) {
-    const windowNames = ["DeltaWindow", "ChannelListWindow", "COMTRADE_Merger"];
+    // ✅ REMOVED 'DeltaWindow' - it's a drawer/sidebar, not a popup!
+    // Only actual popup windows: ChannelListWindow, COMTRADE_Merger
+    const windowNames = ["ChannelListWindow", "COMTRADE_Merger"];
 
     windowNames.forEach((name) => {
       try {
