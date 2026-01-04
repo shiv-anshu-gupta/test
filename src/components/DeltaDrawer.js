@@ -2,6 +2,9 @@
  * Delta Display Drawer Component
  * Shows detailed crosshair values in a slide-out drawer (sidebar)
  * Uses plain HTML table with createState subscriptions for auto-updates
+ *
+ * HTML structure is pre-built in index.html
+ * This file only handles styling and behavior
  */
 
 import { sidebarStore } from "../utils/sidebarStore.js";
@@ -18,80 +21,21 @@ export function createDeltaDrawer() {
   // ✅ CSS moved to styles/components/drawer.css
   // No inline styles needed - all styling is now managed through CSS imports
 
-  const drawerHTML = `
-    <div id="delta-drawer">
-      <div id="delta-drawer-backdrop"></div>
-      <div id="delta-drawer-scrim">
-        <div id="delta-drawer-panel">
-          <div class="delta-drawer-header">
-            <div class="delta-drawer-header-content">
-              <h2 id="delta-drawer-title">Crosshair Data</h2>
-            </div>
-          </div>
-          <div id="delta-drawer-content">
-            <p class="delta-empty-state">No crosshair data available</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  `;
-
-  function injectDrawerHTML() {
-    if (document.getElementById("delta-drawer")) {
-      console.log("[DeltaDrawer] HTML already injected, skipping");
-      return; // Already injected
-    }
-
-    console.log("[DeltaDrawer] Injecting drawer HTML...");
-
-    // Inject drawer HTML (CSS now comes from styles/components/drawer.css)
-    const container = document.createElement("div");
-    container.innerHTML = drawerHTML;
-    document.body.appendChild(container.firstElementChild);
-    console.log("[DeltaDrawer] Drawer HTML injected into body");
-
-    // Verify injection
-    const drawer = document.getElementById("delta-drawer");
-    const panel = document.getElementById("delta-drawer-panel");
-    if (drawer && panel) {
-      console.log(
-        "[DeltaDrawer] ✅ Injection verified - drawer and panel found in DOM"
-      );
-    } else {
-      console.error(
-        "[DeltaDrawer] ❌ Injection failed - drawer:",
-        !!drawer,
-        "panel:",
-        !!panel
-      );
-    }
-
-    setupEventListeners();
-  }
-
   function setupEventListeners() {
     const drawer = document.getElementById("delta-drawer");
     const panel = document.getElementById("delta-drawer-panel");
     const scrim = document.getElementById("delta-drawer-scrim");
 
-    if (!drawer) return;
+    if (!drawer) {
+      console.warn("[DeltaDrawer] Delta drawer element not found in DOM");
+      return;
+    }
 
-    // Close drawer
-    const closeDrawer = () => {
-      isOpen = false;
-      drawer.classList.remove("open");
-      drawer.style.display = "none";
-      scrim.style.display = "none";
-      panel.classList.remove("open");
-    };
-
-    // Don't close on backdrop click - portal should not block parent
-    // backdrop.addEventListener("click", closeDrawer);
-
-    // Close on Escape key
+    // Close drawer on Escape key
     document.addEventListener("keydown", (e) => {
       if (e.key === "Escape" && isOpen) {
-        closeDrawer();
+        const api = window.__deltaDrawerAPI;
+        if (api) api.hide();
       }
     });
   }
@@ -100,7 +44,6 @@ export function createDeltaDrawer() {
   const api = {
     show: () => {
       console.log("[DeltaDrawer] show() called");
-      injectDrawerHTML();
 
       const drawer = document.getElementById("delta-drawer");
       const backdrop = document.getElementById("delta-drawer-backdrop");
@@ -195,7 +138,6 @@ export function createDeltaDrawer() {
         verticalLinesCount,
         "vertical lines"
       );
-      injectDrawerHTML();
 
       const content = document.getElementById("delta-drawer-content");
       if (!content) {

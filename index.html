@@ -40,7 +40,7 @@
           <div class="app-logo">⚡</div>
           <div class="app-title">
             <h2
-              class="bg-gradient-to-r from-green-500 to-blue-600 bg-clip-text text-transparent"
+              class="bg-linear-to-r from-green-500 to-blue-600 bg-clip-text text-transparent"
             >
               COMTRADE Viewer
             </h2>
@@ -356,6 +356,96 @@
       >
         Analysis
       </button>
+    </div>
+
+    <!-- Analysis Sidebar Container (hidden by default) -->
+    <div id="analysis-sidebar" style="display: none">
+      <div id="analysis-sidebar-backdrop"></div>
+
+      <div id="analysis-sidebar-panel">
+        <!-- Header -->
+        <div class="analysis-sidebar-header">
+          <h2 class="analysis-sidebar-title">Analysis</h2>
+          <button
+            id="analysis-sidebar-close"
+            class="analysis-sidebar-close-btn"
+            title="Close sidebar"
+          >
+            ✕
+          </button>
+        </div>
+
+        <!-- Controls -->
+        <div
+          style="
+            padding: 12px 16px;
+            border-bottom: 1px solid #e5e7eb;
+            flex-shrink: 0;
+          "
+        >
+          <div class="analysis-sidebar-controls">
+            <button
+              id="floatingWindowBtn"
+              class="analysis-sidebar-control-btn"
+              title="Display as floating window"
+            >
+              ▦ Floating
+            </button>
+            <button
+              id="belowChartBtn"
+              class="analysis-sidebar-control-btn"
+              title="Display below chart"
+            >
+              📦 Below
+            </button>
+            <button
+              id="returnSidebarBtn"
+              class="analysis-sidebar-control-btn"
+              title="Return to sidebar"
+              style="display: none"
+            >
+              ⬅ Sidebar
+            </button>
+            <button
+              id="returnSidebarFromBelowBtn"
+              class="analysis-sidebar-control-btn"
+              title="Return to sidebar"
+              style="display: none"
+            >
+              ⬅ Sidebar
+            </button>
+          </div>
+        </div>
+
+        <!-- Content -->
+        <div class="analysis-sidebar-content">
+          <div class="polar-chart-section" id="polarChartSection">
+            <div class="polar-section-header">
+              <h3 class="polar-section-title">Phasor Diagram</h3>
+            </div>
+            <div id="polarChartContainer" class="polar-chart-container">
+              <span>Polar Chart</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Delta Drawer Container (hidden by default) -->
+    <div id="delta-drawer" style="display: none">
+      <div id="delta-drawer-backdrop"></div>
+      <div id="delta-drawer-scrim">
+        <div id="delta-drawer-panel">
+          <div class="delta-drawer-header">
+            <div class="delta-drawer-header-content">
+              <h2 id="delta-drawer-title">Crosshair Data</h2>
+            </div>
+          </div>
+          <div id="delta-drawer-content">
+            <p class="delta-empty-state">No crosshair data available</p>
+          </div>
+        </div>
+      </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/uplot@1.6.32/dist/uPlot.iife.js"></script>

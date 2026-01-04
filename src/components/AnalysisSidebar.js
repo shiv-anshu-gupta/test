@@ -3,6 +3,9 @@
  * Displays phasor diagram and analysis tools in a slide-out sidebar
  * Works like React portal - doesn't affect parent layout
  * Uses plain HTML and CSS - no Tailwind
+ *
+ * HTML structure is pre-built in index.html
+ * This file only handles styling and behavior
  */
 
 import { sidebarStore } from "../utils/sidebarStore.js";
@@ -153,76 +156,22 @@ export function createAnalysisSidebar() {
     </style>
   `;
 
-  const sidebarHTML = `
-    <div id="analysis-sidebar">
-      <div id="analysis-sidebar-backdrop"></div>
-      
-      <div id="analysis-sidebar-panel">
-        <!-- Header -->
-        <div class="analysis-sidebar-header">
-          <h2 class="analysis-sidebar-title">Analysis</h2>
-          <button id="analysis-sidebar-close" class="analysis-sidebar-close-btn" title="Close sidebar">
-            ✕
-          </button>
-        </div>
-
-        <!-- Controls -->
-        <div style="padding: 12px 16px; border-bottom: 1px solid #e5e7eb; flex-shrink: 0;">
-          <div class="analysis-sidebar-controls">
-            <button id="floatingWindowBtn" class="analysis-sidebar-control-btn" title="Display as floating window">
-              ▦ Floating
-            </button>
-            <button id="belowChartBtn" class="analysis-sidebar-control-btn" title="Display below chart">
-              📦 Below
-            </button>
-            <button id="returnSidebarBtn" class="analysis-sidebar-control-btn" title="Return to sidebar" style="display: none;">
-              ⬅ Sidebar
-            </button>
-            <button id="returnSidebarFromBelowBtn" class="analysis-sidebar-control-btn" title="Return to sidebar" style="display: none;">
-              ⬅ Sidebar
-            </button>
-          </div>
-        </div>
-
-        <!-- Content -->
-        <div class="analysis-sidebar-content">
-          <div class="polar-chart-section" id="polarChartSection">
-            <div class="polar-section-header">
-              <h3 class="polar-section-title">Phasor Diagram</h3>
-            </div>
-            <div id="polarChartContainer" class="polar-chart-container">
-              <span>Polar Chart</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  `;
-
-  function injectSidebarHTML() {
-    if (document.getElementById("analysis-sidebar")) return; // Already injected
+  function injectStyles() {
+    // Check if styles already injected
+    if (document.getElementById("analysis-sidebar-styles")) return;
 
     // Inject styles
     const styleContainer = document.createElement("div");
     styleContainer.innerHTML = styleHTML;
     document.head.appendChild(styleContainer.firstElementChild);
-
-    // Inject sidebar HTML
-    const container = document.createElement("div");
-    container.innerHTML = sidebarHTML;
-    document.body.appendChild(container.firstElementChild);
-    document.body.appendChild(container.lastElementChild);
-
-    setupEventListeners();
   }
 
   function setupEventListeners() {
     const sidebar = document.getElementById("analysis-sidebar");
     const panel = document.getElementById("analysis-sidebar-panel");
     const closeBtn = document.getElementById("analysis-sidebar-close");
-    const toggleBtn = document.getElementById("analysis-sidebar-toggle");
 
-    if (!sidebar || !closeBtn || !toggleBtn) return;
+    if (!sidebar || !closeBtn) return;
 
     // Close sidebar
     const closeSidebar = () => {
@@ -233,7 +182,6 @@ export function createAnalysisSidebar() {
 
     // Open sidebar
     const openSidebar = () => {
-      injectSidebarHTML(); // Ensure it exists
       const sidebar = document.getElementById("analysis-sidebar");
       const panel = document.getElementById("analysis-sidebar-panel");
 
@@ -243,7 +191,6 @@ export function createAnalysisSidebar() {
     };
 
     closeBtn.addEventListener("click", closeSidebar);
-    toggleBtn.addEventListener("click", openSidebar);
 
     // Keyboard: ESC to close
     const handleEscKey = (e) => {
@@ -258,12 +205,15 @@ export function createAnalysisSidebar() {
   const api = {
     show: () => {
       console.log("[AnalysisSidebar] show() called");
-      injectSidebarHTML();
+      injectStyles();
 
       const sidebar = document.getElementById("analysis-sidebar");
       const panel = document.getElementById("analysis-sidebar-panel");
 
-      if (!sidebar) return;
+      if (!sidebar) {
+        console.warn("[AnalysisSidebar] Sidebar element not found in DOM");
+        return;
+      }
 
       isOpen = true;
       sidebar.style.display = "block";
@@ -299,6 +249,16 @@ export function createAnalysisSidebar() {
       } else {
         api.show();
       }
+    },
+
+    /**
+     * Initialize sidebar - setup event listeners and styles
+     * Call this when DOM is ready
+     */
+    init: () => {
+      injectStyles();
+      setupEventListeners();
+      console.log("[AnalysisSidebar] Initialized");
     },
 
     /**

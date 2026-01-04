@@ -7,7 +7,7 @@ import ComtradeFileParser from "./utils/fileParser.js";
 import ComtradeCombiner from "./utils/combiner.js";
 import ReportGenerator from "./utils/reportGenerator.js";
 import ComtradeDataExporter from "./utils/dataExporter.js";
-import { parseCFG, parseDAT } from "/src/components/comtradeUtils.js";
+import { parseCFG, parseDAT } from "../../src/components/comtradeUtils.js";
 import { initChildThemeManager } from "./utils/childThemeManager.js";
 
 const TIME_UNIT = "microseconds";

@@ -25,10 +25,7 @@
 /* Step 5: Utilities */
 @import url("./utilities/animations.css");
 @import url("./utilities/helpers.css");
-
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 /* === Reset & Base === */
 * {
   margin: 0;
