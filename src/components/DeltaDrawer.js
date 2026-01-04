@@ -16,69 +16,50 @@ import { createSidebarResizer } from "./SidebarResizer.js";
 
 export function createDeltaDrawer() {
   let isOpen = false;
-  let tableRenderer = null; // Replace tabulatorInstances with single renderer
-  let lastUpdateHash = null; // Track last update to prevent duplicate renders
-
-  // ✅ CSS moved to styles/components/drawer.css
-  // No inline styles needed - all styling is now managed through CSS imports
+  let sidebarWidth = 30; // Percentage width
+  const minWidth = 15;
+  const maxWidth = 70;
+  let tableRenderer = null;
+  let lastUpdateHash = null;
 
   function setupEventListeners() {
     const drawer = document.getElementById("delta-drawer");
-    const panel = document.getElementById("delta-drawer-panel");
-    const scrim = document.getElementById("delta-drawer-scrim");
-
     if (!drawer) {
       console.warn("[DeltaDrawer] Delta drawer element not found in DOM");
       return;
     }
-
-    // Close drawer on Escape key
-    document.addEventListener("keydown", (e) => {
-      if (e.key === "Escape" && isOpen) {
-        const api = window.__deltaDrawerAPI;
-        if (api) api.hide();
-      }
-    });
   }
 
-  // Build API object step by step to allow self-referencing
   const api = {
     show: () => {
       console.log("[DeltaDrawer] show() called");
 
       const drawer = document.getElementById("delta-drawer");
-      const panel = document.getElementById("delta-drawer-panel");
-      const scrim = document.getElementById("delta-drawer-scrim");
+      const mainContent = document.getElementById("mainContent");
+      const divider = document.getElementById("resizeDivider");
 
       if (!drawer) {
-        console.error(
-          "[DeltaDrawer] ❌ Delta drawer element not found in DOM. Make sure it's defined in index.html"
-        );
+        console.error("[DeltaDrawer] ❌ Delta drawer element not found in DOM");
         return;
       }
 
-      setupEventListeners();
-
       isOpen = true;
+
+      // Show drawer by setting width
       drawer.classList.remove("hidden");
-      panel.classList.remove("translate-x-full");
-      panel.classList.add("translate-x-0");
+      drawer.style.width = sidebarWidth + "%";
+      mainContent.style.width = 100 - sidebarWidth + "%";
+      divider.classList.remove("hidden");
 
-      if (scrim) {
-        scrim.classList.add("open");
-      }
-
-      // ✅ Adjust main content layout to make room for drawer (600px on the right)
-      adjustMainContent("right", 600);
-
-      console.log("[DeltaDrawer] ✅ Drawer shown with smooth transition");
+      setupEventListeners();
+      console.log("[DeltaDrawer] ✅ Drawer shown");
     },
 
     hide: () => {
       console.log("[DeltaDrawer] hide() called");
       const drawer = document.getElementById("delta-drawer");
-      const panel = document.getElementById("delta-drawer-panel");
-      const scrim = document.getElementById("delta-drawer-scrim");
+      const mainContent = document.getElementById("mainContent");
+      const divider = document.getElementById("resizeDivider");
 
       if (!drawer) {
         console.warn("[DeltaDrawer] Drawer not found in DOM");
@@ -87,22 +68,18 @@ export function createDeltaDrawer() {
       }
 
       isOpen = false;
-      panel.classList.remove("translate-x-0");
-      panel.classList.add("translate-x-full");
 
-      if (scrim) {
-        scrim.classList.remove("open");
-      }
+      // Hide drawer by setting width to 0
+      drawer.style.width = "0px";
+      mainContent.style.width = "100%";
+      divider.classList.add("hidden");
 
-      // ✅ Reset main content layout (remove right margin)
-      adjustMainContent("right", 0);
-
-      // Wait for transform animation to complete before hiding
+      // Add delay before adding hidden class to allow animation
       setTimeout(() => {
         drawer.classList.add("hidden");
-      }, 500); // Match Tailwind transition duration (duration-500)
+      }, 300);
 
-      console.log("[DeltaDrawer] ✅ Drawer hidden with smooth transition");
+      console.log("[DeltaDrawer] ✅ Drawer hidden");
     },
 
     update: async (deltaData = [], verticalLinesCount = 0) => {
@@ -257,7 +234,10 @@ export function createDeltaDrawer() {
       }
     },
 
-    isOpen: () => isOpen,
+    isOpen: () => {
+      const drawer = document.getElementById("delta-drawer");
+      return drawer ? !drawer.classList.contains("hidden") : isOpen;
+    },
 
     toggle: () => {
       if (api.isOpen()) {

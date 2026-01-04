@@ -252,19 +252,9 @@ if (!window.handleDeltaButtonClick) {
         `[handleDeltaButtonClick] Delta currently open: ${isDeltaOpen}`
       );
 
-      // Toggle first, then adjust margins based on new state
+      // Toggle drawer - CSS transforms handle animation, no margin adjustments needed
       sidebarStore.toggle("delta-drawer");
       const isDeltaNowOpen = sidebarStore.isOpen("delta-drawer");
-
-      // Adjust main content width based on NEW state
-      // Delta drawer opens on RIGHT side (width: 384px), so use 'right' parameter
-      if (isDeltaNowOpen) {
-        // Delta is now open - adjust right margin
-        adjustMainContent("right", 384);
-      } else {
-        // Delta is now closed - remove right margin
-        adjustMainContent("right", 0);
-      }
 
       console.log("[main.js] ✅ Delta drawer toggled successfully");
     } catch (err) {
@@ -306,19 +296,9 @@ if (!window.handleAnalysisButtonClick) {
         `[handleAnalysisButtonClick] Analysis currently open: ${isAnalysisOpen}`
       );
 
-      // Toggle first, then adjust margins based on new state
+      // Toggle sidebar - CSS transforms handle animation, no margin adjustments needed
       sidebarStore.toggle("analysis-sidebar");
       const isAnalysisNowOpen = sidebarStore.isOpen("analysis-sidebar");
-
-      // Adjust main content width based on NEW state
-      // Analysis sidebar opens on RIGHT side (width: 320px), so use 'right' parameter
-      if (isAnalysisNowOpen) {
-        // Analysis is now open - adjust right margin
-        adjustMainContent("right", 320);
-      } else {
-        // Analysis is now closed - remove right margin
-        adjustMainContent("right", 0);
-      }
 
       console.log("[main.js] ✅ Analysis sidebar toggled successfully");
     } catch (err) {
@@ -2093,6 +2073,63 @@ function updateLayoutButtonVisibility() {
   }
 }
 
+/**
+ * Setup resizable divider between main content and sidebar
+ * Allows user to drag to resize main content and sidebar widths
+ */
+function setupResizableDivider() {
+  const divider = document.getElementById("resizeDivider");
+  const mainContent = document.getElementById("mainContent");
+  const deltaDrawer = document.getElementById("delta-drawer");
+  const mainContentArea = mainContent.parentElement;
+
+  if (!divider || !mainContent || !deltaDrawer) {
+    console.warn("[ResizableDivider] Required elements not found");
+    return;
+  }
+
+  let isDragging = false;
+
+  divider.addEventListener("mousedown", () => {
+    isDragging = true;
+    document.body.style.cursor = "col-resize";
+    console.log("[ResizableDivider] ✅ Dragging started");
+  });
+
+  document.addEventListener("mouseup", () => {
+    if (isDragging) {
+      isDragging = false;
+      document.body.style.cursor = "default";
+      console.log("[ResizableDivider] ✅ Dragging ended");
+    }
+  });
+
+  document.addEventListener("mousemove", (e) => {
+    if (!isDragging) return;
+
+    const containerRect = mainContentArea.getBoundingClientRect();
+    const newWidth =
+      ((e.clientX - containerRect.left) / containerRect.width) * 100;
+
+    // Constrain width between 20% and 80%
+    if (newWidth > 20 && newWidth < 80) {
+      const mainWidth = newWidth;
+      const sidebarWidth = 100 - newWidth;
+
+      mainContent.style.width = mainWidth + "%";
+      deltaDrawer.style.width = sidebarWidth + "%";
+
+      console.log(
+        `[ResizableDivider] Width: Main ${mainWidth.toFixed(
+          1
+        )}% | Sidebar ${sidebarWidth.toFixed(1)}%`
+      );
+    }
+  });
+
+  console.log("[ResizableDivider] ✅ Initialized");
+}
+
 // Handle sidebar toggle button (for Analysis Sidebar)
 // Note: This button is now dynamically created in AnalysisSidebar.js
 // Get reference to it after sidebar is injected
@@ -2125,6 +2162,9 @@ document.addEventListener("DOMContentLoaded", () => {
   initSidebarSystem();
 
   setupAnalysisSidebarHandlers();
+
+  // Setup draggable divider for sidebar resizing
+  setupResizableDivider();
 
   // Note: Button handlers are now attached via onclick attributes in HTML
   // No need to call setupHtmlButtonHandlers() anymore

@@ -90,7 +90,10 @@ export function createAnalysisSidebar() {
       console.log("[AnalysisSidebar] ✅ Sidebar hidden with smooth transition");
     },
 
-    isOpen: () => isOpen,
+    isOpen: () => {
+      const sidebar = document.getElementById("analysis-sidebar");
+      return sidebar ? !sidebar.classList.contains("hidden") : isOpen;
+    },
 
     toggle: () => {
       if (api.isOpen()) {

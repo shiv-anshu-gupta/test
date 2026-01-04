@@ -85,124 +85,188 @@
         </div>
       </header>
 
-      <!-- Content Area -->
-      <div class="content-wrapper">
-        <!-- Upload & File Info Container -->
-        <div class="upload-file-container">
-          <!-- Upload Section -->
-          <section class="upload-section" id="uploadSection">
-            <div class="upload-icon">📤</div>
-            <h2>Upload COMTRADE Files</h2>
-            <p>Drag & drop CFG and DAT files or click to browse</p>
-            <div class="upload-actions">
-              <label for="cfgFile">
+      <!-- Content Area - Flex Layout with Main + Sidebar -->
+      <div class="flex flex-1 overflow-hidden relative">
+        <!-- Main Content Section (LEFT) -->
+        <div
+          id="mainContent"
+          class="overflow-auto p-6 transition-all duration-300"
+          style="width: 100%; background-color: var(--bg-primary)"
+        >
+          <!-- Upload & File Info Container -->
+          <div class="upload-file-container">
+            <!-- Upload Section -->
+            <section class="upload-section" id="uploadSection">
+              <div class="upload-icon">📤</div>
+              <h2>Upload COMTRADE Files</h2>
+              <p>Drag & drop CFG and DAT files or click to browse</p>
+              <div class="upload-actions">
+                <label for="cfgFile">
+                  <button
+                    class="btn-primary"
+                    type="button"
+                    onclick="document.getElementById('cfgFile').click()"
+                  >
+                    <span>📁</span>
+                    <span>Choose Files</span>
+                  </button>
+                </label>
+                <input type="file" id="cfgFile" accept=".cfg,.dat" multiple />
+                <button class="btn-secondary" id="loadBtn">Load Files</button>
                 <button
-                  class="btn-primary"
-                  type="button"
-                  onclick="document.getElementById('cfgFile').click()"
+                  class="btn-secondary"
+                  id="mergeMultipleFilesBtn"
+                  title="Open file merger to combine multiple COMTRADE files"
                 >
-                  <span>📁</span>
-                  <span>Choose Files</span>
+                  🔗 Merge Multiple Files
                 </button>
-              </label>
-              <input type="file" id="cfgFile" accept=".cfg,.dat" multiple />
-              <button class="btn-secondary" id="loadBtn">Load Files</button>
-              <button
-                class="btn-secondary"
-                id="mergeMultipleFilesBtn"
-                title="Open file merger to combine multiple COMTRADE files"
-              >
-                🔗 Merge Multiple Files
-              </button>
+              </div>
+            </section>
+
+            <!-- File Information (Always Visible) -->
+            <section class="file-info-card" id="fileInfo">
+              <div style="width: 100%">
+                <div class="file-info-header">
+                  <h2 class="file-info-title">File Information</h2>
+                  <div
+                    class="file-status"
+                    id="fileStatus"
+                    style="color: var(--text-secondary)"
+                  >
+                    <span
+                      class="status-dot"
+                      style="background: var(--text-secondary)"
+                    ></span>
+                    <span>No File</span>
+                  </div>
+                </div>
+                <div class="file-details">
+                  <div class="file-detail-item">
+                    <span class="file-detail-label">CFG File</span>
+                    <span
+                      class="file-detail-value"
+                      id="cfgFileName"
+                      style="color: var(--text-secondary)"
+                      >Not Selected</span
+                    >
+                  </div>
+                  <div class="file-detail-item">
+                    <span class="file-detail-label">DAT File</span>
+                    <span
+                      class="file-detail-value"
+                      id="datFileName"
+                      style="color: var(--text-secondary)"
+                      >Not Selected</span
+                    >
+                  </div>
+                </div>
+              </div>
+            </section>
+          </div>
+
+          <!-- Stats Grid (Hidden initially) -->
+          <section class="stats-grid" id="statsGrid" style="display: none">
+            <div class="stat-card">
+              <div class="stat-header">
+                <span class="stat-icon">⟳</span>
+                <span class="stat-label">Sample Rate</span>
+              </div>
+              <div class="stat-value">
+                4800<span class="stat-unit">Hz</span>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-header">
+                <span class="stat-icon">⏱</span>
+                <span class="stat-label">Duration</span>
+              </div>
+              <div class="stat-value">
+                2000<span class="stat-unit">ms</span>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-header">
+                <span class="stat-icon">📊</span>
+                <span class="stat-label">Channels</span>
+              </div>
+              <div class="stat-value">
+                7<span class="stat-unit">total</span>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-header">
+                <span class="stat-icon">⚠</span>
+                <span class="stat-label">Fault Time</span>
+              </div>
+              <div class="stat-value">850<span class="stat-unit">ms</span></div>
             </div>
           </section>
 
-          <!-- File Information (Always Visible) -->
-          <section class="file-info-card" id="fileInfo">
-            <div style="width: 100%">
-              <div class="file-info-header">
-                <h2 class="file-info-title">File Information</h2>
-                <div
-                  class="file-status"
-                  id="fileStatus"
-                  style="color: var(--text-secondary)"
-                >
-                  <span
-                    class="status-dot"
-                    style="background: var(--text-secondary)"
-                  ></span>
-                  <span>No File</span>
-                </div>
-              </div>
-              <div class="file-details">
-                <div class="file-detail-item">
-                  <span class="file-detail-label">CFG File</span>
-                  <span
-                    class="file-detail-value"
-                    id="cfgFileName"
-                    style="color: var(--text-secondary)"
-                    >Not Selected</span
-                  >
-                </div>
-                <div class="file-detail-item">
-                  <span class="file-detail-label">DAT File</span>
-                  <span
-                    class="file-detail-value"
-                    id="datFileName"
-                    style="color: var(--text-secondary)"
-                    >Not Selected</span
-                  >
-                </div>
-              </div>
-            </div>
-          </section>
+          <!-- Charts Container -->
+          <section id="charts" class="charts-wrapper"></section>
+
+          <!-- Results -->
+          <section
+            id="fixed-results"
+            style="
+              margin-top: 24px;
+              color: var(--text-secondary);
+              font-family: monospace;
+              font-size: 0.85rem;
+            "
+          ></section>
         </div>
 
-        <!-- Stats Grid (Hidden initially) -->
-        <section class="stats-grid" id="statsGrid" style="display: none">
-          <div class="stat-card">
-            <div class="stat-header">
-              <span class="stat-icon">⟳</span>
-              <span class="stat-label">Sample Rate</span>
-            </div>
-            <div class="stat-value">4800<span class="stat-unit">Hz</span></div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-header">
-              <span class="stat-icon">⏱</span>
-              <span class="stat-label">Duration</span>
-            </div>
-            <div class="stat-value">2000<span class="stat-unit">ms</span></div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-header">
-              <span class="stat-icon">📊</span>
-              <span class="stat-label">Channels</span>
-            </div>
-            <div class="stat-value">7<span class="stat-unit">total</span></div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-header">
-              <span class="stat-icon">⚠</span>
-              <span class="stat-label">Fault Time</span>
-            </div>
-            <div class="stat-value">850<span class="stat-unit">ms</span></div>
-          </div>
-        </section>
+        <!-- Draggable Divider -->
+        <div
+          id="resizeDivider"
+          class="w-1 transition-colors hidden"
+          style="background-color: var(--border-color); cursor: col-resize"
+        ></div>
 
-        <!-- Charts Container -->
-        <section id="charts" class="charts-wrapper"></section>
-
-        <!-- Results -->
-        <section
-          id="fixed-results"
-          style="
-            margin-top: 24px;
-            color: var(--text-secondary);
-            font-family: monospace;
-            font-size: 0.85rem;
-          "
-        ></section>
+        <!-- Delta Drawer (RIGHT SIDEBAR) -->
+        <div id="delta-drawer" class="hidden" style="width: 0px">
+          <div id="delta-drawer-backdrop"></div>
+          <div id="delta-drawer-scrim">
+            <div
+              id="delta-drawer-panel"
+              class="h-full w-full shadow-2xl flex flex-col transition-all duration-300 pointer-events-auto overflow-hidden"
+              style="
+                background-color: var(--bg-secondary);
+                color: var(--text-primary);
+              "
+            >
+              <div
+                class="p-6 border-b flex items-center justify-between shrink-0"
+                style="
+                  background-color: var(--bg-secondary);
+                  color: var(--text-primary);
+                  border-color: var(--border-color);
+                "
+              >
+                <h2
+                  id="delta-drawer-title"
+                  class="text-lg font-semibold m-0"
+                  style="color: var(--text-primary)"
+                >
+                  Crosshair Data
+                </h2>
+              </div>
+              <div
+                id="delta-drawer-content"
+                class="flex-1 overflow-x-auto overflow-y-auto p-6"
+                style="
+                  background-color: var(--bg-secondary);
+                  color: var(--text-primary);
+                "
+              >
+                <p class="text-center" style="color: var(--text-muted)">
+                  No crosshair data available
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </main>
 
@@ -274,14 +338,7 @@
     </div>
     <div
       id="buttons"
-      style="
-        position: fixed;
-        right: 0;
-        top: 0;
-        width: auto;
-        height: 100%;
-        z-index: 1000;
-      "
+      style="position: fixed; right: 0; top: 0; width: auto; height: 100%"
     >
       <button
         id="delta-values"
@@ -351,182 +408,7 @@
       </button>
     </div>
 
-    <!-- Analysis Sidebar Container (hidden by default) -->
-    <div
-      id="analysis-sidebar"
-      class="hidden fixed inset-0 z-997 pointer-events-none"
-    >
-      <div
-        id="analysis-sidebar-backdrop"
-        class="absolute inset-0 bg-transparent pointer-events-none"
-      ></div>
-
-      <div
-        id="analysis-sidebar-panel"
-        class="fixed top-16 right-0 h-[calc(100vh-4rem)] w-80 shadow-2xl flex flex-col translate-x-full transition-transform duration-500 ease-in-out z-[998] overflow-y-auto overflow-x-hidden pointer-events-auto"
-        style="
-          background-color: var(--bg-secondary);
-          color: var(--text-primary);
-          border-left: 1px solid var(--border-color);
-        "
-      >
-        <!-- Header -->
-        <div
-          class="p-4 flex items-center justify-between shrink-0"
-          style="
-            background-color: var(--bg-secondary);
-            border-bottom: 1px solid var(--border-color);
-          "
-        >
-          <h2
-            class="text-base font-semibold m-0"
-            style="color: var(--text-primary)"
-          >
-            Analysis
-          </h2>
-          <button
-            id="analysis-sidebar-close"
-            class="bg-transparent border-none cursor-pointer p-1 flex items-center justify-center transition-colors duration-200 rounded-md text-xl"
-            style="color: var(--text-muted)"
-            title="Close sidebar"
-          >
-            ✕
-          </button>
-        </div>
-
-        <!-- Controls -->
-        <div
-          class="p-3 px-4 shrink-0"
-          style="
-            background-color: var(--bg-secondary);
-            border-bottom: 1px solid var(--border-color);
-          "
-        >
-          <div class="flex gap-2 flex-wrap">
-            <button
-              id="floatingWindowBtn"
-              class="cursor-pointer text-xs py-1 px-2 rounded transition-all border"
-              style="
-                background-color: var(--bg-tertiary);
-                border-color: var(--border-color);
-                color: var(--text-secondary);
-              "
-              title="Display as floating window"
-            >
-              ▦ Floating
-            </button>
-            <button
-              id="belowChartBtn"
-              class="cursor-pointer text-xs py-1 px-2 rounded transition-all border"
-              style="
-                background-color: var(--bg-tertiary);
-                border-color: var(--border-color);
-                color: var(--text-secondary);
-              "
-              title="Display below chart"
-            >
-              📦 Below
-            </button>
-            <button
-              id="returnSidebarBtn"
-              class="hidden cursor-pointer text-xs py-1 px-2 rounded transition-all border"
-              style="
-                background-color: var(--bg-tertiary);
-                border-color: var(--border-color);
-                color: var(--text-secondary);
-              "
-              title="Return to sidebar"
-            >
-              ⬅ Sidebar
-            </button>
-            <button
-              id="returnSidebarFromBelowBtn"
-              class="hidden cursor-pointer text-xs py-1 px-2 rounded transition-all border"
-              style="
-                background-color: var(--bg-tertiary);
-                border-color: var(--border-color);
-                color: var(--text-secondary);
-              "
-              title="Return to sidebar"
-            >
-              ⬅ Sidebar
-            </button>
-          </div>
-        </div>
-
-        <!-- Content -->
-        <div
-          class="flex-1 overflow-y-auto p-4"
-          style="background-color: var(--bg-secondary)"
-        >
-          <div class="flex flex-col gap-3" id="polarChartSection">
-            <div class="flex justify-between items-center">
-              <h3
-                class="text-sm font-semibold m-0"
-                style="color: var(--text-secondary)"
-              >
-                Phasor Diagram
-              </h3>
-            </div>
-            <div
-              id="polarChartContainer"
-              class="w-full h-75 rounded-lg flex items-center justify-center"
-              style="
-                background-color: var(--bg-tertiary);
-                color: var(--text-secondary);
-                border: 1px solid var(--border-color);
-              "
-            >
-              <span>Polar Chart</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Delta Drawer Container (hidden by default) -->
-    <div id="delta-drawer" class="hidden">
-      <div id="delta-drawer-backdrop"></div>
-      <div id="delta-drawer-scrim">
-        <div
-          id="delta-drawer-panel"
-          class="fixed top-16 right-0 h-[calc(100vh-4rem)] w-[600px] max-w-[90vw] shadow-2xl flex flex-col translate-x-full transition-transform duration-500 ease-in-out z-[1000] pointer-events-auto"
-          style="
-            background-color: var(--bg-secondary);
-            color: var(--text-primary);
-          "
-        >
-          <div
-            class="p-6 border-b flex items-center justify-between shrink-0"
-            style="
-              background-color: var(--bg-secondary);
-              color: var(--text-primary);
-              border-color: var(--border-color);
-            "
-          >
-            <h2
-              id="delta-drawer-title"
-              class="text-lg font-semibold m-0"
-              style="color: var(--text-primary)"
-            >
-              Crosshair Data
-            </h2>
-          </div>
-          <div
-            id="delta-drawer-content"
-            class="flex-1 overflow-x-auto overflow-y-auto p-6"
-            style="
-              background-color: var(--bg-secondary);
-              color: var(--text-primary);
-            "
-          >
-            <p class="text-center" style="color: var(--text-muted)">
-              No crosshair data available
-            </p>
-          </div>
-        </div>
-      </div>
-    </div>
+    <!-- Analysis Sidebar Container (REMOVED - now inside main layout) -->
 
     <script src="https://cdn.jsdelivr.net/npm/uplot@1.6.32/dist/uPlot.iife.js"></script>
 
