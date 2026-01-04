@@ -2116,8 +2116,19 @@ function setupResizableDivider() {
       const mainWidth = newWidth;
       const sidebarWidth = 100 - newWidth;
 
-      mainContent.style.width = mainWidth + "%";
-      deltaDrawer.style.width = sidebarWidth + "%";
+      // ✅ Use CSS variables to override Tailwind hashing
+      document.documentElement.style.setProperty(
+        "--main-content-width",
+        mainWidth + "%"
+      );
+      document.documentElement.style.setProperty(
+        "--sidebar-width",
+        sidebarWidth + "%"
+      );
+
+      // Add resized class to apply CSS variable widths
+      mainContent.classList.add("sidebar-resized");
+      deltaDrawer.classList.add("sidebar-resized");
 
       console.log(
         `[ResizableDivider] Width: Main ${mainWidth.toFixed(

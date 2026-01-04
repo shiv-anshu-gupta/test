@@ -4,37 +4,26 @@
  */
 
 #delta-drawer {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
+  display: block;
+  transition: width 0.3s ease;
+  overflow: hidden;
+  pointer-events: auto;
   height: 100%;
-  display: none;
-  pointer-events: none;
 }
 
-#delta-drawer.open {
-  display: block;
+#delta-drawer.hidden {
+  display: none;
 }
 
 #delta-drawer-panel {
-  position: fixed;
-  top: 0;
-  right: 0;
   height: 100%;
-  width: 600px;
-  max-width: 90vw;
+  width: 100%;
   background-color: var(--bg-secondary);
   box-shadow: -4px 0 12px rgba(0, 0, 0, 0.15);
   display: flex;
   flex-direction: column;
-  transform: translateX(100%);
-  transition: transform 0.5s ease-in-out;
   pointer-events: auto;
-}
-
-#delta-drawer-panel.open {
-  transform: translateX(0);
+  overflow: hidden;
 }
 
 .delta-drawer-header {

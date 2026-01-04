@@ -45,14 +45,27 @@ export function createDeltaDrawer() {
 
       isOpen = true;
 
-      // Show drawer by setting width
+      // ✅ Use CSS variables to override Tailwind hashing
+      document.documentElement.style.setProperty(
+        "--main-content-width",
+        `${100 - sidebarWidth}%`
+      );
+      document.documentElement.style.setProperty(
+        "--sidebar-width",
+        `${sidebarWidth}%`
+      );
+
+      // Add resized class to apply CSS variable widths
       drawer.classList.remove("hidden");
-      drawer.style.width = sidebarWidth + "%";
-      mainContent.style.width = 100 - sidebarWidth + "%";
+      drawer.classList.add("sidebar-resized");
+      mainContent.classList.add("sidebar-resized");
       divider.classList.remove("hidden");
 
       setupEventListeners();
-      console.log("[DeltaDrawer] ✅ Drawer shown");
+      console.log(
+        "[DeltaDrawer] ✅ Drawer shown with width:",
+        sidebarWidth + "%"
+      );
     },
 
     hide: () => {
@@ -69,9 +82,16 @@ export function createDeltaDrawer() {
 
       isOpen = false;
 
-      // Hide drawer by setting width to 0
-      drawer.style.width = "0px";
-      mainContent.style.width = "100%";
+      // ✅ Reset CSS variables and remove resized class
+      document.documentElement.style.setProperty(
+        "--main-content-width",
+        "100%"
+      );
+      document.documentElement.style.setProperty("--sidebar-width", "0px");
+
+      // Remove resized class to clear CSS variable widths
+      drawer.classList.remove("sidebar-resized");
+      mainContent.classList.remove("sidebar-resized");
       divider.classList.add("hidden");
 
       // Add delay before adding hidden class to allow animation

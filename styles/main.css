@@ -26,6 +26,28 @@
 @import url("./utilities/animations.css");
 @import url("./utilities/helpers.css");
 @import "tailwindcss";
+
+/* ============================================================================ */
+/* RESIZABLE SPLIT-PANE LAYOUT - CSS Variables & Custom Classes */
+/* Overrides Tailwind v4 hashed style attributes */
+/* ============================================================================ */
+
+:root {
+  --main-content-width: 100%;
+  --sidebar-width: 0px;
+}
+
+/* Force widths on resizable containers */
+#mainContent.sidebar-resized {
+  width: var(--main-content-width) !important;
+  transition: width 0.3s ease !important;
+}
+
+#delta-drawer.sidebar-resized {
+  width: var(--sidebar-width) !important;
+  transition: width 0.3s ease !important;
+}
+
 /* === Reset & Base === */
 * {
   margin: 0;
