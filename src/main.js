@@ -333,6 +333,10 @@ if (!window.handleAnalysisButtonClick) {
  * By default, the phasor diagram (analysis) sidebar is closed
  */
 function initializeSidebarRegistry() {
+  // Initialize sidebars with Tailwind classes and resizer functionality
+  analysisSidebar.init();
+  deltaWindow.init();
+
   // Register the analysis sidebar with the store
   analysisSidebar.registerWithStore();
 

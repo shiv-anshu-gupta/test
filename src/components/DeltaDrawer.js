@@ -12,6 +12,7 @@ import { adjustMainContent } from "../utils/sidebarResize.js";
 import { crosshairColors } from "../utils/constants.js";
 import { createDeltaTableRenderer } from "./DeltaTableRenderer.js";
 import { formatTableData } from "./DeltaTableDataFormatter.js";
+import { createSidebarResizer } from "./SidebarResizer.js";
 
 export function createDeltaDrawer() {
   let isOpen = false;
@@ -46,31 +47,25 @@ export function createDeltaDrawer() {
       console.log("[DeltaDrawer] show() called");
 
       const drawer = document.getElementById("delta-drawer");
-      const backdrop = document.getElementById("delta-drawer-backdrop");
       const panel = document.getElementById("delta-drawer-panel");
       const scrim = document.getElementById("delta-drawer-scrim");
 
       if (!drawer) {
-        console.error("[DeltaDrawer] ❌ Failed to inject drawer HTML");
+        console.error(
+          "[DeltaDrawer] ❌ Delta drawer element not found in DOM. Make sure it's defined in index.html"
+        );
         return;
       }
 
-      isOpen = true;
-      drawer.style.display = "block";
-      // Force reflow to ensure display change is applied before adding open class
-      void drawer.offsetWidth;
-      drawer.classList.add("open");
+      setupEventListeners();
 
-      if (backdrop) {
-        backdrop.style.display = "block";
-        backdrop.style.opacity = "1";
-      }
+      isOpen = true;
+      drawer.classList.remove("hidden");
+      panel.classList.remove("translate-x-full");
+      panel.classList.add("translate-x-0");
+
       if (scrim) {
-        scrim.style.display = "block";
         scrim.classList.add("open");
-      }
-      if (panel) {
-        panel.classList.add("open");
       }
 
       // ✅ Adjust main content layout to make room for drawer (600px on the right)
@@ -82,7 +77,6 @@ export function createDeltaDrawer() {
     hide: () => {
       console.log("[DeltaDrawer] hide() called");
       const drawer = document.getElementById("delta-drawer");
-      const backdrop = document.getElementById("delta-drawer-backdrop");
       const panel = document.getElementById("delta-drawer-panel");
       const scrim = document.getElementById("delta-drawer-scrim");
 
@@ -93,15 +87,11 @@ export function createDeltaDrawer() {
       }
 
       isOpen = false;
-      drawer.classList.remove("open");
-      if (backdrop) {
-        backdrop.style.opacity = "0";
-      }
+      panel.classList.remove("translate-x-0");
+      panel.classList.add("translate-x-full");
+
       if (scrim) {
         scrim.classList.remove("open");
-      }
-      if (panel) {
-        panel.classList.remove("open");
       }
 
       // ✅ Reset main content layout (remove right margin)
@@ -109,10 +99,8 @@ export function createDeltaDrawer() {
 
       // Wait for transform animation to complete before hiding
       setTimeout(() => {
-        drawer.style.display = "none";
-        if (backdrop) backdrop.style.display = "none";
-        if (scrim) scrim.style.display = "none";
-      }, 500); // Match the CSS transition duration (0.5s)
+        drawer.classList.add("hidden");
+      }, 500); // Match Tailwind transition duration (duration-500)
 
       console.log("[DeltaDrawer] ✅ Drawer hidden with smooth transition");
     },
@@ -277,6 +265,16 @@ export function createDeltaDrawer() {
       } else {
         api.show();
       }
+    },
+
+    /**
+     * Initialize drawer - setup event listeners and resizer
+     * Call this when DOM is ready
+     */
+    init: () => {
+      setupEventListeners();
+      createSidebarResizer("delta-drawer-panel", "left");
+      console.log("[DeltaDrawer] ✅ Initialized with resizable functionality");
     },
   };
 
