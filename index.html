@@ -363,16 +363,31 @@
 
       <div
         id="analysis-sidebar-panel"
-        class="fixed top-16 right-0 h-[calc(100vh-4rem)] w-80 bg-white shadow-2xl flex flex-col translate-x-full transition-transform duration-500 ease-in-out z-[998] overflow-y-auto overflow-x-hidden pointer-events-auto"
+        class="fixed top-16 right-0 h-[calc(100vh-4rem)] w-80 shadow-2xl flex flex-col translate-x-full transition-transform duration-500 ease-in-out z-[998] overflow-y-auto overflow-x-hidden pointer-events-auto"
+        style="
+          background-color: var(--bg-secondary);
+          color: var(--text-primary);
+          border-left: 1px solid var(--border-color);
+        "
       >
         <!-- Header -->
         <div
-          class="p-4 border-b border-gray-200 bg-white flex items-center justify-between shrink-0"
+          class="p-4 flex items-center justify-between shrink-0"
+          style="
+            background-color: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-color);
+          "
         >
-          <h2 class="text-base font-semibold text-gray-900 m-0">Analysis</h2>
+          <h2
+            class="text-base font-semibold m-0"
+            style="color: var(--text-primary)"
+          >
+            Analysis
+          </h2>
           <button
             id="analysis-sidebar-close"
-            class="bg-transparent border-none cursor-pointer p-1 flex items-center justify-center text-gray-400 transition-colors duration-200 rounded-md text-xl hover:text-gray-900 hover:bg-gray-100"
+            class="bg-transparent border-none cursor-pointer p-1 flex items-center justify-center transition-colors duration-200 rounded-md text-xl"
+            style="color: var(--text-muted)"
             title="Close sidebar"
           >
             ✕
@@ -380,32 +395,58 @@
         </div>
 
         <!-- Controls -->
-        <div class="p-3 px-4 border-b border-gray-200 shrink-0">
+        <div
+          class="p-3 px-4 shrink-0"
+          style="
+            background-color: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-color);
+          "
+        >
           <div class="flex gap-2 flex-wrap">
             <button
               id="floatingWindowBtn"
-              class="bg-gray-100 border border-gray-300 text-gray-600 cursor-pointer text-xs py-1 px-2 rounded transition-all hover:bg-gray-200 hover:text-gray-900"
+              class="cursor-pointer text-xs py-1 px-2 rounded transition-all border"
+              style="
+                background-color: var(--bg-tertiary);
+                border-color: var(--border-color);
+                color: var(--text-secondary);
+              "
               title="Display as floating window"
             >
               ▦ Floating
             </button>
             <button
               id="belowChartBtn"
-              class="bg-gray-100 border border-gray-300 text-gray-600 cursor-pointer text-xs py-1 px-2 rounded transition-all hover:bg-gray-200 hover:text-gray-900"
+              class="cursor-pointer text-xs py-1 px-2 rounded transition-all border"
+              style="
+                background-color: var(--bg-tertiary);
+                border-color: var(--border-color);
+                color: var(--text-secondary);
+              "
               title="Display below chart"
             >
               📦 Below
             </button>
             <button
               id="returnSidebarBtn"
-              class="bg-gray-100 border border-gray-300 text-gray-600 cursor-pointer text-xs py-1 px-2 rounded transition-all hover:bg-gray-200 hover:text-gray-900 hidden"
+              class="hidden cursor-pointer text-xs py-1 px-2 rounded transition-all border"
+              style="
+                background-color: var(--bg-tertiary);
+                border-color: var(--border-color);
+                color: var(--text-secondary);
+              "
               title="Return to sidebar"
             >
               ⬅ Sidebar
             </button>
             <button
               id="returnSidebarFromBelowBtn"
-              class="bg-gray-100 border border-gray-300 text-gray-600 cursor-pointer text-xs py-1 px-2 rounded transition-all hover:bg-gray-200 hover:text-gray-900 hidden"
+              class="hidden cursor-pointer text-xs py-1 px-2 rounded transition-all border"
+              style="
+                background-color: var(--bg-tertiary);
+                border-color: var(--border-color);
+                color: var(--text-secondary);
+              "
               title="Return to sidebar"
             >
               ⬅ Sidebar
@@ -414,16 +455,27 @@
         </div>
 
         <!-- Content -->
-        <div class="flex-1 overflow-y-auto p-4">
+        <div
+          class="flex-1 overflow-y-auto p-4"
+          style="background-color: var(--bg-secondary)"
+        >
           <div class="flex flex-col gap-3" id="polarChartSection">
             <div class="flex justify-between items-center">
-              <h3 class="text-sm font-semibold text-gray-600 m-0">
+              <h3
+                class="text-sm font-semibold m-0"
+                style="color: var(--text-secondary)"
+              >
                 Phasor Diagram
               </h3>
             </div>
             <div
               id="polarChartContainer"
-              class="w-full h-75 bg-gray-100 rounded-lg flex items-center justify-center text-gray-600"
+              class="w-full h-75 rounded-lg flex items-center justify-center"
+              style="
+                background-color: var(--bg-tertiary);
+                color: var(--text-secondary);
+                border: 1px solid var(--border-color);
+              "
             >
               <span>Polar Chart</span>
             </div>
@@ -438,23 +490,37 @@
       <div id="delta-drawer-scrim">
         <div
           id="delta-drawer-panel"
-          class="fixed top-16 right-0 h-[calc(100vh-4rem)] w-[600px] max-w-[90vw] bg-white dark:bg-gray-800 shadow-2xl flex flex-col translate-x-full transition-transform duration-500 ease-in-out z-[1000] pointer-events-auto"
+          class="fixed top-16 right-0 h-[calc(100vh-4rem)] w-[600px] max-w-[90vw] shadow-2xl flex flex-col translate-x-full transition-transform duration-500 ease-in-out z-[1000] pointer-events-auto"
+          style="
+            background-color: var(--bg-secondary);
+            color: var(--text-primary);
+          "
         >
           <div
-            class="p-6 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 flex items-center justify-between shrink-0"
+            class="p-6 border-b flex items-center justify-between shrink-0"
+            style="
+              background-color: var(--bg-secondary);
+              color: var(--text-primary);
+              border-color: var(--border-color);
+            "
           >
             <h2
               id="delta-drawer-title"
-              class="text-lg font-semibold text-gray-900 dark:text-white m-0"
+              class="text-lg font-semibold m-0"
+              style="color: var(--text-primary)"
             >
               Crosshair Data
             </h2>
           </div>
           <div
             id="delta-drawer-content"
-            class="flex-1 overflow-x-auto overflow-y-auto p-6 bg-white dark:bg-gray-800"
+            class="flex-1 overflow-x-auto overflow-y-auto p-6"
+            style="
+              background-color: var(--bg-secondary);
+              color: var(--text-primary);
+            "
           >
-            <p class="text-center text-gray-500 dark:text-gray-400">
+            <p class="text-center" style="color: var(--text-muted)">
               No crosshair data available
             </p>
           </div>
