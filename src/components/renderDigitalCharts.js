@@ -218,7 +218,22 @@ export function renderDigitalCharts(
   opts.plugins = opts.plugins.filter(
     (p) => !(p && p.id === "verticalLinePlugin")
   );
-  opts.plugins.push(createDigitalFillPlugin(digitalFillSignals, [yMin, yMax]));
+
+  console.log(`[renderDigitalCharts] 🔌 Before adding digitalFill plugin:`, {
+    pluginsCount: opts.plugins.length,
+    pluginIds: opts.plugins.map((p) => p?.id || "unknown"),
+  });
+
+  const digitalPlugin = createDigitalFillPlugin(digitalFillSignals);
+  opts.plugins.push(digitalPlugin);
+
+  console.log(`[renderDigitalCharts] 🔌 After adding digitalFill plugin:`, {
+    pluginsCount: opts.plugins.length,
+    pluginIds: opts.plugins.map((p) => p?.id || "unknown"),
+    digitalPluginExists: !!digitalPlugin,
+    digitalPluginId: digitalPlugin?.id,
+  });
+
   opts.plugins.push(verticalLinePlugin(verticalLinesX, () => charts));
 
   const chartOptionsEndTime = performance.now();
@@ -231,6 +246,16 @@ export function renderDigitalCharts(
   const chartStartTime = performance.now();
   const chart = new uPlot(opts, chartData, chartDiv);
   const chartEndTime = performance.now();
+
+  // ✅ CRITICAL FIX: Store digital plugin reference on chart for later access
+  // (uPlot doesn't expose plugins array, so we need to keep our own reference)
+  chart._digitalPlugin = digitalPlugin;
+
+  console.log(`[renderDigitalCharts] 📊 After uPlot creation:`, {
+    chartPluginsCount: chart.plugins?.length || 0,
+    digitalPluginStored: !!chart._digitalPlugin,
+    digitalPluginId: chart._digitalPlugin?.id,
+  });
 
   chart._seriesColors = opts.series.slice(1).map((s) => s.stroke);
 

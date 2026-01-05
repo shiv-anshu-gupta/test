@@ -76,35 +76,65 @@ export function createDigitalFillPlugin(signals) {
       }));
     },
     updateColors(newColors) {
-      // ✅ DEBUG: Log input
-      console.log("[digitalFillPlugin] updateColors called:", {
-        receivedColors: newColors,
+      // ✅ CRITICAL: If newColors is the FULL array (592 colors), map using originalIndex!
+      // If newColors is a filtered display array (5 colors), use signal index directly
+
+      const isFullArray = Array.isArray(newColors) && newColors.length > 100;
+
+      console.log("[digitalFillPlugin] 🎯 updateColors called:", {
+        receivedLength: Array.isArray(newColors)
+          ? newColors.length
+          : "not array",
         currentSignals: signals.length,
+        isFullArray: isFullArray,
+        firstNewColors: Array.isArray(newColors)
+          ? newColors.slice(0, 5)
+          : "N/A",
       });
 
       let changed = false;
 
-      // ✅ FIX: Map colors by SIGNAL index, not originalIndex
-      // The newColors array is already in display order (0, 1, 2...)
+      // ✅ FIX: Use originalIndex to map from FULL array (592 colors)
       signals.forEach((sig, signalIdx) => {
-        // Use signal index directly (not originalIndex!)
-        const newColor = Array.isArray(newColors)
-          ? newColors[signalIdx]
-          : newColors?.[signalIdx];
+        let newColor;
+
+        if (isFullArray) {
+          // Full array case: use originalIndex to look up the color
+          const originalIdx = sig.originalIndex ?? signalIdx;
+          newColor = newColors[originalIdx];
+
+          console.log(
+            `[digitalFillPlugin] 🔍 Signal ${signalIdx}: originalIndex=${originalIdx}, accessing newColors[${originalIdx}]`
+          );
+        } else {
+          // Display array case: use signal index directly
+          newColor = Array.isArray(newColors)
+            ? newColors[signalIdx]
+            : newColors?.[signalIdx];
+        }
 
         if (newColor && newColor !== currentColors[signalIdx]) {
           console.log(
-            `[digitalFillPlugin] Signal ${signalIdx} color: ${currentColors[signalIdx]} → ${newColor}`
+            `[digitalFillPlugin] ✅ Signal ${signalIdx} color UPDATE: "${currentColors[signalIdx]}" → "${newColor}"`
           );
           currentColors[signalIdx] = newColor;
           sig.color = newColor;
           changed = true;
+        } else {
+          console.log(
+            `[digitalFillPlugin] ⏭️ Signal ${signalIdx}: No change (newColor=${newColor}, current=${currentColors[signalIdx]})`
+          );
         }
       });
 
-      console.log("[digitalFillPlugin] updateColors result:", {
+      console.log("[digitalFillPlugin] 📊 updateColors result:", {
         changed,
         updatedColors: [...currentColors],
+        colorMapping: signals.map((sig, i) => ({
+          signalIdx: i,
+          originalIdx: sig.originalIndex,
+          currentColor: currentColors[i],
+        })),
       });
 
       return changed;
@@ -273,6 +303,7 @@ export function createDigitalFillPlugin(signals) {
             let xBegin = 0,
               yBegin = 0;
             let rectCount = 0; // ✅ Track how many rects drawn
+            let drawOps = []; // ✅ Track all draw operations
 
             // Calculate the minimum value in yData to determine offsetPresent.
             // If the minimum is even, use it; otherwise, use the next lower even number.
@@ -311,14 +342,19 @@ export function createDigitalFillPlugin(signals) {
               ) - u.valToPos(yData[0] + effectiveOffset, "y", true)
             );
 
-            console.log(`[digitalFillPlugin] Signal ${idx} dimensions:`, {
-              offsetPresent,
-              effectiveOffset,
-              xWidth,
-              yHeight,
-              px0,
-              py,
-            });
+            // ✅ CRITICAL DIAGNOSTIC: Log exact drawing parameters
+            console.log(
+              `[digitalFillPlugin] Signal ${idx} PRE-DRAW DIAGNOSTIC:`,
+              {
+                fillColor,
+                canvasFillStyle: ctx.fillStyle,
+                yHeight,
+                xWidth,
+                firstYData: yData[0],
+                targetVal: sig.targetVal,
+                offsetPresent,
+              }
+            );
 
             // Iterate through all data points to draw step lines and fill regions
             for (let i = 0; i < n - 1; i++) {
@@ -341,6 +377,16 @@ export function createDigitalFillPlugin(signals) {
               // If the signal transitions from high to low, fill the region
               if (yData[i] != sig.targetVal + offsetPresent) {
                 if (beginFill) {
+                  // ✅ CRITICAL: Log EXACT fillRect parameters
+                  drawOps.push({
+                    op: "fillRect",
+                    x: xBegin,
+                    y: yBegin,
+                    width: x0 - xBegin,
+                    height: yHeight,
+                    color: fillColor,
+                  });
+
                   ctx.fillRect(xBegin, yBegin, x0 - xBegin, yHeight);
                   rectCount++;
                   ctx.stroke();
@@ -358,6 +404,16 @@ export function createDigitalFillPlugin(signals) {
                 xWidthCount++;
                 // If this is the last point, fill to the end
                 if (i === n - 2) {
+                  // ✅ CRITICAL: Log EXACT fillRect parameters
+                  drawOps.push({
+                    op: "fillRect",
+                    x: xBegin,
+                    y: yBegin,
+                    width: x1 - xBegin,
+                    height: yHeight,
+                    color: fillColor,
+                  });
+
                   ctx.fillRect(xBegin, yBegin, x1 - xBegin, yHeight);
                   rectCount++;
                   ctx.stroke();
@@ -367,9 +423,13 @@ export function createDigitalFillPlugin(signals) {
             ctx.stroke();
             ctx.closePath();
 
-            // ✅ DEBUG: Log rectangles drawn for this signal
-            console.log(`[digitalFillPlugin] Signal ${idx} complete:`, {
+            // ✅ CRITICAL DIAGNOSTIC: Log all rectangles drawn
+            console.log(`[digitalFillPlugin] Signal ${idx} DRAW OPERATIONS:`, {
               rectanglesDrawn: rectCount,
+              operations: drawOps.slice(0, 5), // First 5 ops for brevity
+              totalOps: drawOps.length,
+              yHeightValid: yHeight > 0,
+              fillColorValid: !!fillColor && fillColor !== "rgba(0,0,0,0)",
             });
 
             ctx.restore();

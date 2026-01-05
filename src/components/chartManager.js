@@ -765,31 +765,93 @@ export function subscribeChartUpdates(
           // ✅ FIX: Update digital plugin colors if this is digital type
           if (type === "digital") {
             console.log(`[COLOR SUBSCRIBER] 🔌 Updating digitalFill plugin...`);
+            console.log(`[COLOR SUBSCRIBER] 📋 Total charts: ${charts.length}`);
+
             for (let ci = 0; ci < charts.length; ci++) {
               const chart = charts[ci];
-              if (!chart || chart._type !== "digital") continue;
+              console.log(`[COLOR SUBSCRIBER] 🔍 Checking chart ${ci}:`, {
+                exists: !!chart,
+                type: chart?._type,
+                hasPlugins: !!chart?.plugins,
+                pluginsCount: chart?.plugins?.length || 0,
+              });
 
-              // Find the digitalFill plugin
-              const digitalPlugin =
-                chart.plugins &&
-                chart.plugins.find((p) => p && p.id === "digitalFill");
+              if (!chart || chart._type !== "digital") {
+                console.log(
+                  `[COLOR SUBSCRIBER] ⏭️ Chart ${ci} skipped (not digital)`
+                );
+                continue;
+              }
+
+              // ✅ FIX: Use stored plugin reference instead of searching chart.plugins
+              // (uPlot doesn't expose plugins array, so we stored it in renderDigitalCharts)
+              const digitalPlugin = chart._digitalPlugin;
+
+              console.log(`[COLOR SUBSCRIBER] 🎯 Found plugin:`, {
+                found: !!digitalPlugin,
+                hasUpdateColors:
+                  typeof digitalPlugin?.updateColors === "function",
+              });
 
               if (
                 digitalPlugin &&
                 typeof digitalPlugin.updateColors === "function"
               ) {
-                // Update plugin with full color array
-                digitalPlugin.updateColors(change.newValue);
-
-                // Clear paths for all series to force regeneration
-                if (chart.series) {
-                  chart.series.forEach((s) => {
-                    if (s && s._paths) s._paths = null;
-                  });
-                }
+                // ✅ CRITICAL: Pass FULL color array (592 colors)
+                // Plugin will use originalIndex to map correctly
+                console.log(
+                  `[COLOR SUBSCRIBER] 📞 Calling updateColors with array of ${change.newValue?.length} colors`
+                );
+                const colorsChanged = digitalPlugin.updateColors(
+                  change.newValue
+                );
 
                 console.log(
-                  `[color subscriber] ✅ Updated digitalFill plugin colors (array replacement)`
+                  `[color subscriber] 📊 Plugin updateColors returned:`,
+                  colorsChanged
+                );
+
+                if (colorsChanged) {
+                  // ✅ CRITICAL: Force complete redraw
+                  try {
+                    // Clear all canvas layers
+                    const canvases = chart.root.querySelectorAll("canvas");
+                    let clearedCount = 0;
+                    canvases.forEach((canvas) => {
+                      try {
+                        const ctx = canvas.getContext("2d");
+                        if (ctx) {
+                          ctx.clearRect(0, 0, canvas.width, canvas.height);
+                          clearedCount++;
+                        }
+                      } catch (e) {
+                        // Ignore
+                      }
+                    });
+                    console.log(
+                      `[color subscriber] 🧹 Cleared ${clearedCount} canvas layers`
+                    );
+
+                    // ✅ Force redraw with true to clear canvas
+                    chart.redraw(true);
+                    console.log(
+                      `[color subscriber] ✅ Chart ${ci} redrawn with plugin color updates`
+                    );
+                  } catch (e) {
+                    console.error(`[color subscriber] ❌ Redraw failed:`, e);
+                  }
+                } else {
+                  console.log(
+                    `[color subscriber] ⏭️ Plugin returned no changes`
+                  );
+                }
+              } else {
+                console.warn(
+                  `[COLOR SUBSCRIBER] ❌ Plugin not found or missing updateColors!`,
+                  {
+                    pluginExists: !!digitalPlugin,
+                    isFunction: typeof digitalPlugin?.updateColors,
+                  }
                 );
               }
             }
@@ -878,10 +940,18 @@ export function subscribeChartUpdates(
         const t5 = performance.now();
 
         // ✅ FIX: Immediate redraw for all affected charts (not batched!)
+        // ⚠️ CRITICAL: Skip digital charts here - we'll redraw them AFTER updating plugin colors
         const t6 = performance.now();
         let redrawCount = 0;
         for (const chart of chartsWithThisChannel) {
           try {
+            // ⚠️ Skip digital charts - they need plugin update first!
+            if (type === "digital") {
+              console.log(
+                `[COLOR SUBSCRIBER] ⏭️ Skipping redraw for digital chart - will update plugin first`
+              );
+              continue;
+            }
             // Immediate redraw (don't batch - we need paths regenerated NOW)
             chart.redraw(false); // false = don't clear canvas
             redrawCount++;
@@ -892,31 +962,72 @@ export function subscribeChartUpdates(
 
         // ✅ FIX: Update digital plugin colors if this is digital type
         if (type === "digital") {
-          for (const chart of chartsWithThisChannel) {
-            if (chart._type !== "digital") continue;
+          console.log(
+            `[COLOR SUBSCRIBER] 🔌 Updating digitalFill plugin for single color change...`
+          );
+          console.log(
+            `[COLOR SUBSCRIBER] 📋 Checking ${chartsWithThisChannel.length} charts with this channel`
+          );
 
-            // Find the digitalFill plugin
-            const digitalPlugin =
-              chart.plugins &&
-              chart.plugins.find((p) => p && p.id === "digitalFill");
+          // ⚠️ CRITICAL: Also check ALL digital charts, not just those in chartsWithThisChannel
+          // because chartsWithThisChannel might be empty if chart hasn't been indexed yet
+          const allDigitalCharts = charts.filter(
+            (c) => c && c._type === "digital"
+          );
+          console.log(
+            `[COLOR SUBSCRIBER] 📊 Total digital charts: ${allDigitalCharts.length}`
+          );
+
+          for (const chart of allDigitalCharts) {
+            console.log(`[COLOR SUBSCRIBER] 🔍 Chart info:`, {
+              type: chart._type,
+              hasDigitalPlugin: !!chart._digitalPlugin,
+              pluginId: chart._digitalPlugin?.id,
+            });
+
+            // ✅ FIX: Use stored plugin reference instead of trying to find it in chart.plugins
+            // (uPlot doesn't expose plugins array)
+            const digitalPlugin = chart._digitalPlugin;
+
+            console.log(`[COLOR SUBSCRIBER] 🎯 Plugin lookup result:`, {
+              pluginFound: !!digitalPlugin,
+              hasUpdateColors:
+                typeof digitalPlugin?.updateColors === "function",
+            });
 
             if (
               digitalPlugin &&
               typeof digitalPlugin.updateColors === "function"
             ) {
-              // Update plugin with full color array
+              // ✅ CRITICAL: For SINGLE color change, we need to pass the FULL array
+              // so plugin can use originalIndex to find the right signal
               const fullColors = channelState.digital?.lineColors || [];
+
+              console.log(
+                `[COLOR SUBSCRIBER] 📊 Single color update: ${type}[${globalIdx}] = ${newColor}`
+              );
+              console.log(
+                `[COLOR SUBSCRIBER] 📞 Calling updateColors with ${fullColors.length} colors`
+              );
+              console.log(
+                `[COLOR SUBSCRIBER] 📋 Color at index ${globalIdx}: ${fullColors[globalIdx]}`
+              );
+
               const colorsChanged = digitalPlugin.updateColors(fullColors);
 
+              console.log(
+                `[COLOR SUBSCRIBER] 📊 updateColors returned: ${colorsChanged}`
+              );
+
               if (colorsChanged) {
-                // ✅ CRITICAL: Clear all series paths to invalidate cache
+                // ✅ Clear all series paths to force regeneration
                 if (chart.series) {
                   chart.series.forEach((s) => {
                     if (s && s._paths) s._paths = null;
                   });
                 }
 
-                // ✅ FIX: Clear all canvas layers to force complete repaint
+                // ✅ FORCE COMPLETE REDRAW
                 try {
                   const canvases = chart.root.querySelectorAll("canvas");
                   canvases.forEach((canvas) => {
@@ -925,27 +1036,22 @@ export function subscribeChartUpdates(
                       ctx.clearRect(0, 0, canvas.width, canvas.height);
                     }
                   });
+                  chart.redraw(true);
                   console.log(
-                    `[color subscriber] 🧹 Cleared ${canvases.length} canvas layers`
+                    `[COLOR SUBSCRIBER] ✅ Chart redrawn with new plugin colors`
                   );
                 } catch (err) {
-                  console.warn(
-                    `[color subscriber] Failed to clear canvas: `,
-                    err
-                  );
+                  console.warn(`[COLOR SUBSCRIBER] Failed to redraw:`, err);
                 }
-
-                // ✅ FORCE COMPLETE REDRAW WITH CANVAS CLEAR
-                chart.redraw(true); // true = clear canvas before redraw
-
-                console.log(
-                  `[color subscriber] ✅ Digital chart canvas repainted with new colors`
-                );
               } else {
                 console.log(
-                  `[color subscriber] ⏭️ Digital colors unchanged, skipping redraw`
+                  `[COLOR SUBSCRIBER] ⏭️ Plugin returned no changes, skipping redraw`
                 );
               }
+            } else {
+              console.warn(
+                `[COLOR SUBSCRIBER] ❌ Plugin not found or updateColors not callable`
+              );
             }
           }
         }
@@ -955,9 +1061,6 @@ export function subscribeChartUpdates(
         // 🔍 DIAGNOSTIC: Log detailed color update information
         console.group(
           `[DIAGNOSTIC] 🔍 Color Update Trace - ${type}[${globalIdx}] → ${newColor}`
-        );
-        console.log(
-          `Charts with this channel: ${chartsWithThisChannel.length}`
         );
         console.log(`Successfully updated: ${updateCount} charts`);
         console.log(`Redraws scheduled: ${redrawCount}`);
