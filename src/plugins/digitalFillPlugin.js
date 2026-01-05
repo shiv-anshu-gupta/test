@@ -76,45 +76,38 @@ export function createDigitalFillPlugin(signals) {
       }));
     },
     updateColors(newColors) {
-      // newColors is expected as an array or object keyed by originalIndex
-      let colorsChanged = false;
+      // ✅ DEBUG: Log what we receive
+      console.log("[digitalFillPlugin] updateColors called with:", newColors);
 
+      let changed = false;
       signals.forEach((sig, i) => {
         const origIdx = sig.originalIndex ?? i;
+        let newColor = null;
 
-        // support both array and object maps
+        // Support both array and object formats
         if (Array.isArray(newColors)) {
-          if (typeof newColors[origIdx] !== "undefined") {
-            const newColor = newColors[origIdx];
-            if (currentColors[i] !== newColor) {
-              currentColors[i] = newColor;
-              sig.color = newColor; // ✅ Update signal config too!
-              colorsChanged = true;
-            }
-          }
+          newColor = newColors[origIdx];
         } else if (newColors && typeof newColors === "object") {
-          if (newColors[origIdx] !== undefined) {
-            const newColor = newColors[origIdx];
-            if (currentColors[i] !== newColor) {
-              currentColors[i] = newColor;
-              sig.color = newColor; // ✅ Update signal config too!
-              colorsChanged = true;
-            }
-          }
+          newColor = newColors[origIdx];
+        }
+
+        // ✅ Check if color actually changed
+        if (newColor && newColor !== currentColors[i]) {
+          console.log(
+            `[digitalFillPlugin] Signal ${i} color: ${currentColors[i]} → ${newColor}`
+          );
+          currentColors[i] = newColor;
+          sig.color = newColor; // ✅ CRITICAL: Update signal config
+          changed = true;
         }
       });
 
-      console.log(
-        `[digitalFillPlugin] updateColors: ${
-          colorsChanged ? "✅ CHANGED" : "⏭️ SAME"
-        }`,
-        {
-          signals: signals.length,
-          newColors: currentColors,
-        }
-      );
+      console.log("[digitalFillPlugin] updateColors result:", {
+        changed,
+        newCurrentColors: [...currentColors],
+      });
 
-      return colorsChanged; // ✅ Return whether colors actually changed
+      return changed;
     },
     // Allow external components to query the current colors
     getSignalColors() {
@@ -244,20 +237,18 @@ export function createDigitalFillPlugin(signals) {
 
             ctx.save();
             // Use currentColors array if updated, fallback to signal color
-            const fillColor = currentColors[idx] || sig.color;
+            const fillColor =
+              currentColors[idx] || sig.color || "rgba(100, 100, 255, 0.5)";
 
             // ✅ DEBUG: Log color being used for each signal
-            console.log(
-              `[digitalFillPlugin] Signal ${idx} drawing with color:`,
-              {
-                currentColor: currentColors[idx],
-                fallbackColor: sig.color,
-                usingColor: fillColor,
-                yDataLength: yData.length,
-                offset: sig.offset,
-                targetVal: sig.targetVal,
-              }
-            );
+            console.log(`[digitalFillPlugin] Signal ${idx} drawing with color:`, {
+              currentColor: currentColors[idx],
+              sigColor: sig.color,
+              usingColor: fillColor,
+              yDataLength: yData.length,
+              offset: sig.offset,
+              targetVal: sig.targetVal,
+            });
 
             // ✅ DEBUG: Set canvas styles and confirm they're applied
             ctx.fillStyle = fillColor;
