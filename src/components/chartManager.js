@@ -909,21 +909,37 @@ export function subscribeChartUpdates(
               const colorsChanged = digitalPlugin.updateColors(fullColors);
 
               if (colorsChanged) {
-                // ✅ CRITICAL: Force plugin to regenerate paths with new colors
-                // The plugin caches drawn rectangles, so we must invalidate the cache
-
-                // Clear all series paths (forces uPlot to call plugin's hooks again)
+                // ✅ CRITICAL: Clear all series paths to invalidate cache
                 if (chart.series) {
                   chart.series.forEach((s) => {
                     if (s && s._paths) s._paths = null;
                   });
                 }
 
-                // ✅ FORCE IMMEDIATE REDRAW (don't batch!)
-                chart.redraw(false); // false = don't clear canvas, just redraw
+                // ✅ FIX: Clear all canvas layers to force complete repaint
+                try {
+                  const canvases = chart.root.querySelectorAll("canvas");
+                  canvases.forEach((canvas) => {
+                    const ctx = canvas.getContext("2d");
+                    if (ctx) {
+                      ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    }
+                  });
+                  console.log(
+                    `[color subscriber] 🧹 Cleared ${canvases.length} canvas layers`
+                  );
+                } catch (err) {
+                  console.warn(
+                    `[color subscriber] Failed to clear canvas: `,
+                    err
+                  );
+                }
+
+                // ✅ FORCE COMPLETE REDRAW WITH CANVAS CLEAR
+                chart.redraw(true); // true = clear canvas before redraw
 
                 console.log(
-                  `[color subscriber] ✅ Updated digitalFill plugin + forced redraw`
+                  `[color subscriber] ✅ Digital chart canvas repainted with new colors`
                 );
               } else {
                 console.log(
