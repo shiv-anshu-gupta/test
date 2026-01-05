@@ -686,23 +686,46 @@ export function subscribeChartUpdates(
       const t0 = performance.now();
 
       try {
+        // 🔍 DIAGNOSTIC: Log color change event
+        console.log(`[COLOR SUBSCRIBER] 📢 Fired! change:`, {
+          path: change.path,
+          newValue: change.newValue,
+          oldValue: change.oldValue,
+          type: change.type,
+        });
+
         const t1 = performance.now();
         const type = change.path && change.path[0];
         const globalIdx = change.path && change.path[2];
+
+        console.log(
+          `[COLOR SUBSCRIBER] 📍 Extracted: type="${type}", globalIdx=${globalIdx}`
+        );
 
         // ✅ Handle both cases:
         // 1. Single color change: path = ['analog', 'lineColors', 0], newValue = '#fff'
         // 2. Whole array replace: path = ['analog', 'lineColors'], newValue = [...colors]
         if (!type || (type !== "analog" && type !== "digital")) {
+          console.warn(`[COLOR SUBSCRIBER] ❌ Invalid type: "${type}"`);
           return; // Invalid type, silently ignore
         }
 
         // Case 2: Whole lineColors array was replaced
         if (Array.isArray(change.newValue) && !Number.isFinite(globalIdx)) {
+          console.log(
+            `[COLOR SUBSCRIBER] 📋 CASE 2: Array replacement (${change.newValue.length} colors)`
+          );
           // Update all colors for this type
+          let arrayUpdateCount = 0;
           for (let ci = 0; ci < charts.length; ci++) {
             const chart = charts[ci];
             if (!chart || chart._type !== type) continue;
+
+            console.log(
+              `  🎨 Chart ${ci} (${type}): Updating ${
+                chart._channelIndices?.length || 0
+              } channels`
+            );
 
             const mapping = chart._channelIndices || [];
             for (let pos = 0; pos < mapping.length; pos++) {
@@ -718,7 +741,10 @@ export function subscribeChartUpdates(
                   if (chart.series[seriesIdx].points) {
                     chart.series[seriesIdx].points.stroke = strokeFn;
                   }
+                  arrayUpdateCount++;
+                  console.log(`    ✅ Series[${seriesIdx}] color → ${color}`);
                 } catch (e) {
+                  console.error(`    ❌ Series update failed:`, e);
                   // Ignore errors for individual series
                 }
               }
@@ -726,13 +752,19 @@ export function subscribeChartUpdates(
             try {
               // ✅ FIX: Immediate redraw instead of batched (forces path regeneration)
               chart.redraw(false);
+              console.log(`  ✅ Chart ${ci} redrawn`);
             } catch (e) {
+              console.error(`  ❌ Redraw failed for chart ${ci}:`, e);
               // Ignore
             }
           }
+          console.log(
+            `[COLOR SUBSCRIBER] ✅ Array case: Updated ${arrayUpdateCount} series`
+          );
 
           // ✅ FIX: Update digital plugin colors if this is digital type
           if (type === "digital") {
+            console.log(`[COLOR SUBSCRIBER] 🔌 Updating digitalFill plugin...`);
             for (let ci = 0; ci < charts.length; ci++) {
               const chart = charts[ci];
               if (!chart || chart._type !== "digital") continue;
@@ -768,8 +800,13 @@ export function subscribeChartUpdates(
 
         // Case 1: Single color element was changed
         if (!Number.isFinite(globalIdx)) {
+          console.warn(`[COLOR SUBSCRIBER] ❌ Invalid globalIdx: ${globalIdx}`);
           return; // Not a single-element update, ignore
         }
+
+        console.log(`[COLOR SUBSCRIBER] 🎯 CASE 1: Single color change`);
+        console.log(`  Channel: ${type}[${globalIdx}]`);
+        console.log(`  New color: ${change.newValue}`);
 
         const newColor = change.newValue;
         let updateCount = 0;
@@ -794,6 +831,19 @@ export function subscribeChartUpdates(
         const chartsWithThisChannel =
           channelToChartsIndex.get(`${type}-${globalIdx}`) || [];
 
+        console.log(
+          `[COLOR SUBSCRIBER] 🔍 Fast index lookup: "${type}-${globalIdx}"`
+        );
+        console.log(
+          `  Found ${chartsWithThisChannel.length} charts with this channel`
+        );
+        console.log(`  Total charts in memory: ${charts.length}`);
+        console.log(`  Charts by type: `, {
+          analog: charts.filter((c) => c?._type === "analog").length,
+          digital: charts.filter((c) => c?._type === "digital").length,
+          computed: charts.filter((c) => c?._type === "computed").length,
+        });
+
         for (const chart of chartsWithThisChannel) {
           try {
             // Find the series index in this specific chart
@@ -802,6 +852,10 @@ export function subscribeChartUpdates(
             if (pos < 0) continue;
 
             const seriesIdx = pos + 1; // uPlot series index (0 is x-axis)
+
+            console.log(
+              `  🎨 Updating ${chart._type} chart, series[${seriesIdx}]...`
+            );
 
             // Update both stroke and cached stroke
             chart.series[seriesIdx].stroke = strokeFn;
@@ -871,6 +925,90 @@ export function subscribeChartUpdates(
           }
         }
         const t7 = performance.now();
+
+        // 🔍 DIAGNOSTIC: Log detailed color update information
+        console.group(
+          `[DIAGNOSTIC] 🔍 Color Update Trace - ${type}[${globalIdx}] → ${newColor}`
+        );
+        console.log(
+          `Charts with this channel: ${chartsWithThisChannel.length}`
+        );
+        console.log(`Successfully updated: ${updateCount} charts`);
+        console.log(`Redraws scheduled: ${redrawCount}`);
+
+        for (
+          let diagIdx = 0;
+          diagIdx < chartsWithThisChannel.length;
+          diagIdx++
+        ) {
+          const chart = chartsWithThisChannel[diagIdx];
+          const mapping = chart._channelIndices || [];
+          const pos = mapping.indexOf(globalIdx);
+
+          if (pos >= 0) {
+            const seriesIdx = pos + 1;
+            const series = chart.series[seriesIdx];
+
+            console.log(`\n  📊 Chart ${diagIdx} (${chart._type}):`, {
+              seriesIdx,
+              strokeType: typeof series.stroke,
+              strokeFunction: series.stroke.toString().substring(0, 50),
+              strokeReturns:
+                typeof series.stroke === "function"
+                  ? series.stroke(chart, seriesIdx)
+                  : "N/A",
+              pathsCleared: series._paths === null,
+              pointsStroke: series.points ? typeof series.points.stroke : "N/A",
+              chartWidth: chart.width,
+              chartHeight: chart.height,
+            });
+
+            // ✅ CRITICAL: Verify stroke function is correct
+            if (typeof series.stroke === "function") {
+              const strokeResult = series.stroke(chart, seriesIdx);
+              if (strokeResult !== newColor) {
+                console.warn(
+                  `    ⚠️ STROKE MISMATCH: Expected "${newColor}", got "${strokeResult}"`
+                );
+              } else {
+                console.log(
+                  `    ✅ Stroke returns correct color: "${strokeResult}"`
+                );
+              }
+            } else {
+              console.error(
+                `    ❌ STROKE NOT A FUNCTION: ${typeof series.stroke}`
+              );
+            }
+
+            // ✅ Check if redraw was called
+            if (typeof chart.redraw === "function") {
+              console.log(`    ✅ chart.redraw() method exists`);
+            } else {
+              console.error(`    ❌ chart.redraw() method NOT FOUND`);
+            }
+
+            // ✅ Check draw hooks
+            if (chart.hooks && chart.hooks.draw) {
+              console.log(
+                `    ℹ️ Draw hooks: ${chart.hooks.draw.length} hook(s)`
+              );
+            }
+
+            // ✅ Check series visibility
+            if (series.show !== false) {
+              console.log(`    ✅ Series is VISIBLE (show: ${series.show})`);
+            } else {
+              console.error(`    ❌ Series is HIDDEN (show: ${series.show})`);
+            }
+
+            // ✅ Check axis configuration
+            if (series.scale) {
+              console.log(`    ℹ️ Scale: ${series.scale}`);
+            }
+          }
+        }
+        console.groupEnd();
 
         // ✅ FIX 6: Only recreate charts that actually failed
         if (failedCharts.length > 0 && updateCount === 0) {
