@@ -342,7 +342,8 @@ export function injectSidebarIntoUplot(uplotContainer, sidebarEl) {
     mainContent.style.cssText = `
       ${mainContent.style.cssText};
       flex: 1;
-      overflow: hidden;
+      min-width: 0;
+      overflow: auto;
     `;
   }
 

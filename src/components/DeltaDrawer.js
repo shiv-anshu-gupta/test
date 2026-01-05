@@ -137,11 +137,11 @@ export function createDeltaDrawer() {
       }
 
       // Show empty state if insufficient data
-      if (!deltaData || deltaData.length === 0 || verticalLinesCount < 2) {
+      if (!deltaData || deltaData.length === 0 || verticalLinesCount < 1) {
         const message =
           verticalLinesCount < 1
-            ? "Add vertical lines using <strong>Alt + 1</strong> on the chart to see delta values"
-            : "Add another vertical line using <strong>Alt + 1</strong> to see delta values between them";
+            ? "Add vertical lines using <strong>Alt + 1</strong> on the chart to see values"
+            : "";
 
         content.innerHTML = `
           <div class="delta-empty-state">
@@ -149,7 +149,7 @@ export function createDeltaDrawer() {
               ${message}
             </div>
             <div style="font-size: 12px; color: #9ca3af; margin-top: 16px;">
-              💡 Place markers on the chart to measure values and differences
+              💡 Place markers on the chart to measure values
             </div>
           </div>
         `;

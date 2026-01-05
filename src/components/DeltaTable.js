@@ -24,13 +24,15 @@ export function buildTableHeader(
   // Value columns (one per vertical line)
   for (let i = 0; i < verticalLinesCount; i++) {
     const color = getColorHex(crosshairColors[i % crosshairColors.length]);
-    const timeValue = verticalLineTimes[i] || `T${i + 1}`;
 
     columns.push(`
       <th class="delta-th delta-th-value">
         <div class="delta-th-content">
-          <span class="delta-color-dot" style="background-color: ${color};"></span>
-          <span class="delta-th-label">T${i + 1}</span>
+          
+          <span class="delta-th-label" style="color: ${color}">${
+      crosshairColors[i % crosshairColors.length].charAt(0).toUpperCase() +
+      crosshairColors[i % crosshairColors.length].slice(1)
+    } vertical line</span>
         </div>
       </th>
     `);
@@ -194,7 +196,7 @@ export function buildTableHTML(
   const body = buildTableBody(tableData, verticalLinesCount);
 
   return `
-    <table class="delta-table">
+    <table class="delta-table">           
       ${header}
       ${body}
     </table>

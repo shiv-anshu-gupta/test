@@ -45,10 +45,13 @@ export function adjustMainContent(position, sidebarWidth) {
     `[adjustMainContent] Position: ${position}, Sidebar width: ${sidebarWidth}px`
   );
 
-  // ✅ Wait for CSS transition, then resize charts to their container width
-  setTimeout(() => {
-    resizeChartsToContainers();
-  }, 350); // Match CSS transition duration
+  // ✅ Use requestAnimationFrame for better sync with layout changes
+  // This ensures charts resize after browser completes layout recalculation
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      resizeChartsToContainers();
+    });
+  });
 }
 
 // ✅ Export to window for onclick handlers

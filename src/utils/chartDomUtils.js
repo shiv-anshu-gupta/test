@@ -154,6 +154,8 @@ export function initUPlotChart(opts, chartData, chartDiv, charts) {
       });
     }
   });
-  ro.observe(chartDiv);
+  // ✅ Observe parent container to catch width changes from sidebar toggle
+  // This ensures chart resizes when parent container width changes
+  ro.observe(chartDiv.parentElement);
   return chart;
 }
