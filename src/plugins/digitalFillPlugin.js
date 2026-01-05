@@ -241,14 +241,17 @@ export function createDigitalFillPlugin(signals) {
               currentColors[idx] || sig.color || "rgba(100, 100, 255, 0.5)";
 
             // ✅ DEBUG: Log color being used for each signal
-            console.log(`[digitalFillPlugin] Signal ${idx} drawing with color:`, {
-              currentColor: currentColors[idx],
-              sigColor: sig.color,
-              usingColor: fillColor,
-              yDataLength: yData.length,
-              offset: sig.offset,
-              targetVal: sig.targetVal,
-            });
+            console.log(
+              `[digitalFillPlugin] Signal ${idx} drawing with color:`,
+              {
+                currentColor: currentColors[idx],
+                sigColor: sig.color,
+                usingColor: fillColor,
+                yDataLength: yData.length,
+                offset: sig.offset,
+                targetVal: sig.targetVal,
+              }
+            );
 
             // ✅ DEBUG: Set canvas styles and confirm they're applied
             ctx.fillStyle = fillColor;
