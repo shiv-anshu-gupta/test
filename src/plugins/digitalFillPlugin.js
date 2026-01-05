@@ -50,6 +50,21 @@
 export function createDigitalFillPlugin(signals) {
   // signals: [{signalIndex, offset, color, targetVal, originalIndex?}]
   const currentColors = signals.map((s) => s.color);
+
+  // ✅ DEBUG: Log plugin initialization
+  console.log("[digitalFillPlugin] 🔧 Plugin initialized", {
+    signalsCount: signals.length,
+    signals: signals.map((s, i) => ({
+      index: i,
+      signalIndex: s.signalIndex,
+      color: s.color,
+      offset: s.offset,
+      targetVal: s.targetVal,
+      originalIndex: s.originalIndex,
+    })),
+    currentColors: currentColors,
+  });
+
   const plugin = {
     id: "digitalFill",
     signals,
@@ -111,28 +126,44 @@ export function createDigitalFillPlugin(signals) {
     hooks: {
       setScale: [
         (u, scaleKey, opts) => {
-          // if (scaleKey !== 'y') return;
+          // ✅ DEBUG: Log setScale hook
+          console.log("[digitalFillPlugin] setScale hook called", {
+            scaleKey,
+            opts,
+            currentYScale: u?.scales?.y,
+          });
+
           const yScaleOpts = u?.opts?.scales?.y;
-          u.setScale("y", { min: 0, max: 15, auto: false });
-          if (
-            yScaleOpts &&
-            typeof yScaleOpts.min === "number" &&
-            typeof yScaleOpts.max === "number"
-          ) {
-            const cur = u.scales.y;
-            // Only set if not already correct
-            if (
-              cur.min !== yScaleOpts.min ||
-              cur.max !== yScaleOpts.max ||
-              cur.auto !== false
-            ) {
-              u.setScale("y", {
-                min: yScaleOpts.min,
-                max: yScaleOpts.max,
-                auto: false,
-              });
-            }
+
+          // ✅ FIX: Only force scale if it's NOT already set
+          if (!yScaleOpts || yScaleOpts.auto !== false) {
+            // Use the provided scale or default to 0-15
+            const minVal = yScaleOpts?.min ?? 0;
+            const maxVal = yScaleOpts?.max ?? 15;
+
+            console.log("[digitalFillPlugin] Setting y-scale to:", {
+              min: minVal,
+              max: maxVal,
+            });
+
+            u.setScale("y", { min: minVal, max: maxVal, auto: false });
+          } else {
+            console.log(
+              "[digitalFillPlugin] Y-scale already configured:",
+              yScaleOpts
+            );
           }
+        },
+      ],
+      init: [
+        (u) => {
+          // ✅ DEBUG: Log when plugin is initialized in uPlot
+          console.log("[digitalFillPlugin] ✅ Plugin init hook called", {
+            chartWidth: u.width,
+            chartHeight: u.height,
+            dataLength: u.data?.[0]?.length,
+            series: u.series.length,
+          });
         },
       ],
       draw: [
@@ -141,10 +172,51 @@ export function createDigitalFillPlugin(signals) {
           const xData = u.data[0];
           const n = xData.length;
           const yScale = u.scales.y;
+
+          // ✅ DEBUG: Log draw hook execution with full validation
+          console.log("[digitalFillPlugin] 🎨 Draw hook called", {
+            signals: signals.length,
+            currentColors: currentColors,
+            yScaleMin: yScale?.min,
+            yScaleMax: yScale?.max,
+            xDataLength: xData?.length,
+            dataArrays: u.data.length,
+            canvasSize: {
+              width: ctx.canvas?.width,
+              height: ctx.canvas?.height,
+            },
+          });
+
+          // ✅ VALIDATION: Check if we have valid data
+          if (!xData || xData.length === 0) {
+            console.warn(
+              "[digitalFillPlugin] ❌ No x-axis data available, skipping draw"
+            );
+            return;
+          }
+
+          if (signals.length === 0) {
+            console.warn(
+              "[digitalFillPlugin] ❌ No signals configured, skipping draw"
+            );
+            return;
+          }
+
+          // ✅ VALIDATION: Check if all signal indices are valid
+          signals.forEach((sig, idx) => {
+            if (!u.data[sig.signalIndex]) {
+              console.warn(
+                `[digitalFillPlugin] ⚠️ Signal ${idx} signalIndex=${sig.signalIndex} not found (only ${u.data.length} arrays)`
+              );
+            }
+          });
+
           if (isNaN(yScale.min) || isNaN(yScale.max)) {
             console.warn(
-              "yScale min/max not defined, cannot draw digital fills"
+              "[digitalFillPlugin] ❌ yScale min/max invalid:",
+              yScale
             );
+            return;
           }
 
           // Get the plotting area boundaries to avoid drawing over axes/labels
@@ -161,18 +233,52 @@ export function createDigitalFillPlugin(signals) {
 
           signals.forEach((sig, idx) => {
             const yData = u.data[sig.signalIndex];
+
+            // ✅ VALIDATION: Check if yData exists
+            if (!yData) {
+              console.warn(
+                `[digitalFillPlugin] ⚠️ Signal ${idx} has no data at index ${sig.signalIndex}`
+              );
+              return;
+            }
+
             ctx.save();
             // Use currentColors array if updated, fallback to signal color
             const fillColor = currentColors[idx] || sig.color;
+
+            // ✅ DEBUG: Log color being used for each signal
+            console.log(
+              `[digitalFillPlugin] Signal ${idx} drawing with color:`,
+              {
+                currentColor: currentColors[idx],
+                fallbackColor: sig.color,
+                usingColor: fillColor,
+                yDataLength: yData.length,
+                offset: sig.offset,
+                targetVal: sig.targetVal,
+              }
+            );
+
+            // ✅ DEBUG: Set canvas styles and confirm they're applied
             ctx.fillStyle = fillColor;
             ctx.strokeStyle = "black";
             ctx.lineWidth = 1.5;
+
+            console.log(
+              `[digitalFillPlugin] Signal ${idx} canvas styles set:`,
+              {
+                fillStyle: ctx.fillStyle,
+                strokeStyle: ctx.strokeStyle,
+                lineWidth: ctx.lineWidth,
+              }
+            );
 
             ctx.beginPath();
             let beginFill = false;
             let xWidthCount = 0;
             let xBegin = 0,
               yBegin = 0;
+            let rectCount = 0; // ✅ Track how many rects drawn
 
             // Calculate the minimum value in yData to determine offsetPresent.
             // If the minimum is even, use it; otherwise, use the next lower even number.
@@ -211,6 +317,15 @@ export function createDigitalFillPlugin(signals) {
               ) - u.valToPos(yData[0] + effectiveOffset, "y", true)
             );
 
+            console.log(`[digitalFillPlugin] Signal ${idx} dimensions:`, {
+              offsetPresent,
+              effectiveOffset,
+              xWidth,
+              yHeight,
+              px0,
+              py,
+            });
+
             // Iterate through all data points to draw step lines and fill regions
             for (let i = 0; i < n - 1; i++) {
               const x0 = u.valToPos(xData[i], "x", true);
@@ -233,6 +348,7 @@ export function createDigitalFillPlugin(signals) {
               if (yData[i] != sig.targetVal + offsetPresent) {
                 if (beginFill) {
                   ctx.fillRect(xBegin, yBegin, x0 - xBegin, yHeight);
+                  rectCount++;
                   ctx.stroke();
                 }
                 beginFill = false;
@@ -249,15 +365,25 @@ export function createDigitalFillPlugin(signals) {
                 // If this is the last point, fill to the end
                 if (i === n - 2) {
                   ctx.fillRect(xBegin, yBegin, x1 - xBegin, yHeight);
+                  rectCount++;
                   ctx.stroke();
                 }
               }
             }
             ctx.stroke();
             ctx.closePath();
+
+            // ✅ DEBUG: Log rectangles drawn for this signal
+            console.log(`[digitalFillPlugin] Signal ${idx} complete:`, {
+              rectanglesDrawn: rectCount,
+            });
+
             ctx.restore();
           });
           ctx.restore(); // Remove the clip
+
+          // ✅ DEBUG: Confirm draw hook completed
+          console.log("[digitalFillPlugin] ✅ Draw hook completed");
         },
       ],
     },
