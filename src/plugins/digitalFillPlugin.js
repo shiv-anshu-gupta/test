@@ -76,35 +76,35 @@ export function createDigitalFillPlugin(signals) {
       }));
     },
     updateColors(newColors) {
-      // ✅ DEBUG: Log what we receive
-      console.log("[digitalFillPlugin] updateColors called with:", newColors);
+      // ✅ DEBUG: Log input
+      console.log("[digitalFillPlugin] updateColors called:", {
+        receivedColors: newColors,
+        currentSignals: signals.length,
+      });
 
       let changed = false;
-      signals.forEach((sig, i) => {
-        const origIdx = sig.originalIndex ?? i;
-        let newColor = null;
 
-        // Support both array and object formats
-        if (Array.isArray(newColors)) {
-          newColor = newColors[origIdx];
-        } else if (newColors && typeof newColors === "object") {
-          newColor = newColors[origIdx];
-        }
+      // ✅ FIX: Map colors by SIGNAL index, not originalIndex
+      // The newColors array is already in display order (0, 1, 2...)
+      signals.forEach((sig, signalIdx) => {
+        // Use signal index directly (not originalIndex!)
+        const newColor = Array.isArray(newColors)
+          ? newColors[signalIdx]
+          : newColors?.[signalIdx];
 
-        // ✅ Check if color actually changed
-        if (newColor && newColor !== currentColors[i]) {
+        if (newColor && newColor !== currentColors[signalIdx]) {
           console.log(
-            `[digitalFillPlugin] Signal ${i} color: ${currentColors[i]} → ${newColor}`
+            `[digitalFillPlugin] Signal ${signalIdx} color: ${currentColors[signalIdx]} → ${newColor}`
           );
-          currentColors[i] = newColor;
-          sig.color = newColor; // ✅ CRITICAL: Update signal config
+          currentColors[signalIdx] = newColor;
+          sig.color = newColor;
           changed = true;
         }
       });
 
       console.log("[digitalFillPlugin] updateColors result:", {
         changed,
-        newCurrentColors: [...currentColors],
+        updatedColors: [...currentColors],
       });
 
       return changed;
