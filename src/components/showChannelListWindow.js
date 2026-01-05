@@ -84,6 +84,7 @@ import themeBroadcast from "../utils/themeBroadcast.js";
  * @param {Object} channelState - reactive state (createState) containing channel metadata
  * @param {Function} [onChannelDrop] - optional callback(type, fromIdx, toIdx)
  * @param {Function} [onChannelColorChange] - optional callback(type, idx, color)
+ * @param {Window} [parentWindow] - optional: reference to parent window for postMessage communication
  * @returns {Window|undefined} the popup window object if opened
  */
 export function showChannelListWindow(
@@ -92,8 +93,16 @@ export function showChannelListWindow(
   onChannelColorChange,
   charts, // optional: pass charts array so we can inspect digital chart plugin for display colors
   cfg, // COMTRADE config
-  data // COMTRADE data
+  data, // COMTRADE data
+  parentWindow = null // ✅ FIX: Accept explicit parent window reference
 ) {
+  // ✅ FIX: Set up parentWindow reference with fallback
+  parentWindow = parentWindow || window;
+  console.log(
+    "[showChannelListWindow] Received parentWindow, will pass to ChannelList",
+    { hasParentWindow: !!parentWindow }
+  );
+
   const win = window.open("", "ChannelListWindow", "width=600,height=700");
   if (!win) {
     console.error("Failed to open popup window - popups may be blocked");
@@ -576,7 +585,8 @@ export function showChannelListWindow(
               },
               win.Tabulator, // ✅ Pass the child window's Tabulator
               win.document, // ✅ Use child window's document
-              root // ✅ Append to child window's root
+              root, // ✅ Append to child window's root
+              parentWindow // ✅ FIX: Pass explicit parent window reference
             );
             console.log(
               "[showChannelListWindow] ChannelList initialized with child Tabulator"
@@ -606,7 +616,8 @@ export function showChannelListWindow(
           },
           win.Tabulator, // ✅ Pass the child window's Tabulator
           win.document, // ✅ Use child window's document
-          root // ✅ Append to child window's root
+          root, // ✅ Append to child window's root
+          parentWindow // ✅ FIX: Pass explicit parent window reference
         );
         console.log(
           "[showChannelListWindow] ChannelList initialized with child Tabulator"

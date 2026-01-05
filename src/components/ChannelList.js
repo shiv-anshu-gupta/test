@@ -1803,7 +1803,8 @@ export function createChannelList(
   TabulatorInstance,
   ownerDocument,
   attachToElement,
-  data = null
+  data = null,
+  parentWindow = null // ✅ NEW: Accept parent window reference
 ) {
   // Use provided document (popup) or fallback to current document
   const doc =
@@ -2236,30 +2237,30 @@ export function createChannelList(
 
         // 2) Post a structured message to the parent (child -> parent)
         try {
-          if (
-            typeof window !== "undefined" &&
-            window.opener &&
-            !window.opener.closed
-          ) {
-            // 🔍 DIAGNOSTIC: Log before sending message
-            console.group(
-              `[ChannelList] 📤 POSTMESSAGE DIAGNOSTIC - Sending to parent`
-            );
-            console.log(`  Has window.opener:`, !!window.opener);
-            console.log(`  Opener closed:`, window.opener?.closed);
-            console.log(
-              `  Opener URL:`,
-              window.opener?.location?.href || "N/A"
-            );
-            console.log(`  Message type:`, type);
-            console.log(`  Field:`, field);
-            console.log(`  Channel ID:`, rowData?.channelID);
-            console.log(`  New value:`, newValue);
-            console.groupEnd();
+          // ✅ FIX: Use explicitly passed parentWindow instead of window.opener
+          const targetParent =
+            parentWindow || (typeof window !== "undefined" && window.opener);
 
+          console.group(
+            `[ChannelList] 📤 POSTMESSAGE DIAGNOSTIC - Sending to parent`
+          );
+          console.log(`  Using parentWindow parameter:`, !!parentWindow);
+          console.log(
+            `  Fallback to window.opener:`,
+            !parentWindow && !!window.opener
+          );
+          console.log(`  Target parent exists:`, !!targetParent);
+          console.log(`  Target parent closed:`, targetParent?.closed);
+          console.log(`  Message type:`, type);
+          console.log(`  Field:`, field);
+          console.log(`  Channel ID:`, rowData?.channelID);
+          console.log(`  New value:`, newValue);
+          console.groupEnd();
+
+          if (targetParent && !targetParent.closed) {
             // Include both legacy object payload and Tabulator-style args/channelID
             // so the parent can accept either form (legacy row-based or [_, channelID, value]).
-            window.opener.postMessage(
+            targetParent.postMessage(
               {
                 source: "ChildWindow",
                 type: type,
@@ -2271,9 +2272,10 @@ export function createChannelList(
             console.log(`[ChannelList] ✅ postMessage SENT successfully`);
           } else {
             console.error(`[ChannelList] ❌ Cannot post message:`, {
+              hasTargetParent: !!targetParent,
+              parentClosed: targetParent?.closed,
               hasWindow: typeof window !== "undefined",
               hasOpener: !!window.opener,
-              openerClosed: window.opener?.closed,
             });
           }
         } catch (postErr) {

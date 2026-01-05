@@ -2360,6 +2360,12 @@ updateUndoRedoButtons();
 // Show Channel List button event listener
 showChannelListBtn.addEventListener("click", () => {
   try {
+    // ✅ FIX: Store parent window reference and pass to showChannelListWindow
+    const parentWindow = window;
+    console.log("[main.js] Opening Channel List with parentWindow reference", {
+      hasWindow: !!parentWindow,
+    });
+
     // Open popup window with Tabulator
     showChannelListWindow(
       channelState,
@@ -2375,7 +2381,8 @@ showChannelListBtn.addEventListener("click", () => {
       },
       charts,
       cfg,
-      data
+      data,
+      parentWindow // ✅ FIX: Pass explicit parent window reference as 7th parameter
     );
   } catch (error) {
     console.error("Error opening channel list:", error);
