@@ -713,6 +713,8 @@ export function subscribeChartUpdates(
                   const seriesIdx = pos + 1;
                   const strokeFn = () => color;
                   chart.series[seriesIdx].stroke = strokeFn;
+                  // ✅ FIX: Clear path cache to force regeneration
+                  chart.series[seriesIdx]._paths = null;
                   if (chart.series[seriesIdx].points) {
                     chart.series[seriesIdx].points.stroke = strokeFn;
                   }
@@ -722,11 +724,45 @@ export function subscribeChartUpdates(
               }
             }
             try {
-              scheduleChartRedraw(chart);
+              // ✅ FIX: Immediate redraw instead of batched (forces path regeneration)
+              chart.redraw(false);
             } catch (e) {
               // Ignore
             }
           }
+
+          // ✅ FIX: Update digital plugin colors if this is digital type
+          if (type === "digital") {
+            for (let ci = 0; ci < charts.length; ci++) {
+              const chart = charts[ci];
+              if (!chart || chart._type !== "digital") continue;
+
+              // Find the digitalFill plugin
+              const digitalPlugin =
+                chart.plugins &&
+                chart.plugins.find((p) => p && p.id === "digitalFill");
+
+              if (
+                digitalPlugin &&
+                typeof digitalPlugin.updateColors === "function"
+              ) {
+                // Update plugin with full color array
+                digitalPlugin.updateColors(change.newValue);
+
+                // Clear paths for all series to force regeneration
+                if (chart.series) {
+                  chart.series.forEach((s) => {
+                    if (s && s._paths) s._paths = null;
+                  });
+                }
+
+                console.log(
+                  `[color subscriber] ✅ Updated digitalFill plugin colors (array replacement)`
+                );
+              }
+            }
+          }
+
           return;
         }
 
@@ -771,6 +807,9 @@ export function subscribeChartUpdates(
             chart.series[seriesIdx].stroke = strokeFn;
             chart.series[seriesIdx]._stroke = newColor; // Cached value
 
+            // ✅ FIX: Clear path cache to force regeneration with new color
+            chart.series[seriesIdx]._paths = null;
+
             if (chart.series[seriesIdx].points) {
               chart.series[seriesIdx].points.stroke = strokeFn;
               chart.series[seriesIdx].points._stroke = newColor;
@@ -784,16 +823,51 @@ export function subscribeChartUpdates(
         }
         const t5 = performance.now();
 
-        // ✅ FIX 5: Batch redraw with RAF (prevents browser layout thrashing)
+        // ✅ FIX: Immediate redraw for all affected charts (not batched!)
         const t6 = performance.now();
         let redrawCount = 0;
         for (const chart of chartsWithThisChannel) {
           try {
-            // Schedule for batch redraw instead of immediate
-            scheduleChartRedraw(chart);
+            // Immediate redraw (don't batch - we need paths regenerated NOW)
+            chart.redraw(false); // false = don't clear canvas
             redrawCount++;
           } catch (e) {
-            console.warn(`[color subscriber] Failed to schedule redraw:`, e);
+            console.warn(`[color subscriber] Failed to redraw:`, e);
+          }
+        }
+
+        // ✅ FIX: Update digital plugin colors if this is digital type
+        if (type === "digital") {
+          for (const chart of chartsWithThisChannel) {
+            if (chart._type !== "digital") continue;
+
+            // Find the digitalFill plugin
+            const digitalPlugin =
+              chart.plugins &&
+              chart.plugins.find((p) => p && p.id === "digitalFill");
+
+            if (
+              digitalPlugin &&
+              typeof digitalPlugin.updateColors === "function"
+            ) {
+              // Update plugin with full color array
+              const fullColors = channelState.digital?.lineColors || [];
+              digitalPlugin.updateColors(fullColors);
+
+              // Clear paths for all series to force regeneration
+              if (chart.series) {
+                chart.series.forEach((s) => {
+                  if (s && s._paths) s._paths = null;
+                });
+              }
+
+              // Redraw with new colors
+              chart.redraw(false);
+
+              console.log(
+                `[color subscriber] ✅ Updated digitalFill plugin colors for single channel`
+              );
+            }
           }
         }
         const t7 = performance.now();

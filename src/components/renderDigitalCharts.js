@@ -62,6 +62,15 @@ export function renderDigitalCharts(
     name: "Digital Channels",
   };
 
+  // ✅ FIX: Extract digital group ID (like analog charts do)
+  const userGroups = channelState.digital?.groups || [];
+  const groupId =
+    digitalIndicesToShow.length > 0 && userGroups.length > 0
+      ? userGroups[digitalIndicesToShow[0]]
+      : "";
+
+  console.log(`[renderDigitalCharts] 🏷️ Digital groupId = "${groupId}"`);
+
   const dragBar = createDragBar(
     {
       indices: digitalChannelsToShow.map((_, i) => i),
@@ -78,7 +87,7 @@ export function renderDigitalCharts(
     digitalYLabels,
     displayedColors,
     "Digital Channels",
-    "",
+    groupId,
     "digital"
   );
   chartsContainer.appendChild(parentDiv);
