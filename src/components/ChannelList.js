@@ -2241,37 +2241,43 @@ export function createChannelList(
             window.opener &&
             !window.opener.closed
           ) {
+            // 🔍 DIAGNOSTIC: Log before sending message
+            console.group(
+              `[ChannelList] 📤 POSTMESSAGE DIAGNOSTIC - Sending to parent`
+            );
+            console.log(`  Has window.opener:`, !!window.opener);
+            console.log(`  Opener closed:`, window.opener?.closed);
+            console.log(
+              `  Opener URL:`,
+              window.opener?.location?.href || "N/A"
+            );
+            console.log(`  Message type:`, type);
+            console.log(`  Field:`, field);
+            console.log(`  Channel ID:`, rowData?.channelID);
+            console.log(`  New value:`, newValue);
+            console.groupEnd();
+
             // Include both legacy object payload and Tabulator-style args/channelID
             // so the parent can accept either form (legacy row-based or [_, channelID, value]).
-            const payload = {
-              field,
-              row: rowData,
-              newValue,
-              channelID:
-                rowData && rowData.channelID ? rowData.channelID : null,
-              args: [
-                null,
-                rowData && rowData.channelID ? rowData.channelID : null,
-                newValue,
-              ],
-            };
-            // Use specific callback types for important fields so the parent
-            // can react to them directly.
-            let type = "callback_update";
-            if (field === "color") type = "callback_color";
-            else if (field === "name") type = "callback_channelName";
-            else if (field === "scale") type = "callback_scale";
-            else if (field === "start") type = "callback_start";
-            else if (field === "duration") type = "callback_duration";
-            else if (field === "invert") type = "callback_invert";
-
             window.opener.postMessage(
-              { source: "ChildWindow", type, payload },
+              {
+                source: "ChildWindow",
+                type: type,
+                payload: payload,
+              },
               "*"
             );
+
+            console.log(`[ChannelList] ✅ postMessage SENT successfully`);
+          } else {
+            console.error(`[ChannelList] ❌ Cannot post message:`, {
+              hasWindow: typeof window !== "undefined",
+              hasOpener: !!window.opener,
+              openerClosed: window.opener?.closed,
+            });
           }
-        } catch (e) {
-          // non-fatal (may run in parent context when createChannelList called from parent)
+        } catch (postErr) {
+          console.error(`[ChannelList] ❌ postMessage failed:`, postErr);
         }
       });
 

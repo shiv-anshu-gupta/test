@@ -3258,8 +3258,22 @@ window.addEventListener("message", (ev) => {
   const msgStartTime = performance.now();
   const msg = ev && ev.data;
 
+  // 🔍 DIAGNOSTIC: Log ALL messages received (before any filtering)
+  console.group(`[main.js] 📨 RAW MESSAGE RECEIVED`);
+  console.log(`Has data:`, !!msg);
+  console.log(`Message source:`, msg?.source);
+  console.log(`Message type:`, msg?.type);
+  console.log(`Origin:`, ev.origin);
+  console.log(`Full message:`, msg);
+  console.groupEnd();
+
   // Listen for messages from child windows (ChannelList, Merger app)
-  if (!msg || msg.source !== "ChildWindow") return;
+  if (!msg || msg.source !== "ChildWindow") {
+    console.warn(`[main.js] ⚠️ Message IGNORED (wrong source):`, msg?.source);
+    return;
+  }
+
+  console.log(`[main.js] ✅ Message ACCEPTED - Processing type: "${msg.type}"`);
 
   const { type, payload } = msg;
 
