@@ -556,6 +556,17 @@ export function showChannelListWindow(
     // Update globalCfg to use channelListCfg so that MathLive editor has access to all channels
     win.globalCfg = channelListCfg;
 
+    // ✅ CRITICAL: Store parentWindow reference in popup window globals so cellEdited handler can access it
+    win.globalParentWindow = parentWindow;
+    console.log(
+      "[showChannelListWindow] Stored parentWindow in popup globals:",
+      {
+        parentWindow: !!parentWindow,
+        globalParentWindow: !!win.globalParentWindow,
+        closed: parentWindow?.closed,
+      }
+    );
+
     // ✅ FIX: Pass Tabulator to createChannelList directly instead of trying to import
     // This avoids the MIME type error from trying to import modules in a popup context
 

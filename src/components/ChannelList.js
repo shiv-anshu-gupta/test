@@ -1806,6 +1806,23 @@ export function createChannelList(
   data = null,
   parentWindow = null // ✅ NEW: Accept parent window reference
 ) {
+  // ✅ CRITICAL FIX: Ensure parentWindow is set with proper fallback chain
+  // Priority: param > global > window.opener > window
+  parentWindow =
+    parentWindow ||
+    (typeof window !== "undefined" && window.globalParentWindow) ||
+    (typeof window !== "undefined" && window.opener) ||
+    (typeof window !== "undefined" && window);
+
+  console.log("[createChannelList] Parent window resolution:", {
+    paramReceived: arguments[6],
+    globalParentWindow:
+      typeof window !== "undefined" && !!window.globalParentWindow,
+    windowOpener: typeof window !== "undefined" && !!window.opener,
+    final: !!parentWindow,
+    closed: parentWindow?.closed,
+  });
+
   // Use provided document (popup) or fallback to current document
   const doc =
     ownerDocument ||
@@ -2203,6 +2220,42 @@ export function createChannelList(
           }
         }
 
+        // ✅ FIX: Define type and payload BEFORE try/catch (variable scoping fix)
+        // Determine message type based on field edited
+        let messageType = "callback_update"; // Default
+        let payload = { row: rowData };
+
+        if (field === "color") {
+          messageType = "callback_color";
+          const idx =
+            rowData && typeof rowData.originalIndex === "number"
+              ? rowData.originalIndex
+              : rowData && typeof rowData.id === "number"
+              ? rowData.id - 1
+              : undefined;
+          payload = {
+            channelID: rowData?.channelID,
+            type: rowData?.type,
+            idx: idx,
+            color: newValue,
+            row: rowData,
+          };
+        } else if (field === "scale") {
+          messageType = "callback_scale";
+          payload = {
+            channelID: rowData?.channelID,
+            scale: newValue,
+            row: rowData,
+          };
+        } else if (field === "group") {
+          messageType = "callback_group";
+          payload = {
+            channelID: rowData?.channelID,
+            group: newValue,
+            row: rowData,
+          };
+        }
+
         // 1) Call local callback if provided (existing flow)
         if (typeof onChannelUpdate === "function") {
           try {
@@ -2237,21 +2290,32 @@ export function createChannelList(
 
         // 2) Post a structured message to the parent (child -> parent)
         try {
-          // ✅ FIX: Use explicitly passed parentWindow instead of window.opener
+          // ✅ FIX: Use explicitly passed parentWindow with multiple fallbacks
           const targetParent =
-            parentWindow || (typeof window !== "undefined" && window.opener);
+            parentWindow ||
+            (typeof window !== "undefined" && window.globalParentWindow) ||
+            (typeof window !== "undefined" && window.opener);
 
           console.group(
             `[ChannelList] 📤 POSTMESSAGE DIAGNOSTIC - Sending to parent`
           );
           console.log(`  Using parentWindow parameter:`, !!parentWindow);
           console.log(
+            `  Using globalParentWindow fallback:`,
+            !parentWindow &&
+              typeof window !== "undefined" &&
+              !!window.globalParentWindow
+          );
+          console.log(
             `  Fallback to window.opener:`,
-            !parentWindow && !!window.opener
+            !parentWindow &&
+              typeof window !== "undefined" &&
+              !window.globalParentWindow &&
+              !!window.opener
           );
           console.log(`  Target parent exists:`, !!targetParent);
           console.log(`  Target parent closed:`, targetParent?.closed);
-          console.log(`  Message type:`, type);
+          console.log(`  Message type:`, messageType);
           console.log(`  Field:`, field);
           console.log(`  Channel ID:`, rowData?.channelID);
           console.log(`  New value:`, newValue);
@@ -2263,7 +2327,7 @@ export function createChannelList(
             targetParent.postMessage(
               {
                 source: "ChildWindow",
-                type: type,
+                type: messageType,
                 payload: payload,
               },
               "*"

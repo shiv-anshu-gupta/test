@@ -3265,6 +3265,11 @@ window.addEventListener("message", (ev) => {
   const msgStartTime = performance.now();
   const msg = ev && ev.data;
 
+  // ✅ FIX: Filter out react-devtools spam messages silently
+  if (msg?.source && msg.source.startsWith("react-devtools")) {
+    return;
+  }
+
   // 🔍 DIAGNOSTIC: Log ALL messages received (before any filtering)
   console.group(`[main.js] 📨 RAW MESSAGE RECEIVED`);
   console.log(`Has data:`, !!msg);
