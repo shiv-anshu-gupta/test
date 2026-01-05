@@ -151,7 +151,7 @@ export function createChartOptions({
   verticalLinesX,
   xLabel = "",
   xUnit,
-  width = 400,
+  width = null,
   height = 200,
   getCharts = null, // Optional getter for all charts
   yUnits = [],

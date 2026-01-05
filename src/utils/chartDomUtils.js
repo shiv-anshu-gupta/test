@@ -134,28 +134,64 @@ export function createSimpleContainer(containerClass = "analysis-container") {
 
 /**
  * Initializes a uPlot chart, sets series colors, adds to array, and attaches ResizeObserver.
- * @param {Object} opts
+ * ✅ FIXED: Now calculates initial width dynamically from container and uses contentBoxSize for better accuracy
+ * @param {Object} opts - Chart options (width can be null, will be calculated from container)
  * @param {Array} chartData
- * @param {HTMLElement} chartDiv
- * @param {Array} charts
+ * @param {HTMLElement} chartDiv - The chart container element
+ * @param {Array} charts - Array to store chart references
  * @returns {uPlot}
  */
 export function initUPlotChart(opts, chartData, chartDiv, charts) {
+  // ✅ FIX #1: Calculate width dynamically from container if not provided
+  // Get parent's client width (this is the actual available space)
+  const containerWidth =
+    chartDiv.parentElement?.clientWidth || chartDiv.clientWidth || 800;
+
+  // Only set width if not already provided or is placeholder
+  if (!opts.width || opts.width === 400) {
+    opts.width = Math.max(containerWidth, 200); // Ensure minimum 200px width
+    console.log(
+      `[initUPlotChart] 📊 Calculated chart width: ${opts.width}px from container ${containerWidth}px`
+    );
+  }
+
   const chart = new uPlot(opts, chartData, chartDiv);
   chart._seriesColors = opts.series.slice(1).map((s) => s.stroke);
 
   charts.push(chart);
 
+  // ✅ FIX #2: Improved ResizeObserver with contentBoxSize for accuracy
   const ro = new ResizeObserver((entries) => {
     for (let entry of entries) {
-      chart.setSize({
-        width: entry.contentRect.width,
-        height: entry.contentRect.height,
-      });
+      // Use contentBoxSize if available (more accurate), fallback to contentRect
+      let newWidth, newHeight;
+
+      if (entry.contentBoxSize) {
+        // contentBoxSize is more accurate for our use case (excludes padding)
+        newWidth = Math.floor(entry.contentBoxSize[0].inlineSize);
+        newHeight = Math.floor(entry.contentBoxSize[0].blockSize);
+      } else {
+        // Fallback to contentRect (includes padding in some browsers)
+        newWidth = Math.floor(entry.contentRect.width);
+        newHeight = Math.floor(entry.contentRect.height);
+      }
+
+      // Ensure we have valid dimensions before resizing
+      if (newWidth > 0 && newHeight > 0) {
+        chart.setSize({
+          width: newWidth,
+          height: newHeight,
+        });
+        console.log(
+          `[ResizeObserver] 📊 Chart resized to ${newWidth}x${newHeight}px`
+        );
+      }
     }
   });
-  // ✅ Observe parent container to catch width changes from sidebar toggle
-  // This ensures chart resizes when parent container width changes
+
+  // ✅ FIX #3: Observe parent container to catch width changes from sidebar toggle
+  // This ensures chart resizes when parent container width changes (sidebar open/close)
   ro.observe(chartDiv.parentElement);
+
   return chart;
 }

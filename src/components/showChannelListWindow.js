@@ -547,33 +547,77 @@ export function showChannelListWindow(
     // Update globalCfg to use channelListCfg so that MathLive editor has access to all channels
     win.globalCfg = channelListCfg;
 
-    // Inject a small module script into the popup so the ChannelList code runs
-    // inside the child window context. That allows the child to postMessage
-    // directly to the parent (window.opener) when changes occur.
-    const moduleScript = win.document.createElement("script");
-    moduleScript.type = "module";
+    // ✅ FIX: Pass Tabulator to createChannelList directly instead of trying to import
+    // This avoids the MIME type error from trying to import modules in a popup context
 
-    const serializedCfg = JSON.stringify(channelListCfg || {});
-    const base =
-      window.location && window.location.origin ? window.location.origin : "";
-    const modulePath = base + "/src/components/ChannelList.js";
-
-    moduleScript.textContent = `
-      import { createChannelList } from ${JSON.stringify(modulePath)};
-      (function(){
-        try {
-          const cfg = ${serializedCfg};
-          const root = document.getElementById('channel-root');
-          // createChannelList signature: (cfg, onChannelUpdate, TabulatorInstance, ownerDocument, attachToElement)
-          // We intentionally do not pass onChannelUpdate here: the child will postMessage to opener for callbacks.
-          createChannelList(cfg, undefined, undefined, document, root);
-        } catch (err) {
-          console.error('Child module failed to initialize ChannelList:', err);
-        }
-      })();
-    `;
-
-    win.document.body.appendChild(moduleScript);
+    try {
+      // Wait a moment for Tabulator to be available globally in the child window
+      if (typeof win.Tabulator === "undefined") {
+        console.warn(
+          "[showChannelListWindow] Tabulator not available yet, waiting..."
+        );
+        setTimeout(() => {
+          if (typeof win.Tabulator !== "undefined") {
+            // Call createChannelList directly with the child window's Tabulator instance
+            createChannelList(
+              channelListCfg,
+              (type, fromIdx, toIdx, color) => {
+                // Notify parent of changes via postMessage
+                if (window.opener && !window.opener.closed) {
+                  window.opener.postMessage(
+                    {
+                      source: "ChannelListWindow",
+                      type: "channel_update",
+                      payload: { channelType: type, fromIdx, toIdx, color },
+                    },
+                    "*"
+                  );
+                }
+              },
+              win.Tabulator, // ✅ Pass the child window's Tabulator
+              win.document, // ✅ Use child window's document
+              root // ✅ Append to child window's root
+            );
+            console.log(
+              "[showChannelListWindow] ChannelList initialized with child Tabulator"
+            );
+          } else {
+            console.error(
+              "[showChannelListWindow] Tabulator still not available after timeout"
+            );
+          }
+        }, 500);
+      } else {
+        // Tabulator is already available
+        createChannelList(
+          channelListCfg,
+          (type, fromIdx, toIdx, color) => {
+            // Notify parent of changes via postMessage
+            if (window.opener && !window.opener.closed) {
+              window.opener.postMessage(
+                {
+                  source: "ChannelListWindow",
+                  type: "channel_update",
+                  payload: { channelType: type, fromIdx, toIdx, color },
+                },
+                "*"
+              );
+            }
+          },
+          win.Tabulator, // ✅ Pass the child window's Tabulator
+          win.document, // ✅ Use child window's document
+          root // ✅ Append to child window's root
+        );
+        console.log(
+          "[showChannelListWindow] ChannelList initialized with child Tabulator"
+        );
+      }
+    } catch (err) {
+      console.error(
+        "[showChannelListWindow] Failed to initialize ChannelList:",
+        err
+      );
+    }
   }
 
   // ✅ Listen for theme changes from parent
