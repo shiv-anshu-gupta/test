@@ -906,24 +906,34 @@ export function subscribeChartUpdates(
             ) {
               // Update plugin with full color array
               const fullColors = channelState.digital?.lineColors || [];
-              digitalPlugin.updateColors(fullColors);
+              const colorsChanged = digitalPlugin.updateColors(fullColors);
 
-              // Clear paths for all series to force regeneration
-              if (chart.series) {
-                chart.series.forEach((s) => {
-                  if (s && s._paths) s._paths = null;
-                });
+              if (colorsChanged) {
+                // ✅ CRITICAL: Force plugin to regenerate paths with new colors
+                // The plugin caches drawn rectangles, so we must invalidate the cache
+
+                // Clear all series paths (forces uPlot to call plugin's hooks again)
+                if (chart.series) {
+                  chart.series.forEach((s) => {
+                    if (s && s._paths) s._paths = null;
+                  });
+                }
+
+                // ✅ FORCE IMMEDIATE REDRAW (don't batch!)
+                chart.redraw(false); // false = don't clear canvas, just redraw
+
+                console.log(
+                  `[color subscriber] ✅ Updated digitalFill plugin + forced redraw`
+                );
+              } else {
+                console.log(
+                  `[color subscriber] ⏭️ Digital colors unchanged, skipping redraw`
+                );
               }
-
-              // Redraw with new colors
-              chart.redraw(false);
-
-              console.log(
-                `[color subscriber] ✅ Updated digitalFill plugin colors for single channel`
-              );
             }
           }
         }
+
         const t7 = performance.now();
 
         // 🔍 DIAGNOSTIC: Log detailed color update information

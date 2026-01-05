@@ -62,17 +62,44 @@ export function createDigitalFillPlugin(signals) {
     },
     updateColors(newColors) {
       // newColors is expected as an array or object keyed by originalIndex
+      let colorsChanged = false;
+
       signals.forEach((sig, i) => {
         const origIdx = sig.originalIndex ?? i;
+
         // support both array and object maps
         if (Array.isArray(newColors)) {
-          if (typeof newColors[origIdx] !== "undefined")
-            currentColors[i] = newColors[origIdx];
-        } else if (newColors && typeof newColors[origIdx] !== "undefined") {
-          currentColors[i] = newColors[origIdx];
+          if (typeof newColors[origIdx] !== "undefined") {
+            const newColor = newColors[origIdx];
+            if (currentColors[i] !== newColor) {
+              currentColors[i] = newColor;
+              sig.color = newColor; // ✅ Update signal config too!
+              colorsChanged = true;
+            }
+          }
+        } else if (newColors && typeof newColors === "object") {
+          if (newColors[origIdx] !== undefined) {
+            const newColor = newColors[origIdx];
+            if (currentColors[i] !== newColor) {
+              currentColors[i] = newColor;
+              sig.color = newColor; // ✅ Update signal config too!
+              colorsChanged = true;
+            }
+          }
         }
       });
-      return true;
+
+      console.log(
+        `[digitalFillPlugin] updateColors: ${
+          colorsChanged ? "✅ CHANGED" : "⏭️ SAME"
+        }`,
+        {
+          signals: signals.length,
+          newColors: currentColors,
+        }
+      );
+
+      return colorsChanged; // ✅ Return whether colors actually changed
     },
     // Allow external components to query the current colors
     getSignalColors() {
