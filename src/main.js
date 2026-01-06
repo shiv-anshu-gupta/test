@@ -447,8 +447,20 @@ export const CALLBACK_TYPE = {
   CHANNEL_NAME: "callback_channelName",
   GROUP: "callback_group",
   ADD_CHANNEL: "callback_addChannel",
-  DELETE: "callback_delete",
 };
+
+const COMPUTED_COLOR_PALETTE = [
+  "#FF6B6B",
+  "#4ECDC4",
+  "#45B7D1",
+  "#FFA07A",
+  "#98D8C8",
+  "#C06C84",
+  "#6C5B7B",
+  "#355C7D",
+  "#F67280",
+  "#99B898",
+];
 
 /**
  * Find a channel by its unique channelID in the channel state
@@ -1259,34 +1271,21 @@ async function processCombinedDataFromMerger(cfgText, datText) {
 
     // PHASE 6: Load persisted computed channels
     const savedChannels = loadComputedChannelsFromStorage();
-    if (savedChannels.length > 0) {
-      if (!data.computedData) data.computedData = [];
-      for (const savedChannel of savedChannels) {
-        const exists = data.computedData.some(
-          (ch) => ch.equation === savedChannel.expression
-        );
-        if (!exists) {
-          data.computedData.push({
-            id: savedChannel.name,
-            equation: savedChannel.expression,
-            data: savedChannel.data,
-            index: data.computedData.length,
-          });
-        }
-      }
-      if (data.computedData.length > 0) {
-        renderComputedChannels(
-          data,
-          chartsContainer,
-          charts,
-          verticalLinesX,
-          subscribeChartUpdates,
-          createState,
-          calculateDeltas,
-          TIME_UNIT,
-          channelState
-        );
-      }
+    const restoredChannels = rehydrateStoredComputedChannels(
+      savedChannels,
+      cfg,
+      data,
+      channelState
+    );
+
+    if (restoredChannels.length > 0) {
+      renderComputedChannels(
+        data,
+        chartsContainer,
+        charts,
+        verticalLinesX,
+        channelState
+      );
     }
 
     console.log(
@@ -1352,6 +1351,203 @@ export const channelState = createState({
     xUnit: "sec",
   },
 });
+
+function rehydrateStoredComputedChannels(
+  savedChannels,
+  cfg,
+  data,
+  channelState
+) {
+  if (!Array.isArray(savedChannels) || savedChannels.length === 0) {
+    return [];
+  }
+
+  if (!data.computedData) {
+    data.computedData = [];
+  }
+
+  if (!cfg.computedChannels) {
+    cfg.computedChannels = [];
+  }
+
+  const addedChannels = [];
+  let paletteIndex = 0;
+
+  const computedState = (() => {
+    try {
+      return getComputedChannelsState();
+    } catch (err) {
+      console.warn(
+        "[rehydrateStoredComputedChannels] State access failed",
+        err
+      );
+      return null;
+    }
+  })();
+
+  const normalizeId = (value, fallback) => {
+    if (value === undefined || value === null || value === "") {
+      return fallback;
+    }
+    return value;
+  };
+
+  const ensureNumericArray = (arr) => {
+    if (!Array.isArray(arr)) {
+      return [];
+    }
+    return arr.map((val) => {
+      const num = Number(val);
+      return Number.isFinite(num) ? num : 0;
+    });
+  };
+
+  const collectExistingGroups = () => {
+    const set = new Set();
+    const pushGroup = (value) => {
+      if (typeof value === "string" && value.startsWith("G")) {
+        set.add(value);
+      }
+    };
+
+    if (cfg?.computedChannels) {
+      cfg.computedChannels.forEach((item) => pushGroup(item?.group));
+    }
+
+    if (channelState?.analog?.groups) {
+      channelState.analog.groups.forEach(pushGroup);
+    }
+
+    if (channelState?.digital?.groups) {
+      channelState.digital.groups.forEach(pushGroup);
+    }
+
+    if (channelState?.computed?.groups) {
+      channelState.computed.groups.forEach(pushGroup);
+    }
+
+    return set;
+  };
+
+  const existingGroups = collectExistingGroups();
+
+  const getFallbackGroup = () => {
+    let index = 0;
+    while (existingGroups.has(`G${index}`)) {
+      index += 1;
+    }
+    const groupId = `G${index}`;
+    existingGroups.add(groupId);
+    return groupId;
+  };
+
+  const idsMatch = (a, b) => {
+    if (a === undefined || a === null || b === undefined || b === null) {
+      return false;
+    }
+    if (a === b) {
+      return true;
+    }
+    return String(a) === String(b);
+  };
+
+  savedChannels.forEach((savedChannel, idx) => {
+    const rawId = normalizeId(savedChannel?.id, savedChannel?.name);
+    const channelId = normalizeId(rawId, `computed_${Date.now()}_${idx}`);
+    const rawName = normalizeId(
+      savedChannel?.name,
+      typeof channelId === "string" ? channelId : `computed_${channelId}`
+    );
+    const channelName = String(rawName);
+    const expression = savedChannel?.expression || savedChannel?.equation || "";
+    const unit = savedChannel?.unit || "";
+    const type = savedChannel?.type || "Computed";
+    const group =
+      typeof savedChannel?.group === "string" && savedChannel.group.trim()
+        ? savedChannel.group.trim()
+        : getFallbackGroup();
+    const color =
+      savedChannel?.color && savedChannel.color.trim()
+        ? savedChannel.color.trim()
+        : COMPUTED_COLOR_PALETTE[paletteIndex % COMPUTED_COLOR_PALETTE.length];
+    paletteIndex += 1;
+
+    existingGroups.add(group);
+
+    const dataSeries = ensureNumericArray(savedChannel?.data);
+
+    const alreadyInData = data.computedData.some(
+      (existing) =>
+        idsMatch(existing?.id, channelId) ||
+        (expression && existing?.equation === expression)
+    );
+
+    if (alreadyInData) {
+      return;
+    }
+
+    const computedEntry = {
+      id: channelId,
+      name: channelName,
+      equation: expression,
+      data: dataSeries,
+      unit,
+      group,
+      color,
+      type,
+      index: data.computedData.length,
+    };
+
+    data.computedData.push(computedEntry);
+
+    const cfgHasChannel = cfg.computedChannels.some(
+      (existing) =>
+        idsMatch(existing?.id, channelId) ||
+        (expression && existing?.equation === expression)
+    );
+
+    if (!cfgHasChannel) {
+      cfg.computedChannels.push({
+        id: channelId,
+        name: channelName,
+        equation: expression,
+        unit,
+        type,
+        group,
+        color,
+        index: computedEntry.index,
+      });
+    }
+
+    if (channelState?.computed) {
+      const computed = channelState.computed;
+      const alreadyInState = computed.channelIDs.some((id) =>
+        idsMatch(id, channelId)
+      );
+
+      if (!alreadyInState) {
+        computed.channelIDs.push(channelId);
+        computed.yLabels.push(channelName);
+        computed.lineColors.push(color);
+        computed.yUnits.push(unit);
+        computed.groups.push(group);
+        computed.scales.push(1);
+        computed.starts.push(0);
+        computed.durations.push("");
+        computed.inverts.push(false);
+        computed.equations.push(expression);
+      }
+    }
+
+    if (computedState?.addChannel && !computedState.hasChannel(channelId)) {
+      computedState.addChannel(channelId, computedEntry, "init");
+    }
+
+    addedChannels.push(computedEntry);
+  });
+
+  return addedChannels;
+}
 
 // Small runtime helper to inspect key runtime structures from DevTools.
 // Call `window.__inspectComtradeState()` in the console to print `data`,
@@ -1713,34 +1909,25 @@ window.addEventListener("mergedFilesReceived", async (event) => {
 
     // PHASE 6: Load persisted computed channels
     const savedChannels = loadComputedChannelsFromStorage();
-    if (savedChannels.length > 0) {
-      if (!data.computedData) data.computedData = [];
-      for (const savedChannel of savedChannels) {
-        const exists = data.computedData.some(
-          (ch) => ch.equation === savedChannel.expression
-        );
-        if (!exists) {
-          data.computedData.push({
-            id: savedChannel.name,
-            equation: savedChannel.expression,
-            data: savedChannel.data,
-            index: data.computedData.length,
-          });
-        }
-      }
-      if (data.computedData.length > 0) {
-        const exportBtn = document.getElementById("exportComputedChannelBtn");
-        const csvBtn = document.getElementById("exportCSVBtn");
-        if (exportBtn) exportBtn.disabled = false;
-        if (csvBtn) csvBtn.disabled = false;
-        renderComputedChannels(
-          data,
-          chartsContainer,
-          charts,
-          verticalLinesX,
-          channelState
-        );
-      }
+    const restoredChannels = rehydrateStoredComputedChannels(
+      savedChannels,
+      cfg,
+      data,
+      channelState
+    );
+
+    if (restoredChannels.length > 0) {
+      const exportBtn = document.getElementById("exportComputedChannelBtn");
+      const csvBtn = document.getElementById("exportCSVBtn");
+      if (exportBtn) exportBtn.disabled = false;
+      if (csvBtn) csvBtn.disabled = false;
+      renderComputedChannels(
+        data,
+        chartsContainer,
+        charts,
+        verticalLinesX,
+        channelState
+      );
     }
     subscribeToComputedChannelStateChanges();
     setupComputedChannelsListener();

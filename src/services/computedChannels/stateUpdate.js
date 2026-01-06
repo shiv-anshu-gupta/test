@@ -71,58 +71,98 @@ export const saveToCfg = (channelData, cfgData) => {
     cfgData.computedChannels = [];
   }
 
-  // ✅ IMPORTANT: The stable ID was already calculated and stored in ChannelList.js
-  // So we just use the LAST entry in cfg.computedChannels which has the correct stable ID
-  const existingChannel =
-    cfgData.computedChannels[cfgData.computedChannels.length - 1];
+  const rawId =
+    channelData?.id ?? channelData?.name ?? `computed_${Date.now()}`;
+  const normalizedId = rawId;
+  const comparisonId = rawId != null ? String(rawId) : null;
 
-  if (existingChannel && existingChannel.id) {
-    // ✅ Channel already exists with stable ID
-    const resolvedGroup = resolveComputedGroup(channelData, cfgData);
-    channelData.group = resolvedGroup;
-    existingChannel.group = resolvedGroup;
+  const rawName = channelData?.name ?? channelData?.id ?? normalizedId;
+  const normalizedName = String(rawName);
 
-    if ((channelData?.unit || "").trim()) {
-      existingChannel.unit = channelData.unit.trim();
+  // Ensure the channelData object carries the normalized identifiers
+  channelData.id = normalizedId;
+  channelData.name = normalizedName;
+
+  const resolvedGroup = resolveComputedGroup(channelData, cfgData);
+  channelData.group = resolvedGroup;
+
+  const findMatchingChannel = (item) => {
+    if (!item) return false;
+    if (comparisonId !== null && String(item.id) === comparisonId) {
+      return true;
     }
-    if ((channelData?.color || "").trim()) {
-      existingChannel.color = channelData.color.trim();
+    if (String(item.name) === normalizedName) {
+      return true;
+    }
+    if (channelData.equation && item.equation === channelData.equation) {
+      return true;
+    }
+    return false;
+  };
+
+  const existingIndex = cfgData.computedChannels.findIndex(findMatchingChannel);
+
+  const computeIndex = () => {
+    if (typeof channelData.index === "number") {
+      return channelData.index;
     }
 
-    console.log(
-      "[stateUpdate] 💾 Saving channel with stable ID to localStorage:",
-      {
-        id: existingChannel.id,
-        name: existingChannel.name,
-        group: existingChannel.group,
-      }
-    );
+    const computedLength =
+      typeof window !== "undefined" &&
+      Array.isArray(window.globalData?.computedData)
+        ? window.globalData.computedData.length
+        : 0;
 
-    // 💾 PERSIST to localStorage - use cfg.computedChannels (has correct numeric IDs)
-    appendComputedChannelToStorage(existingChannel);
-  } else {
-    // ❌ Fallback: if no existing channel, create new one (shouldn't happen normally)
-    console.warn(
-      "[stateUpdate] ⚠️ No existing channel found in cfg, creating new entry"
-    );
+    if (computedLength > 0) {
+      return computedLength - 1;
+    }
 
-    // ✅ FIX: Detect unique group from existing groups in channelState
-    const detectedGroup = resolveComputedGroup(channelData, cfgData);
+    return cfgData.computedChannels.length;
+  };
 
-    const newChannel = {
-      id: channelData.id,
-      name: channelData.name,
-      equation: channelData.equation,
-      mathJsExpression: channelData.mathJsExpression,
-      unit: channelData.unit,
-      type: "Analog",
-      group: detectedGroup, // ✅ Use detected group
-      index: window.globalData.computedData.length - 1,
+  const buildChannelPayload = (existingChannel = {}) => {
+    return {
+      ...existingChannel,
+      id: normalizedId,
+      name: normalizedName,
+      equation: channelData.equation ?? existingChannel.equation,
+      mathJsExpression:
+        channelData.mathJsExpression ?? existingChannel.mathJsExpression,
+      unit: channelData.unit ?? existingChannel.unit ?? "",
+      type: channelData.type ?? existingChannel.type ?? "Analog",
+      group: resolvedGroup,
+      color: channelData.color ?? existingChannel.color,
+      index:
+        typeof existingChannel.index === "number"
+          ? existingChannel.index
+          : computeIndex(),
     };
+  };
 
-    channelData.group = detectedGroup;
+  if (existingIndex >= 0) {
+    const mergedChannel = buildChannelPayload(
+      cfgData.computedChannels[existingIndex]
+    );
+    cfgData.computedChannels[existingIndex] = mergedChannel;
+
+    console.log("[stateUpdate] 💾 Updating existing computed channel:", {
+      id: mergedChannel.id,
+      name: mergedChannel.name,
+      group: mergedChannel.group,
+    });
+
+    appendComputedChannelToStorage(mergedChannel);
+  } else {
+    const newChannel = buildChannelPayload();
 
     cfgData.computedChannels.push(newChannel);
+
+    console.log("[stateUpdate] 💾 Added new computed channel:", {
+      id: newChannel.id,
+      name: newChannel.name,
+      group: newChannel.group,
+    });
+
     appendComputedChannelToStorage(newChannel);
   }
 };
