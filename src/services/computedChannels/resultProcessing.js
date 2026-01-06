@@ -56,6 +56,54 @@ export const generateChannelName = (customChannelName = null) => {
   return timestampName;
 };
 
+function detectComputedGroup() {
+  if (typeof window === "undefined") {
+    return "G0";
+  }
+
+  try {
+    const cfgGroups = window.globalCfg?.computedChannels;
+    if (Array.isArray(cfgGroups) && cfgGroups.length > 0) {
+      const last = cfgGroups[cfgGroups.length - 1];
+      if (last && typeof last.group === "string" && last.group.trim()) {
+        return last.group;
+      }
+    }
+
+    const taken = new Set();
+    const collect = (value) => {
+      if (typeof value !== "string") return;
+      if (!value.startsWith("G")) return;
+      const parsed = parseInt(value.slice(1), 10);
+      if (!Number.isNaN(parsed)) {
+        taken.add(parsed);
+      }
+    };
+
+    const analogGroups = window.channelState?.analog?.groups;
+    if (Array.isArray(analogGroups)) analogGroups.forEach(collect);
+
+    const digitalGroups = window.channelState?.digital?.groups;
+    if (Array.isArray(digitalGroups)) digitalGroups.forEach(collect);
+
+    const computedGroups = window.channelState?.computed?.groups;
+    if (Array.isArray(computedGroups)) computedGroups.forEach(collect);
+
+    let next = 0;
+    while (taken.has(next)) {
+      next += 1;
+    }
+
+    return `G${next}`;
+  } catch (error) {
+    console.warn(
+      "[resultProcessing] Failed to detect group, falling back to G0",
+      error
+    );
+    return "G0";
+  }
+}
+
 /**
  * Build channel data object from results
  * Now accepts custom channel name from equation
@@ -66,7 +114,8 @@ export const buildChannelData = (
   mathJsExpr,
   unit,
   stats,
-  customChannelName = null // ← NEW: Optional custom channel name
+  customChannelName = null,
+  groupOverride = null // ← NEW: Optional group override
 ) => {
   console.log("[resultProcessing] 🏗️ buildChannelData called with:", {
     customChannelName: customChannelName,
@@ -80,6 +129,11 @@ export const buildChannelData = (
 
   console.log("[resultProcessing] 📝 Final channel name:", channelName);
 
+  const resolvedGroup =
+    typeof groupOverride === "string" && groupOverride.trim()
+      ? groupOverride
+      : detectComputedGroup();
+
   return {
     id: channelName,
     name: channelName,
@@ -89,7 +143,7 @@ export const buildChannelData = (
     results: results,
     stats: stats,
     unit: unit || "",
-    group: detectedGroup, // ✅ ADD: Include detected group
+    group: resolvedGroup,
     sampleCount: results.length,
     createdAt: Date.now(),
     index: window.globalData?.computedData?.length || 0,
