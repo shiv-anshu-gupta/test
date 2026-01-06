@@ -15,6 +15,7 @@ import { calculateAxisCountForGroup } from "../utils/axisCalculator.js";
 import { getGlobalAxisAlignment } from "../utils/chartAxisAlignment.js";
 import { getMaxYAxes } from "../utils/maxYAxesStore.js";
 import { attachListenerWithCleanup } from "../utils/eventListenerManager.js";
+import { addChart } from "../utils/chartMetadataStore.js";
 // import { deltaBoxPlugin } from "../plugins/deltaBoxPlugin.js"; // DISABLED: Using DeltaWindow popup instead
 
 export function renderAnalogCharts(
@@ -199,15 +200,43 @@ export function renderAnalogCharts(
     );
 
     // Create chart container with individual channel names, colors, type label, and single group ID
+    const metadata = addChart({
+      chartType: "analog",
+      name: group.name,
+      groupName: group.name,
+      channels: resolvedIndices.map((idx) => {
+        const ch = cfg.analogChannels?.[idx];
+        return (
+          ch?.id ||
+          ch?.channelID ||
+          ch?.name ||
+          (typeof ch?.channelIdx === "number"
+            ? `analog-${ch.channelIdx}`
+            : `analog-${idx}`)
+        );
+      }),
+      colors: group.colors || groupLineColors,
+      indices: resolvedIndices.slice(),
+      sourceGroupId: groupId,
+    });
+
+    console.log(
+      `[renderAnalogCharts] Creating ${metadata.userGroupId} → ${metadata.uPlotInstance}`,
+      metadata.name
+    );
+
     const { parentDiv, chartDiv } = createChartContainer(
       dragBar,
       "chart-container",
       groupYLabels,
       groupLineColors,
       "Analog Channels",
-      groupId,
+      metadata.userGroupId,
       "analog"
     );
+    parentDiv.dataset.userGroupId = metadata.userGroupId;
+    parentDiv.dataset.uPlotInstance = metadata.uPlotInstance;
+    parentDiv.dataset.chartType = "analog";
     chartsContainer.appendChild(parentDiv);
 
     const chartData = [
@@ -245,6 +274,10 @@ export function renderAnalogCharts(
     // opts.plugins.push(deltaBoxPlugin()); // DISABLED: Using DeltaWindow popup instead
 
     const chart = initUPlotChart(opts, chartData, chartDiv, charts);
+    chart._metadata = metadata;
+    chart._userGroupId = metadata.userGroupId;
+    chart._uPlotInstance = metadata.uPlotInstance;
+    chart._chartType = "analog";
 
     // Attach metadata for delta calculation scaling
     chart._axesScales = groupAxesScales || [];

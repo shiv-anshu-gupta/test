@@ -45,6 +45,40 @@ export const saveToCfg = (channelData, cfgData) => {
       "[stateUpdate] ⚠️ No existing channel found in cfg, creating new entry"
     );
 
+    // ✅ FIX: Detect unique group from existing groups in channelState
+    let detectedGroup = "G0";
+    if (typeof window !== "undefined" && window.channelState) {
+      const existingGroups = new Set();
+      
+      // Get all group IDs from analog channels
+      if (window.channelState.analog?.groups) {
+        window.channelState.analog.groups.forEach((g) => {
+          if (typeof g === "string" && g.startsWith("G")) {
+            const num = parseInt(g.substring(1), 10);
+            if (!isNaN(num)) existingGroups.add(num);
+          }
+        });
+      }
+      
+      // Get all group IDs from digital channels
+      if (window.channelState.digital?.groups) {
+        window.channelState.digital.groups.forEach((g) => {
+          if (typeof g === "string" && g.startsWith("G")) {
+            const num = parseInt(g.substring(1), 10);
+            if (!isNaN(num)) existingGroups.add(num);
+          }
+        });
+      }
+      
+      // Find next available group number
+      let nextGroupNum = 0;
+      while (existingGroups.has(nextGroupNum)) {
+        nextGroupNum++;
+      }
+      detectedGroup = `G${nextGroupNum}`;
+      console.log("[stateUpdate] 📊 Detected group:", detectedGroup, "from existing:", Array.from(existingGroups));
+    }
+
     const newChannel = {
       id: channelData.id,
       name: channelData.name,
@@ -52,7 +86,7 @@ export const saveToCfg = (channelData, cfgData) => {
       mathJsExpression: channelData.mathJsExpression,
       unit: channelData.unit,
       type: "Analog",
-      group: "G0",
+      group: detectedGroup, // ✅ Use detected group
       index: window.globalData.computedData.length - 1,
     };
 
@@ -71,27 +105,42 @@ export const updateStateStore = (channelData) => {
   }
 
   // Update reactive channelState for tabulator
-  // ✅ Add computed channels to ANALOG group so they display with analog channels
-  if (typeof window !== "undefined" && window.channelState?.analog) {
+  // ✅ Add computed channels to COMPUTED state (not analog)
+  if (typeof window !== "undefined" && window.channelState?.computed) {
     const { channelState } = window;
-    const analog = channelState.analog;
+    const computed = channelState.computed;
 
-    // Add channel to analog reactive state
-    analog.channelIDs.push(channelData.id);
-    analog.yLabels.push(channelData.name || channelData.id);
-    analog.lineColors.push("#FF6B6B"); // Default computed channel color
-    analog.yUnits.push(channelData.unit || "");
-    analog.groups.push("G0"); // ✅ Use numeric group G0 (not word "Analog") to group with analog channels
-    analog.scales.push(1);
-    analog.starts.push(0);
-    analog.durations.push("");
-    analog.inverts.push(false);
-    analog.equations.push(channelData.equation || "");
-    analog.types.push("Analog"); // ✅ Mark as Analog type
+    // ✅ FIX: Look up group from cfg.computedChannels if not in channelData
+    let channelGroup = channelData.group;
+    if (!channelGroup && typeof window !== "undefined" && window.globalCfg?.computedChannels) {
+      const foundChannel = window.globalCfg.computedChannels.find(ch => ch.id === channelData.id);
+      if (foundChannel) {
+        channelGroup = foundChannel.group;
+      }
+    }
+    // Final fallback to G0
+    if (!channelGroup) {
+      channelGroup = "G0";
+    }
 
-    console.log("[stateUpdate] ✅ Added computed channel to analog group:", {
-      analogChannelCount: analog.channelIDs.length,
-      newChannelId: channelData.id,
+    // Add channel to computed reactive state
+    computed.channelIDs.push(channelData.id);
+    computed.yLabels.push(channelData.name || channelData.id);
+    computed.lineColors.push("#FF6B6B"); // Default computed channel color
+    computed.yUnits.push(channelData.unit || "");
+    computed.groups.push(channelGroup); // ✅ Use detected group with fallback
+    computed.scales.push(1);
+    computed.starts.push(0);
+    computed.durations.push("");
+    computed.inverts.push(false);
+    computed.equations.push(channelData.equation || "");
+
+    console.log("[stateUpdate] ✅ Added computed channel with group:", {
+      channelId: channelData.id,
+      group: channelGroup,
+      fromChannelData: !!channelData.group,
+      fromCfg: !channelData.group && !!window.globalCfg?.computedChannels,
+      computedChannelsCount: computed.channelIDs.length,
     });
   }
 };

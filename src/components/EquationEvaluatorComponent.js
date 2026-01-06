@@ -275,10 +275,43 @@ function saveComputedChannel(computation, resultsDiv) {
   });
 
   // Register in config
+  // ✅ AUTO-DETECT GROUP for the computed channel
+  let computedChannelGroup = "G0";
+  if (computation.equation) {
+    const existingGroups = new Set();
+    
+    // Get groups from channelState
+    if (window.channelState?.analog?.groups) {
+      window.channelState.analog.groups.forEach((g) => {
+        if (typeof g === "string" && g.startsWith("G")) {
+          const num = parseInt(g.substring(1), 10);
+          if (!isNaN(num)) existingGroups.add(num);
+        }
+      });
+    }
+    
+    if (window.channelState?.digital?.groups) {
+      window.channelState.digital.groups.forEach((g) => {
+        if (typeof g === "string" && g.startsWith("G")) {
+          const num = parseInt(g.substring(1), 10);
+          if (!isNaN(num)) existingGroups.add(num);
+        }
+      });
+    }
+    
+    // Find next available group
+    let nextGroupNum = 0;
+    while (existingGroups.has(nextGroupNum)) {
+      nextGroupNum++;
+    }
+    computedChannelGroup = `G${nextGroupNum}`;
+  }
+
   globalCfg.computedChannels.push({
     id: channelName,
     equation: computation.equation,
     unit: "Computed",
+    group: computedChannelGroup,
     index: globalData.computedData.length - 1,
   });
 

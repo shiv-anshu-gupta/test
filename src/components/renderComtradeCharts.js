@@ -10,6 +10,12 @@ import { autoGroupChannels } from "../utils/autoGroupChannels.js";
 import { createDigitalFillPlugin } from "../plugins/digitalFillPlugin.js";
 import { unwrap, createState } from "./createState.js";
 import { analyzeGroupsAndPublishMaxYAxes } from "../utils/analyzeGroupsAndPublish.js";
+import {
+  getChartMetadataState,
+  clearAllCharts,
+} from "../utils/chartMetadataStore.js";
+
+let metadataSubscriptionAttached = false;
 
 /**
  * Render COMTRADE charts in the container.
@@ -34,6 +40,9 @@ export function renderComtradeCharts(
   channelState
 ) {
   const renderStartTime = performance.now();
+
+  clearAllCharts();
+  console.log(`[renderComtradeCharts] Cleared chart metadata for new file`);
 
   // ✅ CRITICAL FIX: Properly destroy old charts BEFORE clearing array
   // This disconnects ResizeObservers, removes event listeners, and prevents memory leaks
@@ -87,6 +96,30 @@ export function renderComtradeCharts(
     verticalLinesX,
     channelState
   );
+
+  const metadataState = getChartMetadataState();
+  if (!metadataSubscriptionAttached && metadataState?.subscribe) {
+    metadataState.subscribe((change) => {
+      console.log(
+        "[MetadataChange]",
+        change.path,
+        "changed to",
+        change.newValue
+      );
+    });
+    metadataSubscriptionAttached = true;
+  }
+
+  const chartsMeta = Array.isArray(metadataState?.charts)
+    ? metadataState.charts
+    : [];
+
+  console.log(`[renderComtradeCharts] Chart metadata summary:`, {
+    totalCharts: chartsMeta.length,
+    analog: chartsMeta.filter((c) => c.chartType === "analog").length,
+    digital: chartsMeta.filter((c) => c.chartType === "digital").length,
+    computed: chartsMeta.filter((c) => c.chartType === "computed").length,
+  });
 
   const renderEndTime = performance.now();
   const totalTime = renderEndTime - renderStartTime;

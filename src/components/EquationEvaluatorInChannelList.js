@@ -108,7 +108,61 @@ export function createEquationEvaluatorInChannelList(
     if (e.key === "Enter") executeBtn.click();
   };
 
-  // Helper function to extract group from channels used in equation
+  // ✅ HELPER: Generate unique group ID for computed channels (popup version)
+  function generateUniqueComputedGroupPopup() {
+    const existingGroups = new Set();
+
+    // Get channelState - could be in popup window or opener (parent) window
+    let channelState = window.channelState || (window.opener && window.opener.channelState);
+
+    // Extract group numbers from channelState (source of truth)
+    if (channelState) {
+      // Get all group IDs from analog channels
+      const analogGroups = channelState.analog?.groups || [];
+      analogGroups.forEach((groupId) => {
+        if (typeof groupId === "string" && groupId.startsWith("G")) {
+          const groupNum = parseInt(groupId.substring(1), 10);
+          if (!isNaN(groupNum)) {
+            existingGroups.add(groupNum);
+          }
+        }
+      });
+
+      // Get all group IDs from digital channels  
+      const digitalGroups = channelState.digital?.groups || [];
+      digitalGroups.forEach((groupId) => {
+        if (typeof groupId === "string" && groupId.startsWith("G")) {
+          const groupNum = parseInt(groupId.substring(1), 10);
+          if (!isNaN(groupNum)) {
+            existingGroups.add(groupNum);
+          }
+        }
+      });
+    }
+
+    // Also check already-created computed channels
+    if (cfg?.computedChannels) {
+      cfg.computedChannels.forEach((ch) => {
+        if (ch.group && typeof ch.group === "string" && ch.group.startsWith("G")) {
+          const groupNum = parseInt(ch.group.substring(1), 10);
+          if (!isNaN(groupNum)) {
+            existingGroups.add(groupNum);
+          }
+        }
+      });
+    }
+
+    let nextGroupNum = 0;
+    while (existingGroups.has(nextGroupNum)) {
+      nextGroupNum++;
+    }
+
+    console.log("[generateUniqueComputedGroupPopup] 🔍 channelState found:", !!channelState, "existing groups:", Array.from(existingGroups), "→ assigning G" + nextGroupNum);
+    return `G${nextGroupNum}`;
+  }
+
+  // ✅ HELPER: Extract group from channels used in equation
+  // Falls back to unique group generation if no channels found
   function extractGroupFromEquation(equation) {
     const usedGroups = [];
 
@@ -116,6 +170,8 @@ export function createEquationEvaluatorInChannelList(
     const channelRefPattern = /([ad]\d+|[a-zA-Z_]\w*)/g;
     const matches = equation.match(channelRefPattern) || [];
     const uniqueRefs = [...new Set(matches)];
+
+    console.log("[extractGroupFromEquation] 🔎 Equation:", equation, "→ Found refs:", uniqueRefs);
 
     // Find which channels are used
     uniqueRefs.forEach((ref) => {
@@ -125,7 +181,10 @@ export function createEquationEvaluatorInChannelList(
           chCfg.id === ref ||
           ref === `a${cfg.analogChannels.indexOf(chCfg)}`
         ) {
-          if (chCfg.group) usedGroups.push(chCfg.group);
+          if (chCfg.group) {
+            console.log(`[extractGroupFromEquation]   ✓ Ref "${ref}" found in group "${chCfg.group}"`);
+            usedGroups.push(chCfg.group);
+          }
         }
       });
 
@@ -135,13 +194,19 @@ export function createEquationEvaluatorInChannelList(
           chCfg.id === ref ||
           ref === `d${cfg.digitalChannels.indexOf(chCfg)}`
         ) {
-          if (chCfg.group) usedGroups.push(chCfg.group);
+          if (chCfg.group) {
+            console.log(`[extractGroupFromEquation]   ✓ Ref "${ref}" found in group "${chCfg.group}"`);
+            usedGroups.push(chCfg.group);
+          }
         }
       });
     });
 
-    // Return the most common group, or empty string if none found
-    if (usedGroups.length === 0) return "";
+    // ✅ FIX: Generate unique group if no channels found instead of empty string
+    if (usedGroups.length === 0) {
+      console.log("[extractGroupFromEquation] ⚠️ No groups found for references, generating unique group");
+      return generateUniqueComputedGroupPopup();
+    }
 
     const groupCounts = {};
     usedGroups.forEach((g) => {
@@ -149,9 +214,12 @@ export function createEquationEvaluatorInChannelList(
     });
 
     // Return the group with highest count
-    return Object.keys(groupCounts).reduce((a, b) =>
+    const result = Object.keys(groupCounts).reduce((a, b) =>
       groupCounts[a] > groupCounts[b] ? a : b
     );
+
+    console.log("[extractGroupFromEquation] ✅ Assigning group:", result, "from counts:", groupCounts);
+    return result;
   }
 
   // Execute equation logic

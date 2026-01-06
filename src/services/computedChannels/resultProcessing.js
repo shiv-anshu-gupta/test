@@ -89,6 +89,7 @@ export const buildChannelData = (
     results: results,
     stats: stats,
     unit: unit || "",
+    group: detectedGroup, // ✅ ADD: Include detected group
     sampleCount: results.length,
     createdAt: Date.now(),
     index: window.globalData?.computedData?.length || 0,

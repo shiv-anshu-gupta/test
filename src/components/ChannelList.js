@@ -4,34 +4,114 @@ import { autoGroupChannels } from "../utils/autoGroupChannels.js";
 import { loadComputedChannelsFromStorage } from "../utils/computedChannelStorage.js";
 
 /**
- * ✅ HELPER: Detect group from expression by analyzing used channel references
+ * ✅ HELPER: Generate unique group ID for computed channels
+ * Scans all existing groups and finds the next available ID to avoid conflicts
  */
-function detectGroupFromExpression(expression, cfg) {
-  if (!expression) return "G0";
+function generateUniqueComputedGroup(cfg, sourceWindow) {
+  const existingGroups = new Set();
+
+  // Get channelState from the appropriate window context
+  let channelState = null;
+  if (sourceWindow) {
+    channelState = sourceWindow.channelState || (sourceWindow.opener && sourceWindow.opener.channelState);
+  } else if (typeof window !== "undefined") {
+    channelState = window.channelState || (window.opener && window.opener.channelState);
+  }
+
+  console.log("[generateUniqueComputedGroup] 📍 sourceWindow:", !!sourceWindow, "has channelState:", !!channelState);
+
+  // Extract group numbers from channelState (source of truth)
+  if (channelState) {
+    // Get all group IDs from analog channels
+    const analogGroups = channelState.analog?.groups || [];
+    console.log("[generateUniqueComputedGroup] 📊 analogGroups:", analogGroups);
+    analogGroups.forEach((groupId) => {
+      if (typeof groupId === "string" && groupId.startsWith("G")) {
+        const groupNum = parseInt(groupId.substring(1), 10);
+        if (!isNaN(groupNum)) {
+          existingGroups.add(groupNum);
+        }
+      }
+    });
+
+    // Get all group IDs from digital channels  
+    const digitalGroups = channelState.digital?.groups || [];
+    console.log("[generateUniqueComputedGroup] 📊 digitalGroups:", digitalGroups);
+    digitalGroups.forEach((groupId) => {
+      if (typeof groupId === "string" && groupId.startsWith("G")) {
+        const groupNum = parseInt(groupId.substring(1), 10);
+        if (!isNaN(groupNum)) {
+          existingGroups.add(groupNum);
+        }
+      }
+    });
+  }
+
+  // Also check already-created computed channels
+  if (cfg?.computedChannels) {
+    cfg.computedChannels.forEach((ch) => {
+      if (ch.group && typeof ch.group === "string" && ch.group.startsWith("G")) {
+        const groupNum = parseInt(ch.group.substring(1), 10);
+        if (!isNaN(groupNum)) {
+          existingGroups.add(groupNum);
+        }
+      }
+    });
+  }
+
+  // Find the lowest available group number
+  let nextGroupNum = 0;
+  while (existingGroups.has(nextGroupNum)) {
+    nextGroupNum++;
+  }
+
+  console.log("[generateUniqueComputedGroup] 🔍 channelState found:", !!channelState, "existing groups:", Array.from(existingGroups), "→ assigning G" + nextGroupNum);
+  return `G${nextGroupNum}`;
+}
+
+/**
+ * ✅ HELPER: Detect group from expression by analyzing used channel references
+ * Falls back to unique group generation if no channels are referenced
+ */
+function detectGroupFromExpression(expression, cfg, sourceWindow) {
+  if (!expression) {
+    console.log("[detectGroupFromExpression] 📝 No expression provided, generating unique group");
+    return generateUniqueComputedGroup(cfg, sourceWindow);
+  }
 
   const channelRefPattern = /\b([A-Z][A-Z0-9_]*|[ad]\d+)\b/g;
   const matches = expression.match(channelRefPattern) || [];
   const uniqueRefs = [...new Set(matches)];
   const usedGroups = [];
 
+  console.log("[detectGroupFromExpression] 🔎 Expression:", expression, "→ Found refs:", uniqueRefs);
+
   uniqueRefs.forEach((ref) => {
     cfg?.analogChannels?.forEach((ch) => {
       if (ch.id === ref && ch.group) {
+        console.log(`[detectGroupFromExpression]   ✓ Ref "${ref}" found in group "${ch.group}"`);
         usedGroups.push(ch.group);
       }
     });
   });
 
-  if (usedGroups.length === 0) return "G0";
+  // ✅ FIX: If no groups found, generate unique group instead of defaulting to G0
+  if (usedGroups.length === 0) {
+    console.log("[detectGroupFromExpression] ⚠️ No groups found for references, generating unique group");
+    return generateUniqueComputedGroup(cfg, sourceWindow);
+  }
 
   const groupCounts = {};
   usedGroups.forEach((g) => {
     groupCounts[g] = (groupCounts[g] || 0) + 1;
   });
 
-  return Object.keys(groupCounts).reduce((a, b) =>
+  const result = Object.keys(groupCounts).reduce((a, b) =>
     groupCounts[a] > groupCounts[b] ? a : b
   );
+  
+  console.log("[detectGroupFromExpression] ✅ Assigning group:", result, "from counts:", groupCounts);
+  return result;
 }
 /**
  * ChannelList component: lists all analog and digital channels with drag-and-drop support.
@@ -1166,7 +1246,12 @@ function saveComputedChannelToGlobals(computedChannelData, channelName, win) {
   if (computedChannelData.equation || computedChannelData.mathJsExpression) {
     const expression =
       computedChannelData.equation || computedChannelData.mathJsExpression;
-    detectedGroup = detectGroupFromExpression(expression, cfg);
+    console.log("[saveComputedChannelToGlobals] 📋 Detecting group for expression");
+    console.log("[saveComputedChannelToGlobals] 📊 cfg available:", !!cfg, "win available:", !!win);
+    detectedGroup = detectGroupFromExpression(expression, cfg, win);
+    console.log("[saveComputedChannelToGlobals] ✅ Detected group:", detectedGroup);
+  } else {
+    console.log("[saveComputedChannelToGlobals] ⚠️ No equation found, using G0");
   }
 
   // ✅ FIXED: Use stableId (numeric) instead of channelName (string)

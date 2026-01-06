@@ -17,6 +17,7 @@ import {
 } from "../utils/chartDomUtils.js";
 import verticalLinePlugin from "../plugins/verticalLinePlugin.js";
 import { attachListenerWithCleanup } from "../utils/eventListenerManager.js";
+import { addChart } from "../utils/chartMetadataStore.js";
 
 /**
  * Format equation string for LaTeX display
@@ -140,6 +141,22 @@ export function renderComputedChannels(
   );
   const groupYUnits = computedChannels.map((ch) => ch.unit || "");
 
+  const metadata = addChart({
+    chartType: "computed",
+    name: "Computed Channels",
+    expression: computedChannels
+      .map((ch) => ch.expression || ch.mathJsExpression || ch.name)
+      .filter(Boolean)
+      .join(" | "),
+    channels: computedChannels.map((ch) => ch.id),
+    colors: groupLineColors.slice(),
+  });
+
+  console.log(
+    `[renderComputedChannels] Creating ${metadata.userGroupId} → ${metadata.uPlotInstance}:`,
+    metadata.expression
+  );
+
   // Create single-group data array [timeArray, ch1Data, ch2Data, ...]
   const channelDataArrays = computedChannels.map((ch) => ch.data || []);
   const chartData = [timeArray, ...channelDataArrays];
@@ -161,9 +178,12 @@ export function renderComputedChannels(
     groupYLabels,
     groupLineColors,
     "Computed Channels",
-    "", // groupId
+    metadata.userGroupId,
     "computed" // type
   );
+  parentDiv.dataset.userGroupId = metadata.userGroupId;
+  parentDiv.dataset.uPlotInstance = metadata.uPlotInstance;
+  parentDiv.dataset.chartType = "computed";
   chartsContainer.appendChild(parentDiv);
 
   console.log(`[renderComputedChannels] 🏗️ Chart container created`);
@@ -205,6 +225,10 @@ export function renderComputedChannels(
   chart._computed = true;
   chart._computedIds = computedChannels.map((ch) => ch.id);
   chart._type = "computed";
+  chart._metadata = metadata;
+  chart._userGroupId = metadata.userGroupId;
+  chart._uPlotInstance = metadata.uPlotInstance;
+  chart._chartType = "computed";
 
   // Attach metadata for delta calculation scaling
   chart._axesScales = [1, ...computedChannels.map(() => 1)];

@@ -67,6 +67,10 @@ import {
   getComputedChannelsState,
   listenForComputedChannelChanges,
 } from "./utils/computedChannelsState.js";
+import {
+  getChartMetadataState,
+  removeChart,
+} from "./utils/chartMetadataStore.js";
 
 // Initialize global DOM update queue for selectiveUpdate feature
 initGlobalDOMUpdateQueue();
@@ -75,6 +79,59 @@ initGlobalDOMUpdateQueue();
 window.__sidebarResize = {
   adjustMainContent,
 };
+
+let metadataDebugSubscriptionAttached = false;
+const chartMetadataDebugState = getChartMetadataState();
+
+if (
+  chartMetadataDebugState &&
+  typeof chartMetadataDebugState.subscribe === "function" &&
+  !metadataDebugSubscriptionAttached
+) {
+  chartMetadataDebugState.subscribe((change) => {
+    const pathString = Array.isArray(change.path)
+      ? change.path.join(".")
+      : change.path;
+    console.log("📊 [ChartMetadata] Change detected:", {
+      path: pathString,
+      oldValue: change.oldValue,
+      newValue: change.newValue,
+    });
+  });
+  metadataDebugSubscriptionAttached = true;
+}
+
+if (typeof window !== "undefined") {
+  window.debugChartMetadata = function debugChartMetadata() {
+    const metadata = getChartMetadataState();
+    const charts = Array.isArray(metadata.charts) ? metadata.charts : [];
+
+    if (typeof console !== "undefined" && typeof console.table === "function") {
+      console.table(
+        charts.map((m) => ({
+          "User Group": m.userGroupId,
+          "Internal ID": m.uPlotInstance,
+          Type: m.chartType,
+          Name: m.name,
+          Channels: Array.isArray(m.channels) ? m.channels.length : 0,
+        }))
+      );
+    }
+
+    console.log("Counters:", {
+      nextUserGroupId: metadata.nextUserGroupId,
+      nextAnalogId: metadata.nextAnalogId,
+      nextDigitalId: metadata.nextDigitalId,
+      nextComputedId: metadata.nextComputedId,
+    });
+
+    return charts;
+  };
+
+  console.log(
+    "💡 [Debug] Type debugChartMetadata() in console to view chart groups"
+  );
+}
 
 /**
  * Simple file reader utility for loading text files
@@ -3029,8 +3086,20 @@ function setupComputedChannelsListener() {
       // ✅ Clear old computed charts for fresh render
       const removeStartTime = performance.now();
 
-      // Destroy old chart instances
+      // Destroy old chart instances and update metadata store
       chartsComputed.forEach((chart) => {
+        if (chart && chart._userGroupId) {
+          const userGroupId = chart._userGroupId;
+          removeChart(userGroupId);
+          const metadataState = getChartMetadataState();
+          console.log(
+            `[ComputedChannel] Deleted ${userGroupId}.  Remaining groups: `,
+            Array.isArray(metadataState.charts)
+              ? metadataState.charts.map((c) => c.userGroupId)
+              : []
+          );
+        }
+
         try {
           chart.destroy();
         } catch (e) {}

@@ -7,6 +7,7 @@ import { createChartContainer } from "../utils/chartDomUtils.js";
 import verticalLinePlugin from "../plugins/verticalLinePlugin.js";
 import { getMaxYAxes } from "../utils/maxYAxesStore.js";
 import { attachListenerWithCleanup } from "../utils/eventListenerManager.js";
+import { addChart } from "../utils/chartMetadataStore.js";
 
 export function renderDigitalCharts(
   cfg,
@@ -80,6 +81,28 @@ export function renderDigitalCharts(
     channelState
   );
 
+  const metadata = addChart({
+    chartType: "digital",
+    name: "Digital Channels",
+    channels: digitalChannelsToShow.map((ch, idx) => {
+      return (
+        ch?.id ||
+        ch?.channelID ||
+        ch?.name ||
+        (typeof ch?.originalIndex === "number"
+          ? `digital-${ch.originalIndex}`
+          : `digital-${idx}`)
+      );
+    }),
+    colors: displayedColors.slice(),
+    indices: digitalIndicesToShow.slice(),
+    sourceGroupId: groupId,
+  });
+
+  console.log(
+    `[renderDigitalCharts] Creating ${metadata.userGroupId} → ${metadata.uPlotInstance}`
+  );
+
   // Create chart container with individual digital channel names, colors, and type label
   const { parentDiv, chartDiv } = createChartContainer(
     dragBar,
@@ -87,9 +110,12 @@ export function renderDigitalCharts(
     digitalYLabels,
     displayedColors,
     "Digital Channels",
-    groupId,
+    metadata.userGroupId,
     "digital"
   );
+  parentDiv.dataset.userGroupId = metadata.userGroupId;
+  parentDiv.dataset.uPlotInstance = metadata.uPlotInstance;
+  parentDiv.dataset.chartType = "digital";
   chartsContainer.appendChild(parentDiv);
   console.log(`[renderDigitalCharts] 🏗️ Chart container created`);
 
@@ -258,6 +284,10 @@ export function renderDigitalCharts(
   });
 
   chart._seriesColors = opts.series.slice(1).map((s) => s.stroke);
+  chart._metadata = metadata;
+  chart._userGroupId = metadata.userGroupId;
+  chart._uPlotInstance = metadata.uPlotInstance;
+  chart._chartType = "digital";
 
   // Attach metadata for delta calculation scaling
   chart._axesScales = axesScales || [];
