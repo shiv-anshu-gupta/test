@@ -24,7 +24,11 @@ import { ResizableGroup } from "./components/ResizableGroup.js";
 import { showChannelListWindow } from "./components/showChannelListWindow.js";
 import { createChannelList } from "./components/ChannelList.js";
 import { createCustomElement } from "./utils/helpers.js";
-import { analogPalette, digitalPalette } from "./utils/constants.js";
+import {
+  analogPalette,
+  digitalPalette,
+  computedPalette,
+} from "./utils/constants.js";
 import { subscribeChartUpdates } from "./components/chartManager.js";
 import { debugLite } from "./components/debugPanelLite.js";
 import { autoGroupChannels } from "./utils/autoGroupChannels.js";
@@ -449,18 +453,7 @@ export const CALLBACK_TYPE = {
   ADD_CHANNEL: "callback_addChannel",
 };
 
-const COMPUTED_COLOR_PALETTE = [
-  "#FF6B6B",
-  "#4ECDC4",
-  "#45B7D1",
-  "#FFA07A",
-  "#98D8C8",
-  "#C06C84",
-  "#6C5B7B",
-  "#355C7D",
-  "#F67280",
-  "#99B898",
-];
+const COMPUTED_COLOR_PALETTE = computedPalette;
 
 /**
  * Find a channel by its unique channelID in the channel state
@@ -1452,98 +1445,121 @@ function rehydrateStoredComputedChannels(
   };
 
   savedChannels.forEach((savedChannel, idx) => {
-    const rawId = normalizeId(savedChannel?.id, savedChannel?.name);
-    const channelId = normalizeId(rawId, `computed_${Date.now()}_${idx}`);
-    const rawName = normalizeId(
-      savedChannel?.name,
-      typeof channelId === "string" ? channelId : `computed_${channelId}`
-    );
-    const channelName = String(rawName);
-    const expression = savedChannel?.expression || savedChannel?.equation || "";
-    const unit = savedChannel?.unit || "";
-    const type = savedChannel?.type || "Computed";
-    const group =
-      typeof savedChannel?.group === "string" && savedChannel.group.trim()
-        ? savedChannel.group.trim()
-        : getFallbackGroup();
-    const color =
-      savedChannel?.color && savedChannel.color.trim()
-        ? savedChannel.color.trim()
-        : COMPUTED_COLOR_PALETTE[paletteIndex % COMPUTED_COLOR_PALETTE.length];
-    paletteIndex += 1;
+    try {
+      const rawId = normalizeId(savedChannel?.id, savedChannel?.name);
+      const channelId = normalizeId(rawId, `computed_${Date.now()}_${idx}`);
+      const rawName = normalizeId(
+        savedChannel?.name,
+        typeof channelId === "string" ? channelId : `computed_${channelId}`
+      );
+      const channelName = String(rawName);
+      const expression =
+        savedChannel?.expression || savedChannel?.equation || "";
+      const unit = savedChannel?.unit || "";
+      const type = savedChannel?.type || "Computed";
+      const group =
+        typeof savedChannel?.group === "string" && savedChannel.group.trim()
+          ? savedChannel.group.trim()
+          : getFallbackGroup();
+      const color =
+        savedChannel?.color && savedChannel.color.trim()
+          ? savedChannel.color.trim()
+          : COMPUTED_COLOR_PALETTE[
+              paletteIndex % COMPUTED_COLOR_PALETTE.length
+            ];
+      paletteIndex += 1;
 
-    existingGroups.add(group);
+      existingGroups.add(group);
 
-    const dataSeries = ensureNumericArray(savedChannel?.data);
+      const dataSeries = ensureNumericArray(savedChannel?.data);
 
-    const alreadyInData = data.computedData.some(
-      (existing) =>
-        idsMatch(existing?.id, channelId) ||
-        (expression && existing?.equation === expression)
-    );
+      if (!Array.isArray(dataSeries) || dataSeries.length === 0) {
+        console.warn(
+          `[rehydrateStoredComputedChannels] Skipping channel ${channelId}: no valid data array`
+        );
+        return;
+      }
 
-    if (alreadyInData) {
-      return;
-    }
+      const alreadyInData = data.computedData.some(
+        (existing) =>
+          idsMatch(existing?.id, channelId) ||
+          (expression && existing?.equation === expression)
+      );
 
-    const computedEntry = {
-      id: channelId,
-      name: channelName,
-      equation: expression,
-      data: dataSeries,
-      unit,
-      group,
-      color,
-      type,
-      index: data.computedData.length,
-    };
+      if (alreadyInData) {
+        console.log(
+          `[rehydrateStoredComputedChannels] Skipping duplicate channel: ${channelId}`
+        );
+        return;
+      }
 
-    data.computedData.push(computedEntry);
-
-    const cfgHasChannel = cfg.computedChannels.some(
-      (existing) =>
-        idsMatch(existing?.id, channelId) ||
-        (expression && existing?.equation === expression)
-    );
-
-    if (!cfgHasChannel) {
-      cfg.computedChannels.push({
+      const computedEntry = {
         id: channelId,
         name: channelName,
         equation: expression,
+        data: dataSeries,
         unit,
-        type,
         group,
         color,
-        index: computedEntry.index,
-      });
-    }
+        type,
+        index: data.computedData.length,
+      };
 
-    if (channelState?.computed) {
-      const computed = channelState.computed;
-      const alreadyInState = computed.channelIDs.some((id) =>
-        idsMatch(id, channelId)
+      data.computedData.push(computedEntry);
+
+      const cfgHasChannel = cfg.computedChannels.some(
+        (existing) =>
+          idsMatch(existing?.id, channelId) ||
+          (expression && existing?.equation === expression)
       );
 
-      if (!alreadyInState) {
-        computed.channelIDs.push(channelId);
-        computed.yLabels.push(channelName);
-        computed.lineColors.push(color);
-        computed.yUnits.push(unit);
-        computed.groups.push(group);
-        computed.scales.push(1);
-        computed.starts.push(0);
-        computed.durations.push("");
-        computed.inverts.push(false);
-        computed.equations.push(expression);
+      if (!cfgHasChannel) {
+        cfg.computedChannels.push({
+          id: channelId,
+          name: channelName,
+          equation: expression,
+          unit,
+          type,
+          group,
+          color,
+          index: computedEntry.index,
+        });
       }
-    }
 
-    if (computedState?.addChannel && !computedState.hasChannel(channelId)) {
-      computedState.addChannel(channelId, computedEntry, "init");
-    }
+      if (channelState?.computed) {
+        const computed = channelState.computed;
+        const alreadyInState = computed.channelIDs.some((id) =>
+          idsMatch(id, channelId)
+        );
 
-    addedChannels.push(computedEntry);
+        if (!alreadyInState) {
+          computed.channelIDs.push(channelId);
+          computed.yLabels.push(channelName);
+          computed.lineColors.push(color);
+          computed.yUnits.push(unit);
+          computed.groups.push(group);
+          computed.scales.push(1);
+          computed.starts.push(0);
+          computed.durations.push("");
+          computed.inverts.push(false);
+          computed.equations.push(expression);
+        }
+      }
+
+      if (computedState?.addChannel && !computedState.hasChannel(channelId)) {
+        computedState.addChannel(channelId, computedEntry, "init");
+      }
+
+      addedChannels.push(computedEntry);
+      console.log(
+        `[rehydrateStoredComputedChannels] ✅ Restored channel: ${channelId} (${dataSeries.length} samples, group: ${group})`
+      );
+    } catch (err) {
+      console.error(
+        `[rehydrateStoredComputedChannels] Error processing channel ${idx}:`,
+        err
+      );
+    }
   });
 
   return addedChannels;
@@ -2995,7 +3011,9 @@ async function handleLoadFiles() {
     );
     fixedResultsEl.innerHTML = "";
   } catch (error) {
-    console.error("[handleLoadFiles] ❌ Error:", error.message);
+    console.error("[handleLoadFiles] ❌ Caught error:", error);
+    console.error("[handleLoadFiles] ❌ Error message:", error.message);
+    console.error("[handleLoadFiles] ❌ Error stack:", error.stack);
     showError(
       "An error occurred while processing the COMTRADE files. Check the console for details.",
       fixedResultsEl

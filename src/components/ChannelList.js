@@ -2,6 +2,7 @@
 // import { createCustomElement } from '../utils/helpers.js';
 import { autoGroupChannels } from "../utils/autoGroupChannels.js";
 import { loadComputedChannelsFromStorage } from "../utils/computedChannelStorage.js";
+import { computedPalette } from "../utils/constants.js";
 
 /**
  * ✅ HELPER: Generate unique group ID for computed channels
@@ -1278,6 +1279,10 @@ function saveComputedChannelToGlobals(computedChannelData, channelName, win) {
     cfg.computedChannels.length +
     1;
 
+  // ✅ ASSIGN COLOR FROM PALETTE (index-based at creation time)
+  const computedIndex = data.computedData.length;
+  const assignedColor = computedPalette[computedIndex % computedPalette.length];
+
   // ✅ AUTO-DETECT GROUP FROM EXPRESSION
   let detectedGroup = "G0";
   if (computedChannelData.equation || computedChannelData.mathJsExpression) {
@@ -1316,6 +1321,7 @@ function saveComputedChannelToGlobals(computedChannelData, channelName, win) {
     group: detectedGroup, // ✅ ADDED: Include group
     type: "Analog", // ✅ ADDED: Include type
     unit: "", // ✅ ADDED: Include unit
+    color: assignedColor, // ✅ NEW: Consistent palette color
     index: data.computedData.length,
   };
 
@@ -1331,6 +1337,7 @@ function saveComputedChannelToGlobals(computedChannelData, channelName, win) {
     unit: "",
     group: detectedGroup, // ✅ AUTO-DETECTED FROM EXPRESSION
     type: "Analog", // ✅ SET AS ANALOG TYPE
+    color: assignedColor, // ✅ NEW: Consistent palette color
     index: data.computedData.length - 1,
   });
 

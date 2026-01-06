@@ -1,8 +1,16 @@
 import { tailwindColors } from "./tailwindColors.js";
 
 export const crosshairColors = [
-  "red", "blue", "green", "magenta", "purple",
-  "orange", "brown", "black", "pink", "yellow"
+  "red",
+  "blue",
+  "green",
+  "magenta",
+  "purple",
+  "orange",
+  "brown",
+  "black",
+  "pink",
+  "yellow",
 ];
 
 export const SI_UNITS = [
@@ -29,7 +37,7 @@ export const analogPalette = [
     tailwindColors["amber-700"],
     tailwindColors["pink-600"],
     tailwindColors["slate-600"],
-    tailwindColors["black"]
+    tailwindColors["black"],
   ],
   // [1]: For dark background (lighter shades)
   [
@@ -42,8 +50,8 @@ export const analogPalette = [
     tailwindColors["amber-200"],
     tailwindColors["pink-300"],
     tailwindColors["slate-300"],
-    tailwindColors["white"]
-  ]
+    tailwindColors["white"],
+  ],
 ];
 
 export const digitalPalette = [
@@ -58,7 +66,7 @@ export const digitalPalette = [
     tailwindColors["teal-700"],
     tailwindColors["pink-700"],
     tailwindColors["slate-700"],
-    tailwindColors["black"]
+    tailwindColors["black"],
   ],
   // [1]: For dark background (lighter shades)
   [
@@ -71,6 +79,35 @@ export const digitalPalette = [
     tailwindColors["teal-200"],
     tailwindColors["pink-200"],
     tailwindColors["slate-200"],
-    tailwindColors["white"]
-  ]
+    tailwindColors["white"],
+  ],
+];
+
+// Computed Channels Palette - consistent across creation, storage, and rendering
+export const computedPalette = [
+  [
+    tailwindColors["red-600"],
+    tailwindColors["blue-600"],
+    tailwindColors["green-600"],
+    tailwindColors["purple-700"],
+    tailwindColors["orange-600"],
+    tailwindColors["teal-600"],
+    tailwindColors["amber-700"],
+    tailwindColors["pink-600"],
+    tailwindColors["slate-600"],
+    tailwindColors["black"],
+  ],
+  // [1]: For dark background (lighter shades)
+  [
+    tailwindColors["red-300"],
+    tailwindColors["blue-300"],
+    tailwindColors["green-300"],
+    tailwindColors["purple-300"],
+    tailwindColors["orange-300"],
+    tailwindColors["teal-300"],
+    tailwindColors["amber-200"],
+    tailwindColors["pink-300"],
+    tailwindColors["slate-300"],
+    tailwindColors["white"],
+  ],
 ];

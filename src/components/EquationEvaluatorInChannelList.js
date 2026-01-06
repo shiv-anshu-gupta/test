@@ -22,6 +22,7 @@ import {
   measurePerformance,
 } from "../utils/computedChannelOptimization.js";
 import { computedChannelMetadata } from "../utils/computedChannelMetadata.js";
+import { computedPalette } from "../utils/constants.js";
 
 export function createEquationEvaluatorInChannelList(
   cfg,
@@ -381,8 +382,10 @@ export function createEquationEvaluatorInChannelList(
     // Extract the group from channels used in the equation
     const usedGroup = extractGroupFromEquation(computation.equation);
 
-    // Generate a random color for the computed channel (similar to how analog/digital channels get colors)
-    const randomColor = "#" + Math.floor(Math.random() * 16777215).toString(16);
+    // ✅ ASSIGN COLOR FROM PALETTE (index-based at creation time)
+    const computedIndex = data.computedData.length;
+    const assignedColor =
+      computedPalette[computedIndex % computedPalette.length];
 
     // Store in data - with complete metadata similar to analog/digital channels
     if (!data.computedData) data.computedData = [];
@@ -421,7 +424,7 @@ export function createEquationEvaluatorInChannelList(
       stats: scaledDataStats,
       scaledStats: computation.scaledStats,
       scalingFactor: computation.scalingFactor,
-      color: randomColor,
+      color: assignedColor, // ✅ CHANGED: Use palette color instead of random
       type: "Computed",
       unit: "Computed",
       group: usedGroup,
@@ -434,7 +437,7 @@ export function createEquationEvaluatorInChannelList(
       equation: computation.equation,
       unit: "Computed",
       group: usedGroup,
-      color: randomColor,
+      color: assignedColor, // ✅ CHANGED: Use palette color instead of random
       type: "Computed",
       index: data.computedData.length - 1,
     });
@@ -507,7 +510,7 @@ export function createEquationEvaluatorInChannelList(
         stats: computation.stats,
         scaledStats: computation.scaledStats,
         scalingFactor: computation.scalingFactor,
-        color: randomColor,
+        color: assignedColor,
         type: "Computed",
         unit: "Computed",
         group: usedGroup,
@@ -519,7 +522,7 @@ export function createEquationEvaluatorInChannelList(
             channelName: channelName,
             equation: computation.equation,
             samples: computation.results.length,
-            color: randomColor,
+            color: assignedColor,
             type: "Computed",
             group: usedGroup,
             fullData: computedChannelData,

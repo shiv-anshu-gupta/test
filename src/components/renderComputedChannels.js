@@ -131,13 +131,10 @@ export function renderComputedChannels(
   // Get global axis alignment
   const maxYAxes = getMaxYAxes() || 1;
 
-  // Define colors for channels
-  const colors = ["#FF6B6B", "#4ECDC4", "#45B7D1", "#FFA07A", "#98D8C8"];
-
   // All computed channels in one group
   const groupYLabels = computedChannels.map((ch) => ch.id || "Computed");
   const groupLineColors = computedChannels.map(
-    (_, idx) => colors[idx % colors.length]
+    (ch) => ch.color || "#4ECDC4" // ✅ USE STORED COLOR, fallback to teal
   );
   const groupYUnits = computedChannels.map((ch) => ch.unit || "");
 
@@ -405,7 +402,7 @@ export function renderComputedChannels(
         width: 10px;
         height: 10px;
         border-radius: 50%;
-        background: ${colors[idx % colors.length]};
+        background: ${groupLineColors[idx % groupLineColors.length]};
         border: 1px solid var(--border-color);
       `;
       nameContainer.appendChild(colorDot);
