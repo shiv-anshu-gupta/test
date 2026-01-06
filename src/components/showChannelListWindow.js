@@ -64,7 +64,6 @@
 import { createChannelList } from "./ChannelList.js";
 import { autoGroupChannels } from "../utils/autoGroupChannels.js";
 import themeBroadcast from "../utils/themeBroadcast.js";
-
 /**
  * Open a Channel List popup and initialize the child UI.
  *
@@ -451,6 +450,9 @@ export function showChannelListWindow(
           /* ignore and fallback to channelState color */
         }
 
+        const cfgGroup = cfg?.digitalChannels?.[idx]?.group;
+        const stateGroup = channelState.digital?.groups?.[idx];
+
         return {
           id,
           name: id,
@@ -459,7 +461,14 @@ export function showChannelListWindow(
           type: "Digital",
           idx,
           originalIndex: idx,
-          group: "Digital",
+          group:
+            (typeof cfgGroup === "string" && /^G\d+$/.test(cfgGroup)
+              ? cfgGroup.trim()
+              : "") ||
+            (typeof stateGroup === "string" && /^G\d+$/.test(stateGroup)
+              ? stateGroup.trim()
+              : "") ||
+            "G0",
         };
       }) || [];
 

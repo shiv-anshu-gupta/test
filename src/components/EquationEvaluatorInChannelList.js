@@ -113,7 +113,8 @@ export function createEquationEvaluatorInChannelList(
     const existingGroups = new Set();
 
     // Get channelState - could be in popup window or opener (parent) window
-    let channelState = window.channelState || (window.opener && window.opener.channelState);
+    let channelState =
+      window.channelState || (window.opener && window.opener.channelState);
 
     // Extract group numbers from channelState (source of truth)
     if (channelState) {
@@ -128,7 +129,7 @@ export function createEquationEvaluatorInChannelList(
         }
       });
 
-      // Get all group IDs from digital channels  
+      // Get all group IDs from digital channels
       const digitalGroups = channelState.digital?.groups || [];
       digitalGroups.forEach((groupId) => {
         if (typeof groupId === "string" && groupId.startsWith("G")) {
@@ -143,7 +144,11 @@ export function createEquationEvaluatorInChannelList(
     // Also check already-created computed channels
     if (cfg?.computedChannels) {
       cfg.computedChannels.forEach((ch) => {
-        if (ch.group && typeof ch.group === "string" && ch.group.startsWith("G")) {
+        if (
+          ch.group &&
+          typeof ch.group === "string" &&
+          ch.group.startsWith("G")
+        ) {
           const groupNum = parseInt(ch.group.substring(1), 10);
           if (!isNaN(groupNum)) {
             existingGroups.add(groupNum);
@@ -157,7 +162,13 @@ export function createEquationEvaluatorInChannelList(
       nextGroupNum++;
     }
 
-    console.log("[generateUniqueComputedGroupPopup] 🔍 channelState found:", !!channelState, "existing groups:", Array.from(existingGroups), "→ assigning G" + nextGroupNum);
+    console.log(
+      "[generateUniqueComputedGroupPopup] 🔍 channelState found:",
+      !!channelState,
+      "existing groups:",
+      Array.from(existingGroups),
+      "→ assigning G" + nextGroupNum
+    );
     return `G${nextGroupNum}`;
   }
 
@@ -171,7 +182,12 @@ export function createEquationEvaluatorInChannelList(
     const matches = equation.match(channelRefPattern) || [];
     const uniqueRefs = [...new Set(matches)];
 
-    console.log("[extractGroupFromEquation] 🔎 Equation:", equation, "→ Found refs:", uniqueRefs);
+    console.log(
+      "[extractGroupFromEquation] 🔎 Equation:",
+      equation,
+      "→ Found refs:",
+      uniqueRefs
+    );
 
     // Find which channels are used
     uniqueRefs.forEach((ref) => {
@@ -182,7 +198,9 @@ export function createEquationEvaluatorInChannelList(
           ref === `a${cfg.analogChannels.indexOf(chCfg)}`
         ) {
           if (chCfg.group) {
-            console.log(`[extractGroupFromEquation]   ✓ Ref "${ref}" found in group "${chCfg.group}"`);
+            console.log(
+              `[extractGroupFromEquation]   ✓ Ref "${ref}" found in group "${chCfg.group}"`
+            );
             usedGroups.push(chCfg.group);
           }
         }
@@ -195,7 +213,9 @@ export function createEquationEvaluatorInChannelList(
           ref === `d${cfg.digitalChannels.indexOf(chCfg)}`
         ) {
           if (chCfg.group) {
-            console.log(`[extractGroupFromEquation]   ✓ Ref "${ref}" found in group "${chCfg.group}"`);
+            console.log(
+              `[extractGroupFromEquation]   ✓ Ref "${ref}" found in group "${chCfg.group}"`
+            );
             usedGroups.push(chCfg.group);
           }
         }
@@ -204,7 +224,9 @@ export function createEquationEvaluatorInChannelList(
 
     // ✅ FIX: Generate unique group if no channels found instead of empty string
     if (usedGroups.length === 0) {
-      console.log("[extractGroupFromEquation] ⚠️ No groups found for references, generating unique group");
+      console.log(
+        "[extractGroupFromEquation] ⚠️ No groups found for references, generating unique group"
+      );
       return generateUniqueComputedGroupPopup();
     }
 
@@ -218,7 +240,12 @@ export function createEquationEvaluatorInChannelList(
       groupCounts[a] > groupCounts[b] ? a : b
     );
 
-    console.log("[extractGroupFromEquation] ✅ Assigning group:", result, "from counts:", groupCounts);
+    console.log(
+      "[extractGroupFromEquation] ✅ Assigning group:",
+      result,
+      "from counts:",
+      groupCounts
+    );
     return result;
   }
 

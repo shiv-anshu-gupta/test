@@ -204,6 +204,7 @@ export function renderAnalogCharts(
       chartType: "analog",
       name: group.name,
       groupName: group.name,
+      userGroupId: groupId,
       channels: resolvedIndices.map((idx) => {
         const ch = cfg.analogChannels?.[idx];
         return (

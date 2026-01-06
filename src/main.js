@@ -83,6 +83,10 @@ window.__sidebarResize = {
 let metadataDebugSubscriptionAttached = false;
 const chartMetadataDebugState = getChartMetadataState();
 
+if (typeof window !== "undefined") {
+  window.__chartMetadataState = chartMetadataDebugState;
+}
+
 if (
   chartMetadataDebugState &&
   typeof chartMetadataDebugState.subscribe === "function" &&
@@ -1169,6 +1173,16 @@ async function processCombinedDataFromMerger(cfgText, datText) {
       console.log(
         "[processCombinedDataFromMerger] ✅ Populated analog group IDs"
       );
+
+      const digitalGroupIds = assignDigitalGroupIds(
+        cfg,
+        channelState,
+        analogGroupIds
+      );
+      console.log(
+        "[processCombinedDataFromMerger] ✅ Populated digital group IDs:",
+        digitalGroupIds
+      );
     } finally {
       if (channelState && channelState.resumeHistory)
         channelState.resumeHistory();
@@ -1604,6 +1618,16 @@ window.addEventListener("mergedFilesReceived", async (event) => {
       console.log(
         "[main.js] ✅ Populated analog group IDs from merged files:",
         analogGroupIds
+      );
+
+      const digitalGroupIds = assignDigitalGroupIds(
+        cfg,
+        channelState,
+        analogGroupIds
+      );
+      console.log(
+        "[main.js] ✅ Populated digital group IDs from merged files:",
+        digitalGroupIds
       );
     } finally {
       if (channelState && channelState.resumeHistory)
@@ -2569,6 +2593,16 @@ async function handleLoadFiles() {
         "[handleLoadFiles] ✅ Populated analog group IDs:",
         analogGroupIds
       );
+
+      const digitalGroupIds = assignDigitalGroupIds(
+        cfg,
+        channelState,
+        analogGroupIds
+      );
+      console.log(
+        "[handleLoadFiles] ✅ Populated digital group IDs:",
+        digitalGroupIds
+      );
     } finally {
       if (channelState && channelState.resumeHistory)
         channelState.resumeHistory();
@@ -2888,6 +2922,7 @@ function initializeChannelState(cfg, data) {
   channelState.digital.yUnits = channelState.digital.yUnits || [];
 
   // Analog channels
+  channelState.analog.groups.length = 0;
   channelState.analog.yLabels.length = 0;
   channelState.analog.lineColors.length = 0;
   channelState.analog.yUnits.length = 0;
@@ -2921,6 +2956,7 @@ function initializeChannelState(cfg, data) {
   channelState.analog.xUnit = "sec";
 
   // Digital channels
+  channelState.digital.groups.length = 0;
   channelState.digital.yLabels.length = 0;
   channelState.digital.lineColors.length = 0;
   channelState.digital.yUnits.length = 0;
@@ -2950,6 +2986,38 @@ function initializeChannelState(cfg, data) {
   });
   channelState.digital.xLabel = "Time";
   channelState.digital.xUnit = "sec";
+}
+
+function parseGroupIndex(groupId) {
+  if (typeof groupId !== "string") return null;
+  const match = /^G(\d+)$/.exec(groupId.trim());
+  if (!match) return null;
+  const parsed = parseInt(match[1], 10);
+  return Number.isNaN(parsed) ? null : parsed;
+}
+
+function assignDigitalGroupIds(cfg, channelState, analogGroupIds) {
+  const analogMax = Array.isArray(analogGroupIds)
+    ? analogGroupIds.reduce((max, id) => {
+        const idx = parseGroupIndex(id);
+        return idx !== null && idx > max ? idx : max;
+      }, -1)
+    : -1;
+
+  const defaultDigitalGroup = `G${Math.max(0, analogMax + 1)}`;
+
+  const digitalGroups = (cfg.digitalChannels || []).map((channel) => {
+    const explicit =
+      typeof channel?.group === "string" && /^G\d+$/.test(channel.group)
+        ? channel.group.trim()
+        : "";
+    const groupId = explicit || defaultDigitalGroup;
+    channel.group = groupId;
+    return groupId;
+  });
+
+  channelState.digital.groups = digitalGroups;
+  return digitalGroups;
 }
 
 /**

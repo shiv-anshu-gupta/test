@@ -57,51 +57,70 @@ export const generateChannelName = (customChannelName = null) => {
 };
 
 function detectComputedGroup() {
-  if (typeof window === "undefined") {
-    return "G0";
-  }
+  const parseIndex = (value) => {
+    if (typeof value !== "string") return null;
+    if (!value.startsWith("G")) return null;
+    const parsed = parseInt(value.slice(1), 10);
+    return Number.isNaN(parsed) ? null : parsed;
+  };
+
+  let maxIndex = -1;
 
   try {
-    const cfgGroups = window.globalCfg?.computedChannels;
-    if (Array.isArray(cfgGroups) && cfgGroups.length > 0) {
-      const last = cfgGroups[cfgGroups.length - 1];
-      if (last && typeof last.group === "string" && last.group.trim()) {
-        return last.group;
+    const globalRef =
+      typeof window !== "undefined"
+        ? window
+        : typeof globalThis !== "undefined"
+        ? globalThis
+        : null;
+    const metadataState = globalRef?.__chartMetadataState;
+    if (metadataState) {
+      const { charts, nextUserGroupId } = metadataState;
+      if (Array.isArray(charts)) {
+        charts.forEach((chart) => {
+          const idx = parseIndex(chart?.userGroupId);
+          if (idx !== null && idx > maxIndex) {
+            maxIndex = idx;
+          }
+        });
+      }
+      if (typeof nextUserGroupId === "number") {
+        maxIndex = Math.max(maxIndex, nextUserGroupId - 1);
       }
     }
 
-    const taken = new Set();
-    const collect = (value) => {
-      if (typeof value !== "string") return;
-      if (!value.startsWith("G")) return;
-      const parsed = parseInt(value.slice(1), 10);
-      if (!Number.isNaN(parsed)) {
-        taken.add(parsed);
-      }
+    const cfgGroups = globalRef?.globalCfg?.computedChannels;
+    if (Array.isArray(cfgGroups)) {
+      cfgGroups.forEach((item) => {
+        const idx = parseIndex(item?.group);
+        if (idx !== null && idx > maxIndex) {
+          maxIndex = idx;
+        }
+      });
+    }
+
+    const collectFromState = (list) => {
+      if (!Array.isArray(list)) return;
+      list.forEach((value) => {
+        const idx = parseIndex(value);
+        if (idx !== null && idx > maxIndex) {
+          maxIndex = idx;
+        }
+      });
     };
 
-    const analogGroups = window.channelState?.analog?.groups;
-    if (Array.isArray(analogGroups)) analogGroups.forEach(collect);
-
-    const digitalGroups = window.channelState?.digital?.groups;
-    if (Array.isArray(digitalGroups)) digitalGroups.forEach(collect);
-
-    const computedGroups = window.channelState?.computed?.groups;
-    if (Array.isArray(computedGroups)) computedGroups.forEach(collect);
-
-    let next = 0;
-    while (taken.has(next)) {
-      next += 1;
-    }
-
-    return `G${next}`;
+    collectFromState(globalRef?.channelState?.analog?.groups);
+    collectFromState(globalRef?.channelState?.digital?.groups);
+    collectFromState(globalRef?.channelState?.computed?.groups);
   } catch (error) {
     console.warn(
-      "[resultProcessing] Failed to detect group, falling back to G0",
+      "[resultProcessing] Group detection failed, defaulting to G0",
       error
     );
-    return "G0";
   }
+
+  const nextIndex = maxIndex + 1;
+  return `G${Math.max(0, nextIndex)}`;
 }
 
 /**

@@ -13,12 +13,20 @@ function generateUniqueComputedGroup(cfg, sourceWindow) {
   // Get channelState from the appropriate window context
   let channelState = null;
   if (sourceWindow) {
-    channelState = sourceWindow.channelState || (sourceWindow.opener && sourceWindow.opener.channelState);
+    channelState =
+      sourceWindow.channelState ||
+      (sourceWindow.opener && sourceWindow.opener.channelState);
   } else if (typeof window !== "undefined") {
-    channelState = window.channelState || (window.opener && window.opener.channelState);
+    channelState =
+      window.channelState || (window.opener && window.opener.channelState);
   }
 
-  console.log("[generateUniqueComputedGroup] 📍 sourceWindow:", !!sourceWindow, "has channelState:", !!channelState);
+  console.log(
+    "[generateUniqueComputedGroup] 📍 sourceWindow:",
+    !!sourceWindow,
+    "has channelState:",
+    !!channelState
+  );
 
   // Extract group numbers from channelState (source of truth)
   if (channelState) {
@@ -34,9 +42,12 @@ function generateUniqueComputedGroup(cfg, sourceWindow) {
       }
     });
 
-    // Get all group IDs from digital channels  
+    // Get all group IDs from digital channels
     const digitalGroups = channelState.digital?.groups || [];
-    console.log("[generateUniqueComputedGroup] 📊 digitalGroups:", digitalGroups);
+    console.log(
+      "[generateUniqueComputedGroup] 📊 digitalGroups:",
+      digitalGroups
+    );
     digitalGroups.forEach((groupId) => {
       if (typeof groupId === "string" && groupId.startsWith("G")) {
         const groupNum = parseInt(groupId.substring(1), 10);
@@ -50,7 +61,11 @@ function generateUniqueComputedGroup(cfg, sourceWindow) {
   // Also check already-created computed channels
   if (cfg?.computedChannels) {
     cfg.computedChannels.forEach((ch) => {
-      if (ch.group && typeof ch.group === "string" && ch.group.startsWith("G")) {
+      if (
+        ch.group &&
+        typeof ch.group === "string" &&
+        ch.group.startsWith("G")
+      ) {
         const groupNum = parseInt(ch.group.substring(1), 10);
         if (!isNaN(groupNum)) {
           existingGroups.add(groupNum);
@@ -65,7 +80,13 @@ function generateUniqueComputedGroup(cfg, sourceWindow) {
     nextGroupNum++;
   }
 
-  console.log("[generateUniqueComputedGroup] 🔍 channelState found:", !!channelState, "existing groups:", Array.from(existingGroups), "→ assigning G" + nextGroupNum);
+  console.log(
+    "[generateUniqueComputedGroup] 🔍 channelState found:",
+    !!channelState,
+    "existing groups:",
+    Array.from(existingGroups),
+    "→ assigning G" + nextGroupNum
+  );
   return `G${nextGroupNum}`;
 }
 
@@ -75,7 +96,9 @@ function generateUniqueComputedGroup(cfg, sourceWindow) {
  */
 function detectGroupFromExpression(expression, cfg, sourceWindow) {
   if (!expression) {
-    console.log("[detectGroupFromExpression] 📝 No expression provided, generating unique group");
+    console.log(
+      "[detectGroupFromExpression] 📝 No expression provided, generating unique group"
+    );
     return generateUniqueComputedGroup(cfg, sourceWindow);
   }
 
@@ -84,12 +107,19 @@ function detectGroupFromExpression(expression, cfg, sourceWindow) {
   const uniqueRefs = [...new Set(matches)];
   const usedGroups = [];
 
-  console.log("[detectGroupFromExpression] 🔎 Expression:", expression, "→ Found refs:", uniqueRefs);
+  console.log(
+    "[detectGroupFromExpression] 🔎 Expression:",
+    expression,
+    "→ Found refs:",
+    uniqueRefs
+  );
 
   uniqueRefs.forEach((ref) => {
     cfg?.analogChannels?.forEach((ch) => {
       if (ch.id === ref && ch.group) {
-        console.log(`[detectGroupFromExpression]   ✓ Ref "${ref}" found in group "${ch.group}"`);
+        console.log(
+          `[detectGroupFromExpression]   ✓ Ref "${ref}" found in group "${ch.group}"`
+        );
         usedGroups.push(ch.group);
       }
     });
@@ -97,7 +127,9 @@ function detectGroupFromExpression(expression, cfg, sourceWindow) {
 
   // ✅ FIX: If no groups found, generate unique group instead of defaulting to G0
   if (usedGroups.length === 0) {
-    console.log("[detectGroupFromExpression] ⚠️ No groups found for references, generating unique group");
+    console.log(
+      "[detectGroupFromExpression] ⚠️ No groups found for references, generating unique group"
+    );
     return generateUniqueComputedGroup(cfg, sourceWindow);
   }
 
@@ -109,8 +141,13 @@ function detectGroupFromExpression(expression, cfg, sourceWindow) {
   const result = Object.keys(groupCounts).reduce((a, b) =>
     groupCounts[a] > groupCounts[b] ? a : b
   );
-  
-  console.log("[detectGroupFromExpression] ✅ Assigning group:", result, "from counts:", groupCounts);
+
+  console.log(
+    "[detectGroupFromExpression] ✅ Assigning group:",
+    result,
+    "from counts:",
+    groupCounts
+  );
   return result;
 }
 /**
@@ -1246,12 +1283,24 @@ function saveComputedChannelToGlobals(computedChannelData, channelName, win) {
   if (computedChannelData.equation || computedChannelData.mathJsExpression) {
     const expression =
       computedChannelData.equation || computedChannelData.mathJsExpression;
-    console.log("[saveComputedChannelToGlobals] 📋 Detecting group for expression");
-    console.log("[saveComputedChannelToGlobals] 📊 cfg available:", !!cfg, "win available:", !!win);
+    console.log(
+      "[saveComputedChannelToGlobals] 📋 Detecting group for expression"
+    );
+    console.log(
+      "[saveComputedChannelToGlobals] 📊 cfg available:",
+      !!cfg,
+      "win available:",
+      !!win
+    );
     detectedGroup = detectGroupFromExpression(expression, cfg, win);
-    console.log("[saveComputedChannelToGlobals] ✅ Detected group:", detectedGroup);
+    console.log(
+      "[saveComputedChannelToGlobals] ✅ Detected group:",
+      detectedGroup
+    );
   } else {
-    console.log("[saveComputedChannelToGlobals] ⚠️ No equation found, using G0");
+    console.log(
+      "[saveComputedChannelToGlobals] ⚠️ No equation found, using G0"
+    );
   }
 
   // ✅ FIXED: Use stableId (numeric) instead of channelName (string)
@@ -1934,6 +1983,11 @@ export function createChannelList(
 
   // Create mapping of analog channel indices to their numeric group IDs
   const analogGroupMap = createAnalogChannelGroupMap(cfg.analogChannels || []);
+  const digitalGroupsFromState = Array.isArray(
+    parentWindow?.channelState?.digital?.groups
+  )
+    ? parentWindow.channelState.digital.groups
+    : [];
 
   // 💾 LOAD persisted computed channels from localStorage if not already in cfg
   if (!cfg.computedChannels || cfg.computedChannels.length === 0) {
@@ -1970,12 +2024,22 @@ export function createChannelList(
       type: "Digital",
       name: ch.id || `Digital ${i + 1}`,
       unit: ch.unit || "",
-      group:
-        ch.group !== undefined &&
-        typeof ch.group === "string" &&
-        ch.group.startsWith("G")
-          ? ch.group
-          : "G9",
+      group: (() => {
+        const explicitGroup =
+          typeof ch.group === "string" && /^G\d+$/.test(ch.group)
+            ? ch.group.trim()
+            : "";
+        if (explicitGroup) return explicitGroup;
+
+        const stateGroup =
+          typeof digitalGroupsFromState[i] === "string" &&
+          /^G\d+$/.test(digitalGroupsFromState[i])
+            ? digitalGroupsFromState[i].trim()
+            : "";
+        if (stateGroup) return stateGroup;
+
+        return "G0";
+      })(),
       color: ch.color || "#888",
       scale: ch.scale || 1,
       start: ch.start || 0,

@@ -4,6 +4,55 @@
 import { getComputedChannelsState } from "../../utils/computedChannelsState.js";
 import { appendComputedChannelToStorage } from "../../utils/computedChannelStorage.js";
 
+function resolveComputedGroup(channelData, cfgData) {
+  const candidateGroup = (channelData?.group || "").trim();
+  if (candidateGroup) {
+    return candidateGroup;
+  }
+
+  const globalRef =
+    typeof window !== "undefined"
+      ? window
+      : typeof globalThis !== "undefined"
+      ? globalThis
+      : null;
+
+  let maxIndex = -1;
+  const collectIndex = (value) => {
+    if (typeof value !== "string") return;
+    if (!value.startsWith("G")) return;
+    const parsed = parseInt(value.slice(1), 10);
+    if (!Number.isNaN(parsed) && parsed > maxIndex) {
+      maxIndex = parsed;
+    }
+  };
+
+  const collectArray = (list) => {
+    if (!Array.isArray(list)) return;
+    list.forEach(collectIndex);
+  };
+
+  collectArray(
+    (cfgData?.computedChannels || []).map((item) => item?.group || "")
+  );
+
+  try {
+    const metadataState = globalRef?.__chartMetadataState;
+    if (metadataState?.charts) {
+      metadataState.charts.forEach((chart) => collectIndex(chart.userGroupId));
+    }
+    if (typeof metadataState?.nextUserGroupId === "number") {
+      maxIndex = Math.max(maxIndex, metadataState.nextUserGroupId - 1);
+    }
+  } catch (err) {}
+
+  collectArray(globalRef?.channelState?.analog?.groups);
+  collectArray(globalRef?.channelState?.digital?.groups);
+  collectArray(globalRef?.channelState?.computed?.groups);
+
+  return `G${Math.max(0, maxIndex + 1)}`;
+}
+
 /**
  * Save channel to global data
  */
@@ -29,11 +78,23 @@ export const saveToCfg = (channelData, cfgData) => {
 
   if (existingChannel && existingChannel.id) {
     // ✅ Channel already exists with stable ID
+    const resolvedGroup = resolveComputedGroup(channelData, cfgData);
+    channelData.group = resolvedGroup;
+    existingChannel.group = resolvedGroup;
+
+    if ((channelData?.unit || "").trim()) {
+      existingChannel.unit = channelData.unit.trim();
+    }
+    if ((channelData?.color || "").trim()) {
+      existingChannel.color = channelData.color.trim();
+    }
+
     console.log(
       "[stateUpdate] 💾 Saving channel with stable ID to localStorage:",
       {
         id: existingChannel.id,
         name: existingChannel.name,
+        group: existingChannel.group,
       }
     );
 
@@ -46,38 +107,7 @@ export const saveToCfg = (channelData, cfgData) => {
     );
 
     // ✅ FIX: Detect unique group from existing groups in channelState
-    let detectedGroup = "G0";
-    if (typeof window !== "undefined" && window.channelState) {
-      const existingGroups = new Set();
-      
-      // Get all group IDs from analog channels
-      if (window.channelState.analog?.groups) {
-        window.channelState.analog.groups.forEach((g) => {
-          if (typeof g === "string" && g.startsWith("G")) {
-            const num = parseInt(g.substring(1), 10);
-            if (!isNaN(num)) existingGroups.add(num);
-          }
-        });
-      }
-      
-      // Get all group IDs from digital channels
-      if (window.channelState.digital?.groups) {
-        window.channelState.digital.groups.forEach((g) => {
-          if (typeof g === "string" && g.startsWith("G")) {
-            const num = parseInt(g.substring(1), 10);
-            if (!isNaN(num)) existingGroups.add(num);
-          }
-        });
-      }
-      
-      // Find next available group number
-      let nextGroupNum = 0;
-      while (existingGroups.has(nextGroupNum)) {
-        nextGroupNum++;
-      }
-      detectedGroup = `G${nextGroupNum}`;
-      console.log("[stateUpdate] 📊 Detected group:", detectedGroup, "from existing:", Array.from(existingGroups));
-    }
+    const detectedGroup = resolveComputedGroup(channelData, cfgData);
 
     const newChannel = {
       id: channelData.id,
@@ -89,6 +119,8 @@ export const saveToCfg = (channelData, cfgData) => {
       group: detectedGroup, // ✅ Use detected group
       index: window.globalData.computedData.length - 1,
     };
+
+    channelData.group = detectedGroup;
 
     cfgData.computedChannels.push(newChannel);
     appendComputedChannelToStorage(newChannel);
@@ -112,8 +144,14 @@ export const updateStateStore = (channelData) => {
 
     // ✅ FIX: Look up group from cfg.computedChannels if not in channelData
     let channelGroup = channelData.group;
-    if (!channelGroup && typeof window !== "undefined" && window.globalCfg?.computedChannels) {
-      const foundChannel = window.globalCfg.computedChannels.find(ch => ch.id === channelData.id);
+    if (
+      !channelGroup &&
+      typeof window !== "undefined" &&
+      window.globalCfg?.computedChannels
+    ) {
+      const foundChannel = window.globalCfg.computedChannels.find(
+        (ch) => ch.id === channelData.id
+      );
       if (foundChannel) {
         channelGroup = foundChannel.group;
       }

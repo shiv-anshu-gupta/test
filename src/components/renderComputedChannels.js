@@ -141,6 +141,24 @@ export function renderComputedChannels(
   );
   const groupYUnits = computedChannels.map((ch) => ch.unit || "");
 
+  const candidateGroups = computedChannels
+    .map((ch) => (ch && typeof ch.group === "string" ? ch.group.trim() : ""))
+    .filter((g) => g !== "");
+  if (
+    (!candidateGroups || candidateGroups.length === 0) &&
+    Array.isArray(channelState?.computed?.groups)
+  ) {
+    channelState.computed.groups.forEach((value) => {
+      if (typeof value === "string" && value.trim()) {
+        candidateGroups.push(value.trim());
+      }
+    });
+  }
+  const computedGroupId =
+    candidateGroups.length > 0
+      ? candidateGroups[candidateGroups.length - 1]
+      : null;
+
   const metadata = addChart({
     chartType: "computed",
     name: "Computed Channels",
@@ -150,6 +168,8 @@ export function renderComputedChannels(
       .join(" | "),
     channels: computedChannels.map((ch) => ch.id),
     colors: groupLineColors.slice(),
+    userGroupId: computedGroupId,
+    sourceGroupId: computedGroupId,
   });
 
   console.log(

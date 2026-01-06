@@ -279,7 +279,7 @@ function saveComputedChannel(computation, resultsDiv) {
   let computedChannelGroup = "G0";
   if (computation.equation) {
     const existingGroups = new Set();
-    
+
     // Get groups from channelState
     if (window.channelState?.analog?.groups) {
       window.channelState.analog.groups.forEach((g) => {
@@ -289,7 +289,7 @@ function saveComputedChannel(computation, resultsDiv) {
         }
       });
     }
-    
+
     if (window.channelState?.digital?.groups) {
       window.channelState.digital.groups.forEach((g) => {
         if (typeof g === "string" && g.startsWith("G")) {
@@ -298,7 +298,7 @@ function saveComputedChannel(computation, resultsDiv) {
         }
       });
     }
-    
+
     // Find next available group
     let nextGroupNum = 0;
     while (existingGroups.has(nextGroupNum)) {

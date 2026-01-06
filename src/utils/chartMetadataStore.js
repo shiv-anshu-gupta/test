@@ -8,6 +8,56 @@ const chartMetadataState = createState({
   nextComputedId: 0,
 });
 
+const GROUP_PREFIX = "G";
+
+function extractGroupIndex(groupId) {
+  if (typeof groupId !== "string") return null;
+  const match = new RegExp(`^${GROUP_PREFIX}(\\d+)$`).exec(groupId.trim());
+  if (!match) return null;
+  const parsed = parseInt(match[1], 10);
+  return Number.isNaN(parsed) ? null : parsed;
+}
+
+function collectUsedGroupIndices(state) {
+  const used = new Set();
+  state.charts.forEach((chart) => {
+    const idx = extractGroupIndex(chart.userGroupId);
+    if (idx !== null) used.add(idx);
+  });
+  return used;
+}
+
+function findNextAvailableGroupIndex(state) {
+  const used = collectUsedGroupIndices(state);
+  let candidate = 0;
+  while (used.has(candidate)) {
+    candidate += 1;
+  }
+  return candidate;
+}
+
+function assignUserGroupId(state, requestedId) {
+  if (typeof requestedId === "string" && requestedId.trim() !== "") {
+    const trimmed = requestedId.trim();
+    const parsed = extractGroupIndex(trimmed);
+    if (parsed !== null) {
+      state.nextUserGroupId = Math.max(
+        state.nextUserGroupId,
+        parsed + 1,
+        findNextAvailableGroupIndex(state)
+      );
+    }
+    return { id: trimmed, autoAssigned: false };
+  }
+
+  const nextIndex = findNextAvailableGroupIndex(state);
+  state.nextUserGroupId = Math.max(state.nextUserGroupId, nextIndex + 1);
+  return {
+    id: `${GROUP_PREFIX}${nextIndex}`,
+    autoAssigned: true,
+  };
+}
+
 function generateUPlotInstance(chartType, state) {
   switch (chartType) {
     case "analog": {
@@ -33,16 +83,6 @@ function generateUPlotInstance(chartType, state) {
   }
 }
 
-function renumberUserGroupIds(state) {
-  state.charts.forEach((chart, index) => {
-    const expected = `G${index}`;
-    if (chart.userGroupId !== expected) {
-      chart.userGroupId = expected;
-    }
-  });
-  state.nextUserGroupId = state.charts.length;
-}
-
 function computeNextComputedIdFromCharts(charts) {
   return charts.reduce((nextId, chart) => {
     const match = /C(\d+)/.exec(chart.uPlotInstance || "");
@@ -63,21 +103,29 @@ export function getChartMetadataState() {
 export function addChart(metadata = {}) {
   const state = chartMetadataState;
   const chartType = metadata.chartType || "unknown";
-  const assignedUserGroupId = `G${state.nextUserGroupId}`;
-  state.nextUserGroupId += 1;
+  const requestedGroupId =
+    typeof metadata.userGroupId === "string"
+      ? metadata.userGroupId
+      : typeof metadata.sourceGroupId === "string"
+      ? metadata.sourceGroupId
+      : null;
+  const { id: assignedUserGroupId, autoAssigned } = assignUserGroupId(
+    state,
+    requestedGroupId
+  );
 
   const assignedUPlotInstance = generateUPlotInstance(chartType, state);
 
   const fullMetadata = {
-    userGroupId: assignedUserGroupId,
-    uPlotInstance: assignedUPlotInstance,
-    chartType,
     ...metadata,
     userGroupId: assignedUserGroupId,
     uPlotInstance: assignedUPlotInstance,
+    chartType,
+    autoAssignedUserGroupId: autoAssigned,
   };
 
   state.charts.push(fullMetadata);
+  state.nextUserGroupId = findNextAvailableGroupIndex(state);
 
   console.log("[chartMetadataStore] Added chart", fullMetadata);
   return fullMetadata;
@@ -97,7 +145,7 @@ export function removeChart(userGroupId) {
   }
 
   const [removed] = state.charts.splice(index, 1);
-  renumberUserGroupIds(state);
+  state.nextUserGroupId = findNextAvailableGroupIndex(state);
 
   console.log("[chartMetadataStore] Removed chart", {
     removed,
@@ -150,12 +198,9 @@ export function resetForFileReload() {
     (chart) => chart.chartType === "computed"
   );
 
-  state.charts = computedCharts.map((chart, index) => ({
-    ...chart,
-    userGroupId: `G${index}`,
-  }));
+  state.charts = computedCharts.map((chart) => ({ ...chart }));
 
-  state.nextUserGroupId = state.charts.length;
+  state.nextUserGroupId = findNextAvailableGroupIndex(state);
   state.nextAnalogId = 0;
   state.nextDigitalId = 0;
   state.nextComputedId = computeNextComputedIdFromCharts(state.charts);

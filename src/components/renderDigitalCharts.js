@@ -84,6 +84,7 @@ export function renderDigitalCharts(
   const metadata = addChart({
     chartType: "digital",
     name: "Digital Channels",
+    userGroupId: groupId,
     channels: digitalChannelsToShow.map((ch, idx) => {
       return (
         ch?.id ||
