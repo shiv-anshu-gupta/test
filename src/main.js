@@ -568,6 +568,12 @@ function rebuildChannelIDMap() {
   digitalIDs.forEach((id, idx) => {
     if (id) channelIDMap.set(id, { type: "digital", idx });
   });
+
+  // Map computed channels
+  const computedIDs = channelState.computed?.channelIDs || [];
+  computedIDs.forEach((id, idx) => {
+    if (id) channelIDMap.set(id, { type: "computed", idx });
+  });
 }
 
 function findChannelByID(channelID) {
@@ -862,7 +868,8 @@ function updateChannelFieldByID(channelID, fieldName, value) {
 function updateChannelFieldByIndex(type, idx, fieldName, value) {
   const updateStartTime = performance.now();
 
-  if (type !== "analog" && type !== "digital") return false;
+  if (type !== "analog" && type !== "digital" && type !== "computed")
+    return false;
   const s = channelState[type];
   if (!s) return false;
   // ensure the target field exists and is an array
@@ -3918,7 +3925,10 @@ window.addEventListener("message", (ev) => {
         if (!row) return;
         const t = (row.type || "").toLowerCase();
         const oi = Number(row.originalIndex ?? row.idx ?? -1);
-        if ((t === "analog" || t === "digital") && oi >= 0) {
+        if (
+          (t === "analog" || t === "digital" || t === "computed") &&
+          oi >= 0
+        ) {
           // use helper with bounds checks
           updateChannelFieldByIndex(t, oi, "lineColors", color);
         } else {
@@ -3956,7 +3966,10 @@ window.addEventListener("message", (ev) => {
         if (!row) return;
         const t = (row.type || "").toLowerCase();
         const oi = Number(row.originalIndex ?? row.idx ?? -1);
-        if ((t === "analog" || t === "digital") && oi >= 0) {
+        if (
+          (t === "analog" || t === "digital" || t === "computed") &&
+          oi >= 0
+        ) {
           updateChannelFieldByIndex(t, oi, "scales", newVal);
         } else {
           let idx = channelState.analog.yLabels.indexOf(row.id ?? row.name);
@@ -4001,7 +4014,10 @@ window.addEventListener("message", (ev) => {
         if (!row) return;
         const t = (row.type || "").toLowerCase();
         const oi = Number(row.originalIndex ?? row.idx ?? -1);
-        if ((t === "analog" || t === "digital") && oi >= 0) {
+        if (
+          (t === "analog" || t === "digital" || t === "computed") &&
+          oi >= 0
+        ) {
           updateChannelFieldByIndex(t, oi, "starts", newVal);
           try {
             debugLite.log("msg.start.byIndex", { type: t, oi, newVal, ok });
@@ -4053,7 +4069,10 @@ window.addEventListener("message", (ev) => {
         if (!row) return;
         const t = (row.type || "").toLowerCase();
         const oi = Number(row.originalIndex ?? row.idx ?? -1);
-        if ((t === "analog" || t === "digital") && oi >= 0) {
+        if (
+          (t === "analog" || t === "digital" || t === "computed") &&
+          oi >= 0
+        ) {
           const ok = updateChannelFieldByIndex(t, oi, "durations", newVal);
           try {
             debugLite.log("msg.duration.byIndex", { type: t, oi, newVal, ok });
@@ -4118,7 +4137,10 @@ window.addEventListener("message", (ev) => {
         if (!row) return;
         const t = (row.type || "").toLowerCase();
         const oi = Number(row.originalIndex ?? row.idx ?? -1);
-        if ((t === "analog" || t === "digital") && oi >= 0) {
+        if (
+          (t === "analog" || t === "digital" || t === "computed") &&
+          oi >= 0
+        ) {
           updateChannelFieldByIndex(t, oi, "inverts", newVal);
         } else {
           let idx = channelState.analog.yLabels.indexOf(row.id ?? row.name);
@@ -4202,7 +4224,10 @@ window.addEventListener("message", (ev) => {
         if (!row) return;
         const t = (row.type || "").toLowerCase();
         const oi = Number(row.originalIndex ?? row.idx ?? -1);
-        if ((t === "analog" || t === "digital") && oi >= 0) {
+        if (
+          (t === "analog" || t === "digital" || t === "computed") &&
+          oi >= 0
+        ) {
           channelState[t].groups = channelState[t].groups || [];
           channelState[t].groups[oi] = newGroup;
         } else {

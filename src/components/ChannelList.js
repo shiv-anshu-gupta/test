@@ -1337,7 +1337,7 @@ function saveComputedChannelToGlobals(computedChannelData, channelName, win) {
     data: channelData.data, // ✅ CRITICAL: Include actual computed values
     unit: "",
     group: detectedGroup, // ✅ AUTO-DETECTED FROM EXPRESSION
-    type: "Analog", // ✅ SET AS ANALOG TYPE
+    type: "Computed", // ✅ SET AS COMPUTED TYPE
     color: assignedColor, // ✅ NEW: Consistent palette color
     index: data.computedData.length - 1,
   });
@@ -2059,7 +2059,7 @@ export function createChannelList(
         ch.id || cfg.analogChannels.length + cfg.digitalChannels.length + i + 1, // ✅ USE STORED ID!
       channelID: ch.channelID,
       originalIndex: i,
-      type: ch.type || "Analog", // ✅ Use type from cfg (defaults to Analog)
+      type: ch.type || "Computed", // ✅ Use type from cfg (defaults to Computed)
       name: ch.name || ch.id || `Computed ${i + 1}`,
       unit: ch.unit || "",
       group: ch.group || detectGroupFromExpression(ch.equation, cfg), // ✅ Smart group detection
@@ -2887,13 +2887,13 @@ export function createChannelList(
               id: computedCh.id, // ✅ SIMPLE! Just use the stored ID!
               channelID: computedCh.channelID,
               originalIndex: cfg.computedChannels.length - 1,
-              type: computedCh.type || "Analog", // ✅ Use stored type from cfg
+              type: computedCh.type || "Computed", // ✅ Use stored type from cfg
               name: computedCh.id || `Computed ${cfg.computedChannels.length}`,
               unit: computedCh.unit || "",
               group:
                 computedCh.group ||
                 detectGroupFromExpression(computedCh.equation, cfg), // ✅ Use stored or detected group
-              color: computedCh.color || "#4ECDC4", // ✅ Match Analog color
+              color: computedCh.color || "#4ECDC4", // ✅ Computed channel color
               scale: computedCh.scale || 1,
               start: computedCh.start || 0,
               duration: computedCh.duration || "",

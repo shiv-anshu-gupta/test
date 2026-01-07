@@ -166,6 +166,6 @@ export const buildChannelData = (
     sampleCount: results.length,
     createdAt: Date.now(),
     index: window.globalData?.computedData?.length || 0,
-    type: "Analog", // ✅ Set type to Analog so it displays with analog channels
+    type: "Computed", // ✅ Set type to Computed so it updates channelState.computed
   };
 };
