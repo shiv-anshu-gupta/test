@@ -1334,6 +1334,7 @@ function saveComputedChannelToGlobals(computedChannelData, channelName, win) {
     name: channelName,
     equation: computedChannelData.equation,
     mathJsExpression: computedChannelData.mathJsExpression,
+    data: channelData.data, // ✅ CRITICAL: Include actual computed values
     unit: "",
     group: detectedGroup, // ✅ AUTO-DETECTED FROM EXPRESSION
     type: "Analog", // ✅ SET AS ANALOG TYPE

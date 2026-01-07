@@ -1473,12 +1473,16 @@ function rehydrateStoredComputedChannels(
 
       const dataSeries = ensureNumericArray(savedChannel?.data);
 
-      if (!Array.isArray(dataSeries) || dataSeries.length === 0) {
+      // Allow empty data arrays - they may be evaluated later
+      if (!Array.isArray(dataSeries)) {
         console.warn(
-          `[rehydrateStoredComputedChannels] Skipping channel ${channelId}: no valid data array`
+          `[rehydrateStoredComputedChannels] Channel ${channelId}: converting invalid data to empty array`
         );
-        return;
       }
+      const validData = Array.isArray(dataSeries) ? dataSeries : [];
+      console.log(
+        `[rehydrateStoredComputedChannels] Restoring channel: ${channelId} (${validData.length} samples, color: ${color}, group: ${group})`
+      );
 
       const alreadyInData = data.computedData.some(
         (existing) =>
@@ -1497,7 +1501,7 @@ function rehydrateStoredComputedChannels(
         id: channelId,
         name: channelName,
         equation: expression,
-        data: dataSeries,
+        data: validData,
         unit,
         group,
         color,
@@ -2106,24 +2110,36 @@ let dragOffsetY = 0;
 // Helper function to move polar chart section to different locations
 function movePolarChartSection(targetMode) {
   const polarChartSection = document.querySelector(".polar-chart-section");
-  if (!polarChartSection) return;
+  if (!polarChartSection) {
+    console.warn("[main.js] polar-chart-section not found for layout change");
+    return;
+  }
+
+  const sidebar = document.getElementById("sidebar");
+  const sidebarToggleBtn = document.getElementById("analysis-sidebar-toggle");
+  const analysisPanel = document.getElementById("analysis-sidebar-panel");
+  const detachedWindowEl = document.getElementById("detachedWindow");
+  const detachedContentEl = document.getElementById("detachedWindowContent");
 
   switch (targetMode) {
     case "floating":
       // Move to floating window
-      detachedWindowContent.innerHTML = polarChartSection.innerHTML;
-      detachedWindow.classList.add("show");
-      sidebar.style.display = "none";
-      sidebarToggleBtn.style.display = "flex";
+      if (!detachedWindowEl || !detachedContentEl) {
+        console.warn("[main.js] Floating window container missing");
+        return;
+      }
+
+      detachedContentEl.innerHTML = polarChartSection.innerHTML;
+      detachedWindowEl.classList.add("show");
+      if (sidebar) sidebar.style.display = "none";
+      if (analysisPanel) analysisPanel.style.display = "none";
+      if (sidebarToggleBtn) sidebarToggleBtn.style.display = "flex";
       if (mainContent) mainContent.classList.add("sidebar-closed");
       console.log("[main.js] Sidebar moved to floating window");
       break;
 
     case "charts-inline":
       // Move to charts container (side by side)
-      const chartsGrid =
-        document.querySelector(".charts-grid") ||
-        chartsContainer.querySelector(".uplot-container");
       if (chartsContainer) {
         // Store original content before moving
         chartsContainer.classList.remove("charts-block-layout");
@@ -2135,8 +2151,9 @@ function movePolarChartSection(targetMode) {
           polarChartSection,
           chartsContainer.firstChild
         );
-        sidebar.style.display = "none";
-        sidebarToggleBtn.style.display = "flex";
+        if (sidebar) sidebar.style.display = "none";
+        if (analysisPanel) analysisPanel.style.display = "none";
+        if (sidebarToggleBtn) sidebarToggleBtn.style.display = "flex";
         if (mainContent) mainContent.classList.add("sidebar-closed");
         console.log(
           "[main.js] Sidebar moved to charts container inline (side by side)"
@@ -2154,8 +2171,9 @@ function movePolarChartSection(targetMode) {
         chartsContainer.style.gridTemplateColumns = "auto";
         chartsContainer.style.gap = "auto";
         chartsContainer.appendChild(polarChartSection);
-        sidebar.style.display = "none";
-        sidebarToggleBtn.style.display = "flex";
+        if (sidebar) sidebar.style.display = "none";
+        if (analysisPanel) analysisPanel.style.display = "none";
+        if (sidebarToggleBtn) sidebarToggleBtn.style.display = "flex";
         if (mainContent) mainContent.classList.add("sidebar-closed");
         console.log("[main.js] Sidebar moved to charts container below");
       }
@@ -2210,8 +2228,9 @@ function movePolarChartSection(targetMode) {
         headerDiv.appendChild(closeBtn);
 
         container.innerHTML = headerDiv.outerHTML + polarChartSection.innerHTML;
-        sidebar.style.display = "none";
-        sidebarToggleBtn.style.display = "flex";
+        if (sidebar) sidebar.style.display = "none";
+        if (analysisPanel) analysisPanel.style.display = "none";
+        if (sidebarToggleBtn) sidebarToggleBtn.style.display = "flex";
         if (mainContent) mainContent.classList.add("sidebar-closed");
         console.log("[main.js] Sidebar moved to analysis container");
       }
@@ -2228,10 +2247,13 @@ function movePolarChartSection(targetMode) {
         }
         polarChartSection.style.order = "auto";
         originalSidebar.appendChild(polarChartSection);
-        detachedWindow.classList.remove("show");
-        sidebar.style.display = "flex";
-        sidebar.style.flexDirection = "column";
-        sidebarToggleBtn.style.display = "none";
+        if (detachedWindowEl) detachedWindowEl.classList.remove("show");
+        if (sidebar) {
+          sidebar.style.display = "flex";
+          sidebar.style.flexDirection = "column";
+        }
+        if (analysisPanel) analysisPanel.style.display = "flex";
+        if (sidebarToggleBtn) sidebarToggleBtn.style.display = "none";
         if (mainContent) mainContent.classList.remove("sidebar-closed");
         console.log("[main.js] Sidebar returned to original sidebar position");
       }
@@ -2365,6 +2387,7 @@ function setupResizableDivider() {
   const divider = document.getElementById("resizeDivider");
   const mainContent = document.getElementById("mainContent");
   const deltaDrawer = document.getElementById("delta-drawer");
+  const analysisSidebar = document.getElementById("analysis-sidebar");
   const mainContentArea = mainContent.parentElement;
 
   if (!divider || !mainContent || !deltaDrawer) {
@@ -2392,8 +2415,8 @@ function setupResizableDivider() {
     if (!isDragging) return;
 
     const containerRect = mainContentArea.getBoundingClientRect();
-    const newWidth =
-      ((e.clientX - containerRect.left) / containerRect.width) * 100;
+    const containerWidth = containerRect.width;
+    const newWidth = ((e.clientX - containerRect.left) / containerWidth) * 100;
 
     // Constrain width between 20% and 80%
     if (newWidth > 20 && newWidth < 80) {
@@ -2409,10 +2432,19 @@ function setupResizableDivider() {
         "--sidebar-width",
         sidebarWidth + "%"
       );
+      document.documentElement.style.setProperty(
+        "--sidebar-width-right",
+        sidebarWidth + "%"
+      );
 
       // Add resized class to apply CSS variable widths
       mainContent.classList.add("sidebar-resized");
       deltaDrawer.classList.add("sidebar-resized");
+
+      // Also update analysis sidebar if it's open
+      if (analysisSidebar && !analysisSidebar.classList.contains("hidden")) {
+        analysisSidebar.classList.add("sidebar-resized");
+      }
 
       console.log(
         `[ResizableDivider] Width: Main ${mainWidth.toFixed(
@@ -3322,6 +3354,36 @@ function setupComputedChannelsListener() {
           window.globalData.computedData.push(computedChannelObj);
         }
 
+        // ✅ ALSO ADD TO cfg.computedChannels (needed for storage)
+        if (window.globalCfg && window.globalCfg.computedChannels) {
+          const cfgEntry = {
+            id: computedChannelObj.id,
+            name: computedChannelObj.name,
+            equation: computedChannelObj.equation,
+            mathJsExpression: computedChannelObj.mathJsExpression,
+            data: computedChannelObj.data, // ✅ CRITICAL: Include data array
+            unit: computedChannelObj.unit,
+            group: computedChannelObj.group,
+            type: computedChannelObj.type,
+            color: computedChannelObj.color,
+            index: computedChannelObj.index,
+          };
+
+          // Check if already exists
+          const cfgExists = window.globalCfg.computedChannels.some(
+            (ch) =>
+              ch.id === computedChannelObj.id ||
+              ch.equation === computedChannelObj.equation
+          );
+          if (!cfgExists) {
+            window.globalCfg.computedChannels.push(cfgEntry);
+            console.log(
+              "[Main] ✅ Added channel to cfg.computedChannels:",
+              cfgEntry.name
+            );
+          }
+        }
+
         // 💾 SAVE cfg.computedChannels (has correct numeric IDs) instead of data.computedData
         if (window.globalCfg && window.globalCfg.computedChannels) {
           console.log(
@@ -3330,7 +3392,33 @@ function setupComputedChannelsListener() {
               window.globalCfg.computedChannels.length - 1
             ]
           );
-          saveComputedChannelsToStorage(window.globalCfg.computedChannels);
+          // ✅ Log what we're about to save
+          console.log("[Main] 💾 saveComputedChannelsToStorage called with:");
+          console.log(
+            "[Main]   cfg.computedChannels count:",
+            window.globalCfg.computedChannels.length
+          );
+          console.log(
+            "[Main]   data.computedData count:",
+            window.globalData?.computedData?.length || 0
+          );
+          console.log(
+            "[Main]   First cfg entry:",
+            window.globalCfg.computedChannels[
+              window.globalCfg.computedChannels.length - 1
+            ]
+          );
+          console.log(
+            "[Main]   First data entry:",
+            window.globalData?.computedData?.[
+              window.globalData.computedData.length - 1
+            ]
+          );
+          // ✅ PASS BOTH cfg AND data so storage can merge computed values with metadata
+          saveComputedChannelsToStorage(
+            window.globalCfg.computedChannels,
+            window.globalData?.computedData || []
+          );
         }
       }
       const eventProcessTime = performance.now() - eventProcessStart;

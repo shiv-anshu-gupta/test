@@ -34,17 +34,24 @@
 
 :root {
   --main-content-width: 100%;
-  --sidebar-width: 0px;
+  --sidebar-width: 0%;
+  --sidebar-width-right: 0%;
 }
 
 /* Force widths on resizable containers */
 #mainContent.sidebar-resized {
   width: var(--main-content-width) !important;
   transition: width 0.3s ease !important;
+  margin-right: 0 !important;
 }
 
 #delta-drawer.sidebar-resized {
   width: var(--sidebar-width) !important;
+  transition: width 0.3s ease !important;
+}
+
+#analysis-sidebar.sidebar-resized {
+  width: var(--sidebar-width-right) !important;
   transition: width 0.3s ease !important;
 }
 

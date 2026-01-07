@@ -16,6 +16,14 @@ export function createSidebarResizer(panelId, side = "left") {
     return;
   }
 
+  // Skip resizer creation for analysis sidebar - it uses percentage-based resizing
+  if (panelId === "analysis-sidebar-panel") {
+    console.log(
+      `[SidebarResizer] Skipped resizer for ${panelId} - uses percentage-based resizing`
+    );
+    return;
+  }
+
   // Create resizer handle
   const resizer = document.createElement("div");
   resizer.className =
@@ -46,11 +54,17 @@ export function createSidebarResizer(panelId, side = "left") {
   document.addEventListener("mousemove", (e) => {
     if (!isResizing) return;
 
-    // Calculate width change (reverse for right-side panels)
-    const diff = side === "left" ? e.clientX - startX : startX - e.clientX;
+    if (panelId === "delta-drawer-panel") {
+      // Delta drawer uses pixel-based resizing
+      const diff = side === "left" ? e.clientX - startX : startX - e.clientX;
+      const newWidth = Math.max(280, Math.min(800, startWidth + diff));
+      panel.style.width = `${newWidth}px`;
 
-    const newWidth = Math.max(280, Math.min(800, startWidth + diff));
-    panel.style.width = `${newWidth}px`;
+      document.documentElement.style.setProperty(
+        "--sidebar-width",
+        `${newWidth}px`
+      );
+    }
   });
 
   // Mouse up - stop resizing and save

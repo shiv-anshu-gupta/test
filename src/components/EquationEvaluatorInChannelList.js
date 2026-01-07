@@ -435,6 +435,7 @@ export function createEquationEvaluatorInChannelList(
       id: channelName,
       name: channelName,
       equation: computation.equation,
+      data: scaledData, // ✅ CRITICAL: Include actual computed values
       unit: "Computed",
       group: usedGroup,
       color: assignedColor, // ✅ CHANGED: Use palette color instead of random
@@ -448,7 +449,7 @@ export function createEquationEvaluatorInChannelList(
       equation: computation.equation,
       latexEquation: computation.equation, // Will be formatted for LaTeX display
       mathJsExpression: computation.equation,
-      color: randomColor,
+      color: assignedColor, // ✅ USE PALETTE COLOR, not randomColor
       group: usedGroup || "Computed",
       unit: "Computed",
       type: "Computed",

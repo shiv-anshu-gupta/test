@@ -8,15 +8,43 @@ const STORAGE_METADATA_KEY = "COMTRADE_COMPUTED_METADATA";
 
 /**
  * Save computed channels to localStorage with merge (not replace!)
- * @param {Array} computedData - Array of computed channel objects
- * @param {Object} metadata - Optional metadata to save
+ * @param {Array} computedData - Array of computed channel objects (cfg.computedChannels metadata)
+ * @param {Object|Array} dataOrMetadata - Either data.computedData array (with actual values) or metadata object
+ * @param {Object} metadata - Optional metadata to save (if dataOrMetadata is an array)
  * @returns {boolean} Success status
  */
-export function saveComputedChannelsToStorage(computedData, metadata = {}) {
+export function saveComputedChannelsToStorage(
+  computedData,
+  dataOrMetadata = {},
+  metadata = {}
+) {
   try {
     if (!Array.isArray(computedData)) {
       throw new Error("computedData must be an array");
     }
+
+    // ✅ Extract data array and metadata from parameters
+    let dataComputedData = [];
+    let metadataToSave = metadata;
+
+    if (Array.isArray(dataOrMetadata)) {
+      // ✅ Called with (cfg.computedChannels, data.computedData, metadata)
+      dataComputedData = dataOrMetadata;
+      metadataToSave = metadata;
+    } else {
+      // ✅ Called with (cfg.computedChannels, metadata)
+      metadataToSave = dataOrMetadata;
+    }
+
+    // ✅ LOG INPUT PARAMETERS
+    console.log("[Storage] saveComputedChannelsToStorage received:");
+    console.log("[Storage]   computedData count:", computedData.length);
+    console.log(
+      "[Storage]   First cfg item data field:",
+      computedData[0]?.data?.length || "NO DATA FIELD"
+    );
+    console.log("[Storage]   dataComputedData count:", dataComputedData.length);
+    console.log("[Storage]   First data item:", dataComputedData[0]?.id);
 
     // ✅ STEP 1: Load existing channels from localStorage
     const existingData = loadComputedChannelsFromStorage();
@@ -37,6 +65,38 @@ export function saveComputedChannelsToStorage(computedData, metadata = {}) {
           ch.expression === (newChannel.expression || newChannel.equation)
       );
 
+      // ✅ MERGE WITH DATA: Find corresponding entry in data.computedData to get actual values
+      const dataEntry = dataComputedData.find(
+        (d) =>
+          d.id === newChannel.id ||
+          d.name === newChannel.name ||
+          d.equation === newChannel.equation
+      );
+
+      console.log(
+        `[Storage] Merging channel ${newChannel.name || newChannel.id}:`,
+        {
+          hasDataInNewChannel: !!newChannel.data,
+          dataLengthInNewChannel: newChannel.data?.length || 0,
+          foundDataEntry: !!dataEntry,
+          dataLengthInDataEntry: dataEntry?.data?.length || 0,
+        }
+      );
+
+      // ✅ CRITICAL: If dataEntry doesn't have data but newChannel does, keep newChannel's data
+      const mergedChannel = {
+        ...newChannel,
+        ...(dataEntry || {}), // ✅ Use dataEntry if it exists
+        // ✅ ENSURE: If newChannel has data and we're not overriding it, keep it
+        data: dataEntry?.data || newChannel.data, // ✅ Prefer dataEntry but fallback to newChannel
+      };
+
+      console.log(
+        `[Storage] Final merged channel data length: ${
+          mergedChannel.data?.length || 0
+        }`
+      );
+
       if (existingIndex >= 0) {
         // ✅ UPDATE existing channel
         console.log(
@@ -46,31 +106,64 @@ export function saveComputedChannelsToStorage(computedData, metadata = {}) {
         );
         mergedData[existingIndex] = {
           ...mergedData[existingIndex],
-          ...newChannel,
+          ...mergedChannel,
         };
       } else {
         // ✅ ADD new channel
         console.log(
           `[Storage] ➕ Adding new channel: ${newChannel.name || newChannel.id}`
         );
-        mergedData.push(newChannel);
+        mergedData.push(mergedChannel);
       }
     });
 
     // ✅ STEP 3: Prepare data for storage (exclude large uPlot references)
-    const dataToStore = mergedData.map((channel) => ({
-      id: channel.id, // ✅ FIRST: Stable numeric ID for table S.No.
-      name: channel.name || channel.id,
-      data: channel.data, // Array of numeric values
-      unit: channel.unit,
-      type: channel.type || "Analog", // ✅ Default to "Analog" not "Computed"
-      group: channel.group || "G0", // ✅ Default to "G0" not "Computed"
-      expression: channel.expression || channel.equation,
-      color: channel.color,
-      min: channel.min,
-      max: channel.max,
-      samples: channel.samples || (channel.data ? channel.data.length : 0),
-    }));
+    const dataToStore = mergedData.map((channel) => {
+      // Ensure data is always numeric array
+      let numericData = channel.data;
+
+      console.log(
+        `[Storage] Processing channel ${
+          channel.name
+        }: data type=${typeof numericData}, isArray=${Array.isArray(
+          numericData
+        )}, length=${numericData?.length || "N/A"}`
+      );
+
+      if (!Array.isArray(numericData)) {
+        console.log(
+          `[Storage] ⚠️ Converting non-array data to empty for ${channel.name}`
+        );
+        numericData = [];
+      } else if (numericData.length > 0 && typeof numericData[0] !== "number") {
+        console.log(
+          `[Storage] Converting ${numericData.length} non-numeric values for ${channel.name}`
+        );
+        numericData = numericData.map((v) => {
+          const num = parseFloat(v);
+          return isNaN(num) ? 0 : num;
+        });
+      }
+
+      console.log(
+        `[Storage] Final data for ${channel.name}: ${numericData.length} samples`
+      );
+
+      return {
+        id: channel.id, // ✅ FIRST: Stable numeric ID for table S.No.
+        name: channel.name || channel.id,
+        data: numericData, // ✅ Always numeric array
+        unit: channel.unit,
+        type: channel.type || "Analog", // ✅ Default to "Analog" not "Computed"
+        group: channel.group || "G0", // ✅ Default to "G0" not "Computed"
+        expression: channel.expression || channel.equation,
+        mathJsExpression: channel.mathJsExpression, // ✅ Include for complete metadata
+        color: channel.color || "#4ECDC4", // ✅ Fallback color
+        min: channel.min,
+        max: channel.max,
+        samples: numericData.length,
+      };
+    });
 
     // ✅ STEP 4: Save merged data
     localStorage.setItem(STORAGE_KEY, JSON.stringify(dataToStore));
@@ -85,6 +178,19 @@ export function saveComputedChannelsToStorage(computedData, metadata = {}) {
 
     console.log(
       `✅ Saved ${dataToStore.length} computed channels to localStorage (${existingData.length} existing + ${computedData.length} new)`
+    );
+    console.log(
+      "[Storage] Detailed save:",
+      dataToStore.map((ch) => ({
+        id: ch.id,
+        name: ch.name,
+        samples: ch.samples,
+        dataLength: ch.data ? ch.data.length : 0,
+        color: ch.color,
+        group: ch.group,
+        expression: ch.expression,
+        hasFirstValue: ch.data && ch.data.length > 0 ? ch.data[0] : undefined,
+      }))
     );
     return true;
   } catch (error) {

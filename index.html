@@ -267,6 +267,111 @@
             </div>
           </div>
         </div>
+
+        <!-- Analysis Sidebar (RIGHT SIDEBAR) -->
+        <div id="analysis-sidebar" class="hidden" style="width: 0px">
+          <div id="analysis-sidebar-backdrop"></div>
+          <div id="analysis-sidebar-scrim">
+            <div
+              id="analysis-sidebar-panel"
+              class="h-full w-full shadow-2xl flex flex-col transition-all duration-300 pointer-events-auto overflow-hidden"
+              style="
+                background-color: var(--bg-secondary);
+                color: var(--text-primary);
+              "
+            >
+              <div
+                class="p-6 border-b flex items-center justify-between shrink-0"
+                style="
+                  background-color: var(--bg-secondary);
+                  color: var(--text-primary);
+                  border-color: var(--border-color);
+                "
+              >
+                <div>
+                  <h2 class="text-lg font-semibold m-0">Analysis Suite</h2>
+                  <p
+                    style="
+                      margin: 4px 0 0;
+                      font-size: 0.82rem;
+                      color: var(--text-secondary);
+                    "
+                  >
+                    View phasor diagrams and manage analysis layouts
+                  </p>
+                </div>
+              </div>
+
+              <div
+                class="flex items-center gap-2 px-6 py-4 border-b"
+                style="border-color: var(--border-color)"
+              >
+                <button
+                  id="floatingWindowBtn"
+                  type="button"
+                  class="btn btn-secondary"
+                  style="flex: 1"
+                >
+                  Float Window
+                </button>
+                <button
+                  id="belowChartBtn"
+                  type="button"
+                  class="btn btn-secondary"
+                  style="flex: 1"
+                >
+                  Show Below Charts
+                </button>
+                <button
+                  id="returnSidebarBtn"
+                  type="button"
+                  class="btn btn-secondary"
+                  style="display: none"
+                >
+                  Return to Sidebar
+                </button>
+              </div>
+
+              <section class="flex-1 overflow-auto px-6 py-5">
+                <div
+                  class="flex items-center justify-between"
+                  style="margin-bottom: 12px"
+                >
+                  <h3
+                    style="
+                      margin: 0;
+                      font-size: 0.95rem;
+                      font-weight: 600;
+                      color: var(--text-primary);
+                    "
+                  >
+                    Phasor Diagram
+                  </h3>
+                  <button
+                    id="analysis-sidebar-close"
+                    type="button"
+                    class="btn btn-secondary"
+                    style="padding: 6px 12px"
+                  >
+                    Close
+                  </button>
+                </div>
+
+                <div id="polarChartContainer" class="polar-chart-container">
+                  <div
+                    style="
+                      padding: 20px;
+                      text-align: center;
+                      color: var(--text-secondary);
+                    "
+                  >
+                    Load COMTRADE data to render the phasor diagram
+                  </div>
+                </div>
+              </section>
+            </div>
+          </div>
+        </div>
       </div>
     </main>
 
