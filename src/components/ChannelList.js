@@ -1281,7 +1281,33 @@ function saveComputedChannelToGlobals(computedChannelData, channelName, win) {
 
   // ✅ ASSIGN COLOR FROM PALETTE (index-based at creation time)
   const computedIndex = data.computedData.length;
-  const assignedColor = computedPalette[computedIndex % computedPalette.length];
+
+  // Get palette from popup window (passed from parent) or fall back to imported version
+  const palette =
+    typeof window !== "undefined" && window.computedPalette
+      ? window.computedPalette
+      : computedPalette;
+
+  console.log(
+    "[saveComputedChannelToGlobals] 🎨 DEBUG - palette source:",
+    window.computedPalette ? "popup window" : "imported"
+  );
+  console.log("[saveComputedChannelToGlobals] 🎨 DEBUG - palette:", palette);
+  console.log(
+    "[saveComputedChannelToGlobals] 🎨 DEBUG - palette[0]:",
+    palette?.[0]
+  );
+  console.log(
+    "[saveComputedChannelToGlobals] 🎨 DEBUG - computedIndex:",
+    computedIndex
+  );
+
+  const assignedColor = palette?.[0]?.[computedIndex % palette[0].length];
+
+  console.log(
+    "[saveComputedChannelToGlobals] 🎨 DEBUG - assignedColor:",
+    assignedColor
+  );
 
   // ✅ AUTO-DETECT GROUP FROM EXPRESSION
   let detectedGroup = "G0";
@@ -2011,11 +2037,13 @@ export function createChannelList(
 
   // Merge analog + digital + computed channel data
   const tableData = [
+    // ✅ Analog channels first
     ...cfg.analogChannels.map((ch, i) => ({
       id: i + 1,
       channelID: ch.channelID,
       originalIndex: i,
       type: "Analog",
+      displayGroup: "Analog & Computed", // ✅ Custom display grouping
       name: ch.id || `Analog ${i + 1}`,
       unit: ch.unit || "",
       group: analogGroupMap[i] || "G0",
@@ -2025,11 +2053,30 @@ export function createChannelList(
       duration: ch.duration || "",
       invert: ch.invert || "",
     })),
+    // ✅ Computed channels together with Analog (no separator)
+    ...(cfg.computedChannels || []).map((ch, i) => ({
+      id:
+        ch.id || cfg.analogChannels.length + cfg.digitalChannels.length + i + 1,
+      channelID: ch.channelID,
+      originalIndex: i,
+      type: "Computed", // ✅ KEEP as Computed type for state routing
+      displayGroup: "Analog & Computed", // ✅ Custom display grouping (same as Analog)
+      name: ch.name || ch.id || `Computed ${i + 1}`,
+      unit: ch.unit || "",
+      group: ch.group || detectGroupFromExpression(ch.equation, cfg),
+      color: ch.color || "#4ECDC4",
+      scale: ch.scale || 1,
+      start: ch.start || 0,
+      duration: ch.duration || "",
+      invert: ch.invert || "",
+    })),
+    // ✅ Digital channels last (separate group)
     ...cfg.digitalChannels.map((ch, i) => ({
       id: i + 1,
       channelID: ch.channelID,
       originalIndex: i,
       type: "Digital",
+      displayGroup: "Digital", // ✅ Custom display grouping (separate)
       name: ch.id || `Digital ${i + 1}`,
       unit: ch.unit || "",
       group: (() => {
@@ -2049,21 +2096,6 @@ export function createChannelList(
         return "G0";
       })(),
       color: ch.color || "#888",
-      scale: ch.scale || 1,
-      start: ch.start || 0,
-      duration: ch.duration || "",
-      invert: ch.invert || "",
-    })),
-    ...(cfg.computedChannels || []).map((ch, i) => ({
-      id:
-        ch.id || cfg.analogChannels.length + cfg.digitalChannels.length + i + 1, // ✅ USE STORED ID!
-      channelID: ch.channelID,
-      originalIndex: i,
-      type: ch.type || "Computed", // ✅ Use type from cfg (defaults to Computed)
-      name: ch.name || ch.id || `Computed ${i + 1}`,
-      unit: ch.unit || "",
-      group: ch.group || detectGroupFromExpression(ch.equation, cfg), // ✅ Smart group detection
-      color: ch.color || "#4ECDC4",
       scale: ch.scale || 1,
       start: ch.start || 0,
       duration: ch.duration || "",
@@ -2321,7 +2353,7 @@ export function createChannelList(
   const table = new TabulatorClass(tableRoot, {
     data: tableData,
     layout: "fitColumns",
-    groupBy: "type",
+    groupBy: "displayGroup", // ✅ CHANGED: Group by custom displayGroup field
     groupStartOpen: true, // ✅ Expand all groups by default
     columns,
     resizableColumnFit: true,

@@ -133,10 +133,17 @@ export function renderComputedChannels(
 
   // All computed channels in one group
   const groupYLabels = computedChannels.map((ch) => ch.id || "Computed");
-  const groupLineColors = computedChannels.map(
-    (ch) => ch.color || "#4ECDC4" // ✅ USE STORED COLOR, fallback to teal
-  );
+  const groupLineColors = computedChannels.map((ch) => ch.color);
   const groupYUnits = computedChannels.map((ch) => ch.unit || "");
+
+  console.log(
+    "[renderComputedChannels] 🎨 DEBUG - computedChannels:",
+    computedChannels
+  );
+  console.log(
+    "[renderComputedChannels] 🎨 DEBUG - groupLineColors:",
+    groupLineColors
+  );
 
   const candidateGroups = computedChannels
     .map((ch) => (ch && typeof ch.group === "string" ? ch.group.trim() : ""))

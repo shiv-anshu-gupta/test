@@ -204,7 +204,7 @@ export const updateStateStore = (channelData) => {
     // Add channel to computed reactive state
     computed.channelIDs.push(channelData.id);
     computed.yLabels.push(channelData.name || channelData.id);
-    computed.lineColors.push("#FF6B6B"); // Default computed channel color
+    computed.lineColors.push(channelData.color || "#4ECDC4");
     computed.yUnits.push(channelData.unit || "");
     computed.groups.push(channelGroup); // ✅ Use detected group with fallback
     computed.scales.push(1);

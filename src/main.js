@@ -3486,6 +3486,60 @@ function setupComputedChannelsListener() {
       const removeTime = performance.now() - removeStartTime;
       console.log(`[Main] ⏱️ Chart cleanup: ${removeTime.toFixed(2)}ms`);
 
+      // ✅ CRITICAL FIX: Merge localStorage channels with current data before rendering
+      // This ensures that previously saved channels are not lost when creating new ones
+      const mergeStartTime = performance.now();
+      const savedChannels = loadComputedChannelsFromStorage();
+
+      if (savedChannels.length > 0) {
+        console.log(
+          `[Main] 🔄 Merging ${
+            savedChannels.length
+          } stored channels with current data.computedData (${
+            data.computedData?.length || 0
+          } items)`
+        );
+
+        if (!data.computedData) {
+          data.computedData = [];
+        }
+
+        // Merge: Add stored channels that are not already in data.computedData
+        savedChannels.forEach((storedChannel) => {
+          const exists = data.computedData.some(
+            (ch) =>
+              ch.id === storedChannel.id ||
+              (storedChannel.name && ch.name === storedChannel.name)
+          );
+
+          if (!exists) {
+            console.log(
+              `[Main] ✅ Adding stored channel to data: ${
+                storedChannel.id || storedChannel.name
+              }`
+            );
+            data.computedData.push({
+              id: storedChannel.id || storedChannel.name,
+              name: storedChannel.name,
+              equation: storedChannel.expression || storedChannel.equation,
+              data: storedChannel.data || [],
+              unit: storedChannel.unit || "",
+              group: storedChannel.group || "Computed",
+              color: storedChannel.color,
+              type: storedChannel.type || "Computed",
+              index: data.computedData.length,
+            });
+          }
+        });
+
+        const mergeTime = performance.now() - mergeStartTime;
+        console.log(
+          `[Main] ⏱️ Channel merge: ${mergeTime.toFixed(2)}ms, total now: ${
+            data.computedData.length
+          }`
+        );
+      }
+
       // Create computed channel charts - one per channel
       try {
         const renderStartTime = performance.now();

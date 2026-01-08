@@ -146,6 +146,14 @@ export function showChannelListWindow(
     win.globalCfg = cfg;
     win.globalData = data;
 
+    // ✅ Pass computedPalette from parent window to popup window
+    if (typeof window !== "undefined" && window.computedPalette) {
+      win.computedPalette = window.computedPalette;
+      console.log(
+        "[showChannelListWindow] ✅ Bound computedPalette from parent window to popup"
+      );
+    }
+
     // Also create a serialized data object with analog and digital arrays for expression evaluation
     if (data && typeof data === "object") {
       win.__dataArrays = {
