@@ -204,7 +204,26 @@ export const updateStateStore = (channelData) => {
     // Add channel to computed reactive state
     computed.channelIDs.push(channelData.id);
     computed.yLabels.push(channelData.name || channelData.id);
-    computed.lineColors.push(channelData.color || "#4ECDC4");
+
+    // ✅ Get color palette from window globals (set by main.js)
+    const computedPalette = (typeof window !== "undefined" &&
+      window.COMPUTED_CHANNEL_COLORS) || [
+      "#dc2626", // red-600
+      "#2563eb", // blue-600
+      "#16a34a", // green-600
+      "#9333ea", // purple-700
+      "#ea580c", // orange-600
+      "#0d9488", // teal-600
+      "#b45309", // amber-700
+      "#be185d", // pink-600
+    ];
+
+    // ✅ Calculate color based on current index
+    const colorIndex = computed.channelIDs.length - 1;
+    const assignedColor =
+      channelData.color || computedPalette[colorIndex % computedPalette.length];
+
+    computed.lineColors.push(assignedColor);
     computed.yUnits.push(channelData.unit || "");
     computed.groups.push(channelGroup); // ✅ Use detected group with fallback
     computed.scales.push(1);

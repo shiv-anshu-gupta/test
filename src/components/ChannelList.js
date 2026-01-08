@@ -1282,32 +1282,30 @@ function saveComputedChannelToGlobals(computedChannelData, channelName, win) {
   // ✅ ASSIGN COLOR FROM PALETTE (index-based at creation time)
   const computedIndex = data.computedData.length;
 
-  // Get palette from popup window (passed from parent) or fall back to imported version
-  const palette =
-    typeof window !== "undefined" && window.computedPalette
-      ? window.computedPalette
-      : computedPalette;
+  // ✅ Get color palette from popup window globals
+  const computedPalette = (typeof window !== "undefined" &&
+    window.COMPUTED_CHANNEL_COLORS) || [
+    "#dc2626", // red-600
+    "#2563eb", // blue-600
+    "#16a34a", // green-600
+    "#9333ea", // purple-700
+    "#ea580c", // orange-600
+    "#0d9488", // teal-600
+    "#b45309", // amber-700
+    "#be185d", // pink-600
+  ]; // Fallback colors
 
-  console.log(
-    "[saveComputedChannelToGlobals] 🎨 DEBUG - palette source:",
-    window.computedPalette ? "popup window" : "imported"
-  );
-  console.log("[saveComputedChannelToGlobals] 🎨 DEBUG - palette:", palette);
-  console.log(
-    "[saveComputedChannelToGlobals] 🎨 DEBUG - palette[0]:",
-    palette?.[0]
-  );
-  console.log(
-    "[saveComputedChannelToGlobals] 🎨 DEBUG - computedIndex:",
-    computedIndex
-  );
+  const assignedColor = computedPalette[computedIndex % computedPalette.length];
 
-  const assignedColor = palette?.[0]?.[computedIndex % palette[0].length];
-
-  console.log(
-    "[saveComputedChannelToGlobals] 🎨 DEBUG - assignedColor:",
-    assignedColor
-  );
+  console.log("[saveComputedChannelToGlobals] 🎨 Assigning color:", {
+    index: computedIndex,
+    color: assignedColor,
+    paletteSize: computedPalette.length,
+    source:
+      typeof window !== "undefined" && window.COMPUTED_CHANNEL_COLORS
+        ? "popup window"
+        : "fallback",
+  });
 
   // ✅ AUTO-DETECT GROUP FROM EXPRESSION
   let detectedGroup = "G0";

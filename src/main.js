@@ -29,6 +29,15 @@ import {
   digitalPalette,
   computedPalette,
 } from "./utils/constants.js";
+
+// ✅ Make computedPalette available globally for popup windows
+if (typeof window !== "undefined") {
+  window.COMPUTED_CHANNEL_COLORS = computedPalette[0]; // Use light theme palette (index 0)
+  console.log(
+    "[main] Computed channel colors loaded and exposed to window:",
+    window.COMPUTED_CHANNEL_COLORS
+  );
+}
 import { subscribeChartUpdates } from "./components/chartManager.js";
 import { debugLite } from "./components/debugPanelLite.js";
 import { autoGroupChannels } from "./utils/autoGroupChannels.js";

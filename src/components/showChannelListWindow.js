@@ -146,11 +146,12 @@ export function showChannelListWindow(
     win.globalCfg = cfg;
     win.globalData = data;
 
-    // ✅ Pass computedPalette from parent window to popup window
-    if (typeof window !== "undefined" && window.computedPalette) {
-      win.computedPalette = window.computedPalette;
+    // ✅ Pass color constants to popup window
+    if (typeof window !== "undefined" && window.COMPUTED_CHANNEL_COLORS) {
+      win.COMPUTED_CHANNEL_COLORS = window.COMPUTED_CHANNEL_COLORS;
       console.log(
-        "[showChannelListWindow] ✅ Bound computedPalette from parent window to popup"
+        "[showChannelListWindow] ✅ Passed computed color palette to popup:",
+        win.COMPUTED_CHANNEL_COLORS
       );
     }
 
