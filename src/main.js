@@ -438,6 +438,297 @@ let chartsComputed = [];
 window.__charts = charts;
 window.__chartsComputed = chartsComputed;
 
+/**
+ * Update computed channel color by ID in channelState
+ * Searches computed channels directly in state
+ * @param {string} channelId - Channel ID (e.g., "V4")
+ * @param {string} color - New color hex code
+ * @returns {boolean} Success status
+ */
+function updateComputedChannelColorInState(channelId, color) {
+  try {
+    console.log(
+      `[updateComputedChannelColorInState] 🔍 Looking for channel ID: "${channelId}" in computed state`
+    );
+
+    // Direct approach: access the computed state property directly (it's a Proxy, not a function)
+    let computedState = null;
+
+    try {
+      // Try to access computed state directly - DO NOT CALL IT as a function
+      computedState = channelState.computed;
+      console.log(
+        `[updateComputedChannelColorInState] Got computed state directly`
+      );
+    } catch (e) {
+      console.warn(
+        `[updateComputedChannelColorInState] Failed to get computed state directly:`,
+        e.message
+      );
+    }
+
+    // If direct access failed, try the getter
+    if (!computedState?.channelIDs) {
+      console.log(
+        `[updateComputedChannelColorInState] Trying getComputedChannelsState()...`
+      );
+      try {
+        computedState = getComputedChannelsState?.();
+        if (computedState?.channelIDs) {
+          console.log(
+            `[updateComputedChannelColorInState] ✅ Got state from getComputedChannelsState()`
+          );
+        }
+      } catch (e) {
+        console.warn(
+          `[updateComputedChannelColorInState] getComputedChannelsState() failed:`,
+          e.message
+        );
+      }
+    }
+
+    if (!computedState?.channelIDs) {
+      console.warn(
+        `[updateComputedChannelColorInState] ⚠️ Could not access computed state with channelIDs`
+      );
+      console.log(
+        `[updateComputedChannelColorInState] computedState available:`,
+        !!computedState
+      );
+      console.log(
+        `[updateComputedChannelColorInState] Will continue with chart/storage update only`
+      );
+      return false;
+    }
+
+    // Find the index by channel ID
+    const idx = computedState.channelIDs.indexOf(channelId);
+
+    if (idx < 0) {
+      console.warn(
+        `[updateComputedChannelColorInState] ⚠️ Channel "${channelId}" not in state.channelIDs`
+      );
+      return false;
+    }
+
+    // Update the lineColors array
+    if (!Array.isArray(computedState.lineColors)) {
+      console.warn(
+        `[updateComputedChannelColorInState] ⚠️ lineColors is not an array`
+      );
+      return false;
+    }
+
+    console.log(
+      `[updateComputedChannelColorInState] Updating color for "${channelId}" at state index ${idx}`
+    );
+    computedState.lineColors[idx] = color;
+
+    console.log(
+      `[updateComputedChannelColorInState] ✅ Updated state color for "${channelId}"`
+    );
+    return true;
+  } catch (e) {
+    console.error(`[updateComputedChannelColorInState] ❌ Error:`, e.message);
+    return false;
+  }
+}
+
+/**
+ * Find computed channel index by its ID in cfg.computedChannels or data.computedData
+ * @param {string} channelId - Channel ID (e.g., "V4")
+ * @returns {number} Index in computed array, or -1 if not found
+ */
+function findComputedChannelIndexById(channelId) {
+  console.log(
+    `[findComputedChannelIndexById] 🔍 Looking for channel ID: "${channelId}"`
+  );
+
+  // Try cfg.computedChannels first
+  if (cfg?.computedChannels && Array.isArray(cfg.computedChannels)) {
+    console.log(
+      `[findComputedChannelIndexById] Searching cfg.computedChannels (${cfg.computedChannels.length} channels)`
+    );
+    const idx = cfg.computedChannels.findIndex(
+      (ch) => ch.id === channelId || ch.name === channelId
+    );
+    if (idx >= 0) {
+      console.log(
+        `[findComputedChannelIndexById] ✅ Found in cfg.computedChannels at index ${idx}`
+      );
+      return idx;
+    }
+  } else {
+    console.warn(
+      `[findComputedChannelIndexById] cfg.computedChannels not available`
+    );
+  }
+
+  // Fallback: Try globalData.computedData
+  if (globalData?.computedData && Array.isArray(globalData.computedData)) {
+    console.log(
+      `[findComputedChannelIndexById] Searching globalData.computedData (${globalData.computedData.length} channels)`
+    );
+    const idx = globalData.computedData.findIndex(
+      (ch) => ch.id === channelId || ch.name === channelId
+    );
+    if (idx >= 0) {
+      console.log(
+        `[findComputedChannelIndexById] ✅ Found in globalData.computedData at index ${idx}`
+      );
+      return idx;
+    }
+  } else {
+    console.warn(
+      `[findComputedChannelIndexById] globalData.computedData not available`
+    );
+  }
+
+  // Fallback: Try window.globalData if global is not working
+  if (
+    window?.globalData?.computedData &&
+    Array.isArray(window.globalData.computedData)
+  ) {
+    console.log(
+      `[findComputedChannelIndexById] Searching window.globalData.computedData`
+    );
+    const idx = window.globalData.computedData.findIndex(
+      (ch) => ch.id === channelId || ch.name === channelId
+    );
+    if (idx >= 0) {
+      console.log(
+        `[findComputedChannelIndexById] ✅ Found in window.globalData.computedData at index ${idx}`
+      );
+      return idx;
+    }
+  }
+
+  console.warn(
+    `[findComputedChannelIndexById] ❌ Channel "${channelId}" not found in any computed channels source`
+  );
+  console.log(`[findComputedChannelIndexById] cfg:`, !!cfg);
+  console.log(`[findComputedChannelIndexById] globalData:`, !!globalData);
+  console.log(
+    `[findComputedChannelIndexById] window.globalData:`,
+    !!window?.globalData
+  );
+
+  return -1;
+}
+
+/**
+ * Update a computed chart's colors directly by channel ID lookup
+ * @param {string} channelId - Channel ID (e.g., "V4")
+ * @param {string} newColor - New color hex code
+ */
+function updateComputedChartColorById(channelId, newColor) {
+  try {
+    console.log(
+      `[updateComputedChartColorById] 🎨 Updating computed channel "${channelId}" color → ${newColor}`
+    );
+
+    // Check if chartsComputed exists - there's only ONE chart containing ALL computed channels as series
+    const chartsArr = window.chartsComputed || chartsComputed;
+    if (!Array.isArray(chartsArr) || chartsArr.length === 0) {
+      console.warn(
+        `[updateComputedChartColorById] ⚠️ chartsComputed not ready (length: ${
+          chartsArr?.length || 0
+        })`
+      );
+      return false;
+    }
+
+    // Find the computed channels chart (should be the last one or marked with _computed=true)
+    let computedChart = null;
+    for (const chart of chartsArr) {
+      if (chart && chart._computed === true) {
+        computedChart = chart;
+        break;
+      }
+    }
+
+    if (!computedChart) {
+      console.warn(
+        `[updateComputedChartColorById] ⚠️ No computed chart found (tried ${chartsArr.length} charts)`
+      );
+      return false;
+    }
+
+    console.log(
+      `[updateComputedChartColorById] ✅ Found computed chart with ${
+        computedChart._computedIds?.length || 0
+      } series`
+    );
+
+    // Find the series index by matching channel ID
+    if (!Array.isArray(computedChart._computedIds)) {
+      console.warn(
+        `[updateComputedChartColorById] ⚠️ Chart doesn't have _computedIds array`
+      );
+      return false;
+    }
+
+    const seriesIndex = computedChart._computedIds.indexOf(channelId);
+    if (seriesIndex < 0) {
+      console.warn(
+        `[updateComputedChartColorById] ❌ Channel "${channelId}" not found in computed chart`
+      );
+      console.log(
+        `[updateComputedChartColorById] Available channels:`,
+        computedChart._computedIds
+      );
+      return false;
+    }
+
+    // Series indices are offset by 1 (series[0] is x-axis, series[1+] are data)
+    const actualSeriesIdx = seriesIndex + 1;
+
+    if (!computedChart.series || !Array.isArray(computedChart.series)) {
+      console.warn(
+        `[updateComputedChartColorById] ❌ Series array not found on chart`
+      );
+      return false;
+    }
+
+    if (actualSeriesIdx >= computedChart.series.length) {
+      console.warn(
+        `[updateComputedChartColorById] ❌ Series index ${actualSeriesIdx} out of bounds (length: ${computedChart.series.length})`
+      );
+      return false;
+    }
+
+    const series = computedChart.series[actualSeriesIdx];
+    if (!series) {
+      console.warn(
+        `[updateComputedChartColorById] ❌ Series at index ${actualSeriesIdx} is null`
+      );
+      return false;
+    }
+
+    // Update the series stroke color
+    series.stroke = () => newColor;
+
+    // Clear path cache to force redraw
+    if (series._paths) {
+      series._paths = null;
+    }
+
+    // Redraw the chart
+    if (typeof computedChart.redraw === "function") {
+      computedChart.redraw(false);
+      console.log(
+        `[updateComputedChartColorById] ✅ Chart redrawn with new color for "${channelId}"`
+      );
+      return true;
+    }
+
+    return true;
+  } catch (e) {
+    console.error(`[updateComputedChartColorById] ❌ Error:`, e.message);
+    return false;
+  }
+}
+
 // Global config and data
 let cfg, data;
 
@@ -1291,7 +1582,7 @@ async function processCombinedDataFromMerger(cfgText, datText) {
       renderComputedChannels(
         data,
         chartsContainer,
-        charts,
+        chartsComputed,
         verticalLinesX,
         channelState
       );
@@ -1478,7 +1769,9 @@ function rehydrateStoredComputedChannels(
           ? savedChannel.group.trim()
           : getFallbackGroup();
       const color =
-        savedChannel?.color && savedChannel.color.trim()
+        savedChannel?.color &&
+        typeof savedChannel.color === "string" &&
+        savedChannel.color.trim()
           ? savedChannel.color.trim()
           : COMPUTED_COLOR_PALETTE[
               paletteIndex % COMPUTED_COLOR_PALETTE.length
@@ -1555,7 +1848,11 @@ function rehydrateStoredComputedChannels(
         if (!alreadyInState) {
           computed.channelIDs.push(channelId);
           computed.yLabels.push(channelName);
-          computed.lineColors.push(color);
+          computed.lineColors.push(
+            color && typeof color === "string" && color.trim()
+              ? color.trim()
+              : "#888"
+          );
           computed.yUnits.push(unit);
           computed.groups.push(group);
           computed.scales.push(1);
@@ -1960,7 +2257,7 @@ window.addEventListener("mergedFilesReceived", async (event) => {
       renderComputedChannels(
         data,
         chartsContainer,
-        charts,
+        chartsComputed,
         verticalLinesX,
         channelState
       );
@@ -2929,8 +3226,13 @@ async function handleLoadFiles() {
         if (!exists) {
           data.computedData.push({
             id: savedChannel.name,
+            name: savedChannel.name,
             equation: savedChannel.expression,
             data: savedChannel.data,
+            color: savedChannel.color, // ✅ CRITICAL: Include stored color
+            unit: savedChannel.unit,
+            group: savedChannel.group,
+            type: savedChannel.type,
             index: data.computedData.length,
           });
         }
@@ -2943,7 +3245,7 @@ async function handleLoadFiles() {
         renderComputedChannels(
           data,
           chartsContainer,
-          charts,
+          chartsComputed,
           verticalLinesX,
           channelState
         );
@@ -3966,6 +4268,7 @@ window.addEventListener("message", (ev) => {
             : payload && payload.color
             ? payload.color
             : null;
+
         if (!row) {
           if (Array.isArray(payload) && payload.length >= 3) {
             channelID = payload[1];
@@ -3975,24 +4278,35 @@ window.addEventListener("message", (ev) => {
           }
         }
 
+        console.log(`[COLOR HANDLER] 📢 Color change received:`, {
+          type: row?.type,
+          color,
+        });
+
+        // ✅ STEP 1: Update channelState (UI update)
         if (channelID) {
           const updated = updateChannelFieldByID(
             channelID,
             "lineColors",
             color
           );
-          if (updated) return;
+          if (updated) {
+            console.log(
+              `[COLOR HANDLER] ✅ Updated by channelID: ${channelID}`
+            );
+            return;
+          }
           // fall through to legacy behavior if update failed
         }
 
         if (!row) return;
         const t = (row.type || "").toLowerCase();
         const oi = Number(row.originalIndex ?? row.idx ?? -1);
-        if (
-          (t === "analog" || t === "digital" || t === "computed") &&
-          oi >= 0
-        ) {
+        if ((t === "analog" || t === "digital") && oi >= 0) {
           // use helper with bounds checks
+          console.log(
+            `[COLOR HANDLER] 🎨 Updating ${t}[${oi}] color → ${color}`
+          );
           updateChannelFieldByIndex(t, oi, "lineColors", color);
         } else {
           // fallback: match by label
@@ -4005,6 +4319,115 @@ window.addEventListener("message", (ev) => {
               updateChannelFieldByIndex("digital", idx, "lineColors", color);
           }
         }
+        break;
+      }
+
+      case "callback_computed_color": {
+        // ✅ SEPARATE PIPELINE FOR COMPUTED CHANNELS
+        // Uses ID-based lookup instead of index-based
+        console.log(
+          `[COMPUTED COLOR HANDLER] 📢 Computed channel color change received:`,
+          payload
+        );
+
+        const color = payload?.color || payload?.newValue;
+        const channelId = payload?.id || payload?.channelID || payload?.row?.id;
+
+        if (!color || !channelId) {
+          console.warn(
+            `[COMPUTED COLOR HANDLER] ❌ Missing color or channelId:`,
+            { color, channelId }
+          );
+          break;
+        }
+
+        console.log(
+          `[COMPUTED COLOR HANDLER] 🎯 Looking up channel by ID: "${channelId}"`
+        );
+
+        // ✅ STEP 1: Update UI state by ID (in computed state)
+        const stateUpdated = updateComputedChannelColorInState(
+          channelId,
+          color
+        );
+
+        if (stateUpdated) {
+          console.log(
+            `[COMPUTED COLOR HANDLER] ✅ Updated state for channel: ${channelId}`
+          );
+        } else {
+          console.warn(
+            `[COMPUTED COLOR HANDLER] ⚠️ State update failed for channel: ${channelId}`
+          );
+        }
+
+        // ✅ STEP 2: Update chart using ID-based lookup
+        console.log(
+          `[COMPUTED COLOR HANDLER] 💾 Updating chart for channel: ${channelId}`
+        );
+        updateComputedChartColorById(channelId, color);
+
+        // ✅ STEP 3: Update the computed channel color directly in globalData before saving
+        try {
+          // Get computed data
+          let computedData =
+            globalData?.computedData ||
+            cfg?.computedChannels ||
+            window.globalData?.computedData ||
+            [];
+
+          if (Array.isArray(computedData)) {
+            // Find and update the channel in the data
+            for (let i = 0; i < computedData.length; i++) {
+              if (
+                computedData[i].id === channelId ||
+                computedData[i].name === channelId
+              ) {
+                computedData[i].color = color;
+                console.log(
+                  `[COMPUTED COLOR HANDLER] ✅ Updated color in computed data for "${channelId}"`
+                );
+                break;
+              }
+            }
+          }
+        } catch (e) {
+          console.warn(
+            `[COMPUTED COLOR HANDLER] ⚠️ Could not update computed data color:`,
+            e.message
+          );
+        }
+
+        // ✅ STEP 4: Save to localStorage using static import (already imported at top)
+        try {
+          // Get computed channels from any available source
+          const computedChannelsData =
+            cfg?.computedChannels ||
+            globalData?.computedData ||
+            window.globalData?.computedData ||
+            [];
+
+          if (
+            !Array.isArray(computedChannelsData) ||
+            computedChannelsData.length === 0
+          ) {
+            console.warn(
+              `[COMPUTED COLOR HANDLER] ⚠️ No computed channels data to save`
+            );
+          } else {
+            saveComputedChannelsToStorage(
+              computedChannelsData,
+              computedChannelsData
+            );
+            console.log(`[COMPUTED COLOR HANDLER] ✅ Saved to localStorage`);
+          }
+        } catch (e) {
+          console.error(
+            `[COMPUTED COLOR HANDLER] ❌ Storage save error:`,
+            e.message
+          );
+        }
+
         break;
       }
       case CALLBACK_TYPE.SCALE: {

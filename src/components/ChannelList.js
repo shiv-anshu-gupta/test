@@ -2246,20 +2246,36 @@ export function createChannelList(
         let payload = { row: rowData };
 
         if (field === "color") {
-          messageType = "callback_color";
-          const idx =
-            rowData && typeof rowData.originalIndex === "number"
-              ? rowData.originalIndex
-              : rowData && typeof rowData.id === "number"
-              ? rowData.id - 1
-              : undefined;
-          payload = {
-            channelID: rowData?.channelID,
-            type: rowData?.type,
-            idx: idx,
-            color: newValue,
-            row: rowData,
-          };
+          // ✅ Use separate callback type for computed channels (ID-based lookup)
+          if (rowData?.type && rowData.type.toLowerCase() === "computed") {
+            messageType = "callback_computed_color";
+            payload = {
+              id: rowData?.id,
+              channelID: rowData?.channelID,
+              color: newValue,
+              row: rowData,
+            };
+            console.log(`[ChannelList] 📤 COMPUTED COLOR MESSAGE:`, {
+              id: rowData?.id,
+              color: newValue,
+            });
+          } else {
+            // Analog/Digital use regular color callback
+            messageType = "callback_color";
+            const idx =
+              rowData && typeof rowData.originalIndex === "number"
+                ? rowData.originalIndex
+                : rowData && typeof rowData.id === "number"
+                ? rowData.id - 1
+                : undefined;
+            payload = {
+              channelID: rowData?.channelID,
+              type: rowData?.type,
+              idx: idx,
+              color: newValue,
+              row: rowData,
+            };
+          }
         } else if (field === "scale") {
           messageType = "callback_scale";
           payload = {

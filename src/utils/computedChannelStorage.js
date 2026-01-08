@@ -87,6 +87,11 @@ export function saveComputedChannelsToStorage(
       const mergedChannel = {
         ...newChannel,
         ...(dataEntry || {}), // ✅ Use dataEntry if it exists
+        // ✅ ENSURE: Preserve critical metadata fields from newChannel (cfg) that define appearance/behavior
+        color: dataEntry?.color || newChannel.color, // ✅ Preserve color from cfg if not in data
+        unit: dataEntry?.unit || newChannel.unit, // ✅ Preserve unit from cfg
+        group: dataEntry?.group || newChannel.group, // ✅ Preserve group from cfg
+        type: dataEntry?.type || newChannel.type, // ✅ Preserve type from cfg
         // ✅ ENSURE: If newChannel has data and we're not overriding it, keep it
         data: dataEntry?.data || newChannel.data, // ✅ Prefer dataEntry but fallback to newChannel
       };

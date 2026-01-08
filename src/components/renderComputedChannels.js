@@ -133,7 +133,9 @@ export function renderComputedChannels(
 
   // All computed channels in one group
   const groupYLabels = computedChannels.map((ch) => ch.id || "Computed");
-  const groupLineColors = computedChannels.map((ch) => ch.color);
+  const groupLineColors = computedChannels.map((ch) =>
+    ch.color && typeof ch.color === "string" ? ch.color.trim() : ""
+  );
   const groupYUnits = computedChannels.map((ch) => ch.unit || "");
 
   console.log(
