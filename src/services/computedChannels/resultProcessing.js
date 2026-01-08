@@ -153,6 +153,27 @@ export const buildChannelData = (
       ? groupOverride
       : detectComputedGroup();
 
+  // ✅ ASSIGN COLOR FROM PALETTE (index-based at creation time)
+  const computedIndex = window.globalData?.computedData?.length || 0;
+  const computedPalette = (typeof window !== "undefined" &&
+    window.COMPUTED_CHANNEL_COLORS) || [
+    "#dc2626", // red-600
+    "#2563eb", // blue-600
+    "#16a34a", // green-600
+    "#9333ea", // purple-700
+    "#ea580c", // orange-600
+    "#0d9488", // teal-600
+    "#b45309", // amber-700
+    "#be185d", // pink-600
+  ];
+  const assignedColor = computedPalette[computedIndex % computedPalette.length];
+
+  console.log("[resultProcessing] 🎨 Assigned color:", {
+    index: computedIndex,
+    color: assignedColor,
+    paletteSize: computedPalette.length,
+  });
+
   return {
     id: channelName,
     name: channelName,
@@ -165,7 +186,8 @@ export const buildChannelData = (
     group: resolvedGroup,
     sampleCount: results.length,
     createdAt: Date.now(),
-    index: window.globalData?.computedData?.length || 0,
+    index: computedIndex,
+    color: assignedColor, // ✅ NEW: Assign palette color
     type: "Computed", // ✅ Set type to Computed so it updates channelState.computed
   };
 };
