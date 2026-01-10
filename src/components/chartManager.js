@@ -227,6 +227,9 @@ export function subscribeChartUpdates(
   // Rebuilt whenever chart structure changes
   const channelToChartsIndex = new Map();
 
+  // ✅ Flag to prevent dataState subscriber from interfering during deletion
+  let isHandlingDeletion = false;
+
   function rebuildChannelToChartsIndex() {
     channelToChartsIndex.clear();
     for (let ci = 0; ci < charts.length; ci++) {
@@ -560,6 +563,25 @@ export function subscribeChartUpdates(
       if (!Array.isArray(dataState[type])) {
         console.warn(
           `[recreateChart] dataState[${type}] is not an array or is undefined`
+        );
+        return;
+      }
+
+      // ✅ SAFETY CHECK: If chart index is out of bounds, skip recreation
+      // This prevents infinite loops when deletion removes all charts
+      if (idx < 0 || idx >= (chartsContainer?.children.length || 0)) {
+        console.warn(
+          `[recreateChart] Chart index ${idx} is out of bounds (container has ${chartsContainer?.children.length || 0} children), skipping`
+        );
+        return;
+      }
+
+      // ✅ SAFETY CHECK: Ensure we have valid data to display
+      const expectedSeriesCount = Math.max(0, channelState[type].yLabels?.length || 0);
+      const actualSeriesCount = Math.max(0, (dataState[type]?.length || 1) - 1); // -1 for time array
+      if (expectedSeriesCount !== actualSeriesCount) {
+        console.warn(
+          `[recreateChart] Data mismatch: expecting ${expectedSeriesCount} series but have ${actualSeriesCount}, skipping to avoid crash`
         );
         return;
       }
@@ -2029,14 +2051,88 @@ export function subscribeChartUpdates(
     { descendants: true }
   );
 
-  // Add/Delete: channelIDs or yLabels descendant changes -> recreate
+  // ✨ SIMPLE DELETION HANDLER: Reuses same render logic as group change
+  // When channels are deleted, just trigger a full rebuild
+  // The render functions will only create containers for groups with channels
+  // Empty groups will naturally have no container (clean DOM!)
   channelState.subscribeProperty(
     "channelIDs",
     (change) => {
+      const t0 = performance.now();
       const type = change.path && change.path[0];
-      const typeIdx = chartTypes.indexOf(type);
-      if (typeIdx === -1) return;
-      recreateChartSync(type, typeIdx);
+      
+      if (!type) return;
+
+      // ✅ CRITICAL: Set flag to prevent dataState subscriber from interfering
+      isHandlingDeletion = true;
+
+      try {
+        const oldLength = Array.isArray(change.oldValue) ? change.oldValue.length : 0;
+        const newLength = Array.isArray(change.newValue) ? change.newValue.length : 0;
+        
+        console.log(
+          `[DELETE HANDLER] 🗑️ Channel deletion detected: ${type} (${oldLength} → ${newLength})`
+        );
+
+        debugLite.log("channel.delete.detected", {
+          type,
+          oldLength,
+          newLength,
+        });
+
+        // ✅ STEP 1: Detect if this is a deletion event (not addition)
+        const isChannelDeleted = oldLength > newLength;
+
+        if (!isChannelDeleted) {
+          // Not a deletion - ignore and let other subscribers handle it
+          console.log(`[DELETE HANDLER] ℹ️ Not a deletion event, skipping`);
+          return;
+        }
+
+        console.log(
+          `[DELETE HANDLER] ✅ Deletion confirmed: ${oldLength - newLength} channel(s) removed`
+        );
+
+        // ✅ STEP 2: Rebuild all charts (reusing group change logic)
+        // This will re-render all containers, but only create containers for groups with channels
+        // Empty groups will have NO container (perfect solution!)
+        (async () => {
+          try {
+            console.log(`[DELETE HANDLER] 🔄 Rebuilding all charts with renderComtradeCharts()...`);
+
+            // Import the same render function that group change uses
+            const { renderComtradeCharts: renderAllCharts } = await import(
+              "./renderComtradeCharts.js"
+            );
+
+            // Clear and rebuild - this intelligently creates only non-empty containers
+            renderAllCharts(
+              cfg,
+              data,
+              chartsContainer,
+              charts,
+              verticalLinesX,
+              channelState,
+              createState,
+              calculateDeltas,
+              TIME_UNIT
+            );
+
+            const elapsed = (performance.now() - t0).toFixed(2);
+            console.log(
+              `[DELETE HANDLER] ✅ Rebuild complete: ${elapsed}ms - empty containers removed, remaining groups rendered`
+            );
+          } catch (err) {
+            console.error(`[DELETE HANDLER] ❌ Rebuild failed:`, err);
+          }
+        })();
+      } catch (err) {
+        console.error(`[DELETE HANDLER] ❌ Error in deletion handler:`, err);
+      } finally {
+        // ✅ CRITICAL: Always reset deletion flag when done
+        isHandlingDeletion = false;
+        console.log("[DELETE HANDLER] ✅ Deletion handling complete, released flag");
+      }
     },
     { descendants: true }
   );
@@ -2357,10 +2453,22 @@ export function subscribeChartUpdates(
   try {
     console.log("[subscribeChartUpdates] Setting up dataState.subscribe");
     dataState.subscribe((change) => {
+      // ✅ CRITICAL: Skip if deletion handler is managing the update
+      if (isHandlingDeletion) {
+        console.log(
+          "[dataState subscriber] 🚫 Skipping during deletion (isHandlingDeletion=true)"
+        );
+        return;
+      }
+
       try {
         const type = change.path && change.path[0];
         const idx = chartTypes.indexOf(type);
         if (idx !== -1) {
+          console.log(
+            "[dataState subscriber] 🔄 Data changed, recreating chart",
+            { type }
+          );
           recreateChart(type, idx);
         }
       } catch (err) {

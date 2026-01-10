@@ -1,0 +1,973 @@
+ChannelList.js:2463 [ChannelList] 📤 ROW DELETED EVENT FIRED
+ChannelList.js:2464   Row data: Object
+ChannelList.js:2465   Row object: Proxy(u)
+ChannelList.js:2471 [ChannelList] 🔔 Calling local onChannelUpdate('delete', data)
+ChannelList.js:2473 [ChannelList] ✅ Local callback executed
+ChannelList.js:2485 [ChannelList] 📤 DELETE MESSAGE TO PARENT
+ChannelList.js:2486   Target parent exists: true
+ChannelList.js:2487   Parent closed: false
+ChannelList.js:2488   Row data: Object
+ChannelList.js:2501 [ChannelList] 📤 Posting message: Object
+ChannelList.js:2503 [ChannelList] ✅ Message posted successfully
+ChannelList.js:2152 [ChannelList] ✅ row.delete() called successfully
+main.js:4077 [main.js] 📨 RAW MESSAGE RECEIVED
+main.js:4078 Has data: true
+main.js:4079 Message source: ChildWindow
+main.js:4080 Message type: callback_delete
+main.js:4081 Origin: http://localhost:3000
+main.js:4082 Full message: Object
+main.js:4091 [main.js] ✅ Message ACCEPTED - Processing type: "callback_delete"
+main.js:4105 [Performance] 📨 Message received: callback_delete Object
+main.js:4781 [DELETE CALLBACK] 🗑️ DELETE MESSAGE RECEIVED
+main.js:4782 Payload received: Object
+main.js:4783 Payload type: object
+main.js:4784 Is array: false
+main.js:4785 Payload keys: Array(14)
+main.js:4802 [DELETE CALLBACK] 🔍 Parsed delete request: Object
+main.js:4811 [DELETE CALLBACK] 📍 Deleting by channelID: analog-0-waycv90
+main.js:4814 [DELETE CALLBACK] Result: ✅ DELETED
+main.js:4821 [DELETE CALLBACK] ✅ Deletion complete - chartManager subscribers will handle recreation
+chartManager.js:580 [recreateChart] ✓ Destroyed old chart at index 0
+chartManager.js:589 [recreateChart] ✓ Cleared container HTML
+chartManager.js:601 [recreateChart] type="analog", idx=0, dataLength=6, seriesCount=5
+chartManager.js:611 [recreateChart] ✓ Created new uPlot instance
+chartManager.js:616 [recreateChart] ✅ Successfully recreated chart[0] for type "analog"
+chartManager.js:580 [recreateChart] ✓ Destroyed old chart at index 0
+chartManager.js:589 [recreateChart] ✓ Cleared container HTML
+chartManager.js:601 [recreateChart] type="analog", idx=0, dataLength=6, seriesCount=5
+chartManager.js:611 [recreateChart] ✓ Created new uPlot instance
+chartManager.js:616 [recreateChart] ✅ Successfully recreated chart[0] for type "analog"
+chartManager.js:580 [recreateChart] ✓ Destroyed old chart at index 0
+chartManager.js:589 [recreateChart] ✓ Cleared container HTML
+chartManager.js:601 [recreateChart] type="analog", idx=0, dataLength=6, seriesCount=5
+chartManager.js:611 [recreateChart] ✓ Created new uPlot instance
+chartManager.js:616 [recreateChart] ✅ Successfully recreated chart[0] for type "analog"
+chartManager.js:580 [recreateChart] ✓ Destroyed old chart at index 0
+chartManager.js:589 [recreateChart] ✓ Cleared container HTML
+chartManager.js:601 [recreateChart] type="analog", idx=0, dataLength=6, seriesCount=5
+chartManager.js:611 [recreateChart] ✓ Created new uPlot instance
+chartManager.js:616 [recreateChart] ✅ Successfully recreated chart[0] for type "analog"
+chartManager.js:580 [recreateChart] ✓ Destroyed old chart at index 0
+chartManager.js:589 [recreateChart] ✓ Cleared container HTML
+chartManager.js:601 [recreateChart] type="analog", idx=0, dataLength=6, seriesCount=5
+chartManager.js:611 [recreateChart] ✓ Created new uPlot instance
+chartManager.js:616 [recreateChart] ✅ Successfully recreated chart[0] for type "analog"
+chartManager.js:580 [recreateChart] ✓ Destroyed old chart at index 0
+chartManager.js:589 [recreateChart] ✓ Cleared container HTML
+chartManager.js:601 [recreateChart] type="analog", idx=0, dataLength=6, seriesCount=5
+chartManager.js:611 [recreateChart] ✓ Created new uPlot instance
+chartManager.js:616 [recreateChart] ✅ Successfully recreated chart[0] for type "analog"
+chartManager.js:580 [recreateChart] ✓ Destroyed old chart at index 0
+chartManager.js:589 [recreateChart] ✓ Cleared container HTML
+chartManager.js:601 [recreateChart] type="analog", idx=0, dataLength=6, seriesCount=5
+chartManager.js:611 [recreateChart] ✓ Created new uPlot instance
+chartManager.js:616 [recreateChart] ✅ Successfully recreated chart[0] for type "analog"
+chartManager.js:580 [recreateChart] ✓ Destroyed old chart at index 0
+chartManager.js:589 [recreateChart] ✓ Cleared container HTML
+chartManager.js:601 [recreateChart] type="analog", idx=0, dataLength=6, seriesCount=5
+chartManager.js:611 [recreateChart] ✓ Created new uPlot instance
+chartManager.js:616 [recreateChart] ✅ Successfully recreated chart[0] for type "analog"
+chartManager.js:580 [recreateChart] ✓ Destroyed old chart at index 0
+chartManager.js:589 [recreateChart] ✓ Cleared container HTML
+chartManager.js:601 [recreateChart] type="analog", idx=0, dataLength=6, seriesCount=5
+chartManager.js:611 [recreateChart] ✓ Created new uPlot instance
+chartManager.js:616 [recreateChart] ✅ Successfully recreated chart[0] for type "analog"
+chartManager.js:580 [recreateChart] ✓ Destroyed old chart at index 0
+chartManager.js:589 [recreateChart] ✓ Cleared container HTML
+chartManager.js:601 [recreateChart] type="analog", idx=0, dataLength=6, seriesCount=5
+chartManager.js:611 [recreateChart] ✓ Created new uPlot instance
+chartManager.js:616 [recreateChart] ✅ Successfully recreated chart[0] for type "analog"
+chartManager.js:580 [recreateChart] ✓ Destroyed old chart at index 0
+chartManager.js:589 [recreateChart] ✓ Cleared container HTML
+chartManager.js:601 [recreateChart] type="analog", idx=0, dataLength=6, seriesCount=5
+chartManager.js:611 [recreateChart] ✓ Created new uPlot instance
+chartManager.js:616 [recreateChart] ✅ Successfully recreated chart[0] for type "analog"
+chartManager.js:580 [recreateChart] ✓ Destroyed old chart at index 0
+chartManager.js:589 [recreateChart] ✓ Cleared container HTML
+chartManager.js:601 [recreateChart] type="analog", idx=0, dataLength=6, seriesCount=5
+chartManager.js:611 [recreateChart] ✓ Created new uPlot instance
+chartManager.js:616 [recreateChart] ✅ Successfully recreated chart[0] for type "analog"
+chartManager.js:580 [recreateChart] ✓ Destroyed old chart at index 0
+chartManager.js:589 [recreateChart] ✓ Cleared container HTML
+chartManager.js:601 [recreateChart] type="analog", idx=0, dataLength=6, seriesCount=5
+chartManager.js:611 [recreateChart] ✓ Created new uPlot instance
+chartManager.js:616 [recreateChart] ✅ Successfully recreated chart[0] for type "analog"
+chartManager.js:580 [recreateChart] ✓ Destroyed old chart at index 0
+chartManager.js:589 [recreateChart] ✓ Cleared container HTML
+chartManager.js:601 [recreateChart] type="analog", idx=0, dataLength=6, seriesCount=5
+chartManager.js:611 [recreateChart] ✓ Created new uPlot instance
+chartManager.js:616 [recreateChart] ✅ Successfully recreated chart[0] for type "analog"
+7chartManager.js:2061 [DELETE HANDLER] ℹ️ Both empty (0 → 0), skipping recreation to avoid loop
+chartManager.js:580 [recreateChart] ✓ Destroyed old chart at index 0
+chartManager.js:589 [recreateChart] ✓ Cleared container HTML
+chartManager.js:601 [recreateChart] type="analog", idx=0, dataLength=6, seriesCount=5
+chartManager.js:611 [recreateChart] ✓ Created new uPlot instance
+chartManager.js:616 [recreateChart] ✅ Successfully recreated chart[0] for type "analog"
+chartManager.js:580 [recreateChart] ✓ Destroyed old chart at index 0
+chartManager.js:589 [recreateChart] ✓ Cleared container HTML
+chartManager.js:601 [recreateChart] type="analog", idx=0, dataLength=6, seriesCount=5
+chartManager.js:611 [recreateChart] ✓ Created new uPlot instance
+chartManager.js:616 [recreateChart] ✅ Successfully recreated chart[0] for type "analog"
+chartManager.js:580 [recreateChart] ✓ Destroyed old chart at index 0
+chartManager.js:589 [recreateChart] ✓ Cleared container HTML
+chartManager.js:601 [recreateChart] type="analog", idx=0, dataLength=6, seriesCount=5
+chartManager.js:611 [recreateChart] ✓ Created new uPlot instance
+chartManager.js:616 [recreateChart] ✅ Successfully recreated chart[0] for type "analog"
+chartManager.js:580 [recreateChart] ✓ Destroyed old chart at index 0
+chartManager.js:589 [recreateChart] ✓ Cleared container HTML
+chartManager.js:601 [recreateChart] type="analog", idx=0, dataLength=6, seriesCount=5
+chartManager.js:611 [recreateChart] ✓ Created new uPlot instance
+chartManager.js:616 [recreateChart] ✅ Successfully recreated chart[0] for type "analog"
+chartManager.js:580 [recreateChart] ✓ Destroyed old chart at index 0
+chartManager.js:589 [recreateChart] ✓ Cleared container HTML
+chartManager.js:601 [recreateChart] type="analog", idx=0, dataLength=6, seriesCount=5
+chartManager.js:611 [recreateChart] ✓ Created new uPlot instance
+chartManager.js:616 [recreateChart] ✅ Successfully recreated chart[0] for type "analog"
+chartManager.js:580 [recreateChart] ✓ Destroyed old chart at index 0
+chartManager.js:589 [recreateChart] ✓ Cleared container HTML
+chartManager.js:601 [recreateChart] type="analog", idx=0, dataLength=6, seriesCount=5
+chartManager.js:611 [recreateChart] ✓ Created new uPlot instance
+chartManager.js:616 [recreateChart] ✅ Successfully recreated chart[0] for type "analog"
+chartManager.js:580 [recreateChart] ✓ Destroyed old chart at index 0
+chartManager.js:589 [recreateChart] ✓ Cleared container HTML
+chartManager.js:601 [recreateChart] type="analog", idx=0, dataLength=6, seriesCount=5
+chartManager.js:611 [recreateChart] ✓ Created new uPlot instance
+chartManager.js:616 [recreateChart] ✅ Successfully recreated chart[0] for type "analog"
+chartManager.js:580 [recreateChart] ✓ Destroyed old chart at index 0
+chartManager.js:589 [recreateChart] ✓ Cleared container HTML
+chartManager.js:601 [recreateChart] type="analog", idx=0, dataLength=6, seriesCount=5
+chartManager.js:611 [recreateChart] ✓ Created new uPlot instance
+chartManager.js:616 [recreateChart] ✅ Successfully recreated chart[0] for type "analog"
+installHook.js:1 Error: Script error. at :0:0 null
+overrideMethod @ installHook.js:1Understand this error
+uPlot.iife.js:3973 Uncaught TypeError: Cannot read properties of undefined (reading 'length')Understand this error
+installHook.js:1 Error: Script error. at :0:0 null
+overrideMethod @ installHook.js:1Understand this error
+uPlot.iife.js:3973 Uncaught TypeError: Cannot read properties of undefined (reading 'length')Understand this error
+installHook.js:1 Error: Script error. at :0:0 null
+overrideMethod @ installHook.js:1Understand this error
+uPlot.iife.js:3973 Uncaught TypeError: Cannot read properties of undefined (reading 'length')Understand this error
+installHook.js:1 Error: Script error. at :0:0 null
+overrideMethod @ installHook.js:1Understand this error
+uPlot.iife.js:3973 Uncaught TypeError: Cannot read properties of undefined (reading 'length')Understand this error
+installHook.js:1 Error: Script error. at :0:0 null
+overrideMethod @ installHook.js:1Understand this error
+uPlot.iife.js:3973 Uncaught TypeError: Cannot read properties of undefined (reading 'length')Understand this error
+installHook.js:1 Error: Script error. at :0:0 null
+overrideMethod @ installHook.js:1Understand this error
+uPlot.iife.js:3973 Uncaught TypeError: Cannot read properties of undefined (reading 'length')Understand this error
+installHook.js:1 Error: Script error. at :0:0 null
+overrideMethod @ installHook.js:1Understand this error
+uPlot.iife.js:3973 Uncaught TypeError: Cannot read properties of undefined (reading 'length')Understand this error
+installHook.js:1 Error: Script error. at :0:0 null
+overrideMethod @ installHook.js:1Understand this error
+uPlot.iife.js:3973 Uncaught TypeError: Cannot read properties of undefined (reading 'length')Understand this error
+installHook.js:1 Error: Script error. at :0:0 null
+overrideMethod @ installHook.js:1Understand this error
+uPlot.iife.js:3973 Uncaught TypeError: Cannot read properties of undefined (reading 'length')Understand this error
+installHook.js:1 Error: Script error. at :0:0 null
+overrideMethod @ installHook.js:1Understand this error
+uPlot.iife.js:3973 Uncaught TypeError: Cannot read properties of undefined (reading 'length')Understand this error
+installHook.js:1 Error: Script error. at :0:0 null
+overrideMethod @ installHook.js:1Understand this error
+uPlot.iife.js:3973 Uncaught TypeError: Cannot read properties of undefined (reading 'length')Understand this error
+installHook.js:1 Error: Script error. at :0:0 null
+overrideMethod @ installHook.js:1Understand this error
+uPlot.iife.js:3973 Uncaught TypeError: Cannot read properties of undefined (reading 'length')Understand this error
+installHook.js:1 Error: Script error. at :0:0 null
+overrideMethod @ installHook.js:1Understand this error
+uPlot.iife.js:3973 Uncaught TypeError: Cannot read properties of undefined (reading 'length')Understand this error
+installHook.js:1 Error: Script error. at :0:0 null
+overrideMethod @ installHook.js:1Understand this error
+uPlot.iife.js:3973 Uncaught TypeError: Cannot read properties of undefined (reading 'length')Understand this error
+installHook.js:1 Error: Script error. at :0:0 null
+overrideMethod @ installHook.js:1Understand this error
+uPlot.iife.js:3973 Uncaught TypeError: Cannot read properties of undefined (reading 'length')Understand this error
+installHook.js:1 Error: Script error. at :0:0 null
+overrideMethod @ installHook.js:1Understand this error
+uPlot.iife.js:3973 Uncaught TypeError: Cannot read properties of undefined (reading 'length')Understand this error
+installHook.js:1 Error: Script error. at :0:0 null
+overrideMethod @ installHook.js:1Understand this error
+uPlot.iife.js:3973 Uncaught TypeError: Cannot read properties of undefined (reading 'length')Understand this error
+installHook.js:1 Error: Script error. at :0:0 null
+overrideMethod @ installHook.js:1Understand this error
+uPlot.iife.js:3973 Uncaught TypeError: Cannot read properties of undefined (reading 'length')Understand this error
+installHook.js:1 Error: Script error. at :0:0 null
+overrideMethod @ installHook.js:1Understand this error
+uPlot.iife.js:3973 Uncaught TypeError: Cannot read properties of undefined (reading 'length')Understand this error
+installHook.js:1 Error: Script error. at :0:0 null
+overrideMethod @ installHook.js:1Understand this error
+uPlot.iife.js:3973 Uncaught TypeError: Cannot read properties of undefined (reading 'length')Understand this error
+installHook.js:1 Error: Script error. at :0:0 null
+overrideMethod @ installHook.js:1Understand this error
+uPlot.iife.js:3973 Uncaught TypeError: Cannot read properties of undefined (reading 'length')Understand this error
+installHook.js:1 Error: Script error. at :0:0 null
+overrideMethod @ installHook.js:1Understand this error
+uPlot.iife.js:3973 Uncaught TypeError: Cannot read properties of undefined (reading 'length')Understand this error
+chartManager.js:580 [recreateChart] ✓ Destroyed old chart at index 0
+chartManager.js:589 [recreateChart] ✓ Cleared container HTML
+chartManager.js:601 [recreateChart] type="analog", idx=0, dataLength=6, seriesCount=5
+chartManager.js:611 [recreateChart] ✓ Created new uPlot instance
+chartManager.js:616 [recreateChart] ✅ Successfully recreated chart[0] for type "analog"
+chartManager.js:580 [recreateChart] ✓ Destroyed old chart at index 0
+chartManager.js:589 [recreateChart] ✓ Cleared container HTML
+chartManager.js:601 [recreateChart] type="analog", idx=0, dataLength=6, seriesCount=5
+chartManager.js:611 [recreateChart] ✓ Created new uPlot instance
+chartManager.js:616 [recreateChart] ✅ Successfully recreated chart[0] for type "analog"
+chartManager.js:580 [recreateChart] ✓ Destroyed old chart at index 0
+chartManager.js:589 [recreateChart] ✓ Cleared container HTML
+chartManager.js:601 [recreateChart] type="analog", idx=0, dataLength=6, seriesCount=5
+chartManager.js:611 [recreateChart] ✓ Created new uPlot instance
+chartManager.js:616 [recreateChart] ✅ Successfully recreated chart[0] for type "analog"
+chartManager.js:580 [recreateChart] ✓ Destroyed old chart at index 0
+chartManager.js:589 [recreateChart] ✓ Cleared container HTML
+chartManager.js:601 [recreateChart] type="analog", idx=0, dataLength=6, seriesCount=5
+chartManager.js:611 [recreateChart] ✓ Created new uPlot instance
+chartManager.js:616 [recreateChart] ✅ Successfully recreated chart[0] for type "analog"
+chartManager.js:580 [recreateChart] ✓ Destroyed old chart at index 0
+chartManager.js:589 [recreateChart] ✓ Cleared container HTML
+chartManager.js:601 [recreateChart] type="analog", idx=0, dataLength=6, seriesCount=5
+chartManager.js:611 [recreateChart] ✓ Created new uPlot instance
+chartManager.js:616 [recreateChart] ✅ Successfully recreated chart[0] for type "analog"
+chartManager.js:580 [recreateChart] ✓ Destroyed old chart at index 0
+chartManager.js:589 [recreateChart] ✓ Cleared container HTML
+chartManager.js:601 [recreateChart] type="analog", idx=0, dataLength=6, seriesCount=5
+chartManager.js:611 [recreateChart] ✓ Created new uPlot instance
+chartManager.js:616 [recreateChart] ✅ Successfully recreated chart[0] for type "analog"
+installHook.js:1 Error: Script error. at :0:0 null
+overrideMethod @ installHook.js:1Understand this error
+uPlot.iife.js:3973 Uncaught TypeError: Cannot read properties of undefined (reading 'length')Understand this error
+installHook.js:1 Error: Script error. at :0:0 null
+overrideMethod @ installHook.js:1Understand this error
+uPlot.iife.js:3973 Uncaught TypeError: Cannot read properties of undefined (reading 'length')Understand this error
+installHook.js:1 Error: Script error. at :0:0 null
+overrideMethod @ installHook.js:1Understand this error
+uPlot.iife.js:3973 Uncaught TypeError: Cannot read properties of undefined (reading 'length')Understand this error
+installHook.js:1 Error: Script error. at :0:0 null
+overrideMethod @ installHook.js:1Understand this error
+uPlot.iife.js:3973 Uncaught TypeError: Cannot read properties of undefined (reading 'length')Understand this error
+installHook.js:1 Error: Script error. at :0:0 null
+overrideMethod @ installHook.js:1Understand this error
+uPlot.iife.js:3973 Uncaught TypeError: Cannot read properties of undefined (reading 'length')Understand this error
+installHook.js:1 Error: Script error. at :0:0 null
+overrideMethod @ installHook.js:1Understand this error
+uPlot.iife.js:3973 Uncaught TypeError: Cannot read properties of undefined (reading 'length')Understand this error
+chartManager.js:580 [recreateChart] ✓ Destroyed old chart at index 0
+chartManager.js:589 [recreateChart] ✓ Cleared container HTML
+chartManager.js:601 [recreateChart] type="analog", idx=0, dataLength=6, seriesCount=5
+chartManager.js:611 [recreateChart] ✓ Created new uPlot instance
+chartManager.js:616 [recreateChart] ✅ Successfully recreated chart[0] for type "analog"
+installHook.js:1 Error: Script error. at :0:0 null
+overrideMethod @ installHook.js:1Understand this error
+uPlot.iife.js:3973 Uncaught TypeError: Cannot read properties of undefined (reading 'length')Understand this error
+installHook.js:1 [createState] Failed to save history QuotaExceededError: Failed to execute 'setItem' on 'Storage': Setting the value of '__uplot_history__' exceeded the quota.
+    at createState.js:916:22
+overrideMethod @ installHook.js:1Understand this warning
+chartManager.js:1342 [group subscriber] 🔄 Processing group change...
+axisCalculator.js:287 [calculateAxisCountForGroup] Debug: { units: [A,A], result: 1 }
+axisCalculator.js:287 [calculateAxisCountForGroup] Debug: { units: [A,V,V], result: 2 }
+axisCalculator.js:287 [calculateAxisCountForGroup] Debug: { units: [A], result: 1 }
+analyzeGroupsAndPublish.js:178 [analyzeGroupsAndPublishMaxYAxes] 📊 Analysis: G0(2ch,1ax:[A,A]) | G1(3ch,2ax:[A,V,V]) | G2(1ch,1ax:[A])
+analyzeGroupsAndPublish.js:179 [analyzeGroupsAndPublishMaxYAxes] 🎯 Publishing maxYAxes: 2
+maxYAxesStore.js:88 [maxYAxesStore] 📊 Published maxYAxes: 2
+chartManager.js:1359 [group subscriber] 📊 Axis count: old=1, new=2, changed=true
+chartManager.js:1390 [group subscriber] 🔥 Axis requirement changed -> FULL REBUILD
+installHook.js:1 [group subscriber] ❌ Group change processing failed: ReferenceError: Cannot access 'chartsContainer' before initialization
+    at chartManager.js:1411:24
+overrideMethod @ installHook.js:1Understand this error
+chartManager.js:1918 [group subscriber] 🔄 Falling back to full renderComtradeCharts...
+chartMetadataStore.js:192 [chartMetadataStore] Cleared all charts
+renderComtradeCharts.js:45 [renderComtradeCharts] Cleared chart metadata for new file
+renderComtradeCharts.js:53 [renderComtradeCharts] Starting chart rendering...
+axisCalculator.js:287 [calculateAxisCountForGroup] Debug: { units: [A,A], result: 1 }
+axisCalculator.js:287 [calculateAxisCountForGroup] Debug: { units: [A,V,V], result: 2 }
+axisCalculator.js:287 [calculateAxisCountForGroup] Debug: { units: [A], result: 1 }
+analyzeGroupsAndPublish.js:178 [analyzeGroupsAndPublishMaxYAxes] 📊 Analysis: G0(2ch,1ax:[A,A]) | G1(3ch,2ax:[A,V,V]) | G2(1ch,1ax:[A])
+analyzeGroupsAndPublish.js:179 [analyzeGroupsAndPublishMaxYAxes] 🎯 Publishing maxYAxes: 2
+maxYAxesStore.js:88 [maxYAxesStore] 📊 Published maxYAxes: 2
+renderComtradeCharts.js:58 [renderComtradeCharts] 🔧 Global axis alignment published to store
+renderAnalogCharts.js:36 [renderAnalogCharts] 📊 userGroups from state: Proxy(Array)
+renderAnalogCharts.js:37 [renderAnalogCharts] Total analog channels: 7
+renderAnalogCharts.js:55 [renderAnalogCharts] ⚡ Using user-assigned groups (6 channels)
+axisCalculator.js:287 [calculateAxisCountForGroup] Debug: { units: [A,A], result: 1 }
+axisCalculator.js:287 [calculateAxisCountForGroup] Debug: { units: [A], result: 1 }
+axisCalculator.js:287 [calculateAxisCountForGroup] Debug: { units: [A,V,V], result: 2 }
+renderAnalogCharts.js:83 [renderAnalogCharts] ⚡ Auto-grouping 1 unassigned channels
+renderAnalogCharts.js:92 [renderAnalogCharts] ✓ Auto-grouping took 0.40ms
+axisCalculator.js:287 [calculateAxisCountForGroup] Debug: { units: [V], result: 1 }
+renderAnalogCharts.js:146 [renderAnalogCharts] 🔧 Starting chart creation for 4 groups... maxYAxes=2
+renderAnalogCharts.js:194 [renderAnalogCharts] 🏷️ Group "G0": resolved indices = [0,1], extracted groupId = "G0"
+chartMetadataStore.js:130 [chartMetadataStore] Added chart Object
+renderAnalogCharts.js:224 [renderAnalogCharts] Creating G0 → A0 G0
+renderAnalogCharts.js:262 [renderAnalogCharts] ✅ Chart config: group="G0", globalMaxYAxes=2, channels=2, yUnits=[A, A]
+chartDomUtils.js:153 [initUPlotChart] 📊 Calculated chart width: 1906px from container 1906px
+renderAnalogCharts.js:424 [renderAnalogCharts] ✓ Group "G0" created in 4ms
+renderAnalogCharts.js:194 [renderAnalogCharts] 🏷️ Group "G2": resolved indices = [2], extracted groupId = "G2"
+chartMetadataStore.js:130 [chartMetadataStore] Added chart Object
+renderAnalogCharts.js:224 [renderAnalogCharts] Creating G2 → A1 G2
+renderAnalogCharts.js:262 [renderAnalogCharts] ✅ Chart config: group="G2", globalMaxYAxes=2, channels=1, yUnits=[A]
+chartDomUtils.js:153 [initUPlotChart] 📊 Calculated chart width: 1906px from container 1906px
+renderAnalogCharts.js:424 [renderAnalogCharts] ✓ Group "G2" created in 2ms
+renderAnalogCharts.js:194 [renderAnalogCharts] 🏷️ Group "G1": resolved indices = [3,4,5], extracted groupId = "G1"
+chartMetadataStore.js:130 [chartMetadataStore] Added chart Object
+renderAnalogCharts.js:224 [renderAnalogCharts] Creating G1 → A2 G1
+renderAnalogCharts.js:262 [renderAnalogCharts] ✅ Chart config: group="G1", globalMaxYAxes=2, channels=3, yUnits=[V, V, V]
+chartDomUtils.js:153 [initUPlotChart] 📊 Calculated chart width: 1906px from container 1906px
+renderAnalogCharts.js:424 [renderAnalogCharts] ✓ Group "G1" created in 1ms
+renderAnalogCharts.js:194 [renderAnalogCharts] 🏷️ Group "Voltages": resolved indices = [6], extracted groupId = "undefined"
+chartMetadataStore.js:130 [chartMetadataStore] Added chart Object
+renderAnalogCharts.js:224 [renderAnalogCharts] Creating G3 → A3 Voltages
+renderAnalogCharts.js:262 [renderAnalogCharts] ✅ Chart config: group="Voltages", globalMaxYAxes=2, channels=1, yUnits=[]
+chartDomUtils.js:153 [initUPlotChart] 📊 Calculated chart width: 1906px from container 1906px
+renderAnalogCharts.js:424 [renderAnalogCharts] ✓ Group "Voltages" created in 1ms
+renderAnalogCharts.js:435 [renderAnalogCharts] ✓ All 4 charts created in 8ms
+renderAnalogCharts.js:451 [renderAnalogCharts] ✅ Render complete in 9ms
+renderDigitalCharts.js:22 [renderDigitalCharts] 🟦 Starting digital chart rendering...
+renderDigitalCharts.js:27 [renderDigitalCharts] 📊 Found 5 changed digital channels: Array(5)
+renderDigitalCharts.js:53 [renderDigitalCharts] 📋 Channel labels: SV03, SV03T, ER2, EQC2, EQC3
+renderDigitalCharts.js:56 [renderDigitalCharts] 🎨 Line colors: [#0f766e, #b91c1c, #be185d, #15803d, #6d28d9]
+renderDigitalCharts.js:73 [renderDigitalCharts] 🏷️ Digital groupId = "G3"
+chartMetadataStore.js:130 [chartMetadataStore] Added chart Object
+renderDigitalCharts.js:103 [renderDigitalCharts] Creating G3 → D0
+renderDigitalCharts.js:121 [renderDigitalCharts] 🏗️ Chart container created
+renderDigitalCharts.js:144 [renderDigitalCharts] ✅ Chart config: maxYAxes=2, channels=5, yMin=-0.5, yMax=14
+renderDigitalCharts.js:166 [renderDigitalCharts] 📏 Y-Axes Configuration: Object
+renderDigitalCharts.js:202 [renderDigitalCharts] 📏 First Axis Configuration: Object
+renderDigitalCharts.js:210 [renderDigitalCharts] 📏 Final Axes Array: Array(3)
+renderDigitalCharts.js:249 [renderDigitalCharts] 🔌 Before adding digitalFill plugin: Object
+digitalFillPlugin.js:55 [digitalFillPlugin] 🔧 Plugin initialized Object
+renderDigitalCharts.js:257 [renderDigitalCharts] 🔌 After adding digitalFill plugin: Object
+renderDigitalCharts.js:267 [renderDigitalCharts] ⏱️ createChartOptions took 1.6ms
+digitalFillPlugin.js:184 [digitalFillPlugin] ✅ Plugin init hook called Object
+renderDigitalCharts.js:281 [renderDigitalCharts] 📊 After uPlot creation: Object
+renderDigitalCharts.js:303 [renderDigitalCharts] ✅ Digital chart created in 0.7ms with 5 channels
+renderDigitalCharts.js:390 [renderDigitalCharts] ⏱️ Click handler setup took 0.1ms
+renderDigitalCharts.js:408 [renderDigitalCharts] ⏱️ ResizeObserver.observe took 0.0ms
+renderDigitalCharts.js:416 [renderDigitalCharts] ✓ Render complete in 10388.7ms
+renderComputedChannels.js:87 [renderComputedChannels] 🟪 Starting computed channels rendering...
+renderComputedChannels.js:97 [renderComputedChannels] ℹ️ No computed channels to render
+renderComtradeCharts.js:117 [renderComtradeCharts] Chart metadata summary: Object
+renderComtradeCharts.js:129 [renderComtradeCharts] ✅ All 5 charts rendered in 10400.1ms
+installHook.js:1 Error: Script error. at :0:0 null
+overrideMethod @ installHook.js:1Understand this error
+uPlot.iife.js:3973 Uncaught TypeError: Cannot read properties of undefined (reading 'length')Understand this error
+digitalFillPlugin.js:153 [digitalFillPlugin] setScale hook called Object
+digitalFillPlugin.js:167 [digitalFillPlugin] Setting y-scale to: Object
+digitalFillPlugin.js:153 [digitalFillPlugin] setScale hook called Object
+digitalFillPlugin.js:167 [digitalFillPlugin] Setting y-scale to: Object
+installHook.js:1 Error: Script error. at :0:0 null
+overrideMethod @ installHook.js:1Understand this error
+uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')Understand this error
+main.js:112 📊 [ChartMetadata] Change detected: Object
+main.js:112 📊 [ChartMetadata] Change detected: Object
+main.js:112 📊 [ChartMetadata] Change detected: Object
+main.js:112 📊 [ChartMetadata] Change detected: Object
+main.js:112 📊 [ChartMetadata] Change detected: Object
+main.js:112 📊 [ChartMetadata] Change detected: Object
+main.js:112 📊 [ChartMetadata] Change detected: Object
+main.js:112 📊 [ChartMetadata] Change detected: Object
+main.js:112 📊 [ChartMetadata] Change detected: Object
+main.js:112 📊 [ChartMetadata] Change detected: Object
+main.js:112 📊 [ChartMetadata] Change detected: Object
+main.js:112 📊 [ChartMetadata] Change detected: Object
+main.js:112 📊 [ChartMetadata] Change detected: Object
+main.js:112 📊 [ChartMetadata] Change detected: Object
+main.js:112 📊 [ChartMetadata] Change detected: Object
+main.js:112 📊 [ChartMetadata] Change detected: Object
+main.js:112 📊 [ChartMetadata] Change detected: Object
+main.js:112 📊 [ChartMetadata] Change detected: Object
+main.js:112 📊 [ChartMetadata] Change detected: Object
+main.js:112 📊 [ChartMetadata] Change detected: Object
+main.js:112 📊 [ChartMetadata] Change detected: Object
+main.js:112 📊 [ChartMetadata] Change detected: Object
+main.js:112 📊 [ChartMetadata] Change detected: Object
+main.js:112 📊 [ChartMetadata] Change detected: Object
+main.js:112 📊 [ChartMetadata] Change detected: Object
+main.js:112 📊 [ChartMetadata] Change detected: Object
+main.js:112 📊 [ChartMetadata] Change detected: Object
+main.js:112 📊 [ChartMetadata] Change detected: Object
+main.js:112 📊 [ChartMetadata] Change detected: Object
+main.js:112 📊 [ChartMetadata] Change detected: Object
+renderComtradeCharts.js:103 [MetadataChange] Array(1) changed to Proxy(Array)
+renderComtradeCharts.js:103 [MetadataChange] Array(1) changed to 0
+renderComtradeCharts.js:103 [MetadataChange] Array(1) changed to 0
+renderComtradeCharts.js:103 [MetadataChange] Array(1) changed to 0
+renderComtradeCharts.js:103 [MetadataChange] Array(1) changed to 0
+renderComtradeCharts.js:103 [MetadataChange] Array(1) changed to 1
+renderComtradeCharts.js:103 [MetadataChange] Array(1) changed to 1
+renderComtradeCharts.js:103 [MetadataChange] Array(2) changed to Proxy(Object)
+renderComtradeCharts.js:103 [MetadataChange] Array(2) changed to 1
+renderComtradeCharts.js:103 [MetadataChange] Array(1) changed to 1
+renderComtradeCharts.js:103 [MetadataChange] Array(1) changed to 3
+renderComtradeCharts.js:103 [MetadataChange] Array(1) changed to 2
+renderComtradeCharts.js:103 [MetadataChange] Array(2) changed to Proxy(Object)
+renderComtradeCharts.js:103 [MetadataChange] Array(2) changed to 2
+renderComtradeCharts.js:103 [MetadataChange] Array(1) changed to 1
+renderComtradeCharts.js:103 [MetadataChange] Array(1) changed to 2
+renderComtradeCharts.js:103 [MetadataChange] Array(1) changed to 3
+renderComtradeCharts.js:103 [MetadataChange] Array(2) changed to Proxy(Object)
+renderComtradeCharts.js:103 [MetadataChange] Array(2) changed to 3
+renderComtradeCharts.js:103 [MetadataChange] Array(1) changed to 3
+renderComtradeCharts.js:103 [MetadataChange] Array(1) changed to 4
+renderComtradeCharts.js:103 [MetadataChange] Array(1) changed to 4
+renderComtradeCharts.js:103 [MetadataChange] Array(2) changed to Proxy(Object)
+renderComtradeCharts.js:103 [MetadataChange] Array(2) changed to 4
+renderComtradeCharts.js:103 [MetadataChange] Array(1) changed to 4
+renderComtradeCharts.js:103 [MetadataChange] Array(1) changed to 4
+renderComtradeCharts.js:103 [MetadataChange] Array(1) changed to 1
+renderComtradeCharts.js:103 [MetadataChange] Array(2) changed to Proxy(Object)
+renderComtradeCharts.js:103 [MetadataChange] Array(2) changed to 5
+renderComtradeCharts.js:103 [MetadataChange] Array(1) changed to 4
+4chartDomUtils.js:185 [ResizeObserver] 📊 Chart resized to 1906x398px
+digitalFillPlugin.js:200 [digitalFillPlugin] 🎨 Draw hook called Object
+digitalFillPlugin.js:274 [digitalFillPlugin] Signal 0 drawing with color: Object
+digitalFillPlugin.js:291 [digitalFillPlugin] Signal 0 canvas styles set: Object
+digitalFillPlugin.js:346 [digitalFillPlugin] Signal 0 PRE-DRAW DIAGNOSTIC: Object
+digitalFillPlugin.js:427 [digitalFillPlugin] Signal 0 DRAW OPERATIONS: Object
+digitalFillPlugin.js:274 [digitalFillPlugin] Signal 1 drawing with color: Object
+digitalFillPlugin.js:291 [digitalFillPlugin] Signal 1 canvas styles set: Object
+digitalFillPlugin.js:346 [digitalFillPlugin] Signal 1 PRE-DRAW DIAGNOSTIC: Object
+digitalFillPlugin.js:427 [digitalFillPlugin] Signal 1 DRAW OPERATIONS: Object
+digitalFillPlugin.js:274 [digitalFillPlugin] Signal 2 drawing with color: Object
+digitalFillPlugin.js:291 [digitalFillPlugin] Signal 2 canvas styles set: Object
+digitalFillPlugin.js:346 [digitalFillPlugin] Signal 2 PRE-DRAW DIAGNOSTIC: Object
+digitalFillPlugin.js:427 [digitalFillPlugin] Signal 2 DRAW OPERATIONS: Object
+digitalFillPlugin.js:274 [digitalFillPlugin] Signal 3 drawing with color: Object
+digitalFillPlugin.js:291 [digitalFillPlugin] Signal 3 canvas styles set: Object
+digitalFillPlugin.js:346 [digitalFillPlugin] Signal 3 PRE-DRAW DIAGNOSTIC: Object
+digitalFillPlugin.js:427 [digitalFillPlugin] Signal 3 DRAW OPERATIONS: Object
+digitalFillPlugin.js:274 [digitalFillPlugin] Signal 4 drawing with color: Object
+digitalFillPlugin.js:291 [digitalFillPlugin] Signal 4 canvas styles set: Object
+digitalFillPlugin.js:346 [digitalFillPlugin] Signal 4 PRE-DRAW DIAGNOSTIC: Object
+digitalFillPlugin.js:427 [digitalFillPlugin] Signal 4 DRAW OPERATIONS: Object
+digitalFillPlugin.js:440 [digitalFillPlugin] ✅ Draw hook completed
+installHook.js:1 Error: Script error. at :0:0 null
+overrideMethod @ installHook.js:1Understand this error
+uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')Understand this error
+installHook.js:1 Error: Script error. at :0:0 null
+overrideMethod @ installHook.js:1Understand this error
+uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')Understand this error
+installHook.js:1 Error: Script error. at :0:0 null
+overrideMethod @ installHook.js:1Understand this error
+uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')Understand this error
+installHook.js:1 Error: Script error. at :0:0 null
+overrideMethod @ installHook.js:1Understand this error
+uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')Understand this error
+installHook.js:1 Error: Script error. at :0:0 null
+overrideMethod @ installHook.js:1Understand this error
+uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')Understand this error
+installHook.js:1 Error: Script error. at :0:0 null
+overrideMethod @ installHook.js:1Understand this error
+uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')Understand this error
+installHook.js:1 Error: Script error. at :0:0 null
+overrideMethod @ installHook.js:1Understand this error
+uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')Understand this error
+installHook.js:1 Error: Script error. at :0:0 null
+overrideMethod @ installHook.js:1Understand this error
+uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')Understand this error
+installHook.js:1 Error: Script error. at :0:0 null
+overrideMethod @ installHook.js:1Understand this error
+uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')Understand this error
+installHook.js:1 Error: Script error. at :0:0 null
+overrideMethod @ installHook.js:1Understand this error
+uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')Understand this error
+installHook.js:1 Error: Script error. at :0:0 null
+overrideMethod @ installHook.js:1Understand this error
+uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')Understand this error
+installHook.js:1 Error: Script error. at :0:0 null
+overrideMethod @ installHook.js:1Understand this error
+uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')Understand this error
+installHook.js:1 Error: Script error. at :0:0 null
+overrideMethod @ installHook.js:1Understand this error
+uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')Understand this error
+installHook.js:1 Error: Script error. at :0:0 null
+overrideMethod @ installHook.js:1Understand this error
+uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')Understand this error
+installHook.js:1 Error: Script error. at :0:0 null
+overrideMethod @ installHook.js:1Understand this error
+uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')Understand this error
+installHook.js:1 Error: Script error. at :0:0 null
+overrideMethod @ installHook.js:1Understand this error
+uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')Understand this error
+installHook.js:1 Error: Script error. at :0:0 null
+overrideMethod @ installHook.js:1Understand this error
+uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')Understand this error
+installHook.js:1 Error: Script error. at :0:0 null
+overrideMethod @ installHook.js:1Understand this error
+uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')Understand this error
+installHook.js:1 Error: Script error. at :0:0 null
+overrideMethod @ installHook.js:1Understand this error
+uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')Understand this error
+installHook.js:1 Error: Script error. at :0:0 null
+overrideMethod @ installHook.js:1Understand this error
+uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')Understand this error
+installHook.js:1 Error: Script error. at :0:0 null
+overrideMethod @ installHook.js:1Understand this error
+uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')Understand this error
+installHook.js:1 Error: Script error. at :0:0 null
+overrideMethod @ installHook.js:1Understand this error
+uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')Understand this error
+installHook.js:1 Error: Script error. at :0:0 null
+overrideMethod @ installHook.js:1Understand this error
+uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')Understand this error
+installHook.js:1 Error: Script error. at :0:0 null
+overrideMethod @ installHook.js:1Understand this error
+uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')Understand this error
+installHook.js:1 Error: Script error. at :0:0 null
+overrideMethod @ installHook.js:1Understand this error
+uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')Understand this error
+installHook.js:1 Error: Script error. at :0:0 null
+overrideMethod @ installHook.js:1Understand this error
+uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')Understand this error
+installHook.js:1 Error: Script error. at :0:0 null
+overrideMethod @ installHook.js:1Understand this error
+uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')Understand this error
+installHook.js:1 Error: Script error. at :0:0 null
+overrideMethod @ installHook.js:1Understand this error
+uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')Understand this error
+installHook.js:1 Error: Script error. at :0:0 null
+overrideMethod @ installHook.js:1Understand this error
+uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')Understand this error
+installHook.js:1 Error: Script error. at :0:0 null
+overrideMethod @ installHook.js:1Understand this error
+uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')Understand this error
+installHook.js:1 Error: Script error. at :0:0 null
+overrideMethod @ installHook.js:1Understand this error
+uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')Understand this error
+installHook.js:1 Error: Script error. at :0:0 null
+overrideMethod @ installHook.js:1Understand this error
+uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')Understand this error
+installHook.js:1 Error: Script error. at :0:0 null
+overrideMethod @ installHook.js:1Understand this error
+uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')Understand this error
+installHook.js:1 Error: Script error. at :0:0 null
+overrideMethod @ installHook.js:1Understand this error
+uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')Understand this error
+installHook.js:1 Error: Script error. at :0:0 null
+overrideMethod @ installHook.js:1Understand this error
+uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')Understand this error
+installHook.js:1 Error: Script error. at :0:0 null
+overrideMethod @ installHook.js:1Understand this error
+uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')Understand this error
+installHook.js:1 Error: Script error. at :0:0 null
+overrideMethod @ installHook.js:1Understand this error
+uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')Understand this error
+installHook.js:1 Error: Script error. at :0:0 null
+overrideMethod @ installHook.js:1Understand this error
+uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')Understand this error
+installHook.js:1 Error: Script error. at :0:0 null
+overrideMethod @ installHook.js:1Understand this error
+uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')Understand this error
+installHook.js:1 Error: Script error. at :0:0 null
+overrideMethod @ installHook.js:1Understand this error
+uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')Understand this error
+installHook.js:1 Error: Script error. at :0:0 null
+overrideMethod @ installHook.js:1Understand this error
+uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')Understand this error
+4chartDomUtils.js:185 [ResizeObserver] 📊 Chart resized to 1351x398px
+installHook.js:1 Error: Script error. at :0:0 null
+overrideMethod @ installHook.js:1
+(anonymous) @ main.js:1993Understand this error
+uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')
+cursor.dataIdx @ uPlot.iife.js:3528
+updateCursor @ uPlot.iife.js:5375
+mouseMove @ uPlot.iife.js:5725
+pub @ uPlot.iife.js:6059
+pub @ uPlot.iife.js:1750
+pubSync @ uPlot.iife.js:6052
+updateCursor @ uPlot.iife.js:5660
+mouseMove @ uPlot.iife.js:5723
+(anonymous) @ uPlot.iife.js:1350Understand this error
+installHook.js:1 Error: Script error. at :0:0 null
+overrideMethod @ installHook.js:1
+(anonymous) @ main.js:1993Understand this error
+uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')
+cursor.dataIdx @ uPlot.iife.js:3528
+updateCursor @ uPlot.iife.js:5375
+mouseMove @ uPlot.iife.js:5725
+pub @ uPlot.iife.js:6059
+pub @ uPlot.iife.js:1750
+pubSync @ uPlot.iife.js:6052
+updateCursor @ uPlot.iife.js:5660
+mouseMove @ uPlot.iife.js:5723
+(anonymous) @ uPlot.iife.js:1350Understand this error
+installHook.js:1 Error: Script error. at :0:0 null
+overrideMethod @ installHook.js:1
+(anonymous) @ main.js:1993Understand this error
+uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')
+cursor.dataIdx @ uPlot.iife.js:3528
+updateCursor @ uPlot.iife.js:5375
+mouseMove @ uPlot.iife.js:5725
+pub @ uPlot.iife.js:6059
+pub @ uPlot.iife.js:1750
+pubSync @ uPlot.iife.js:6052
+updateCursor @ uPlot.iife.js:5660
+mouseMove @ uPlot.iife.js:5723
+(anonymous) @ uPlot.iife.js:1350Understand this error
+installHook.js:1 Error: Script error. at :0:0 null
+overrideMethod @ installHook.js:1
+(anonymous) @ main.js:1993Understand this error
+uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')
+cursor.dataIdx @ uPlot.iife.js:3528
+updateCursor @ uPlot.iife.js:5375
+mouseMove @ uPlot.iife.js:5725
+pub @ uPlot.iife.js:6059
+pub @ uPlot.iife.js:1750
+pubSync @ uPlot.iife.js:6052
+updateCursor @ uPlot.iife.js:5660
+mouseMove @ uPlot.iife.js:5723
+(anonymous) @ uPlot.iife.js:1350Understand this error
+installHook.js:1 Error: Script error. at :0:0 null
+overrideMethod @ installHook.js:1
+(anonymous) @ main.js:1993Understand this error
+uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')
+cursor.dataIdx @ uPlot.iife.js:3528
+updateCursor @ uPlot.iife.js:5375
+mouseMove @ uPlot.iife.js:5725
+pub @ uPlot.iife.js:6059
+pub @ uPlot.iife.js:1750
+pubSync @ uPlot.iife.js:6052
+updateCursor @ uPlot.iife.js:5660
+mouseMove @ uPlot.iife.js:5723
+(anonymous) @ uPlot.iife.js:1350Understand this error
+installHook.js:1 Error: Script error. at :0:0 null
+overrideMethod @ installHook.js:1
+(anonymous) @ main.js:1993Understand this error
+uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')
+cursor.dataIdx @ uPlot.iife.js:3528
+updateCursor @ uPlot.iife.js:5375
+mouseMove @ uPlot.iife.js:5725
+pub @ uPlot.iife.js:6059
+pub @ uPlot.iife.js:1750
+pubSync @ uPlot.iife.js:6052
+updateCursor @ uPlot.iife.js:5660
+mouseMove @ uPlot.iife.js:5723
+(anonymous) @ uPlot.iife.js:1350Understand this error
+installHook.js:1 Error: Script error. at :0:0 null
+overrideMethod @ installHook.js:1
+(anonymous) @ main.js:1993Understand this error
+uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')
+cursor.dataIdx @ uPlot.iife.js:3528
+updateCursor @ uPlot.iife.js:5375
+mouseMove @ uPlot.iife.js:5725
+pub @ uPlot.iife.js:6059
+pub @ uPlot.iife.js:1750
+pubSync @ uPlot.iife.js:6052
+updateCursor @ uPlot.iife.js:5660
+mouseMove @ uPlot.iife.js:5723
+(anonymous) @ uPlot.iife.js:1350Understand this error
+installHook.js:1 Error: Script error. at :0:0 null
+overrideMethod @ installHook.js:1
+(anonymous) @ main.js:1993Understand this error
+uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')
+cursor.dataIdx @ uPlot.iife.js:3528
+updateCursor @ uPlot.iife.js:5375
+mouseMove @ uPlot.iife.js:5725
+pub @ uPlot.iife.js:6059
+pub @ uPlot.iife.js:1750
+pubSync @ uPlot.iife.js:6052
+updateCursor @ uPlot.iife.js:5660
+mouseMove @ uPlot.iife.js:5723
+(anonymous) @ uPlot.iife.js:1350Understand this error
+installHook.js:1 Error: Script error. at :0:0 null
+overrideMethod @ installHook.js:1
+(anonymous) @ main.js:1993Understand this error
+uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')
+cursor.dataIdx @ uPlot.iife.js:3528
+updateCursor @ uPlot.iife.js:5375
+mouseMove @ uPlot.iife.js:5725
+pub @ uPlot.iife.js:6059
+pub @ uPlot.iife.js:1750
+pubSync @ uPlot.iife.js:6052
+updateCursor @ uPlot.iife.js:5660
+mouseMove @ uPlot.iife.js:5723
+(anonymous) @ uPlot.iife.js:1350Understand this error
+installHook.js:1 Error: Script error. at :0:0 null
+overrideMethod @ installHook.js:1
+(anonymous) @ main.js:1993Understand this error
+uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')
+cursor.dataIdx @ uPlot.iife.js:3528
+updateCursor @ uPlot.iife.js:5375
+mouseMove @ uPlot.iife.js:5725
+pub @ uPlot.iife.js:6059
+pub @ uPlot.iife.js:1750
+pubSync @ uPlot.iife.js:6052
+updateCursor @ uPlot.iife.js:5660
+mouseMove @ uPlot.iife.js:5723
+(anonymous) @ uPlot.iife.js:1350Understand this error
+installHook.js:1 Error: Script error. at :0:0 null
+overrideMethod @ installHook.js:1
+(anonymous) @ main.js:1993Understand this error
+uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')
+cursor.dataIdx @ uPlot.iife.js:3528
+updateCursor @ uPlot.iife.js:5375
+mouseMove @ uPlot.iife.js:5725
+pub @ uPlot.iife.js:6059
+pub @ uPlot.iife.js:1750
+pubSync @ uPlot.iife.js:6052
+updateCursor @ uPlot.iife.js:5660
+mouseMove @ uPlot.iife.js:5723
+(anonymous) @ uPlot.iife.js:1350Understand this error
+installHook.js:1 Error: Script error. at :0:0 null
+overrideMethod @ installHook.js:1
+(anonymous) @ main.js:1993Understand this error
+uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')
+cursor.dataIdx @ uPlot.iife.js:3528
+updateCursor @ uPlot.iife.js:5375
+mouseMove @ uPlot.iife.js:5725
+pub @ uPlot.iife.js:6059
+pub @ uPlot.iife.js:1750
+pubSync @ uPlot.iife.js:6052
+updateCursor @ uPlot.iife.js:5660
+mouseMove @ uPlot.iife.js:5723
+(anonymous) @ uPlot.iife.js:1350Understand this error
+installHook.js:1 Error: Script error. at :0:0 null
+overrideMethod @ installHook.js:1
+(anonymous) @ main.js:1993Understand this error
+uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')
+cursor.dataIdx @ uPlot.iife.js:3528
+updateCursor @ uPlot.iife.js:5375
+mouseMove @ uPlot.iife.js:5725
+pub @ uPlot.iife.js:6059
+pub @ uPlot.iife.js:1750
+pubSync @ uPlot.iife.js:6052
+updateCursor @ uPlot.iife.js:5660
+mouseMove @ uPlot.iife.js:5723
+(anonymous) @ uPlot.iife.js:1350Understand this error
+installHook.js:1 Error: Script error. at :0:0 null
+overrideMethod @ installHook.js:1
+(anonymous) @ main.js:1993Understand this error
+uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')
+cursor.dataIdx @ uPlot.iife.js:3528
+updateCursor @ uPlot.iife.js:5375
+mouseMove @ uPlot.iife.js:5725
+pub @ uPlot.iife.js:6059
+pub @ uPlot.iife.js:1750
+pubSync @ uPlot.iife.js:6052
+updateCursor @ uPlot.iife.js:5660
+mouseMove @ uPlot.iife.js:5723
+(anonymous) @ uPlot.iife.js:1350Understand this error
+installHook.js:1 Error: Script error. at :0:0 null
+overrideMethod @ installHook.js:1
+(anonymous) @ main.js:1993Understand this error
+uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')
+cursor.dataIdx @ uPlot.iife.js:3528
+updateCursor @ uPlot.iife.js:5375
+mouseMove @ uPlot.iife.js:5725
+pub @ uPlot.iife.js:6059
+pub @ uPlot.iife.js:1750
+pubSync @ uPlot.iife.js:6052
+updateCursor @ uPlot.iife.js:5660
+mouseMove @ uPlot.iife.js:5723
+(anonymous) @ uPlot.iife.js:1350Understand this error
+installHook.js:1 Error: Script error. at :0:0 null
+overrideMethod @ installHook.js:1
+(anonymous) @ main.js:1993Understand this error
+uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')
+cursor.dataIdx @ uPlot.iife.js:3528
+updateCursor @ uPlot.iife.js:5375
+mouseMove @ uPlot.iife.js:5725
+pub @ uPlot.iife.js:6059
+pub @ uPlot.iife.js:1750
+pubSync @ uPlot.iife.js:6052
+updateCursor @ uPlot.iife.js:5660
+mouseMove @ uPlot.iife.js:5723
+(anonymous) @ uPlot.iife.js:1350Understand this error
+installHook.js:1 Error: Script error. at :0:0 null
+overrideMethod @ installHook.js:1
+(anonymous) @ main.js:1993Understand this error
+uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')
+cursor.dataIdx @ uPlot.iife.js:3528
+updateCursor @ uPlot.iife.js:5375
+mouseMove @ uPlot.iife.js:5725
+pub @ uPlot.iife.js:6059
+pub @ uPlot.iife.js:1750
+pubSync @ uPlot.iife.js:6052
+updateCursor @ uPlot.iife.js:5660
+mouseMove @ uPlot.iife.js:5723
+(anonymous) @ uPlot.iife.js:1350Understand this error
+installHook.js:1 Error: Script error. at :0:0 null
+overrideMethod @ installHook.js:1
+(anonymous) @ main.js:1993Understand this error
+uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')
+cursor.dataIdx @ uPlot.iife.js:3528
+updateCursor @ uPlot.iife.js:5375
+mouseMove @ uPlot.iife.js:5725
+pub @ uPlot.iife.js:6059
+pub @ uPlot.iife.js:1750
+pubSync @ uPlot.iife.js:6052
+updateCursor @ uPlot.iife.js:5660
+mouseMove @ uPlot.iife.js:5723
+(anonymous) @ uPlot.iife.js:1350Understand this error
+installHook.js:1 Error: Script error. at :0:0 null
+overrideMethod @ installHook.js:1
+(anonymous) @ main.js:1993Understand this error
+uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')
+cursor.dataIdx @ uPlot.iife.js:3528
+updateCursor @ uPlot.iife.js:5375
+mouseMove @ uPlot.iife.js:5725
+pub @ uPlot.iife.js:6059
+pub @ uPlot.iife.js:1750
+pubSync @ uPlot.iife.js:6052
+updateCursor @ uPlot.iife.js:5660
+mouseMove @ uPlot.iife.js:5723
+(anonymous) @ uPlot.iife.js:1350Understand this error
+installHook.js:1 Error: Script error. at :0:0 null
+overrideMethod @ installHook.js:1
+(anonymous) @ main.js:1993Understand this error
+uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')
+cursor.dataIdx @ uPlot.iife.js:3528
+updateCursor @ uPlot.iife.js:5375
+mouseMove @ uPlot.iife.js:5725
+pub @ uPlot.iife.js:6059
+pub @ uPlot.iife.js:1750
+pubSync @ uPlot.iife.js:6052
+updateCursor @ uPlot.iife.js:5660
+mouseMove @ uPlot.iife.js:5723
+(anonymous) @ uPlot.iife.js:1350Understand this error
+installHook.js:1 Error: Script error. at :0:0 null
+overrideMethod @ installHook.js:1
+(anonymous) @ main.js:1993Understand this error
+uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')
+cursor.dataIdx @ uPlot.iife.js:3528
+updateCursor @ uPlot.iife.js:5375
+mouseMove @ uPlot.iife.js:5725
+pub @ uPlot.iife.js:6059
+pub @ uPlot.iife.js:1750
+pubSync @ uPlot.iife.js:6052
+updateCursor @ uPlot.iife.js:5660
+mouseMove @ uPlot.iife.js:5723
+(anonymous) @ uPlot.iife.js:1350Understand this error
+installHook.js:1 Error: Script error. at :0:0 null
+overrideMethod @ installHook.js:1
+(anonymous) @ main.js:1993Understand this error
+uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')
+cursor.dataIdx @ uPlot.iife.js:3528
+updateCursor @ uPlot.iife.js:5375
+mouseMove @ uPlot.iife.js:5725
+pub @ uPlot.iife.js:6059
+pub @ uPlot.iife.js:1750
+pubSync @ uPlot.iife.js:6052
+updateCursor @ uPlot.iife.js:5660
+mouseMove @ uPlot.iife.js:5723
+(anonymous) @ uPlot.iife.js:1350Understand this error
+installHook.js:1 Error: Script error. at :0:0 null
+overrideMethod @ installHook.js:1
+(anonymous) @ main.js:1993Understand this error
+uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')
+cursor.dataIdx @ uPlot.iife.js:3528
+updateCursor @ uPlot.iife.js:5375
+mouseMove @ uPlot.iife.js:5725
+pub @ uPlot.iife.js:6059
+pub @ uPlot.iife.js:1750
+pubSync @ uPlot.iife.js:6052
+updateCursor @ uPlot.iife.js:5660
+mouseMove @ uPlot.iife.js:5723
+(anonymous) @ uPlot.iife.js:1350Understand this error
+installHook.js:1 Error: Script error. at :0:0 null
+overrideMethod @ installHook.js:1
+(anonymous) @ main.js:1993Understand this error
+uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')
+cursor.dataIdx @ uPlot.iife.js:3528
+updateCursor @ uPlot.iife.js:5375
+mouseMove @ uPlot.iife.js:5725
+pub @ uPlot.iife.js:6059
+pub @ uPlot.iife.js:1750
+pubSync @ uPlot.iife.js:6052
+updateCursor @ uPlot.iife.js:5660
+mouseMove @ uPlot.iife.js:5723
+(anonymous) @ uPlot.iife.js:1350Understand this error
+installHook.js:1 Error: Script error. at :0:0 null
+overrideMethod @ installHook.js:1
+(anonymous) @ main.js:1993Understand this error
+uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')
+cursor.dataIdx @ uPlot.iife.js:3528
+updateCursor @ uPlot.iife.js:5375
+mouseMove @ uPlot.iife.js:5725
+pub @ uPlot.iife.js:6059
+pub @ uPlot.iife.js:1750
+pubSync @ uPlot.iife.js:6052
+updateCursor @ uPlot.iife.js:5660
+mouseMove @ uPlot.iife.js:5723
+(anonymous) @ uPlot.iife.js:1350Understand this error
+installHook.js:1 Error: Script error. at :0:0 null
+overrideMethod @ installHook.js:1
+(anonymous) @ main.js:1993Understand this error
+uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')
+cursor.dataIdx @ uPlot.iife.js:3528
+updateCursor @ uPlot.iife.js:5375
+mouseMove @ uPlot.iife.js:5725
+pub @ uPlot.iife.js:6059
+pub @ uPlot.iife.js:1750
+pubSync @ uPlot.iife.js:6052
+updateCursor @ uPlot.iife.js:5660
+mouseMove @ uPlot.iife.js:5723
+(anonymous) @ uPlot.iife.js:1350Understand this error
+installHook.js:1 Error: Script error. at :0:0 null
+overrideMethod @ installHook.js:1
+(anonymous) @ main.js:1993Understand this error
+uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')
+cursor.dataIdx @ uPlot.iife.js:3528
+updateCursor @ uPlot.iife.js:5375
+mouseMove @ uPlot.iife.js:5725
+pub @ uPlot.iife.js:6059
+pub @ uPlot.iife.js:1750
+pubSync @ uPlot.iife.js:6052
+updateCursor @ uPlot.iife.js:5660
+mouseMove @ uPlot.iife.js:5723
+(anonymous) @ uPlot.iife.js:1350Understand this error
+installHook.js:1 Error: Script error. at :0:0 null
+overrideMethod @ installHook.js:1
+(anonymous) @ main.js:1993Understand this error
+uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')
+cursor.dataIdx @ uPlot.iife.js:3528
+updateCursor @ uPlot.iife.js:5375
+mouseMove @ uPlot.iife.js:5725
+pub @ uPlot.iife.js:6059
+pub @ uPlot.iife.js:1750
+pubSync @ uPlot.iife.js:6052
+updateCursor @ uPlot.iife.js:5660
+mouseMove @ uPlot.iife.js:5723
+(anonymous) @ uPlot.iife.js:1350Understand this error
+installHook.js:1 Error: Script error. at :0:0 null
+overrideMethod @ installHook.js:1
+(anonymous) @ main.js:1993Understand this error
+uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')
+cursor.dataIdx @ uPlot.iife.js:3528
+updateCursor @ uPlot.iife.js:5375
+mouseMove @ uPlot.iife.js:5725
+pub @ uPlot.iife.js:6059
+pub @ uPlot.iife.js:1750
+pubSync @ uPlot.iife.js:6052
+updateCursor @ uPlot.iife.js:5660
+mouseMove @ uPlot.iife.js:5723
+(anonymous) @ uPlot.iife.js:1350Understand this error
+installHook.js:1 Error: Script error. at :0:0 null
+overrideMethod @ installHook.js:1
+(anonymous) @ main.js:1993Understand this error
+uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')
+cursor.dataIdx @ uPlot.iife.js:3528
+updateCursor @ uPlot.iife.js:5375
+mouseMove @ uPlot.iife.js:5725
+pub @ uPlot.iife.js:6059
+pub @ uPlot.iife.js:1750
+pubSync @ uPlot.iife.js:6052
+updateCursor @ uPlot.iife.js:5660
+mouseMove @ uPlot.iife.js:5723
+(anonymous) @ uPlot.iife.js:1350Understand this error
+installHook.js:1 Error: Script error. at :0:0 null
+overrideMethod @ installHook.js:1
+(anonymous) @ main.js:1993Understand this error
+uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')
+cursor.dataIdx @ uPlot.iife.js:3528
+updateCursor @ uPlot.iife.js:5375
+mouseMove @ uPlot.iife.js:5725
+pub @ uPlot.iife.js:6059
+pub @ uPlot.iife.js:1750
+pubSync @ uPlot.iife.js:6052
+updateCursor @ uPlot.iife.js:5660
+mouseMove @ uPlot.iife.js:5723
+(anonymous) @ uPlot.iife.js:1350Understand this error
+installHook.js:1 Error: Script error. at :0:0 null
+overrideMethod @ installHook.js:1
+(anonymous) @ main.js:1993Understand this error
