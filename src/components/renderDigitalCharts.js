@@ -29,6 +29,14 @@ export function renderDigitalCharts(
     changedIndices
   );
 
+  // ✅ FIX: Skip rendering if no digital channels exist (prevent phantom containers)
+  if (changedIndices.length === 0) {
+    console.log(
+      `[renderDigitalCharts] ⏭️ No digital channels to render, skipping container creation`
+    );
+    return;
+  }
+
   const digitalIndicesToShow = changedIndices;
   // Keep originalIndex on displayed channel objects so mapping is stable
   const digitalChannelsToShow = digitalIndicesToShow.map((i) => ({

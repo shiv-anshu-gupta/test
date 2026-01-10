@@ -273,8 +273,9 @@ export function createDeltaDrawer() {
      */
     init: () => {
       setupEventListeners();
-      createSidebarResizer("delta-drawer-panel", "left");
-      console.log("[DeltaDrawer] ✅ Initialized with resizable functionality");
+      // ✅ REMOVED: createSidebarResizer - using explicit resizeDivider from HTML instead
+      // createSidebarResizer("delta-drawer-panel", "left");
+      console.log("[DeltaDrawer] ✅ Initialized with event listeners (resizer from HTML)");
     },
   };
 

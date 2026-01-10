@@ -18,22 +18,19 @@ export function buildTableHeader(
 ) {
   const columns = [];
 
-  // Column 1: Channel name
-  columns.push(`<th class="delta-th delta-th-channel">Channel</th>`);
+  // Column 1: Channel name (first column styling)
+  columns.push(`<th scope="col" class="py-6 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6 dark:text-gray-200">Channel</th>`);
 
   // Value columns (one per vertical line)
   for (let i = 0; i < verticalLinesCount; i++) {
     const color = getColorHex(crosshairColors[i % crosshairColors.length]);
 
     columns.push(`
-      <th class="delta-th delta-th-value">
-        <div class="delta-th-content">
-          
-          <span class="delta-th-label" style="color: ${color}">${
+      <th scope="col" class="px-3 py-8 text-left text-sm font-semibold text-gray-900 dark:text-gray-200">
+        <span style="color: ${color}">${
       crosshairColors[i % crosshairColors.length].charAt(0).toUpperCase() +
       crosshairColors[i % crosshairColors.length].slice(1)
-    } vertical line</span>
-        </div>
+    }</span>
       </th>
     `);
   }
@@ -47,30 +44,26 @@ export function buildTableHeader(
 
     // Delta value column
     columns.push(`
-      <th class="delta-th delta-th-delta">
-        <div class="delta-th-content">
-          <span class="delta-color-dot" style="background-color: ${color1};"></span>
-          <span class="delta-arrow">→</span>
-          <span class="delta-color-dot" style="background-color: ${color2};"></span>
-          <span class="delta-th-label">Δ</span>
-        </div>
+      <th scope="col" class="px-3 py-8 text-left text-sm font-semibold text-gray-900 dark:text-gray-200">
+        <span style="background-color: ${color1}; width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-right: 4px;"></span>
+        <span style="display: inline-block; margin: 0 2px;">→</span>
+        <span style="background-color: ${color2}; width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-left: 4px; margin-right: 4px;"></span>
+        <span>Δ</span>
       </th>
     `);
 
     // Percentage column
     columns.push(`
-      <th class="delta-th delta-th-percentage">
-        <div class="delta-th-content">
-          <span class="delta-color-dot" style="background-color: ${color1};"></span>
-          <span class="delta-arrow">→</span>
-          <span class="delta-color-dot" style="background-color: ${color2};"></span>
-          <span class="delta-th-label">%</span>
-        </div>
+      <th scope="col" class="px-3 py-8 text-left text-sm font-semibold text-gray-900 dark:text-gray-200">
+        <span style="background-color: ${color1}; width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-right: 4px;"></span>
+        <span style="display: inline-block; margin: 0 2px;">→</span>
+        <span style="background-color: ${color2}; width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-left: 4px; margin-right: 4px;"></span>
+        <span>%</span>
       </th>
     `);
   }
 
-  return `<thead><tr>${columns.join("")}</tr></thead>`;
+  return `<thead class="bg-gray-50 dark:bg-gray-800/75"><tr>${columns.join("")}</tr></thead>`;
 }
 
 /**
@@ -81,10 +74,9 @@ export function buildTableHeader(
  */
 export function buildTableBody(tableData, verticalLinesCount) {
   if (!tableData || tableData.length === 0) {
-    return `<tbody><tr><td colspan="100" class="delta-empty">No data available</td></tr></tbody>`;
+    return `<tbody><tr><td colspan="100" class="whitespace-nowrap py-10 pl-4 pr-3 text-sm text-gray-500 dark:text-gray-400 sm:pl-6">No data available</td></tr></tbody>`;
   }
 
-  // ✅ Debug: Log first row to inspect structure
   console.log("[DeltaTable] First row structure:", tableData[0]);
   console.log("[DeltaTable] Total rows:", tableData.length);
   console.log("[DeltaTable] VerticalLinesCount:", verticalLinesCount);
@@ -93,7 +85,6 @@ export function buildTableBody(tableData, verticalLinesCount) {
     const cells = [];
     const isTimeRow = row.channel === "__TIME_ROW__";
 
-    // ✅ Debug: Log values being extracted for first non-time row
     if (rowIndex === 1 || (rowIndex === 0 && !isTimeRow)) {
       console.log(`[DeltaTable] Row ${rowIndex} values:`, {
         channel: row.channel,
@@ -104,18 +95,16 @@ export function buildTableBody(tableData, verticalLinesCount) {
       });
     }
 
-    // Channel name cell
+    // Channel name cell (first column)
     if (isTimeRow) {
       cells.push(
-        `<td class="delta-td delta-td-channel delta-time-row">Time (T)</td>`
+        `<td class="whitespace-nowrap py-10 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6 dark:text-white">Time (T)</td>`
       );
     } else {
       cells.push(`
-        <td class="delta-td delta-td-channel">
-          <div class="delta-channel-content">
-            <span class="delta-color-dot" style="background-color: ${row.color};"></span>
-            <span class="delta-channel-name">${row.channel}</span>
-          </div>
+        <td class="whitespace-nowrap py-10 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6 dark:text-white">
+          <span style="background-color: ${row.color}; width: 12px; height: 12px; border-radius: 2px; display: inline-block; margin-right: 8px; vertical-align: middle;"></span>
+          ${row.channel}
         </td>
       `);
     }
@@ -123,10 +112,7 @@ export function buildTableBody(tableData, verticalLinesCount) {
     // Value cells
     for (let i = 0; i < verticalLinesCount; i++) {
       const value = row[`v${i}`] || "N/A";
-      const cellClass = isTimeRow
-        ? "delta-td-value delta-time-row"
-        : "delta-td-value";
-      cells.push(`<td class="delta-td ${cellClass}">${value}</td>`);
+      cells.push(`<td class="whitespace-nowrap px-3 py-10 text-sm text-gray-500 dark:text-gray-400">${value}</td>`);
     }
 
     // Delta and percentage cells
@@ -135,7 +121,6 @@ export function buildTableBody(tableData, verticalLinesCount) {
       let percentage =
         row[`percentage${i}`] != null ? row[`percentage${i}`] : 0;
 
-      // Ensure percentage is a number
       if (typeof percentage === "string") {
         percentage = parseFloat(percentage) || 0;
       } else if (typeof percentage !== "number") {
@@ -143,35 +128,28 @@ export function buildTableBody(tableData, verticalLinesCount) {
       }
 
       // Delta cell
-      const deltaCellClass = isTimeRow
-        ? "delta-td-delta delta-time-row"
-        : "delta-td-delta";
-      cells.push(`<td class="delta-td ${deltaCellClass}">${deltaValue}</td>`);
+      cells.push(`<td class="whitespace-nowrap px-3 py-10 text-sm text-gray-500 dark:text-gray-400">${deltaValue}</td>`);
 
       // Percentage cell
       if (isTimeRow) {
         cells.push(
-          `<td class="delta-td delta-td-percentage delta-time-row">—</td>`
+          `<td class="whitespace-nowrap px-3 py-10 text-sm text-gray-500 dark:text-gray-400">—</td>`
         );
       } else {
         const percentClass =
-          percentage < 0 ? "negative" : percentage > 0 ? "positive" : "zero";
+          percentage < 0 ? "text-red-600 dark:text-red-400" : percentage > 0 ? "text-green-600 dark:text-green-400" : "text-gray-500 dark:text-gray-400";
         cells.push(`
-          <td class="delta-td delta-td-percentage">
-            <span class="delta-percentage ${percentClass}">${percentage.toFixed(
-          1
-        )}%</span>
+          <td class="whitespace-nowrap px-3 py-10 text-sm font-medium ${percentClass}">
+            ${percentage.toFixed(1)}%
           </td>
         `);
       }
     }
 
-    return `<tr class="${
-      isTimeRow ? "delta-row-time" : ""
-    }" data-row-index="${rowIndex}">${cells.join("")}</tr>`;
+    return `<tr class="divide-x divide-gray-200 dark:divide-white/10">${cells.join("")}</tr>`;
   });
 
-  return `<tbody>${rows.join("")}</tbody>`;
+  return `<tbody class="divide-y divide-gray-200 bg-white dark:divide-white/10 dark:bg-gray-800/50">${rows.join("")}</tbody>`;
 }
 
 /**
@@ -196,10 +174,18 @@ export function buildTableHTML(
   const body = buildTableBody(tableData, verticalLinesCount);
 
   return `
-    <table class="delta-table">           
-      ${header}
-      ${body}
-    </table>
+    <div class="mt-4 flow-root">
+      <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+        <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+          <div class="overflow-hidden shadow outline outline-1 outline-black/5 sm:rounded-lg dark:shadow-none dark:-outline-offset-1 dark:outline-white/10">
+            <table class="relative min-w-full divide-y divide-gray-300 dark:divide-white/15">           
+              ${header}
+              ${body}
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
   `;
 }
 

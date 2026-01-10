@@ -226,8 +226,6 @@
 
         <!-- Delta Drawer (RIGHT SIDEBAR) -->
         <div id="delta-drawer" class="hidden" style="width: 0px">
-          <div id="delta-drawer-backdrop"></div>
-          <div id="delta-drawer-scrim">
             <div
               id="delta-drawer-panel"
               class="h-full w-full shadow-2xl flex flex-col transition-all duration-300 pointer-events-auto overflow-hidden"
@@ -236,8 +234,50 @@
                 color: var(--text-primary);
               "
             >
+              <!-- Window Control Buttons Row -->
               <div
-                class="p-6 border-b flex items-center justify-between shrink-0"
+                class="px-6 py-3 border-b flex items-center justify-end gap-2 shrink-0"
+                style="
+                  background-color: var(--bg-secondary);
+                  color: var(--text-primary);
+                  border-color: var(--border-color);
+                "
+              >
+                <button
+                  id="delta-drawer-minimize"
+                  class="p-1 hover:bg-gray-300 dark:hover:bg-gray-700 rounded transition-colors"
+                  title="Minimize"
+                  style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;"
+                >
+                  <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M19 13H5v-2h14v2z"/>
+                  </svg>
+                </button>
+                <button
+                  id="delta-drawer-maximize"
+                  class="p-1 hover:bg-gray-300 dark:hover:bg-gray-700 rounded transition-colors"
+                  title="Maximize"
+                  style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;"
+                >
+                  <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M7 7h10v10H7V7zm12-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2z"/>
+                  </svg>
+                </button>
+                <button
+                  id="delta-drawer-close"
+                  class="p-1 hover:bg-red-300 dark:hover:bg-red-700 rounded transition-colors"
+                  title="Close"
+                  style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;"
+                >
+                  <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/>
+                  </svg>
+                </button>
+              </div>
+
+              <!-- Title and Search Row -->
+              <div
+                class="px-6 py-4 border-b flex items-center justify-between gap-4 shrink-0"
                 style="
                   background-color: var(--bg-secondary);
                   color: var(--text-primary);
@@ -251,6 +291,29 @@
                 >
                   Crosshair Data
                 </h2>
+                <div class="relative w-40">
+                  <input
+                    id="delta-table-search"
+                    type="text"
+                    placeholder="Search..."
+                    class="w-full px-3 py-2 pr-10 rounded border text-sm"
+                    style="
+                      background-color: var(--bg-tertiary);
+                      color: var(--text-primary);
+                      border-color: var(--border-color);
+                    "
+                  />
+                  <button
+                    id="delta-table-search-btn"
+                    class="absolute right-2 top-1/2 transform -translate-y-1/2 p-1 transition-colors hover:opacity-70"
+                    style="background-color: transparent; color: var(--text-primary);"
+                    title="Search"
+                  >
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                  </button>
+                </div>
               </div>
               <div
                 id="delta-drawer-content"
@@ -265,13 +328,10 @@
                 </p>
               </div>
             </div>
-          </div>
         </div>
 
         <!-- Analysis Sidebar (RIGHT SIDEBAR) -->
         <div id="analysis-sidebar" class="hidden" style="width: 0px">
-          <div id="analysis-sidebar-backdrop"></div>
-          <div id="analysis-sidebar-scrim">
             <div
               id="analysis-sidebar-panel"
               class="h-full w-full shadow-2xl flex flex-col transition-all duration-300 pointer-events-auto overflow-hidden"
@@ -279,62 +339,52 @@
                 background-color: var(--bg-secondary);
                 color: var(--text-primary);
               "
+              "
             >
+              <!-- Window Control Buttons Row -->
               <div
-                class="p-6 border-b flex items-center justify-between shrink-0"
+                class="px-6 py-3 border-b flex items-center justify-end gap-2 shrink-0"
                 style="
                   background-color: var(--bg-secondary);
                   color: var(--text-primary);
                   border-color: var(--border-color);
                 "
               >
-                <div>
-                  <h2 class="text-lg font-semibold m-0">Analysis Suite</h2>
-                  <p
-                    style="
-                      margin: 4px 0 0;
-                      font-size: 0.82rem;
-                      color: var(--text-secondary);
-                    "
-                  >
-                    View phasor diagrams and manage analysis layouts
-                  </p>
-                </div>
-              </div>
-
-              <div
-                class="flex items-center gap-2 px-6 py-4 border-b"
-                style="border-color: var(--border-color)"
-              >
                 <button
-                  id="floatingWindowBtn"
-                  type="button"
-                  class="btn btn-secondary"
-                  style="flex: 1"
+                  id="analysis-sidebar-minimize"
+                  class="p-1 hover:bg-gray-300 dark:hover:bg-gray-700 rounded transition-colors"
+                  title="Minimize"
+                  style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;"
                 >
-                  Float Window
+                  <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M19 13H5v-2h14v2z"/>
+                  </svg>
                 </button>
                 <button
-                  id="belowChartBtn"
-                  type="button"
-                  class="btn btn-secondary"
-                  style="flex: 1"
+                  id="analysis-sidebar-maximize"
+                  class="p-1 hover:bg-gray-300 dark:hover:bg-gray-700 rounded transition-colors"
+                  title="Maximize"
+                  style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;"
                 >
-                  Show Below Charts
+                  <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M7 7h10v10H7V7zm12-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2z"/>
+                  </svg>
                 </button>
                 <button
-                  id="returnSidebarBtn"
-                  type="button"
-                  class="btn btn-secondary"
-                  style="display: none"
+                  id="analysis-sidebar-close"
+                  class="p-1 hover:bg-red-300 dark:hover:bg-red-700 rounded transition-colors"
+                  title="Close"
+                  style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;"
                 >
-                  Return to Sidebar
+                  <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/>
+                  </svg>
                 </button>
               </div>
 
               <section class="flex-1 overflow-auto px-6 py-5">
                 <div
-                  class="flex items-center justify-between"
+                  class="flex items-center"
                   style="margin-bottom: 12px"
                 >
                   <h3
@@ -347,14 +397,6 @@
                   >
                     Phasor Diagram
                   </h3>
-                  <button
-                    id="analysis-sidebar-close"
-                    type="button"
-                    class="btn btn-secondary"
-                    style="padding: 6px 12px"
-                  >
-                    Close
-                  </button>
                 </div>
 
                 <div id="polarChartContainer" class="polar-chart-container">

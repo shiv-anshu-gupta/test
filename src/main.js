@@ -337,6 +337,66 @@ if (!window.handleDeltaButtonClick) {
   };
 }
 
+// Setup event listener for delta drawer close button
+function setupDeltaDrawerCloseButton() {
+  const closeBtn = document.getElementById("delta-drawer-close");
+  if (closeBtn && !closeBtn.__hasListener) {
+    closeBtn.__hasListener = true;
+    closeBtn.addEventListener("click", (event) => {
+      console.log("[main.js] Delta drawer close button clicked");
+      event.preventDefault();
+      event.stopPropagation();
+      // Call the same toggle function as the Crosshair Data button
+      window.handleDeltaButtonClick(event);
+    });
+  }
+}
+
+// Setup event listener for delta drawer minimize button
+function setupDeltaDrawerMinimizeButton() {
+  const minimizeBtn = document.getElementById("delta-drawer-minimize");
+  if (minimizeBtn && !minimizeBtn.__hasListener) {
+    minimizeBtn.__hasListener = true;
+    minimizeBtn.addEventListener("click", (event) => {
+      console.log("[main.js] Delta drawer minimize button clicked");
+      event.preventDefault();
+      event.stopPropagation();
+      // Close the drawer (same as close button)
+      window.handleDeltaButtonClick(event);
+    });
+  }
+}
+
+// Setup event listener for analysis sidebar close button
+function setupAnalysisSidebarCloseButton() {
+  const closeBtn = document.getElementById("analysis-sidebar-close");
+  if (closeBtn && !closeBtn.__hasListener) {
+    closeBtn.__hasListener = true;
+    closeBtn.addEventListener("click", (event) => {
+      console.log("[main.js] Analysis sidebar close button clicked");
+      event.preventDefault();
+      event.stopPropagation();
+      // Call the same toggle function as the Analysis button
+      window.handleAnalysisButtonClick(event);
+    });
+  }
+}
+
+// Setup event listener for analysis sidebar minimize button
+function setupAnalysisSidebarMinimizeButton() {
+  const minimizeBtn = document.getElementById("analysis-sidebar-minimize");
+  if (minimizeBtn && !minimizeBtn.__hasListener) {
+    minimizeBtn.__hasListener = true;
+    minimizeBtn.addEventListener("click", (event) => {
+      console.log("[main.js] Analysis sidebar minimize button clicked");
+      event.preventDefault();
+      event.stopPropagation();
+      // Close the sidebar (same as close button)
+      window.handleAnalysisButtonClick(event);
+    });
+  }
+}
+
 if (!window.handleAnalysisButtonClick) {
   window.handleAnalysisButtonClick = function (event) {
     console.log(
@@ -399,6 +459,12 @@ function initializeSidebarRegistry() {
 
   // Initialize all sidebars to their default closed state
   sidebarStore.initializeDefaults();
+
+  // Setup button event listeners for close/minimize buttons
+  setupDeltaDrawerCloseButton();
+  setupDeltaDrawerMinimizeButton();
+  setupAnalysisSidebarCloseButton();
+  setupAnalysisSidebarMinimizeButton();
 
   console.log(
     "[SidebarRegistry] Sidebar registry initialized. Active sidebars:",
