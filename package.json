@@ -6,12 +6,12 @@
     "tailwindcss": "^4.1.18"
   },
   "scripts": {
-    "dev": "parcel index.html comtrade-combiner/index.html --port 3000",
-    "start": "parcel index.html comtrade-combiner/index.html --port 3000",
+    "dev": "parcel index.html comtrade-combiner/index.html --port 5000",
+    "start": "parcel index.html comtrade-combiner/index.html --port 5000",
     "build": "parcel build index.html comtrade-combiner/index.html --public-url ./ --no-source-maps --no-scope-hoist",
     "build:main": "parcel build index.html --public-url ./ --no-scope-hoist",
     "build:combiner": "parcel build comtrade-combiner/index.html --public-url ./ --no-scope-hoist",
-    "preview": "npx serve dist -p 3000",
+    "preview": "npx serve dist -p 5000",
     "docs": "jsdoc -c jsdoc.json",
     "mermaid": "node generateMermaid.js",
     "mmd2svg": "mmdc -i docs/classDiagram.mmd -o docs/classDiagram.svg",

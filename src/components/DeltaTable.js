@@ -209,3 +209,21 @@ function getColorHex(colorName) {
   };
   return colorMap[colorName] || "#6b7280";
 }
+
+/**
+ * Filter table rows based on search query
+ * @param {Object[]} tableData - Table data to filter
+ * @param {string} searchQuery - Search text
+ * @returns {Object[]} Filtered table data
+ */
+export function filterTableRows(tableData, searchQuery) {
+  if (!searchQuery || searchQuery.trim() === "") {
+    return tableData;
+  }
+
+  const query = searchQuery.toLowerCase();
+  return tableData.filter((row) => {
+    if (row.channel === "__TIME_ROW__") return true;
+    return row.channel.toLowerCase().includes(query);
+  });
+}

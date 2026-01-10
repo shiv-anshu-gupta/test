@@ -1,6 +1,6 @@
 // src/components/renderComputedChannels.js
-// NEW: One chart per computed channel, stored in chartsComputed array
-// Matches the pattern used for analog/digital charts
+// Renders computed channels - one chart with all computed channels as series
+// Stored in the main charts array alongside analog and digital charts
 
 import { createChartOptions } from "./chartComponent.js";
 import { createDragBar } from "./createDragBar.js";
@@ -72,14 +72,14 @@ function formatEquationForLatex(equation) {
  * Matches the pattern used for analog/digital channels
  * @param {Object} data - Parsed COMTRADE data with time array
  * @param {HTMLElement} chartsContainer - The container for charts
- * @param {Array} chartsComputed - Array to store chart instances
+ * @param {Array} charts - Array to store chart instances
  * @param {Array} verticalLinesX - Array of vertical line X positions
  * @param {Object} channelState - Reactive state for channels
  */
 export function renderComputedChannels(
   data,
   chartsContainer,
-  chartsComputed,
+  charts,
   verticalLinesX,
   channelState
 ) {
@@ -222,7 +222,7 @@ export function renderComputedChannels(
     verticalLinesX,
     xLabel: data.xLabel || "Time",
     xUnit: data.xUnit || "s",
-    getCharts: () => chartsComputed,
+    getCharts: () => charts,
     yUnits: groupYUnits,
     axesScales: [1, ...computedChannels.map(() => 1)],
     singleYAxis: false,
@@ -234,11 +234,11 @@ export function renderComputedChannels(
   opts.plugins = opts.plugins.filter(
     (p) => !(p && p.id === "verticalLinePlugin")
   );
-  opts.plugins.push(verticalLinePlugin(verticalLinesX, () => chartsComputed));
+  opts.plugins.push(verticalLinePlugin(verticalLinesX, () => charts));
 
-  // Create uPlot chart instance (will be pushed to chartsComputed array)
+  // Create uPlot chart instance (will be pushed to charts array)
   const chartStartTime = performance.now();
-  const chart = initUPlotChart(opts, chartData, chartDiv, chartsComputed);
+  const chart = initUPlotChart(opts, chartData, chartDiv, charts);
   const chartTime = performance.now() - chartStartTime;
 
   console.log(
@@ -351,7 +351,7 @@ export function renderComputedChannels(
         }
 
         // Redraw all charts
-        chartsComputed.forEach((c) => {
+        charts.forEach((c) => {
           if (c && c.redraw) c.redraw();
         });
       }, 0);

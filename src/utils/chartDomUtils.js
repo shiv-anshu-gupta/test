@@ -161,32 +161,48 @@ export function initUPlotChart(opts, chartData, chartDiv, charts) {
   charts.push(chart);
 
   // ✅ FIX #2: Improved ResizeObserver with contentBoxSize for accuracy
+  // ✅ FIX #4: Add debouncing to prevent ResizeObserver loop during animations
+  let resizeTimeout = null;
+  let lastSize = { width: 0, height: 0 };
+
   const ro = new ResizeObserver((entries) => {
-    for (let entry of entries) {
-      // Use contentBoxSize if available (more accurate), fallback to contentRect
-      let newWidth, newHeight;
-
-      if (entry.contentBoxSize) {
-        // contentBoxSize is more accurate for our use case (excludes padding)
-        newWidth = Math.floor(entry.contentBoxSize[0].inlineSize);
-        newHeight = Math.floor(entry.contentBoxSize[0].blockSize);
-      } else {
-        // Fallback to contentRect (includes padding in some browsers)
-        newWidth = Math.floor(entry.contentRect.width);
-        newHeight = Math.floor(entry.contentRect.height);
-      }
-
-      // Ensure we have valid dimensions before resizing
-      if (newWidth > 0 && newHeight > 0) {
-        chart.setSize({
-          width: newWidth,
-          height: newHeight,
-        });
-        console.log(
-          `[ResizeObserver] 📊 Chart resized to ${newWidth}x${newHeight}px`
-        );
-      }
+    // Clear pending resize
+    if (resizeTimeout) {
+      clearTimeout(resizeTimeout);
     }
+
+    resizeTimeout = setTimeout(() => {
+      for (let entry of entries) {
+        // Use contentBoxSize if available (more accurate), fallback to contentRect
+        let newWidth, newHeight;
+
+        if (entry.contentBoxSize) {
+          // contentBoxSize is more accurate for our use case (excludes padding)
+          newWidth = Math.floor(entry.contentBoxSize[0].inlineSize);
+          newHeight = Math.floor(entry.contentBoxSize[0].blockSize);
+        } else {
+          // Fallback to contentRect (includes padding in some browsers)
+          newWidth = Math.floor(entry.contentRect.width);
+          newHeight = Math.floor(entry.contentRect.height);
+        }
+
+        // Only resize if dimensions actually changed (prevents resize loops)
+        if (
+          newWidth > 0 &&
+          newHeight > 0 &&
+          (newWidth !== lastSize.width || newHeight !== lastSize.height)
+        ) {
+          lastSize = { width: newWidth, height: newHeight };
+          chart.setSize({
+            width: newWidth,
+            height: newHeight,
+          });
+          console.log(
+            `[ResizeObserver] 📊 Chart resized to ${newWidth}x${newHeight}px`
+          );
+        }
+      }
+    }, 50); // Debounce resize calls by 50ms
   });
 
   // ✅ FIX #3: Observe parent container to catch width changes from sidebar toggle

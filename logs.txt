@@ -1,973 +1,661 @@
-ChannelList.js:2463 [ChannelList] 📤 ROW DELETED EVENT FIRED
-ChannelList.js:2464   Row data: Object
-ChannelList.js:2465   Row object: Proxy(u)
-ChannelList.js:2471 [ChannelList] 🔔 Calling local onChannelUpdate('delete', data)
-ChannelList.js:2473 [ChannelList] ✅ Local callback executed
-ChannelList.js:2485 [ChannelList] 📤 DELETE MESSAGE TO PARENT
-ChannelList.js:2486   Target parent exists: true
-ChannelList.js:2487   Parent closed: false
-ChannelList.js:2488   Row data: Object
-ChannelList.js:2501 [ChannelList] 📤 Posting message: Object
-ChannelList.js:2503 [ChannelList] ✅ Message posted successfully
-ChannelList.js:2152 [ChannelList] ✅ row.delete() called successfully
-main.js:4077 [main.js] 📨 RAW MESSAGE RECEIVED
-main.js:4078 Has data: true
-main.js:4079 Message source: ChildWindow
-main.js:4080 Message type: callback_delete
-main.js:4081 Origin: http://localhost:3000
-main.js:4082 Full message: Object
-main.js:4091 [main.js] ✅ Message ACCEPTED - Processing type: "callback_delete"
-main.js:4105 [Performance] 📨 Message received: callback_delete Object
-main.js:4781 [DELETE CALLBACK] 🗑️ DELETE MESSAGE RECEIVED
-main.js:4782 Payload received: Object
-main.js:4783 Payload type: object
-main.js:4784 Is array: false
-main.js:4785 Payload keys: Array(14)
-main.js:4802 [DELETE CALLBACK] 🔍 Parsed delete request: Object
-main.js:4811 [DELETE CALLBACK] 📍 Deleting by channelID: analog-0-waycv90
-main.js:4814 [DELETE CALLBACK] Result: ✅ DELETED
-main.js:4821 [DELETE CALLBACK] ✅ Deletion complete - chartManager subscribers will handle recreation
-chartManager.js:580 [recreateChart] ✓ Destroyed old chart at index 0
-chartManager.js:589 [recreateChart] ✓ Cleared container HTML
-chartManager.js:601 [recreateChart] type="analog", idx=0, dataLength=6, seriesCount=5
-chartManager.js:611 [recreateChart] ✓ Created new uPlot instance
-chartManager.js:616 [recreateChart] ✅ Successfully recreated chart[0] for type "analog"
-chartManager.js:580 [recreateChart] ✓ Destroyed old chart at index 0
-chartManager.js:589 [recreateChart] ✓ Cleared container HTML
-chartManager.js:601 [recreateChart] type="analog", idx=0, dataLength=6, seriesCount=5
-chartManager.js:611 [recreateChart] ✓ Created new uPlot instance
-chartManager.js:616 [recreateChart] ✅ Successfully recreated chart[0] for type "analog"
-chartManager.js:580 [recreateChart] ✓ Destroyed old chart at index 0
-chartManager.js:589 [recreateChart] ✓ Cleared container HTML
-chartManager.js:601 [recreateChart] type="analog", idx=0, dataLength=6, seriesCount=5
-chartManager.js:611 [recreateChart] ✓ Created new uPlot instance
-chartManager.js:616 [recreateChart] ✅ Successfully recreated chart[0] for type "analog"
-chartManager.js:580 [recreateChart] ✓ Destroyed old chart at index 0
-chartManager.js:589 [recreateChart] ✓ Cleared container HTML
-chartManager.js:601 [recreateChart] type="analog", idx=0, dataLength=6, seriesCount=5
-chartManager.js:611 [recreateChart] ✓ Created new uPlot instance
-chartManager.js:616 [recreateChart] ✅ Successfully recreated chart[0] for type "analog"
-chartManager.js:580 [recreateChart] ✓ Destroyed old chart at index 0
-chartManager.js:589 [recreateChart] ✓ Cleared container HTML
-chartManager.js:601 [recreateChart] type="analog", idx=0, dataLength=6, seriesCount=5
-chartManager.js:611 [recreateChart] ✓ Created new uPlot instance
-chartManager.js:616 [recreateChart] ✅ Successfully recreated chart[0] for type "analog"
-chartManager.js:580 [recreateChart] ✓ Destroyed old chart at index 0
-chartManager.js:589 [recreateChart] ✓ Cleared container HTML
-chartManager.js:601 [recreateChart] type="analog", idx=0, dataLength=6, seriesCount=5
-chartManager.js:611 [recreateChart] ✓ Created new uPlot instance
-chartManager.js:616 [recreateChart] ✅ Successfully recreated chart[0] for type "analog"
-chartManager.js:580 [recreateChart] ✓ Destroyed old chart at index 0
-chartManager.js:589 [recreateChart] ✓ Cleared container HTML
-chartManager.js:601 [recreateChart] type="analog", idx=0, dataLength=6, seriesCount=5
-chartManager.js:611 [recreateChart] ✓ Created new uPlot instance
-chartManager.js:616 [recreateChart] ✅ Successfully recreated chart[0] for type "analog"
-chartManager.js:580 [recreateChart] ✓ Destroyed old chart at index 0
-chartManager.js:589 [recreateChart] ✓ Cleared container HTML
-chartManager.js:601 [recreateChart] type="analog", idx=0, dataLength=6, seriesCount=5
-chartManager.js:611 [recreateChart] ✓ Created new uPlot instance
-chartManager.js:616 [recreateChart] ✅ Successfully recreated chart[0] for type "analog"
-chartManager.js:580 [recreateChart] ✓ Destroyed old chart at index 0
-chartManager.js:589 [recreateChart] ✓ Cleared container HTML
-chartManager.js:601 [recreateChart] type="analog", idx=0, dataLength=6, seriesCount=5
-chartManager.js:611 [recreateChart] ✓ Created new uPlot instance
-chartManager.js:616 [recreateChart] ✅ Successfully recreated chart[0] for type "analog"
-chartManager.js:580 [recreateChart] ✓ Destroyed old chart at index 0
-chartManager.js:589 [recreateChart] ✓ Cleared container HTML
-chartManager.js:601 [recreateChart] type="analog", idx=0, dataLength=6, seriesCount=5
-chartManager.js:611 [recreateChart] ✓ Created new uPlot instance
-chartManager.js:616 [recreateChart] ✅ Successfully recreated chart[0] for type "analog"
-chartManager.js:580 [recreateChart] ✓ Destroyed old chart at index 0
-chartManager.js:589 [recreateChart] ✓ Cleared container HTML
-chartManager.js:601 [recreateChart] type="analog", idx=0, dataLength=6, seriesCount=5
-chartManager.js:611 [recreateChart] ✓ Created new uPlot instance
-chartManager.js:616 [recreateChart] ✅ Successfully recreated chart[0] for type "analog"
-chartManager.js:580 [recreateChart] ✓ Destroyed old chart at index 0
-chartManager.js:589 [recreateChart] ✓ Cleared container HTML
-chartManager.js:601 [recreateChart] type="analog", idx=0, dataLength=6, seriesCount=5
-chartManager.js:611 [recreateChart] ✓ Created new uPlot instance
-chartManager.js:616 [recreateChart] ✅ Successfully recreated chart[0] for type "analog"
-chartManager.js:580 [recreateChart] ✓ Destroyed old chart at index 0
-chartManager.js:589 [recreateChart] ✓ Cleared container HTML
-chartManager.js:601 [recreateChart] type="analog", idx=0, dataLength=6, seriesCount=5
-chartManager.js:611 [recreateChart] ✓ Created new uPlot instance
-chartManager.js:616 [recreateChart] ✅ Successfully recreated chart[0] for type "analog"
-chartManager.js:580 [recreateChart] ✓ Destroyed old chart at index 0
-chartManager.js:589 [recreateChart] ✓ Cleared container HTML
-chartManager.js:601 [recreateChart] type="analog", idx=0, dataLength=6, seriesCount=5
-chartManager.js:611 [recreateChart] ✓ Created new uPlot instance
-chartManager.js:616 [recreateChart] ✅ Successfully recreated chart[0] for type "analog"
-7chartManager.js:2061 [DELETE HANDLER] ℹ️ Both empty (0 → 0), skipping recreation to avoid loop
-chartManager.js:580 [recreateChart] ✓ Destroyed old chart at index 0
-chartManager.js:589 [recreateChart] ✓ Cleared container HTML
-chartManager.js:601 [recreateChart] type="analog", idx=0, dataLength=6, seriesCount=5
-chartManager.js:611 [recreateChart] ✓ Created new uPlot instance
-chartManager.js:616 [recreateChart] ✅ Successfully recreated chart[0] for type "analog"
-chartManager.js:580 [recreateChart] ✓ Destroyed old chart at index 0
-chartManager.js:589 [recreateChart] ✓ Cleared container HTML
-chartManager.js:601 [recreateChart] type="analog", idx=0, dataLength=6, seriesCount=5
-chartManager.js:611 [recreateChart] ✓ Created new uPlot instance
-chartManager.js:616 [recreateChart] ✅ Successfully recreated chart[0] for type "analog"
-chartManager.js:580 [recreateChart] ✓ Destroyed old chart at index 0
-chartManager.js:589 [recreateChart] ✓ Cleared container HTML
-chartManager.js:601 [recreateChart] type="analog", idx=0, dataLength=6, seriesCount=5
-chartManager.js:611 [recreateChart] ✓ Created new uPlot instance
-chartManager.js:616 [recreateChart] ✅ Successfully recreated chart[0] for type "analog"
-chartManager.js:580 [recreateChart] ✓ Destroyed old chart at index 0
-chartManager.js:589 [recreateChart] ✓ Cleared container HTML
-chartManager.js:601 [recreateChart] type="analog", idx=0, dataLength=6, seriesCount=5
-chartManager.js:611 [recreateChart] ✓ Created new uPlot instance
-chartManager.js:616 [recreateChart] ✅ Successfully recreated chart[0] for type "analog"
-chartManager.js:580 [recreateChart] ✓ Destroyed old chart at index 0
-chartManager.js:589 [recreateChart] ✓ Cleared container HTML
-chartManager.js:601 [recreateChart] type="analog", idx=0, dataLength=6, seriesCount=5
-chartManager.js:611 [recreateChart] ✓ Created new uPlot instance
-chartManager.js:616 [recreateChart] ✅ Successfully recreated chart[0] for type "analog"
-chartManager.js:580 [recreateChart] ✓ Destroyed old chart at index 0
-chartManager.js:589 [recreateChart] ✓ Cleared container HTML
-chartManager.js:601 [recreateChart] type="analog", idx=0, dataLength=6, seriesCount=5
-chartManager.js:611 [recreateChart] ✓ Created new uPlot instance
-chartManager.js:616 [recreateChart] ✅ Successfully recreated chart[0] for type "analog"
-chartManager.js:580 [recreateChart] ✓ Destroyed old chart at index 0
-chartManager.js:589 [recreateChart] ✓ Cleared container HTML
-chartManager.js:601 [recreateChart] type="analog", idx=0, dataLength=6, seriesCount=5
-chartManager.js:611 [recreateChart] ✓ Created new uPlot instance
-chartManager.js:616 [recreateChart] ✅ Successfully recreated chart[0] for type "analog"
-chartManager.js:580 [recreateChart] ✓ Destroyed old chart at index 0
-chartManager.js:589 [recreateChart] ✓ Cleared container HTML
-chartManager.js:601 [recreateChart] type="analog", idx=0, dataLength=6, seriesCount=5
-chartManager.js:611 [recreateChart] ✓ Created new uPlot instance
-chartManager.js:616 [recreateChart] ✅ Successfully recreated chart[0] for type "analog"
-installHook.js:1 Error: Script error. at :0:0 null
-overrideMethod @ installHook.js:1Understand this error
-uPlot.iife.js:3973 Uncaught TypeError: Cannot read properties of undefined (reading 'length')Understand this error
-installHook.js:1 Error: Script error. at :0:0 null
-overrideMethod @ installHook.js:1Understand this error
-uPlot.iife.js:3973 Uncaught TypeError: Cannot read properties of undefined (reading 'length')Understand this error
-installHook.js:1 Error: Script error. at :0:0 null
-overrideMethod @ installHook.js:1Understand this error
-uPlot.iife.js:3973 Uncaught TypeError: Cannot read properties of undefined (reading 'length')Understand this error
-installHook.js:1 Error: Script error. at :0:0 null
-overrideMethod @ installHook.js:1Understand this error
-uPlot.iife.js:3973 Uncaught TypeError: Cannot read properties of undefined (reading 'length')Understand this error
-installHook.js:1 Error: Script error. at :0:0 null
-overrideMethod @ installHook.js:1Understand this error
-uPlot.iife.js:3973 Uncaught TypeError: Cannot read properties of undefined (reading 'length')Understand this error
-installHook.js:1 Error: Script error. at :0:0 null
-overrideMethod @ installHook.js:1Understand this error
-uPlot.iife.js:3973 Uncaught TypeError: Cannot read properties of undefined (reading 'length')Understand this error
-installHook.js:1 Error: Script error. at :0:0 null
-overrideMethod @ installHook.js:1Understand this error
-uPlot.iife.js:3973 Uncaught TypeError: Cannot read properties of undefined (reading 'length')Understand this error
-installHook.js:1 Error: Script error. at :0:0 null
-overrideMethod @ installHook.js:1Understand this error
-uPlot.iife.js:3973 Uncaught TypeError: Cannot read properties of undefined (reading 'length')Understand this error
-installHook.js:1 Error: Script error. at :0:0 null
-overrideMethod @ installHook.js:1Understand this error
-uPlot.iife.js:3973 Uncaught TypeError: Cannot read properties of undefined (reading 'length')Understand this error
-installHook.js:1 Error: Script error. at :0:0 null
-overrideMethod @ installHook.js:1Understand this error
-uPlot.iife.js:3973 Uncaught TypeError: Cannot read properties of undefined (reading 'length')Understand this error
-installHook.js:1 Error: Script error. at :0:0 null
-overrideMethod @ installHook.js:1Understand this error
-uPlot.iife.js:3973 Uncaught TypeError: Cannot read properties of undefined (reading 'length')Understand this error
-installHook.js:1 Error: Script error. at :0:0 null
-overrideMethod @ installHook.js:1Understand this error
-uPlot.iife.js:3973 Uncaught TypeError: Cannot read properties of undefined (reading 'length')Understand this error
-installHook.js:1 Error: Script error. at :0:0 null
-overrideMethod @ installHook.js:1Understand this error
-uPlot.iife.js:3973 Uncaught TypeError: Cannot read properties of undefined (reading 'length')Understand this error
-installHook.js:1 Error: Script error. at :0:0 null
-overrideMethod @ installHook.js:1Understand this error
-uPlot.iife.js:3973 Uncaught TypeError: Cannot read properties of undefined (reading 'length')Understand this error
-installHook.js:1 Error: Script error. at :0:0 null
-overrideMethod @ installHook.js:1Understand this error
-uPlot.iife.js:3973 Uncaught TypeError: Cannot read properties of undefined (reading 'length')Understand this error
-installHook.js:1 Error: Script error. at :0:0 null
-overrideMethod @ installHook.js:1Understand this error
-uPlot.iife.js:3973 Uncaught TypeError: Cannot read properties of undefined (reading 'length')Understand this error
-installHook.js:1 Error: Script error. at :0:0 null
-overrideMethod @ installHook.js:1Understand this error
-uPlot.iife.js:3973 Uncaught TypeError: Cannot read properties of undefined (reading 'length')Understand this error
-installHook.js:1 Error: Script error. at :0:0 null
-overrideMethod @ installHook.js:1Understand this error
-uPlot.iife.js:3973 Uncaught TypeError: Cannot read properties of undefined (reading 'length')Understand this error
-installHook.js:1 Error: Script error. at :0:0 null
-overrideMethod @ installHook.js:1Understand this error
-uPlot.iife.js:3973 Uncaught TypeError: Cannot read properties of undefined (reading 'length')Understand this error
-installHook.js:1 Error: Script error. at :0:0 null
-overrideMethod @ installHook.js:1Understand this error
-uPlot.iife.js:3973 Uncaught TypeError: Cannot read properties of undefined (reading 'length')Understand this error
-installHook.js:1 Error: Script error. at :0:0 null
-overrideMethod @ installHook.js:1Understand this error
-uPlot.iife.js:3973 Uncaught TypeError: Cannot read properties of undefined (reading 'length')Understand this error
-installHook.js:1 Error: Script error. at :0:0 null
-overrideMethod @ installHook.js:1Understand this error
-uPlot.iife.js:3973 Uncaught TypeError: Cannot read properties of undefined (reading 'length')Understand this error
-chartManager.js:580 [recreateChart] ✓ Destroyed old chart at index 0
-chartManager.js:589 [recreateChart] ✓ Cleared container HTML
-chartManager.js:601 [recreateChart] type="analog", idx=0, dataLength=6, seriesCount=5
-chartManager.js:611 [recreateChart] ✓ Created new uPlot instance
-chartManager.js:616 [recreateChart] ✅ Successfully recreated chart[0] for type "analog"
-chartManager.js:580 [recreateChart] ✓ Destroyed old chart at index 0
-chartManager.js:589 [recreateChart] ✓ Cleared container HTML
-chartManager.js:601 [recreateChart] type="analog", idx=0, dataLength=6, seriesCount=5
-chartManager.js:611 [recreateChart] ✓ Created new uPlot instance
-chartManager.js:616 [recreateChart] ✅ Successfully recreated chart[0] for type "analog"
-chartManager.js:580 [recreateChart] ✓ Destroyed old chart at index 0
-chartManager.js:589 [recreateChart] ✓ Cleared container HTML
-chartManager.js:601 [recreateChart] type="analog", idx=0, dataLength=6, seriesCount=5
-chartManager.js:611 [recreateChart] ✓ Created new uPlot instance
-chartManager.js:616 [recreateChart] ✅ Successfully recreated chart[0] for type "analog"
-chartManager.js:580 [recreateChart] ✓ Destroyed old chart at index 0
-chartManager.js:589 [recreateChart] ✓ Cleared container HTML
-chartManager.js:601 [recreateChart] type="analog", idx=0, dataLength=6, seriesCount=5
-chartManager.js:611 [recreateChart] ✓ Created new uPlot instance
-chartManager.js:616 [recreateChart] ✅ Successfully recreated chart[0] for type "analog"
-chartManager.js:580 [recreateChart] ✓ Destroyed old chart at index 0
-chartManager.js:589 [recreateChart] ✓ Cleared container HTML
-chartManager.js:601 [recreateChart] type="analog", idx=0, dataLength=6, seriesCount=5
-chartManager.js:611 [recreateChart] ✓ Created new uPlot instance
-chartManager.js:616 [recreateChart] ✅ Successfully recreated chart[0] for type "analog"
-chartManager.js:580 [recreateChart] ✓ Destroyed old chart at index 0
-chartManager.js:589 [recreateChart] ✓ Cleared container HTML
-chartManager.js:601 [recreateChart] type="analog", idx=0, dataLength=6, seriesCount=5
-chartManager.js:611 [recreateChart] ✓ Created new uPlot instance
-chartManager.js:616 [recreateChart] ✅ Successfully recreated chart[0] for type "analog"
-installHook.js:1 Error: Script error. at :0:0 null
-overrideMethod @ installHook.js:1Understand this error
-uPlot.iife.js:3973 Uncaught TypeError: Cannot read properties of undefined (reading 'length')Understand this error
-installHook.js:1 Error: Script error. at :0:0 null
-overrideMethod @ installHook.js:1Understand this error
-uPlot.iife.js:3973 Uncaught TypeError: Cannot read properties of undefined (reading 'length')Understand this error
-installHook.js:1 Error: Script error. at :0:0 null
-overrideMethod @ installHook.js:1Understand this error
-uPlot.iife.js:3973 Uncaught TypeError: Cannot read properties of undefined (reading 'length')Understand this error
-installHook.js:1 Error: Script error. at :0:0 null
-overrideMethod @ installHook.js:1Understand this error
-uPlot.iife.js:3973 Uncaught TypeError: Cannot read properties of undefined (reading 'length')Understand this error
-installHook.js:1 Error: Script error. at :0:0 null
-overrideMethod @ installHook.js:1Understand this error
-uPlot.iife.js:3973 Uncaught TypeError: Cannot read properties of undefined (reading 'length')Understand this error
-installHook.js:1 Error: Script error. at :0:0 null
-overrideMethod @ installHook.js:1Understand this error
-uPlot.iife.js:3973 Uncaught TypeError: Cannot read properties of undefined (reading 'length')Understand this error
-chartManager.js:580 [recreateChart] ✓ Destroyed old chart at index 0
-chartManager.js:589 [recreateChart] ✓ Cleared container HTML
-chartManager.js:601 [recreateChart] type="analog", idx=0, dataLength=6, seriesCount=5
-chartManager.js:611 [recreateChart] ✓ Created new uPlot instance
-chartManager.js:616 [recreateChart] ✅ Successfully recreated chart[0] for type "analog"
-installHook.js:1 Error: Script error. at :0:0 null
-overrideMethod @ installHook.js:1Understand this error
-uPlot.iife.js:3973 Uncaught TypeError: Cannot read properties of undefined (reading 'length')Understand this error
-installHook.js:1 [createState] Failed to save history QuotaExceededError: Failed to execute 'setItem' on 'Storage': Setting the value of '__uplot_history__' exceeded the quota.
-    at createState.js:916:22
-overrideMethod @ installHook.js:1Understand this warning
-chartManager.js:1342 [group subscriber] 🔄 Processing group change...
-axisCalculator.js:287 [calculateAxisCountForGroup] Debug: { units: [A,A], result: 1 }
-axisCalculator.js:287 [calculateAxisCountForGroup] Debug: { units: [A,V,V], result: 2 }
-axisCalculator.js:287 [calculateAxisCountForGroup] Debug: { units: [A], result: 1 }
-analyzeGroupsAndPublish.js:178 [analyzeGroupsAndPublishMaxYAxes] 📊 Analysis: G0(2ch,1ax:[A,A]) | G1(3ch,2ax:[A,V,V]) | G2(1ch,1ax:[A])
-analyzeGroupsAndPublish.js:179 [analyzeGroupsAndPublishMaxYAxes] 🎯 Publishing maxYAxes: 2
-maxYAxesStore.js:88 [maxYAxesStore] 📊 Published maxYAxes: 2
-chartManager.js:1359 [group subscriber] 📊 Axis count: old=1, new=2, changed=true
-chartManager.js:1390 [group subscriber] 🔥 Axis requirement changed -> FULL REBUILD
-installHook.js:1 [group subscriber] ❌ Group change processing failed: ReferenceError: Cannot access 'chartsContainer' before initialization
-    at chartManager.js:1411:24
-overrideMethod @ installHook.js:1Understand this error
-chartManager.js:1918 [group subscriber] 🔄 Falling back to full renderComtradeCharts...
-chartMetadataStore.js:192 [chartMetadataStore] Cleared all charts
-renderComtradeCharts.js:45 [renderComtradeCharts] Cleared chart metadata for new file
-renderComtradeCharts.js:53 [renderComtradeCharts] Starting chart rendering...
-axisCalculator.js:287 [calculateAxisCountForGroup] Debug: { units: [A,A], result: 1 }
-axisCalculator.js:287 [calculateAxisCountForGroup] Debug: { units: [A,V,V], result: 2 }
-axisCalculator.js:287 [calculateAxisCountForGroup] Debug: { units: [A], result: 1 }
-analyzeGroupsAndPublish.js:178 [analyzeGroupsAndPublishMaxYAxes] 📊 Analysis: G0(2ch,1ax:[A,A]) | G1(3ch,2ax:[A,V,V]) | G2(1ch,1ax:[A])
-analyzeGroupsAndPublish.js:179 [analyzeGroupsAndPublishMaxYAxes] 🎯 Publishing maxYAxes: 2
-maxYAxesStore.js:88 [maxYAxesStore] 📊 Published maxYAxes: 2
-renderComtradeCharts.js:58 [renderComtradeCharts] 🔧 Global axis alignment published to store
-renderAnalogCharts.js:36 [renderAnalogCharts] 📊 userGroups from state: Proxy(Array)
-renderAnalogCharts.js:37 [renderAnalogCharts] Total analog channels: 7
-renderAnalogCharts.js:55 [renderAnalogCharts] ⚡ Using user-assigned groups (6 channels)
-axisCalculator.js:287 [calculateAxisCountForGroup] Debug: { units: [A,A], result: 1 }
-axisCalculator.js:287 [calculateAxisCountForGroup] Debug: { units: [A], result: 1 }
-axisCalculator.js:287 [calculateAxisCountForGroup] Debug: { units: [A,V,V], result: 2 }
-renderAnalogCharts.js:83 [renderAnalogCharts] ⚡ Auto-grouping 1 unassigned channels
-renderAnalogCharts.js:92 [renderAnalogCharts] ✓ Auto-grouping took 0.40ms
-axisCalculator.js:287 [calculateAxisCountForGroup] Debug: { units: [V], result: 1 }
-renderAnalogCharts.js:146 [renderAnalogCharts] 🔧 Starting chart creation for 4 groups... maxYAxes=2
-renderAnalogCharts.js:194 [renderAnalogCharts] 🏷️ Group "G0": resolved indices = [0,1], extracted groupId = "G0"
-chartMetadataStore.js:130 [chartMetadataStore] Added chart Object
-renderAnalogCharts.js:224 [renderAnalogCharts] Creating G0 → A0 G0
-renderAnalogCharts.js:262 [renderAnalogCharts] ✅ Chart config: group="G0", globalMaxYAxes=2, channels=2, yUnits=[A, A]
-chartDomUtils.js:153 [initUPlotChart] 📊 Calculated chart width: 1906px from container 1906px
-renderAnalogCharts.js:424 [renderAnalogCharts] ✓ Group "G0" created in 4ms
-renderAnalogCharts.js:194 [renderAnalogCharts] 🏷️ Group "G2": resolved indices = [2], extracted groupId = "G2"
-chartMetadataStore.js:130 [chartMetadataStore] Added chart Object
-renderAnalogCharts.js:224 [renderAnalogCharts] Creating G2 → A1 G2
-renderAnalogCharts.js:262 [renderAnalogCharts] ✅ Chart config: group="G2", globalMaxYAxes=2, channels=1, yUnits=[A]
-chartDomUtils.js:153 [initUPlotChart] 📊 Calculated chart width: 1906px from container 1906px
-renderAnalogCharts.js:424 [renderAnalogCharts] ✓ Group "G2" created in 2ms
-renderAnalogCharts.js:194 [renderAnalogCharts] 🏷️ Group "G1": resolved indices = [3,4,5], extracted groupId = "G1"
-chartMetadataStore.js:130 [chartMetadataStore] Added chart Object
-renderAnalogCharts.js:224 [renderAnalogCharts] Creating G1 → A2 G1
-renderAnalogCharts.js:262 [renderAnalogCharts] ✅ Chart config: group="G1", globalMaxYAxes=2, channels=3, yUnits=[V, V, V]
-chartDomUtils.js:153 [initUPlotChart] 📊 Calculated chart width: 1906px from container 1906px
-renderAnalogCharts.js:424 [renderAnalogCharts] ✓ Group "G1" created in 1ms
-renderAnalogCharts.js:194 [renderAnalogCharts] 🏷️ Group "Voltages": resolved indices = [6], extracted groupId = "undefined"
-chartMetadataStore.js:130 [chartMetadataStore] Added chart Object
-renderAnalogCharts.js:224 [renderAnalogCharts] Creating G3 → A3 Voltages
-renderAnalogCharts.js:262 [renderAnalogCharts] ✅ Chart config: group="Voltages", globalMaxYAxes=2, channels=1, yUnits=[]
-chartDomUtils.js:153 [initUPlotChart] 📊 Calculated chart width: 1906px from container 1906px
-renderAnalogCharts.js:424 [renderAnalogCharts] ✓ Group "Voltages" created in 1ms
-renderAnalogCharts.js:435 [renderAnalogCharts] ✓ All 4 charts created in 8ms
-renderAnalogCharts.js:451 [renderAnalogCharts] ✅ Render complete in 9ms
-renderDigitalCharts.js:22 [renderDigitalCharts] 🟦 Starting digital chart rendering...
-renderDigitalCharts.js:27 [renderDigitalCharts] 📊 Found 5 changed digital channels: Array(5)
-renderDigitalCharts.js:53 [renderDigitalCharts] 📋 Channel labels: SV03, SV03T, ER2, EQC2, EQC3
-renderDigitalCharts.js:56 [renderDigitalCharts] 🎨 Line colors: [#0f766e, #b91c1c, #be185d, #15803d, #6d28d9]
-renderDigitalCharts.js:73 [renderDigitalCharts] 🏷️ Digital groupId = "G3"
-chartMetadataStore.js:130 [chartMetadataStore] Added chart Object
-renderDigitalCharts.js:103 [renderDigitalCharts] Creating G3 → D0
-renderDigitalCharts.js:121 [renderDigitalCharts] 🏗️ Chart container created
-renderDigitalCharts.js:144 [renderDigitalCharts] ✅ Chart config: maxYAxes=2, channels=5, yMin=-0.5, yMax=14
-renderDigitalCharts.js:166 [renderDigitalCharts] 📏 Y-Axes Configuration: Object
-renderDigitalCharts.js:202 [renderDigitalCharts] 📏 First Axis Configuration: Object
-renderDigitalCharts.js:210 [renderDigitalCharts] 📏 Final Axes Array: Array(3)
-renderDigitalCharts.js:249 [renderDigitalCharts] 🔌 Before adding digitalFill plugin: Object
-digitalFillPlugin.js:55 [digitalFillPlugin] 🔧 Plugin initialized Object
-renderDigitalCharts.js:257 [renderDigitalCharts] 🔌 After adding digitalFill plugin: Object
-renderDigitalCharts.js:267 [renderDigitalCharts] ⏱️ createChartOptions took 1.6ms
-digitalFillPlugin.js:184 [digitalFillPlugin] ✅ Plugin init hook called Object
-renderDigitalCharts.js:281 [renderDigitalCharts] 📊 After uPlot creation: Object
-renderDigitalCharts.js:303 [renderDigitalCharts] ✅ Digital chart created in 0.7ms with 5 channels
-renderDigitalCharts.js:390 [renderDigitalCharts] ⏱️ Click handler setup took 0.1ms
-renderDigitalCharts.js:408 [renderDigitalCharts] ⏱️ ResizeObserver.observe took 0.0ms
-renderDigitalCharts.js:416 [renderDigitalCharts] ✓ Render complete in 10388.7ms
-renderComputedChannels.js:87 [renderComputedChannels] 🟪 Starting computed channels rendering...
-renderComputedChannels.js:97 [renderComputedChannels] ℹ️ No computed channels to render
-renderComtradeCharts.js:117 [renderComtradeCharts] Chart metadata summary: Object
-renderComtradeCharts.js:129 [renderComtradeCharts] ✅ All 5 charts rendered in 10400.1ms
-installHook.js:1 Error: Script error. at :0:0 null
-overrideMethod @ installHook.js:1Understand this error
-uPlot.iife.js:3973 Uncaught TypeError: Cannot read properties of undefined (reading 'length')Understand this error
-digitalFillPlugin.js:153 [digitalFillPlugin] setScale hook called Object
-digitalFillPlugin.js:167 [digitalFillPlugin] Setting y-scale to: Object
-digitalFillPlugin.js:153 [digitalFillPlugin] setScale hook called Object
-digitalFillPlugin.js:167 [digitalFillPlugin] Setting y-scale to: Object
-installHook.js:1 Error: Script error. at :0:0 null
-overrideMethod @ installHook.js:1Understand this error
-uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')Understand this error
-main.js:112 📊 [ChartMetadata] Change detected: Object
-main.js:112 📊 [ChartMetadata] Change detected: Object
-main.js:112 📊 [ChartMetadata] Change detected: Object
-main.js:112 📊 [ChartMetadata] Change detected: Object
-main.js:112 📊 [ChartMetadata] Change detected: Object
-main.js:112 📊 [ChartMetadata] Change detected: Object
-main.js:112 📊 [ChartMetadata] Change detected: Object
-main.js:112 📊 [ChartMetadata] Change detected: Object
-main.js:112 📊 [ChartMetadata] Change detected: Object
-main.js:112 📊 [ChartMetadata] Change detected: Object
-main.js:112 📊 [ChartMetadata] Change detected: Object
-main.js:112 📊 [ChartMetadata] Change detected: Object
-main.js:112 📊 [ChartMetadata] Change detected: Object
-main.js:112 📊 [ChartMetadata] Change detected: Object
-main.js:112 📊 [ChartMetadata] Change detected: Object
-main.js:112 📊 [ChartMetadata] Change detected: Object
-main.js:112 📊 [ChartMetadata] Change detected: Object
-main.js:112 📊 [ChartMetadata] Change detected: Object
-main.js:112 📊 [ChartMetadata] Change detected: Object
-main.js:112 📊 [ChartMetadata] Change detected: Object
-main.js:112 📊 [ChartMetadata] Change detected: Object
-main.js:112 📊 [ChartMetadata] Change detected: Object
-main.js:112 📊 [ChartMetadata] Change detected: Object
-main.js:112 📊 [ChartMetadata] Change detected: Object
-main.js:112 📊 [ChartMetadata] Change detected: Object
-main.js:112 📊 [ChartMetadata] Change detected: Object
-main.js:112 📊 [ChartMetadata] Change detected: Object
-main.js:112 📊 [ChartMetadata] Change detected: Object
-main.js:112 📊 [ChartMetadata] Change detected: Object
-main.js:112 📊 [ChartMetadata] Change detected: Object
-renderComtradeCharts.js:103 [MetadataChange] Array(1) changed to Proxy(Array)
-renderComtradeCharts.js:103 [MetadataChange] Array(1) changed to 0
-renderComtradeCharts.js:103 [MetadataChange] Array(1) changed to 0
-renderComtradeCharts.js:103 [MetadataChange] Array(1) changed to 0
-renderComtradeCharts.js:103 [MetadataChange] Array(1) changed to 0
-renderComtradeCharts.js:103 [MetadataChange] Array(1) changed to 1
-renderComtradeCharts.js:103 [MetadataChange] Array(1) changed to 1
-renderComtradeCharts.js:103 [MetadataChange] Array(2) changed to Proxy(Object)
-renderComtradeCharts.js:103 [MetadataChange] Array(2) changed to 1
-renderComtradeCharts.js:103 [MetadataChange] Array(1) changed to 1
-renderComtradeCharts.js:103 [MetadataChange] Array(1) changed to 3
-renderComtradeCharts.js:103 [MetadataChange] Array(1) changed to 2
-renderComtradeCharts.js:103 [MetadataChange] Array(2) changed to Proxy(Object)
-renderComtradeCharts.js:103 [MetadataChange] Array(2) changed to 2
-renderComtradeCharts.js:103 [MetadataChange] Array(1) changed to 1
-renderComtradeCharts.js:103 [MetadataChange] Array(1) changed to 2
-renderComtradeCharts.js:103 [MetadataChange] Array(1) changed to 3
-renderComtradeCharts.js:103 [MetadataChange] Array(2) changed to Proxy(Object)
-renderComtradeCharts.js:103 [MetadataChange] Array(2) changed to 3
-renderComtradeCharts.js:103 [MetadataChange] Array(1) changed to 3
-renderComtradeCharts.js:103 [MetadataChange] Array(1) changed to 4
-renderComtradeCharts.js:103 [MetadataChange] Array(1) changed to 4
-renderComtradeCharts.js:103 [MetadataChange] Array(2) changed to Proxy(Object)
-renderComtradeCharts.js:103 [MetadataChange] Array(2) changed to 4
-renderComtradeCharts.js:103 [MetadataChange] Array(1) changed to 4
-renderComtradeCharts.js:103 [MetadataChange] Array(1) changed to 4
-renderComtradeCharts.js:103 [MetadataChange] Array(1) changed to 1
-renderComtradeCharts.js:103 [MetadataChange] Array(2) changed to Proxy(Object)
-renderComtradeCharts.js:103 [MetadataChange] Array(2) changed to 5
-renderComtradeCharts.js:103 [MetadataChange] Array(1) changed to 4
-4chartDomUtils.js:185 [ResizeObserver] 📊 Chart resized to 1906x398px
-digitalFillPlugin.js:200 [digitalFillPlugin] 🎨 Draw hook called Object
-digitalFillPlugin.js:274 [digitalFillPlugin] Signal 0 drawing with color: Object
-digitalFillPlugin.js:291 [digitalFillPlugin] Signal 0 canvas styles set: Object
-digitalFillPlugin.js:346 [digitalFillPlugin] Signal 0 PRE-DRAW DIAGNOSTIC: Object
-digitalFillPlugin.js:427 [digitalFillPlugin] Signal 0 DRAW OPERATIONS: Object
-digitalFillPlugin.js:274 [digitalFillPlugin] Signal 1 drawing with color: Object
-digitalFillPlugin.js:291 [digitalFillPlugin] Signal 1 canvas styles set: Object
-digitalFillPlugin.js:346 [digitalFillPlugin] Signal 1 PRE-DRAW DIAGNOSTIC: Object
-digitalFillPlugin.js:427 [digitalFillPlugin] Signal 1 DRAW OPERATIONS: Object
-digitalFillPlugin.js:274 [digitalFillPlugin] Signal 2 drawing with color: Object
-digitalFillPlugin.js:291 [digitalFillPlugin] Signal 2 canvas styles set: Object
-digitalFillPlugin.js:346 [digitalFillPlugin] Signal 2 PRE-DRAW DIAGNOSTIC: Object
-digitalFillPlugin.js:427 [digitalFillPlugin] Signal 2 DRAW OPERATIONS: Object
-digitalFillPlugin.js:274 [digitalFillPlugin] Signal 3 drawing with color: Object
-digitalFillPlugin.js:291 [digitalFillPlugin] Signal 3 canvas styles set: Object
-digitalFillPlugin.js:346 [digitalFillPlugin] Signal 3 PRE-DRAW DIAGNOSTIC: Object
-digitalFillPlugin.js:427 [digitalFillPlugin] Signal 3 DRAW OPERATIONS: Object
-digitalFillPlugin.js:274 [digitalFillPlugin] Signal 4 drawing with color: Object
-digitalFillPlugin.js:291 [digitalFillPlugin] Signal 4 canvas styles set: Object
-digitalFillPlugin.js:346 [digitalFillPlugin] Signal 4 PRE-DRAW DIAGNOSTIC: Object
-digitalFillPlugin.js:427 [digitalFillPlugin] Signal 4 DRAW OPERATIONS: Object
-digitalFillPlugin.js:440 [digitalFillPlugin] ✅ Draw hook completed
-installHook.js:1 Error: Script error. at :0:0 null
-overrideMethod @ installHook.js:1Understand this error
-uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')Understand this error
-installHook.js:1 Error: Script error. at :0:0 null
-overrideMethod @ installHook.js:1Understand this error
-uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')Understand this error
-installHook.js:1 Error: Script error. at :0:0 null
-overrideMethod @ installHook.js:1Understand this error
-uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')Understand this error
-installHook.js:1 Error: Script error. at :0:0 null
-overrideMethod @ installHook.js:1Understand this error
-uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')Understand this error
-installHook.js:1 Error: Script error. at :0:0 null
-overrideMethod @ installHook.js:1Understand this error
-uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')Understand this error
-installHook.js:1 Error: Script error. at :0:0 null
-overrideMethod @ installHook.js:1Understand this error
-uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')Understand this error
-installHook.js:1 Error: Script error. at :0:0 null
-overrideMethod @ installHook.js:1Understand this error
-uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')Understand this error
-installHook.js:1 Error: Script error. at :0:0 null
-overrideMethod @ installHook.js:1Understand this error
-uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')Understand this error
-installHook.js:1 Error: Script error. at :0:0 null
-overrideMethod @ installHook.js:1Understand this error
-uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')Understand this error
-installHook.js:1 Error: Script error. at :0:0 null
-overrideMethod @ installHook.js:1Understand this error
-uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')Understand this error
-installHook.js:1 Error: Script error. at :0:0 null
-overrideMethod @ installHook.js:1Understand this error
-uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')Understand this error
-installHook.js:1 Error: Script error. at :0:0 null
-overrideMethod @ installHook.js:1Understand this error
-uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')Understand this error
-installHook.js:1 Error: Script error. at :0:0 null
-overrideMethod @ installHook.js:1Understand this error
-uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')Understand this error
-installHook.js:1 Error: Script error. at :0:0 null
-overrideMethod @ installHook.js:1Understand this error
-uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')Understand this error
-installHook.js:1 Error: Script error. at :0:0 null
-overrideMethod @ installHook.js:1Understand this error
-uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')Understand this error
-installHook.js:1 Error: Script error. at :0:0 null
-overrideMethod @ installHook.js:1Understand this error
-uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')Understand this error
-installHook.js:1 Error: Script error. at :0:0 null
-overrideMethod @ installHook.js:1Understand this error
-uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')Understand this error
-installHook.js:1 Error: Script error. at :0:0 null
-overrideMethod @ installHook.js:1Understand this error
-uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')Understand this error
-installHook.js:1 Error: Script error. at :0:0 null
-overrideMethod @ installHook.js:1Understand this error
-uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')Understand this error
-installHook.js:1 Error: Script error. at :0:0 null
-overrideMethod @ installHook.js:1Understand this error
-uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')Understand this error
-installHook.js:1 Error: Script error. at :0:0 null
-overrideMethod @ installHook.js:1Understand this error
-uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')Understand this error
-installHook.js:1 Error: Script error. at :0:0 null
-overrideMethod @ installHook.js:1Understand this error
-uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')Understand this error
-installHook.js:1 Error: Script error. at :0:0 null
-overrideMethod @ installHook.js:1Understand this error
-uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')Understand this error
-installHook.js:1 Error: Script error. at :0:0 null
-overrideMethod @ installHook.js:1Understand this error
-uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')Understand this error
-installHook.js:1 Error: Script error. at :0:0 null
-overrideMethod @ installHook.js:1Understand this error
-uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')Understand this error
-installHook.js:1 Error: Script error. at :0:0 null
-overrideMethod @ installHook.js:1Understand this error
-uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')Understand this error
-installHook.js:1 Error: Script error. at :0:0 null
-overrideMethod @ installHook.js:1Understand this error
-uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')Understand this error
-installHook.js:1 Error: Script error. at :0:0 null
-overrideMethod @ installHook.js:1Understand this error
-uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')Understand this error
-installHook.js:1 Error: Script error. at :0:0 null
-overrideMethod @ installHook.js:1Understand this error
-uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')Understand this error
-installHook.js:1 Error: Script error. at :0:0 null
-overrideMethod @ installHook.js:1Understand this error
-uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')Understand this error
-installHook.js:1 Error: Script error. at :0:0 null
-overrideMethod @ installHook.js:1Understand this error
-uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')Understand this error
-installHook.js:1 Error: Script error. at :0:0 null
-overrideMethod @ installHook.js:1Understand this error
-uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')Understand this error
-installHook.js:1 Error: Script error. at :0:0 null
-overrideMethod @ installHook.js:1Understand this error
-uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')Understand this error
-installHook.js:1 Error: Script error. at :0:0 null
-overrideMethod @ installHook.js:1Understand this error
-uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')Understand this error
-installHook.js:1 Error: Script error. at :0:0 null
-overrideMethod @ installHook.js:1Understand this error
-uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')Understand this error
-installHook.js:1 Error: Script error. at :0:0 null
-overrideMethod @ installHook.js:1Understand this error
-uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')Understand this error
-installHook.js:1 Error: Script error. at :0:0 null
-overrideMethod @ installHook.js:1Understand this error
-uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')Understand this error
-installHook.js:1 Error: Script error. at :0:0 null
-overrideMethod @ installHook.js:1Understand this error
-uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')Understand this error
-installHook.js:1 Error: Script error. at :0:0 null
-overrideMethod @ installHook.js:1Understand this error
-uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')Understand this error
-installHook.js:1 Error: Script error. at :0:0 null
-overrideMethod @ installHook.js:1Understand this error
-uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')Understand this error
-installHook.js:1 Error: Script error. at :0:0 null
-overrideMethod @ installHook.js:1Understand this error
-uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')Understand this error
-4chartDomUtils.js:185 [ResizeObserver] 📊 Chart resized to 1351x398px
-installHook.js:1 Error: Script error. at :0:0 null
-overrideMethod @ installHook.js:1
-(anonymous) @ main.js:1993Understand this error
-uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')
-cursor.dataIdx @ uPlot.iife.js:3528
-updateCursor @ uPlot.iife.js:5375
-mouseMove @ uPlot.iife.js:5725
-pub @ uPlot.iife.js:6059
-pub @ uPlot.iife.js:1750
-pubSync @ uPlot.iife.js:6052
-updateCursor @ uPlot.iife.js:5660
-mouseMove @ uPlot.iife.js:5723
-(anonymous) @ uPlot.iife.js:1350Understand this error
-installHook.js:1 Error: Script error. at :0:0 null
-overrideMethod @ installHook.js:1
-(anonymous) @ main.js:1993Understand this error
-uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')
-cursor.dataIdx @ uPlot.iife.js:3528
-updateCursor @ uPlot.iife.js:5375
-mouseMove @ uPlot.iife.js:5725
-pub @ uPlot.iife.js:6059
-pub @ uPlot.iife.js:1750
-pubSync @ uPlot.iife.js:6052
-updateCursor @ uPlot.iife.js:5660
-mouseMove @ uPlot.iife.js:5723
-(anonymous) @ uPlot.iife.js:1350Understand this error
-installHook.js:1 Error: Script error. at :0:0 null
-overrideMethod @ installHook.js:1
-(anonymous) @ main.js:1993Understand this error
-uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')
-cursor.dataIdx @ uPlot.iife.js:3528
-updateCursor @ uPlot.iife.js:5375
-mouseMove @ uPlot.iife.js:5725
-pub @ uPlot.iife.js:6059
-pub @ uPlot.iife.js:1750
-pubSync @ uPlot.iife.js:6052
-updateCursor @ uPlot.iife.js:5660
-mouseMove @ uPlot.iife.js:5723
-(anonymous) @ uPlot.iife.js:1350Understand this error
-installHook.js:1 Error: Script error. at :0:0 null
-overrideMethod @ installHook.js:1
-(anonymous) @ main.js:1993Understand this error
-uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')
-cursor.dataIdx @ uPlot.iife.js:3528
-updateCursor @ uPlot.iife.js:5375
-mouseMove @ uPlot.iife.js:5725
-pub @ uPlot.iife.js:6059
-pub @ uPlot.iife.js:1750
-pubSync @ uPlot.iife.js:6052
-updateCursor @ uPlot.iife.js:5660
-mouseMove @ uPlot.iife.js:5723
-(anonymous) @ uPlot.iife.js:1350Understand this error
-installHook.js:1 Error: Script error. at :0:0 null
-overrideMethod @ installHook.js:1
-(anonymous) @ main.js:1993Understand this error
-uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')
-cursor.dataIdx @ uPlot.iife.js:3528
-updateCursor @ uPlot.iife.js:5375
-mouseMove @ uPlot.iife.js:5725
-pub @ uPlot.iife.js:6059
-pub @ uPlot.iife.js:1750
-pubSync @ uPlot.iife.js:6052
-updateCursor @ uPlot.iife.js:5660
-mouseMove @ uPlot.iife.js:5723
-(anonymous) @ uPlot.iife.js:1350Understand this error
-installHook.js:1 Error: Script error. at :0:0 null
-overrideMethod @ installHook.js:1
-(anonymous) @ main.js:1993Understand this error
-uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')
-cursor.dataIdx @ uPlot.iife.js:3528
-updateCursor @ uPlot.iife.js:5375
-mouseMove @ uPlot.iife.js:5725
-pub @ uPlot.iife.js:6059
-pub @ uPlot.iife.js:1750
-pubSync @ uPlot.iife.js:6052
-updateCursor @ uPlot.iife.js:5660
-mouseMove @ uPlot.iife.js:5723
-(anonymous) @ uPlot.iife.js:1350Understand this error
-installHook.js:1 Error: Script error. at :0:0 null
-overrideMethod @ installHook.js:1
-(anonymous) @ main.js:1993Understand this error
-uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')
-cursor.dataIdx @ uPlot.iife.js:3528
-updateCursor @ uPlot.iife.js:5375
-mouseMove @ uPlot.iife.js:5725
-pub @ uPlot.iife.js:6059
-pub @ uPlot.iife.js:1750
-pubSync @ uPlot.iife.js:6052
-updateCursor @ uPlot.iife.js:5660
-mouseMove @ uPlot.iife.js:5723
-(anonymous) @ uPlot.iife.js:1350Understand this error
-installHook.js:1 Error: Script error. at :0:0 null
-overrideMethod @ installHook.js:1
-(anonymous) @ main.js:1993Understand this error
-uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')
-cursor.dataIdx @ uPlot.iife.js:3528
-updateCursor @ uPlot.iife.js:5375
-mouseMove @ uPlot.iife.js:5725
-pub @ uPlot.iife.js:6059
-pub @ uPlot.iife.js:1750
-pubSync @ uPlot.iife.js:6052
-updateCursor @ uPlot.iife.js:5660
-mouseMove @ uPlot.iife.js:5723
-(anonymous) @ uPlot.iife.js:1350Understand this error
-installHook.js:1 Error: Script error. at :0:0 null
-overrideMethod @ installHook.js:1
-(anonymous) @ main.js:1993Understand this error
-uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')
-cursor.dataIdx @ uPlot.iife.js:3528
-updateCursor @ uPlot.iife.js:5375
-mouseMove @ uPlot.iife.js:5725
-pub @ uPlot.iife.js:6059
-pub @ uPlot.iife.js:1750
-pubSync @ uPlot.iife.js:6052
-updateCursor @ uPlot.iife.js:5660
-mouseMove @ uPlot.iife.js:5723
-(anonymous) @ uPlot.iife.js:1350Understand this error
-installHook.js:1 Error: Script error. at :0:0 null
-overrideMethod @ installHook.js:1
-(anonymous) @ main.js:1993Understand this error
-uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')
-cursor.dataIdx @ uPlot.iife.js:3528
-updateCursor @ uPlot.iife.js:5375
-mouseMove @ uPlot.iife.js:5725
-pub @ uPlot.iife.js:6059
-pub @ uPlot.iife.js:1750
-pubSync @ uPlot.iife.js:6052
-updateCursor @ uPlot.iife.js:5660
-mouseMove @ uPlot.iife.js:5723
-(anonymous) @ uPlot.iife.js:1350Understand this error
-installHook.js:1 Error: Script error. at :0:0 null
-overrideMethod @ installHook.js:1
-(anonymous) @ main.js:1993Understand this error
-uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')
-cursor.dataIdx @ uPlot.iife.js:3528
-updateCursor @ uPlot.iife.js:5375
-mouseMove @ uPlot.iife.js:5725
-pub @ uPlot.iife.js:6059
-pub @ uPlot.iife.js:1750
-pubSync @ uPlot.iife.js:6052
-updateCursor @ uPlot.iife.js:5660
-mouseMove @ uPlot.iife.js:5723
-(anonymous) @ uPlot.iife.js:1350Understand this error
-installHook.js:1 Error: Script error. at :0:0 null
-overrideMethod @ installHook.js:1
-(anonymous) @ main.js:1993Understand this error
-uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')
-cursor.dataIdx @ uPlot.iife.js:3528
-updateCursor @ uPlot.iife.js:5375
-mouseMove @ uPlot.iife.js:5725
-pub @ uPlot.iife.js:6059
-pub @ uPlot.iife.js:1750
-pubSync @ uPlot.iife.js:6052
-updateCursor @ uPlot.iife.js:5660
-mouseMove @ uPlot.iife.js:5723
-(anonymous) @ uPlot.iife.js:1350Understand this error
-installHook.js:1 Error: Script error. at :0:0 null
-overrideMethod @ installHook.js:1
-(anonymous) @ main.js:1993Understand this error
-uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')
-cursor.dataIdx @ uPlot.iife.js:3528
-updateCursor @ uPlot.iife.js:5375
-mouseMove @ uPlot.iife.js:5725
-pub @ uPlot.iife.js:6059
-pub @ uPlot.iife.js:1750
-pubSync @ uPlot.iife.js:6052
-updateCursor @ uPlot.iife.js:5660
-mouseMove @ uPlot.iife.js:5723
-(anonymous) @ uPlot.iife.js:1350Understand this error
-installHook.js:1 Error: Script error. at :0:0 null
-overrideMethod @ installHook.js:1
-(anonymous) @ main.js:1993Understand this error
-uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')
-cursor.dataIdx @ uPlot.iife.js:3528
-updateCursor @ uPlot.iife.js:5375
-mouseMove @ uPlot.iife.js:5725
-pub @ uPlot.iife.js:6059
-pub @ uPlot.iife.js:1750
-pubSync @ uPlot.iife.js:6052
-updateCursor @ uPlot.iife.js:5660
-mouseMove @ uPlot.iife.js:5723
-(anonymous) @ uPlot.iife.js:1350Understand this error
-installHook.js:1 Error: Script error. at :0:0 null
-overrideMethod @ installHook.js:1
-(anonymous) @ main.js:1993Understand this error
-uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')
-cursor.dataIdx @ uPlot.iife.js:3528
-updateCursor @ uPlot.iife.js:5375
-mouseMove @ uPlot.iife.js:5725
-pub @ uPlot.iife.js:6059
-pub @ uPlot.iife.js:1750
-pubSync @ uPlot.iife.js:6052
-updateCursor @ uPlot.iife.js:5660
-mouseMove @ uPlot.iife.js:5723
-(anonymous) @ uPlot.iife.js:1350Understand this error
-installHook.js:1 Error: Script error. at :0:0 null
-overrideMethod @ installHook.js:1
-(anonymous) @ main.js:1993Understand this error
-uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')
-cursor.dataIdx @ uPlot.iife.js:3528
-updateCursor @ uPlot.iife.js:5375
-mouseMove @ uPlot.iife.js:5725
-pub @ uPlot.iife.js:6059
-pub @ uPlot.iife.js:1750
-pubSync @ uPlot.iife.js:6052
-updateCursor @ uPlot.iife.js:5660
-mouseMove @ uPlot.iife.js:5723
-(anonymous) @ uPlot.iife.js:1350Understand this error
-installHook.js:1 Error: Script error. at :0:0 null
-overrideMethod @ installHook.js:1
-(anonymous) @ main.js:1993Understand this error
-uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')
-cursor.dataIdx @ uPlot.iife.js:3528
-updateCursor @ uPlot.iife.js:5375
-mouseMove @ uPlot.iife.js:5725
-pub @ uPlot.iife.js:6059
-pub @ uPlot.iife.js:1750
-pubSync @ uPlot.iife.js:6052
-updateCursor @ uPlot.iife.js:5660
-mouseMove @ uPlot.iife.js:5723
-(anonymous) @ uPlot.iife.js:1350Understand this error
-installHook.js:1 Error: Script error. at :0:0 null
-overrideMethod @ installHook.js:1
-(anonymous) @ main.js:1993Understand this error
-uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')
-cursor.dataIdx @ uPlot.iife.js:3528
-updateCursor @ uPlot.iife.js:5375
-mouseMove @ uPlot.iife.js:5725
-pub @ uPlot.iife.js:6059
-pub @ uPlot.iife.js:1750
-pubSync @ uPlot.iife.js:6052
-updateCursor @ uPlot.iife.js:5660
-mouseMove @ uPlot.iife.js:5723
-(anonymous) @ uPlot.iife.js:1350Understand this error
-installHook.js:1 Error: Script error. at :0:0 null
-overrideMethod @ installHook.js:1
-(anonymous) @ main.js:1993Understand this error
-uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')
-cursor.dataIdx @ uPlot.iife.js:3528
-updateCursor @ uPlot.iife.js:5375
-mouseMove @ uPlot.iife.js:5725
-pub @ uPlot.iife.js:6059
-pub @ uPlot.iife.js:1750
-pubSync @ uPlot.iife.js:6052
-updateCursor @ uPlot.iife.js:5660
-mouseMove @ uPlot.iife.js:5723
-(anonymous) @ uPlot.iife.js:1350Understand this error
-installHook.js:1 Error: Script error. at :0:0 null
-overrideMethod @ installHook.js:1
-(anonymous) @ main.js:1993Understand this error
-uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')
-cursor.dataIdx @ uPlot.iife.js:3528
-updateCursor @ uPlot.iife.js:5375
-mouseMove @ uPlot.iife.js:5725
-pub @ uPlot.iife.js:6059
-pub @ uPlot.iife.js:1750
-pubSync @ uPlot.iife.js:6052
-updateCursor @ uPlot.iife.js:5660
-mouseMove @ uPlot.iife.js:5723
-(anonymous) @ uPlot.iife.js:1350Understand this error
-installHook.js:1 Error: Script error. at :0:0 null
-overrideMethod @ installHook.js:1
-(anonymous) @ main.js:1993Understand this error
-uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')
-cursor.dataIdx @ uPlot.iife.js:3528
-updateCursor @ uPlot.iife.js:5375
-mouseMove @ uPlot.iife.js:5725
-pub @ uPlot.iife.js:6059
-pub @ uPlot.iife.js:1750
-pubSync @ uPlot.iife.js:6052
-updateCursor @ uPlot.iife.js:5660
-mouseMove @ uPlot.iife.js:5723
-(anonymous) @ uPlot.iife.js:1350Understand this error
-installHook.js:1 Error: Script error. at :0:0 null
-overrideMethod @ installHook.js:1
-(anonymous) @ main.js:1993Understand this error
-uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')
-cursor.dataIdx @ uPlot.iife.js:3528
-updateCursor @ uPlot.iife.js:5375
-mouseMove @ uPlot.iife.js:5725
-pub @ uPlot.iife.js:6059
-pub @ uPlot.iife.js:1750
-pubSync @ uPlot.iife.js:6052
-updateCursor @ uPlot.iife.js:5660
-mouseMove @ uPlot.iife.js:5723
-(anonymous) @ uPlot.iife.js:1350Understand this error
-installHook.js:1 Error: Script error. at :0:0 null
-overrideMethod @ installHook.js:1
-(anonymous) @ main.js:1993Understand this error
-uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')
-cursor.dataIdx @ uPlot.iife.js:3528
-updateCursor @ uPlot.iife.js:5375
-mouseMove @ uPlot.iife.js:5725
-pub @ uPlot.iife.js:6059
-pub @ uPlot.iife.js:1750
-pubSync @ uPlot.iife.js:6052
-updateCursor @ uPlot.iife.js:5660
-mouseMove @ uPlot.iife.js:5723
-(anonymous) @ uPlot.iife.js:1350Understand this error
-installHook.js:1 Error: Script error. at :0:0 null
-overrideMethod @ installHook.js:1
-(anonymous) @ main.js:1993Understand this error
-uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')
-cursor.dataIdx @ uPlot.iife.js:3528
-updateCursor @ uPlot.iife.js:5375
-mouseMove @ uPlot.iife.js:5725
-pub @ uPlot.iife.js:6059
-pub @ uPlot.iife.js:1750
-pubSync @ uPlot.iife.js:6052
-updateCursor @ uPlot.iife.js:5660
-mouseMove @ uPlot.iife.js:5723
-(anonymous) @ uPlot.iife.js:1350Understand this error
-installHook.js:1 Error: Script error. at :0:0 null
-overrideMethod @ installHook.js:1
-(anonymous) @ main.js:1993Understand this error
-uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')
-cursor.dataIdx @ uPlot.iife.js:3528
-updateCursor @ uPlot.iife.js:5375
-mouseMove @ uPlot.iife.js:5725
-pub @ uPlot.iife.js:6059
-pub @ uPlot.iife.js:1750
-pubSync @ uPlot.iife.js:6052
-updateCursor @ uPlot.iife.js:5660
-mouseMove @ uPlot.iife.js:5723
-(anonymous) @ uPlot.iife.js:1350Understand this error
-installHook.js:1 Error: Script error. at :0:0 null
-overrideMethod @ installHook.js:1
-(anonymous) @ main.js:1993Understand this error
-uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')
-cursor.dataIdx @ uPlot.iife.js:3528
-updateCursor @ uPlot.iife.js:5375
-mouseMove @ uPlot.iife.js:5725
-pub @ uPlot.iife.js:6059
-pub @ uPlot.iife.js:1750
-pubSync @ uPlot.iife.js:6052
-updateCursor @ uPlot.iife.js:5660
-mouseMove @ uPlot.iife.js:5723
-(anonymous) @ uPlot.iife.js:1350Understand this error
-installHook.js:1 Error: Script error. at :0:0 null
-overrideMethod @ installHook.js:1
-(anonymous) @ main.js:1993Understand this error
-uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')
-cursor.dataIdx @ uPlot.iife.js:3528
-updateCursor @ uPlot.iife.js:5375
-mouseMove @ uPlot.iife.js:5725
-pub @ uPlot.iife.js:6059
-pub @ uPlot.iife.js:1750
-pubSync @ uPlot.iife.js:6052
-updateCursor @ uPlot.iife.js:5660
-mouseMove @ uPlot.iife.js:5723
-(anonymous) @ uPlot.iife.js:1350Understand this error
-installHook.js:1 Error: Script error. at :0:0 null
-overrideMethod @ installHook.js:1
-(anonymous) @ main.js:1993Understand this error
-uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')
-cursor.dataIdx @ uPlot.iife.js:3528
-updateCursor @ uPlot.iife.js:5375
-mouseMove @ uPlot.iife.js:5725
-pub @ uPlot.iife.js:6059
-pub @ uPlot.iife.js:1750
-pubSync @ uPlot.iife.js:6052
-updateCursor @ uPlot.iife.js:5660
-mouseMove @ uPlot.iife.js:5723
-(anonymous) @ uPlot.iife.js:1350Understand this error
-installHook.js:1 Error: Script error. at :0:0 null
-overrideMethod @ installHook.js:1
-(anonymous) @ main.js:1993Understand this error
-uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')
-cursor.dataIdx @ uPlot.iife.js:3528
-updateCursor @ uPlot.iife.js:5375
-mouseMove @ uPlot.iife.js:5725
-pub @ uPlot.iife.js:6059
-pub @ uPlot.iife.js:1750
-pubSync @ uPlot.iife.js:6052
-updateCursor @ uPlot.iife.js:5660
-mouseMove @ uPlot.iife.js:5723
-(anonymous) @ uPlot.iife.js:1350Understand this error
-installHook.js:1 Error: Script error. at :0:0 null
-overrideMethod @ installHook.js:1
-(anonymous) @ main.js:1993Understand this error
-uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')
-cursor.dataIdx @ uPlot.iife.js:3528
-updateCursor @ uPlot.iife.js:5375
-mouseMove @ uPlot.iife.js:5725
-pub @ uPlot.iife.js:6059
-pub @ uPlot.iife.js:1750
-pubSync @ uPlot.iife.js:6052
-updateCursor @ uPlot.iife.js:5660
-mouseMove @ uPlot.iife.js:5723
-(anonymous) @ uPlot.iife.js:1350Understand this error
-installHook.js:1 Error: Script error. at :0:0 null
-overrideMethod @ installHook.js:1
-(anonymous) @ main.js:1993Understand this error
-uPlot.iife.js:3528 Uncaught TypeError: Cannot read properties of undefined (reading '1')
-cursor.dataIdx @ uPlot.iife.js:3528
-updateCursor @ uPlot.iife.js:5375
-mouseMove @ uPlot.iife.js:5725
-pub @ uPlot.iife.js:6059
-pub @ uPlot.iife.js:1750
-pubSync @ uPlot.iife.js:6052
-updateCursor @ uPlot.iife.js:5660
-mouseMove @ uPlot.iife.js:5723
-(anonymous) @ uPlot.iife.js:1350Understand this error
-installHook.js:1 Error: Script error. at :0:0 null
-overrideMethod @ installHook.js:1
-(anonymous) @ main.js:1993Understand this error
+[DeltaDrawer] show() called
+DeltaDrawer.js:89 [DeltaDrawer] Search functionality initialized
+DeltaDrawer.js:124 [DeltaDrawer] ✅ Drawer shown with width: 30%
+DeltaDrawer.js:172 [DeltaDrawer] update() called with 4 sections, 1 vertical lines, drawer open: true
+DeltaDrawer.js:234 [DeltaDrawer] ✨ Content cleared, creating single table container
+DeltaDrawer.js:243 [DeltaDrawer] ✅ Table container appended to content (ONCE)
+DeltaDrawer.js:288 [DeltaDrawer] ⚠️ Using placeholder time values
+update @ DeltaDrawer.js:288
+await in update
+handleVerticalLineShortcuts @ handleVerticalLineShortcuts.js:100
+await in handleVerticalLineShortcuts
+(anonymous) @ main.js:2895Understand this warning
+DeltaTableDataFormatter.js:30 [formatTableData] 🔄 Formatting data for 1 lines from 4 sections {firstSection: {…}, lastSection: {…}}
+DeltaTableDataFormatter.js:43 [formatTableData] 📊 Single vertical line mode - no deltas
+DeltaTableDataFormatter.js:59 [formatTableData] ✨ New channel: IA
+DeltaTableDataFormatter.js:66 [formatTableData] Channel IA: v0 = -283.01 MA
+DeltaTableDataFormatter.js:59 [formatTableData] ✨ New channel: IB
+DeltaTableDataFormatter.js:66 [formatTableData] Channel IB: v0 = 1.41 GA
+DeltaTableDataFormatter.js:59 [formatTableData] ✨ New channel: IC
+DeltaTableDataFormatter.js:66 [formatTableData] Channel IC: v0 = -1.67 GA
+DeltaTableDataFormatter.js:59 [formatTableData] ✨ New channel: IN
+DeltaTableDataFormatter.js:66 [formatTableData] Channel IN: v0 = -247.79 MA
+DeltaTableDataFormatter.js:59 [formatTableData] ✨ New channel: VA
+DeltaTableDataFormatter.js:66 [formatTableData] Channel VA: v0 = 161.59 MV
+DeltaTableDataFormatter.js:59 [formatTableData] ✨ New channel: VB
+DeltaTableDataFormatter.js:66 [formatTableData] Channel VB: v0 = -1.38 GV
+DeltaTableDataFormatter.js:59 [formatTableData] ✨ New channel: VC
+DeltaTableDataFormatter.js:66 [formatTableData] Channel VC: v0 = 1.69 GV
+DeltaTableDataFormatter.js:59 [formatTableData] ✨ New channel: SV03
+DeltaTableDataFormatter.js:66 [formatTableData] Channel SV03: v0 = 1.00 
+DeltaTableDataFormatter.js:59 [formatTableData] ✨ New channel: SV03T
+DeltaTableDataFormatter.js:66 [formatTableData] Channel SV03T: v0 = 1.00 
+DeltaTableDataFormatter.js:59 [formatTableData] ✨ New channel: ER2
+DeltaTableDataFormatter.js:66 [formatTableData] Channel ER2: v0 = 1.00 
+DeltaTableDataFormatter.js:59 [formatTableData] ✨ New channel: EQC2
+DeltaTableDataFormatter.js:66 [formatTableData] Channel EQC2: v0 = 1.00 
+DeltaTableDataFormatter.js:59 [formatTableData] ✨ New channel: EQC3
+DeltaTableDataFormatter.js:66 [formatTableData] Channel EQC3: v0 = 0.00 
+DeltaTableDataFormatter.js:211 [formatTableData] ✅ Consolidated 12 channels
+DeltaTableDataFormatter.js:243 [formatTableData] ✅ Formatted complete table with 13 rows (including time row) {totalChannels: 12, verticalLinesCount: 1, firstDataRow: {…}, lastDataRow: {…}}
+DeltaDrawer.js:301 [DeltaDrawer] formatTableData returned 13 rows
+DeltaTableRenderer.js:121 [DeltaTableRenderer] Subscribed to verticalLinesX state
+DeltaTableRenderer.js:34 [DeltaTableRenderer] render() called with: {rowCount: 13, linesCount: 1, containerExists: true, containerHtml: '', firstRow: {…}, …}
+DeltaTableRenderer.js:54 [DeltaTableRenderer] Extracted lines array: 0 lines
+DeltaTableRenderer.js:73 [DeltaTableRenderer] No time values extracted, using placeholders
+render @ DeltaTableRenderer.js:73
+update @ DeltaDrawer.js:331
+await in update
+handleVerticalLineShortcuts @ handleVerticalLineShortcuts.js:100
+await in handleVerticalLineShortcuts
+(anonymous) @ main.js:2895Understand this warning
+DeltaTableRenderer.js:82 [DeltaTableRenderer] Building HTML with 13 rows
+DeltaTable.js:80 [DeltaTable] First row structure: {channel: '__TIME_ROW__', color: '#3b82f6', v0: 'T1'}
+DeltaTable.js:81 [DeltaTable] Total rows: 13
+DeltaTable.js:82 [DeltaTable] VerticalLinesCount: 1
+DeltaTable.js:89 [DeltaTable] Row 1 values: {channel: 'IA', v0: '-283.01 MA', v1: undefined, delta0: undefined, percentage0: undefined}
+DeltaTableRenderer.js:93 [DeltaTableRenderer] ✅ Rendered table with 13 rows and 1 lines in container: delta-table-main
+DeltaTableRenderer.js:97 [DeltaTableRenderer] First 500 chars of rendered HTML: 
+    <div class="mt-4 flow-root">
+      <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+        <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+          <div class="overflow-hidden shadow outline outline-1 outline-black/5 sm:rounded-lg dark:shadow-none dark:-outline-offset-1 dark:outline-white/10">
+            <table class="relative min-w-full divide-y divide-gray-300 dark:divide-white/15">           
+              <thead class="bg-gray-50 dark:bg-gray-800/75
+DeltaDrawer.js:333 [DeltaDrawer] ✅ Table rendered with 13 rows (including time row) and 1 columns
+20verticalLinePlugin.js:92 [verticalLinePlugin] Subscription triggered, calling debounced update
+2setupPolarChartIntegration.js:103 [setupPolarChartWithVerticalLines] Subscription triggered, calling debounced update
+DeltaTableRenderer.js:113 [DeltaTableRenderer] Vertical lines changed, re-rendering table
+DeltaTableRenderer.js:34 [DeltaTableRenderer] render() called with: {rowCount: 13, linesCount: 1, containerExists: true, containerHtml: '\n    <div class="mt-4 flow-root">\n      <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">\n', firstRow: {…}, …}
+DeltaTableRenderer.js:54 [DeltaTableRenderer] Extracted lines array: 0 lines
+DeltaTableRenderer.js:73 [DeltaTableRenderer] No time values extracted, using placeholders
+render @ DeltaTableRenderer.js:73
+(anonymous) @ DeltaTableRenderer.js:118
+wrapped @ createState.js:514
+(anonymous) @ createState.js:544
+requestAnimationFrame
+notify @ createState.js:538
+set @ createState.js:681
+createState @ createState.js:470
+fILKw../components/chartComponent.js @ main.js:287
+newRequire @ test.1fcc916e.js:84
+localRequire @ test.1fcc916e.js:144
+handleVerticalLineShortcuts @ handleVerticalLineShortcuts.js:97
+(anonymous) @ main.js:2895Understand this warning
+DeltaTableRenderer.js:82 [DeltaTableRenderer] Building HTML with 13 rows
+DeltaTable.js:80 [DeltaTable] First row structure: {channel: '__TIME_ROW__', color: '#3b82f6', v0: 'T1'}
+DeltaTable.js:81 [DeltaTable] Total rows: 13
+DeltaTable.js:82 [DeltaTable] VerticalLinesCount: 1
+DeltaTable.js:89 [DeltaTable] Row 1 values: {channel: 'IA', v0: '-283.01 MA', v1: undefined, delta0: undefined, percentage0: undefined}
+DeltaTableRenderer.js:93 [DeltaTableRenderer] ✅ Rendered table with 13 rows and 1 lines in container: delta-table-main
+DeltaTableRenderer.js:97 [DeltaTableRenderer] First 500 chars of rendered HTML: 
+    <div class="mt-4 flow-root">
+      <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+        <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+          <div class="overflow-hidden shadow outline outline-1 outline-black/5 sm:rounded-lg dark:shadow-none dark:-outline-offset-1 dark:outline-white/10">
+            <table class="relative min-w-full divide-y divide-gray-300 dark:divide-white/15">           
+              <thead class="bg-gray-50 dark:bg-gray-800/75
+DeltaTableRenderer.js:113 [DeltaTableRenderer] Vertical lines changed, re-rendering table
+DeltaTableRenderer.js:34 [DeltaTableRenderer] render() called with: {rowCount: 13, linesCount: 1, containerExists: true, containerHtml: '\n    <div class="mt-4 flow-root">\n      <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">\n', firstRow: {…}, …}
+DeltaTableRenderer.js:54 [DeltaTableRenderer] Extracted lines array: 0 lines
+DeltaTableRenderer.js:73 [DeltaTableRenderer] No time values extracted, using placeholders
+render @ DeltaTableRenderer.js:73
+(anonymous) @ DeltaTableRenderer.js:118
+wrapped @ createState.js:514
+(anonymous) @ createState.js:544
+requestAnimationFrame
+notify @ createState.js:538
+set @ createState.js:681
+createState @ createState.js:470
+fILKw../components/chartComponent.js @ main.js:287
+newRequire @ test.1fcc916e.js:84
+localRequire @ test.1fcc916e.js:144
+handleVerticalLineShortcuts @ handleVerticalLineShortcuts.js:97
+(anonymous) @ main.js:2895Understand this warning
+DeltaTableRenderer.js:82 [DeltaTableRenderer] Building HTML with 13 rows
+DeltaTable.js:80 [DeltaTable] First row structure: {channel: '__TIME_ROW__', color: '#3b82f6', v0: 'T1'}
+DeltaTable.js:81 [DeltaTable] Total rows: 13
+DeltaTable.js:82 [DeltaTable] VerticalLinesCount: 1
+DeltaTable.js:89 [DeltaTable] Row 1 values: {channel: 'IA', v0: '-283.01 MA', v1: undefined, delta0: undefined, percentage0: undefined}
+DeltaTableRenderer.js:93 [DeltaTableRenderer] ✅ Rendered table with 13 rows and 1 lines in container: delta-table-main
+DeltaTableRenderer.js:97 [DeltaTableRenderer] First 500 chars of rendered HTML: 
+    <div class="mt-4 flow-root">
+      <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+        <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+          <div class="overflow-hidden shadow outline outline-1 outline-black/5 sm:rounded-lg dark:shadow-none dark:-outline-offset-1 dark:outline-white/10">
+            <table class="relative min-w-full divide-y divide-gray-300 dark:divide-white/15">           
+              <thead class="bg-gray-50 dark:bg-gray-800/75
+DeltaTableRenderer.js:113 [DeltaTableRenderer] Vertical lines changed, re-rendering table
+DeltaTableRenderer.js:34 [DeltaTableRenderer] render() called with: {rowCount: 13, linesCount: 1, containerExists: true, containerHtml: '\n    <div class="mt-4 flow-root">\n      <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">\n', firstRow: {…}, …}
+DeltaTableRenderer.js:54 [DeltaTableRenderer] Extracted lines array: 0 lines
+DeltaTableRenderer.js:73 [DeltaTableRenderer] No time values extracted, using placeholders
+render @ DeltaTableRenderer.js:73
+(anonymous) @ DeltaTableRenderer.js:118
+wrapped @ createState.js:514
+(anonymous) @ createState.js:544
+requestAnimationFrame
+notify @ createState.js:538
+set @ createState.js:681
+createState @ createState.js:470
+fILKw../components/chartComponent.js @ main.js:287
+newRequire @ test.1fcc916e.js:84
+localRequire @ test.1fcc916e.js:144
+handleVerticalLineShortcuts @ handleVerticalLineShortcuts.js:97
+(anonymous) @ main.js:2895Understand this warning
+DeltaTableRenderer.js:82 [DeltaTableRenderer] Building HTML with 13 rows
+DeltaTable.js:80 [DeltaTable] First row structure: {channel: '__TIME_ROW__', color: '#3b82f6', v0: 'T1'}
+DeltaTable.js:81 [DeltaTable] Total rows: 13
+DeltaTable.js:82 [DeltaTable] VerticalLinesCount: 1
+DeltaTable.js:89 [DeltaTable] Row 1 values: {channel: 'IA', v0: '-283.01 MA', v1: undefined, delta0: undefined, percentage0: undefined}
+DeltaTableRenderer.js:93 [DeltaTableRenderer] ✅ Rendered table with 13 rows and 1 lines in container: delta-table-main
+DeltaTableRenderer.js:97 [DeltaTableRenderer] First 500 chars of rendered HTML: 
+    <div class="mt-4 flow-root">
+      <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+        <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+          <div class="overflow-hidden shadow outline outline-1 outline-black/5 sm:rounded-lg dark:shadow-none dark:-outline-offset-1 dark:outline-white/10">
+            <table class="relative min-w-full divide-y divide-gray-300 dark:divide-white/15">           
+              <thead class="bg-gray-50 dark:bg-gray-800/75
+DeltaTableRenderer.js:113 [DeltaTableRenderer] Vertical lines changed, re-rendering table
+DeltaTableRenderer.js:34 [DeltaTableRenderer] render() called with: {rowCount: 13, linesCount: 1, containerExists: true, containerHtml: '\n    <div class="mt-4 flow-root">\n      <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">\n', firstRow: {…}, …}
+DeltaTableRenderer.js:54 [DeltaTableRenderer] Extracted lines array: 0 lines
+DeltaTableRenderer.js:73 [DeltaTableRenderer] No time values extracted, using placeholders
+render @ DeltaTableRenderer.js:73
+(anonymous) @ DeltaTableRenderer.js:118
+wrapped @ createState.js:514
+(anonymous) @ createState.js:544
+requestAnimationFrame
+notify @ createState.js:538
+set @ createState.js:681
+createState @ createState.js:470
+fILKw../components/chartComponent.js @ main.js:287
+newRequire @ test.1fcc916e.js:84
+localRequire @ test.1fcc916e.js:144
+handleVerticalLineShortcuts @ handleVerticalLineShortcuts.js:97
+(anonymous) @ main.js:2895Understand this warning
+DeltaTableRenderer.js:82 [DeltaTableRenderer] Building HTML with 13 rows
+DeltaTable.js:80 [DeltaTable] First row structure: {channel: '__TIME_ROW__', color: '#3b82f6', v0: 'T1'}
+DeltaTable.js:81 [DeltaTable] Total rows: 13
+DeltaTable.js:82 [DeltaTable] VerticalLinesCount: 1
+DeltaTable.js:89 [DeltaTable] Row 1 values: {channel: 'IA', v0: '-283.01 MA', v1: undefined, delta0: undefined, percentage0: undefined}
+DeltaTableRenderer.js:93 [DeltaTableRenderer] ✅ Rendered table with 13 rows and 1 lines in container: delta-table-main
+DeltaTableRenderer.js:97 [DeltaTableRenderer] First 500 chars of rendered HTML: 
+    <div class="mt-4 flow-root">
+      <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+        <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+          <div class="overflow-hidden shadow outline outline-1 outline-black/5 sm:rounded-lg dark:shadow-none dark:-outline-offset-1 dark:outline-white/10">
+            <table class="relative min-w-full divide-y divide-gray-300 dark:divide-white/15">           
+              <thead class="bg-gray-50 dark:bg-gray-800/75
+DeltaTableRenderer.js:113 [DeltaTableRenderer] Vertical lines changed, re-rendering table
+DeltaTableRenderer.js:34 [DeltaTableRenderer] render() called with: {rowCount: 13, linesCount: 1, containerExists: true, containerHtml: '\n    <div class="mt-4 flow-root">\n      <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">\n', firstRow: {…}, …}
+DeltaTableRenderer.js:54 [DeltaTableRenderer] Extracted lines array: 0 lines
+DeltaTableRenderer.js:73 [DeltaTableRenderer] No time values extracted, using placeholders
+render @ DeltaTableRenderer.js:73
+(anonymous) @ DeltaTableRenderer.js:118
+wrapped @ createState.js:514
+(anonymous) @ createState.js:544
+requestAnimationFrame
+notify @ createState.js:538
+set @ createState.js:681
+createState @ createState.js:470
+fILKw../components/chartComponent.js @ main.js:287
+newRequire @ test.1fcc916e.js:84
+localRequire @ test.1fcc916e.js:144
+handleVerticalLineShortcuts @ handleVerticalLineShortcuts.js:97
+(anonymous) @ main.js:2895Understand this warning
+DeltaTableRenderer.js:82 [DeltaTableRenderer] Building HTML with 13 rows
+DeltaTable.js:80 [DeltaTable] First row structure: {channel: '__TIME_ROW__', color: '#3b82f6', v0: 'T1'}
+DeltaTable.js:81 [DeltaTable] Total rows: 13
+DeltaTable.js:82 [DeltaTable] VerticalLinesCount: 1
+DeltaTable.js:89 [DeltaTable] Row 1 values: {channel: 'IA', v0: '-283.01 MA', v1: undefined, delta0: undefined, percentage0: undefined}
+DeltaTableRenderer.js:93 [DeltaTableRenderer] ✅ Rendered table with 13 rows and 1 lines in container: delta-table-main
+DeltaTableRenderer.js:97 [DeltaTableRenderer] First 500 chars of rendered HTML: 
+    <div class="mt-4 flow-root">
+      <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+        <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+          <div class="overflow-hidden shadow outline outline-1 outline-black/5 sm:rounded-lg dark:shadow-none dark:-outline-offset-1 dark:outline-white/10">
+            <table class="relative min-w-full divide-y divide-gray-300 dark:divide-white/15">           
+              <thead class="bg-gray-50 dark:bg-gray-800/75
+DeltaTableRenderer.js:113 [DeltaTableRenderer] Vertical lines changed, re-rendering table
+DeltaTableRenderer.js:34 [DeltaTableRenderer] render() called with: {rowCount: 13, linesCount: 1, containerExists: true, containerHtml: '\n    <div class="mt-4 flow-root">\n      <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">\n', firstRow: {…}, …}
+DeltaTableRenderer.js:54 [DeltaTableRenderer] Extracted lines array: 0 lines
+DeltaTableRenderer.js:73 [DeltaTableRenderer] No time values extracted, using placeholders
+render @ DeltaTableRenderer.js:73
+(anonymous) @ DeltaTableRenderer.js:118
+wrapped @ createState.js:514
+(anonymous) @ createState.js:544
+requestAnimationFrame
+notify @ createState.js:538
+set @ createState.js:681
+createState @ createState.js:470
+fILKw../components/chartComponent.js @ main.js:287
+newRequire @ test.1fcc916e.js:84
+localRequire @ test.1fcc916e.js:144
+handleVerticalLineShortcuts @ handleVerticalLineShortcuts.js:97
+(anonymous) @ main.js:2895Understand this warning
+DeltaTableRenderer.js:82 [DeltaTableRenderer] Building HTML with 13 rows
+DeltaTable.js:80 [DeltaTable] First row structure: {channel: '__TIME_ROW__', color: '#3b82f6', v0: 'T1'}
+DeltaTable.js:81 [DeltaTable] Total rows: 13
+DeltaTable.js:82 [DeltaTable] VerticalLinesCount: 1
+DeltaTable.js:89 [DeltaTable] Row 1 values: {channel: 'IA', v0: '-283.01 MA', v1: undefined, delta0: undefined, percentage0: undefined}
+DeltaTableRenderer.js:93 [DeltaTableRenderer] ✅ Rendered table with 13 rows and 1 lines in container: delta-table-main
+DeltaTableRenderer.js:97 [DeltaTableRenderer] First 500 chars of rendered HTML: 
+    <div class="mt-4 flow-root">
+      <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+        <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+          <div class="overflow-hidden shadow outline outline-1 outline-black/5 sm:rounded-lg dark:shadow-none dark:-outline-offset-1 dark:outline-white/10">
+            <table class="relative min-w-full divide-y divide-gray-300 dark:divide-white/15">           
+              <thead class="bg-gray-50 dark:bg-gray-800/75
+DeltaTableRenderer.js:113 [DeltaTableRenderer] Vertical lines changed, re-rendering table
+DeltaTableRenderer.js:34 [DeltaTableRenderer] render() called with: {rowCount: 13, linesCount: 1, containerExists: true, containerHtml: '\n    <div class="mt-4 flow-root">\n      <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">\n', firstRow: {…}, …}
+DeltaTableRenderer.js:54 [DeltaTableRenderer] Extracted lines array: 0 lines
+DeltaTableRenderer.js:73 [DeltaTableRenderer] No time values extracted, using placeholders
+render @ DeltaTableRenderer.js:73
+(anonymous) @ DeltaTableRenderer.js:118
+wrapped @ createState.js:514
+(anonymous) @ createState.js:544
+requestAnimationFrame
+notify @ createState.js:538
+set @ createState.js:681
+createState @ createState.js:470
+fILKw../components/chartComponent.js @ main.js:287
+newRequire @ test.1fcc916e.js:84
+localRequire @ test.1fcc916e.js:144
+handleVerticalLineShortcuts @ handleVerticalLineShortcuts.js:97
+(anonymous) @ main.js:2895Understand this warning
+DeltaTableRenderer.js:82 [DeltaTableRenderer] Building HTML with 13 rows
+DeltaTable.js:80 [DeltaTable] First row structure: {channel: '__TIME_ROW__', color: '#3b82f6', v0: 'T1'}
+DeltaTable.js:81 [DeltaTable] Total rows: 13
+DeltaTable.js:82 [DeltaTable] VerticalLinesCount: 1
+DeltaTable.js:89 [DeltaTable] Row 1 values: {channel: 'IA', v0: '-283.01 MA', v1: undefined, delta0: undefined, percentage0: undefined}
+DeltaTableRenderer.js:93 [DeltaTableRenderer] ✅ Rendered table with 13 rows and 1 lines in container: delta-table-main
+DeltaTableRenderer.js:97 [DeltaTableRenderer] First 500 chars of rendered HTML: 
+    <div class="mt-4 flow-root">
+      <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+        <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+          <div class="overflow-hidden shadow outline outline-1 outline-black/5 sm:rounded-lg dark:shadow-none dark:-outline-offset-1 dark:outline-white/10">
+            <table class="relative min-w-full divide-y divide-gray-300 dark:divide-white/15">           
+              <thead class="bg-gray-50 dark:bg-gray-800/75
+DeltaTableRenderer.js:113 [DeltaTableRenderer] Vertical lines changed, re-rendering table
+DeltaTableRenderer.js:34 [DeltaTableRenderer] render() called with: {rowCount: 13, linesCount: 1, containerExists: true, containerHtml: '\n    <div class="mt-4 flow-root">\n      <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">\n', firstRow: {…}, …}
+DeltaTableRenderer.js:54 [DeltaTableRenderer] Extracted lines array: 0 lines
+DeltaTableRenderer.js:73 [DeltaTableRenderer] No time values extracted, using placeholders
+render @ DeltaTableRenderer.js:73
+(anonymous) @ DeltaTableRenderer.js:118
+wrapped @ createState.js:514
+(anonymous) @ createState.js:544
+requestAnimationFrame
+notify @ createState.js:538
+set @ createState.js:681
+createState @ createState.js:470
+fILKw../components/chartComponent.js @ main.js:287
+newRequire @ test.1fcc916e.js:84
+localRequire @ test.1fcc916e.js:144
+handleVerticalLineShortcuts @ handleVerticalLineShortcuts.js:97
+(anonymous) @ main.js:2895Understand this warning
+DeltaTableRenderer.js:82 [DeltaTableRenderer] Building HTML with 13 rows
+DeltaTable.js:80 [DeltaTable] First row structure: {channel: '__TIME_ROW__', color: '#3b82f6', v0: 'T1'}
+DeltaTable.js:81 [DeltaTable] Total rows: 13
+DeltaTable.js:82 [DeltaTable] VerticalLinesCount: 1
+DeltaTable.js:89 [DeltaTable] Row 1 values: {channel: 'IA', v0: '-283.01 MA', v1: undefined, delta0: undefined, percentage0: undefined}
+DeltaTableRenderer.js:93 [DeltaTableRenderer] ✅ Rendered table with 13 rows and 1 lines in container: delta-table-main
+DeltaTableRenderer.js:97 [DeltaTableRenderer] First 500 chars of rendered HTML: 
+    <div class="mt-4 flow-root">
+      <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+        <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+          <div class="overflow-hidden shadow outline outline-1 outline-black/5 sm:rounded-lg dark:shadow-none dark:-outline-offset-1 dark:outline-white/10">
+            <table class="relative min-w-full divide-y divide-gray-300 dark:divide-white/15">           
+              <thead class="bg-gray-50 dark:bg-gray-800/75
+DeltaTableRenderer.js:113 [DeltaTableRenderer] Vertical lines changed, re-rendering table
+DeltaTableRenderer.js:34 [DeltaTableRenderer] render() called with: {rowCount: 13, linesCount: 1, containerExists: true, containerHtml: '\n    <div class="mt-4 flow-root">\n      <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">\n', firstRow: {…}, …}
+DeltaTableRenderer.js:54 [DeltaTableRenderer] Extracted lines array: 0 lines
+DeltaTableRenderer.js:73 [DeltaTableRenderer] No time values extracted, using placeholders
+render @ DeltaTableRenderer.js:73
+(anonymous) @ DeltaTableRenderer.js:118
+wrapped @ createState.js:514
+(anonymous) @ createState.js:544
+requestAnimationFrame
+notify @ createState.js:538
+set @ createState.js:681
+createState @ createState.js:470
+fILKw../components/chartComponent.js @ main.js:287
+newRequire @ test.1fcc916e.js:84
+localRequire @ test.1fcc916e.js:144
+handleVerticalLineShortcuts @ handleVerticalLineShortcuts.js:97
+(anonymous) @ main.js:2895Understand this warning
+DeltaTableRenderer.js:82 [DeltaTableRenderer] Building HTML with 13 rows
+DeltaTable.js:80 [DeltaTable] First row structure: {channel: '__TIME_ROW__', color: '#3b82f6', v0: 'T1'}
+DeltaTable.js:81 [DeltaTable] Total rows: 13
+DeltaTable.js:82 [DeltaTable] VerticalLinesCount: 1
+DeltaTable.js:89 [DeltaTable] Row 1 values: {channel: 'IA', v0: '-283.01 MA', v1: undefined, delta0: undefined, percentage0: undefined}
+DeltaTableRenderer.js:93 [DeltaTableRenderer] ✅ Rendered table with 13 rows and 1 lines in container: delta-table-main
+DeltaTableRenderer.js:97 [DeltaTableRenderer] First 500 chars of rendered HTML: 
+    <div class="mt-4 flow-root">
+      <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+        <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+          <div class="overflow-hidden shadow outline outline-1 outline-black/5 sm:rounded-lg dark:shadow-none dark:-outline-offset-1 dark:outline-white/10">
+            <table class="relative min-w-full divide-y divide-gray-300 dark:divide-white/15">           
+              <thead class="bg-gray-50 dark:bg-gray-800/75
+DeltaTableRenderer.js:113 [DeltaTableRenderer] Vertical lines changed, re-rendering table
+DeltaTableRenderer.js:34 [DeltaTableRenderer] render() called with: {rowCount: 13, linesCount: 1, containerExists: true, containerHtml: '\n    <div class="mt-4 flow-root">\n      <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">\n', firstRow: {…}, …}
+DeltaTableRenderer.js:54 [DeltaTableRenderer] Extracted lines array: 0 lines
+DeltaTableRenderer.js:73 [DeltaTableRenderer] No time values extracted, using placeholders
+render @ DeltaTableRenderer.js:73
+(anonymous) @ DeltaTableRenderer.js:118
+wrapped @ createState.js:514
+(anonymous) @ createState.js:544
+requestAnimationFrame
+notify @ createState.js:538
+set @ createState.js:681
+createState @ createState.js:470
+fILKw../components/chartComponent.js @ main.js:287
+newRequire @ test.1fcc916e.js:84
+localRequire @ test.1fcc916e.js:144
+handleVerticalLineShortcuts @ handleVerticalLineShortcuts.js:97
+(anonymous) @ main.js:2895Understand this warning
+DeltaTableRenderer.js:82 [DeltaTableRenderer] Building HTML with 13 rows
+DeltaTable.js:80 [DeltaTable] First row structure: {channel: '__TIME_ROW__', color: '#3b82f6', v0: 'T1'}
+DeltaTable.js:81 [DeltaTable] Total rows: 13
+DeltaTable.js:82 [DeltaTable] VerticalLinesCount: 1
+DeltaTable.js:89 [DeltaTable] Row 1 values: {channel: 'IA', v0: '-283.01 MA', v1: undefined, delta0: undefined, percentage0: undefined}
+DeltaTableRenderer.js:93 [DeltaTableRenderer] ✅ Rendered table with 13 rows and 1 lines in container: delta-table-main
+DeltaTableRenderer.js:97 [DeltaTableRenderer] First 500 chars of rendered HTML: 
+    <div class="mt-4 flow-root">
+      <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+        <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+          <div class="overflow-hidden shadow outline outline-1 outline-black/5 sm:rounded-lg dark:shadow-none dark:-outline-offset-1 dark:outline-white/10">
+            <table class="relative min-w-full divide-y divide-gray-300 dark:divide-white/15">           
+              <thead class="bg-gray-50 dark:bg-gray-800/75
+DeltaTableRenderer.js:113 [DeltaTableRenderer] Vertical lines changed, re-rendering table
+DeltaTableRenderer.js:34 [DeltaTableRenderer] render() called with: {rowCount: 13, linesCount: 1, containerExists: true, containerHtml: '\n    <div class="mt-4 flow-root">\n      <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">\n', firstRow: {…}, …}
+DeltaTableRenderer.js:54 [DeltaTableRenderer] Extracted lines array: 0 lines
+DeltaTableRenderer.js:73 [DeltaTableRenderer] No time values extracted, using placeholders
+render @ DeltaTableRenderer.js:73
+(anonymous) @ DeltaTableRenderer.js:118
+wrapped @ createState.js:514
+(anonymous) @ createState.js:544
+requestAnimationFrame
+notify @ createState.js:538
+set @ createState.js:681
+createState @ createState.js:470
+fILKw../components/chartComponent.js @ main.js:287
+newRequire @ test.1fcc916e.js:84
+localRequire @ test.1fcc916e.js:144
+handleVerticalLineShortcuts @ handleVerticalLineShortcuts.js:97
+(anonymous) @ main.js:2895Understand this warning
+DeltaTableRenderer.js:82 [DeltaTableRenderer] Building HTML with 13 rows
+DeltaTable.js:80 [DeltaTable] First row structure: {channel: '__TIME_ROW__', color: '#3b82f6', v0: 'T1'}
+DeltaTable.js:81 [DeltaTable] Total rows: 13
+DeltaTable.js:82 [DeltaTable] VerticalLinesCount: 1
+DeltaTable.js:89 [DeltaTable] Row 1 values: {channel: 'IA', v0: '-283.01 MA', v1: undefined, delta0: undefined, percentage0: undefined}
+DeltaTableRenderer.js:93 [DeltaTableRenderer] ✅ Rendered table with 13 rows and 1 lines in container: delta-table-main
+DeltaTableRenderer.js:97 [DeltaTableRenderer] First 500 chars of rendered HTML: 
+    <div class="mt-4 flow-root">
+      <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+        <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+          <div class="overflow-hidden shadow outline outline-1 outline-black/5 sm:rounded-lg dark:shadow-none dark:-outline-offset-1 dark:outline-white/10">
+            <table class="relative min-w-full divide-y divide-gray-300 dark:divide-white/15">           
+              <thead class="bg-gray-50 dark:bg-gray-800/75
+DeltaTableRenderer.js:113 [DeltaTableRenderer] Vertical lines changed, re-rendering table
+DeltaTableRenderer.js:34 [DeltaTableRenderer] render() called with: {rowCount: 13, linesCount: 1, containerExists: true, containerHtml: '\n    <div class="mt-4 flow-root">\n      <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">\n', firstRow: {…}, …}
+DeltaTableRenderer.js:54 [DeltaTableRenderer] Extracted lines array: 0 lines
+DeltaTableRenderer.js:73 [DeltaTableRenderer] No time values extracted, using placeholders
+render @ DeltaTableRenderer.js:73
+(anonymous) @ DeltaTableRenderer.js:118
+wrapped @ createState.js:514
+(anonymous) @ createState.js:544
+requestAnimationFrame
+notify @ createState.js:538
+set @ createState.js:681
+createState @ createState.js:470
+fILKw../components/chartComponent.js @ main.js:287
+newRequire @ test.1fcc916e.js:84
+localRequire @ test.1fcc916e.js:144
+handleVerticalLineShortcuts @ handleVerticalLineShortcuts.js:97
+(anonymous) @ main.js:2895Understand this warning
+DeltaTableRenderer.js:82 [DeltaTableRenderer] Building HTML with 13 rows
+DeltaTable.js:80 [DeltaTable] First row structure: {channel: '__TIME_ROW__', color: '#3b82f6', v0: 'T1'}
+DeltaTable.js:81 [DeltaTable] Total rows: 13
+DeltaTable.js:82 [DeltaTable] VerticalLinesCount: 1
+DeltaTable.js:89 [DeltaTable] Row 1 values: {channel: 'IA', v0: '-283.01 MA', v1: undefined, delta0: undefined, percentage0: undefined}
+DeltaTableRenderer.js:93 [DeltaTableRenderer] ✅ Rendered table with 13 rows and 1 lines in container: delta-table-main
+DeltaTableRenderer.js:97 [DeltaTableRenderer] First 500 chars of rendered HTML: 
+    <div class="mt-4 flow-root">
+      <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+        <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+          <div class="overflow-hidden shadow outline outline-1 outline-black/5 sm:rounded-lg dark:shadow-none dark:-outline-offset-1 dark:outline-white/10">
+            <table class="relative min-w-full divide-y divide-gray-300 dark:divide-white/15">           
+              <thead class="bg-gray-50 dark:bg-gray-800/75
+DeltaTableRenderer.js:113 [DeltaTableRenderer] Vertical lines changed, re-rendering table
+DeltaTableRenderer.js:34 [DeltaTableRenderer] render() called with: {rowCount: 13, linesCount: 1, containerExists: true, containerHtml: '\n    <div class="mt-4 flow-root">\n      <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">\n', firstRow: {…}, …}
+DeltaTableRenderer.js:54 [DeltaTableRenderer] Extracted lines array: 0 lines
+DeltaTableRenderer.js:73 [DeltaTableRenderer] No time values extracted, using placeholders
+render @ DeltaTableRenderer.js:73
+(anonymous) @ DeltaTableRenderer.js:118
+wrapped @ createState.js:514
+(anonymous) @ createState.js:544
+requestAnimationFrame
+notify @ createState.js:538
+set @ createState.js:681
+createState @ createState.js:470
+fILKw../components/chartComponent.js @ main.js:287
+newRequire @ test.1fcc916e.js:84
+localRequire @ test.1fcc916e.js:144
+handleVerticalLineShortcuts @ handleVerticalLineShortcuts.js:97
+(anonymous) @ main.js:2895Understand this warning
+DeltaTableRenderer.js:82 [DeltaTableRenderer] Building HTML with 13 rows
+DeltaTable.js:80 [DeltaTable] First row structure: {channel: '__TIME_ROW__', color: '#3b82f6', v0: 'T1'}
+DeltaTable.js:81 [DeltaTable] Total rows: 13
+DeltaTable.js:82 [DeltaTable] VerticalLinesCount: 1
+DeltaTable.js:89 [DeltaTable] Row 1 values: {channel: 'IA', v0: '-283.01 MA', v1: undefined, delta0: undefined, percentage0: undefined}
+DeltaTableRenderer.js:93 [DeltaTableRenderer] ✅ Rendered table with 13 rows and 1 lines in container: delta-table-main
+DeltaTableRenderer.js:97 [DeltaTableRenderer] First 500 chars of rendered HTML: 
+    <div class="mt-4 flow-root">
+      <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+        <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+          <div class="overflow-hidden shadow outline outline-1 outline-black/5 sm:rounded-lg dark:shadow-none dark:-outline-offset-1 dark:outline-white/10">
+            <table class="relative min-w-full divide-y divide-gray-300 dark:divide-white/15">           
+              <thead class="bg-gray-50 dark:bg-gray-800/75
+DeltaTableRenderer.js:113 [DeltaTableRenderer] Vertical lines changed, re-rendering table
+DeltaTableRenderer.js:34 [DeltaTableRenderer] render() called with: {rowCount: 13, linesCount: 1, containerExists: true, containerHtml: '\n    <div class="mt-4 flow-root">\n      <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">\n', firstRow: {…}, …}
+DeltaTableRenderer.js:54 [DeltaTableRenderer] Extracted lines array: 0 lines
+DeltaTableRenderer.js:73 [DeltaTableRenderer] No time values extracted, using placeholders
+render @ DeltaTableRenderer.js:73
+(anonymous) @ DeltaTableRenderer.js:118
+wrapped @ createState.js:514
+(anonymous) @ createState.js:544
+requestAnimationFrame
+notify @ createState.js:538
+set @ createState.js:681
+createState @ createState.js:470
+fILKw../components/chartComponent.js @ main.js:287
+newRequire @ test.1fcc916e.js:84
+localRequire @ test.1fcc916e.js:144
+handleVerticalLineShortcuts @ handleVerticalLineShortcuts.js:97
+(anonymous) @ main.js:2895Understand this warning
+DeltaTableRenderer.js:82 [DeltaTableRenderer] Building HTML with 13 rows
+DeltaTable.js:80 [DeltaTable] First row structure: {channel: '__TIME_ROW__', color: '#3b82f6', v0: 'T1'}
+DeltaTable.js:81 [DeltaTable] Total rows: 13
+DeltaTable.js:82 [DeltaTable] VerticalLinesCount: 1
+DeltaTable.js:89 [DeltaTable] Row 1 values: {channel: 'IA', v0: '-283.01 MA', v1: undefined, delta0: undefined, percentage0: undefined}
+DeltaTableRenderer.js:93 [DeltaTableRenderer] ✅ Rendered table with 13 rows and 1 lines in container: delta-table-main
+DeltaTableRenderer.js:97 [DeltaTableRenderer] First 500 chars of rendered HTML: 
+    <div class="mt-4 flow-root">
+      <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+        <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+          <div class="overflow-hidden shadow outline outline-1 outline-black/5 sm:rounded-lg dark:shadow-none dark:-outline-offset-1 dark:outline-white/10">
+            <table class="relative min-w-full divide-y divide-gray-300 dark:divide-white/15">           
+              <thead class="bg-gray-50 dark:bg-gray-800/75
+ThemeContext.js:117 [ThemeContext] Received theme from another window: dark
+chartComponent.js:297 [chartComponent] 🎨 Theme changed, redrawing charts
+chartComponent.js:277 [updateAllChartAxisColors] 🎨 Redrawing 2 charts for theme change
+chartComponent.js:297 [chartComponent] 🎨 Theme changed, redrawing charts
+chartComponent.js:277 [updateAllChartAxisColors] 🎨 Redrawing 2 charts for theme change
+2main.js:2957 [Main] Global theme changed to: dark
+ThemeContext.js:230 [ThemeContext] Theme applied: dark → dark
+themeBroadcast.js:30 [themeBroadcast] Received theme from another tab: dark
+themeBroadcast.js:100 [themeBroadcast] Theme applied: dark
+calculateDeltas.js:57 [formatScaledValue] value=-283009813, scaleFactor=1, scaled=-283009813, absScaled=283009813, siPrefix='M', divisor=1000000, result='-283.01 MA'
+calculateDeltas.js:57 [formatScaledValue] value=1405205883, scaleFactor=1, scaled=1405205883, absScaled=1405205883, siPrefix='G', divisor=1000000000, result='1.41 GA'
+calculateDeltas.js:57 [formatScaledValue] value=-1671574031, scaleFactor=1, scaled=-1671574031, absScaled=1671574031, siPrefix='G', divisor=1000000000, result='-1.67 GA'
+calculateDeltas.js:57 [formatScaledValue] value=-247786589, scaleFactor=1, scaled=-247786589, absScaled=247786589, siPrefix='M', divisor=1000000, result='-247.79 MA'
+calculateDeltas.js:57 [formatScaledValue] value=161591624, scaleFactor=1, scaled=161591624, absScaled=161591624, siPrefix='M', divisor=1000000, result='161.59 MV'
+calculateDeltas.js:57 [formatScaledValue] value=-1375735327, scaleFactor=1, scaled=-1375735327, absScaled=1375735327, siPrefix='G', divisor=1000000000, result='-1.38 GV'
+calculateDeltas.js:57 [formatScaledValue] value=1688168251, scaleFactor=1, scaled=1688168251, absScaled=1688168251, siPrefix='G', divisor=1000000000, result='1.69 GV'
+4calculateDeltas.js:57 [formatScaledValue] value=1, scaleFactor=1, scaled=1, absScaled=1, siPrefix='', divisor=1, result='1.00 '
+calculateDeltas.js:57 [formatScaledValue] value=0, scaleFactor=1, scaled=0, absScaled=0, siPrefix='', divisor=1, result='0.00 '
+verticalLinePlugin.js:71 [verticalLinePlugin] 🔄 Calling deltaWindow.update() with debounce
+DeltaDrawer.js:172 [DeltaDrawer] update() called with 4 sections, 1 vertical lines, drawer open: true
+DeltaDrawer.js:186 [DeltaDrawer] ⏭️ Skipping duplicate update (data unchanged)
+calculateDeltas.js:57 [formatScaledValue] value=-283009813, scaleFactor=1, scaled=-283009813, absScaled=283009813, siPrefix='M', divisor=1000000, result='-283.01 MA'
+calculateDeltas.js:57 [formatScaledValue] value=1405205883, scaleFactor=1, scaled=1405205883, absScaled=1405205883, siPrefix='G', divisor=1000000000, result='1.41 GA'
+calculateDeltas.js:57 [formatScaledValue] value=-1671574031, scaleFactor=1, scaled=-1671574031, absScaled=1671574031, siPrefix='G', divisor=1000000000, result='-1.67 GA'
+calculateDeltas.js:57 [formatScaledValue] value=-247786589, scaleFactor=1, scaled=-247786589, absScaled=247786589, siPrefix='M', divisor=1000000, result='-247.79 MA'
+calculateDeltas.js:57 [formatScaledValue] value=161591624, scaleFactor=1, scaled=161591624, absScaled=161591624, siPrefix='M', divisor=1000000, result='161.59 MV'
+calculateDeltas.js:57 [formatScaledValue] value=-1375735327, scaleFactor=1, scaled=-1375735327, absScaled=1375735327, siPrefix='G', divisor=1000000000, result='-1.38 GV'
+calculateDeltas.js:57 [formatScaledValue] value=1688168251, scaleFactor=1, scaled=1688168251, absScaled=1688168251, siPrefix='G', divisor=1000000000, result='1.69 GV'
+4calculateDeltas.js:57 [formatScaledValue] value=1, scaleFactor=1, scaled=1, absScaled=1, siPrefix='', divisor=1, result='1.00 '
+calculateDeltas.js:57 [formatScaledValue] value=0, scaleFactor=1, scaled=0, absScaled=0, siPrefix='', divisor=1, result='0.00 '
+verticalLinePlugin.js:71 [verticalLinePlugin] 🔄 Calling deltaWindow.update() with debounce
+DeltaDrawer.js:172 [DeltaDrawer] update() called with 4 sections, 1 vertical lines, drawer open: true
+DeltaDrawer.js:186 [DeltaDrawer] ⏭️ Skipping duplicate update (data unchanged)
+calculateDeltas.js:57 [formatScaledValue] value=-283009813, scaleFactor=1, scaled=-283009813, absScaled=283009813, siPrefix='M', divisor=1000000, result='-283.01 MA'
+calculateDeltas.js:57 [formatScaledValue] value=1405205883, scaleFactor=1, scaled=1405205883, absScaled=1405205883, siPrefix='G', divisor=1000000000, result='1.41 GA'
+calculateDeltas.js:57 [formatScaledValue] value=-1671574031, scaleFactor=1, scaled=-1671574031, absScaled=1671574031, siPrefix='G', divisor=1000000000, result='-1.67 GA'
+calculateDeltas.js:57 [formatScaledValue] value=-247786589, scaleFactor=1, scaled=-247786589, absScaled=247786589, siPrefix='M', divisor=1000000, result='-247.79 MA'
+calculateDeltas.js:57 [formatScaledValue] value=161591624, scaleFactor=1, scaled=161591624, absScaled=161591624, siPrefix='M', divisor=1000000, result='161.59 MV'
+calculateDeltas.js:57 [formatScaledValue] value=-1375735327, scaleFactor=1, scaled=-1375735327, absScaled=1375735327, siPrefix='G', divisor=1000000000, result='-1.38 GV'
+calculateDeltas.js:57 [formatScaledValue] value=1688168251, scaleFactor=1, scaled=1688168251, absScaled=1688168251, siPrefix='G', divisor=1000000000, result='1.69 GV'
+4calculateDeltas.js:57 [formatScaledValue] value=1, scaleFactor=1, scaled=1, absScaled=1, siPrefix='', divisor=1, result='1.00 '
+calculateDeltas.js:57 [formatScaledValue] value=0, scaleFactor=1, scaled=0, absScaled=0, siPrefix='', divisor=1, result='0.00 '
+verticalLinePlugin.js:71 [verticalLinePlugin] 🔄 Calling deltaWindow.update() with debounce
+DeltaDrawer.js:172 [DeltaDrawer] update() called with 4 sections, 1 vertical lines, drawer open: true
+DeltaDrawer.js:186 [DeltaDrawer] ⏭️ Skipping duplicate update (data unchanged)
+calculateDeltas.js:57 [formatScaledValue] value=-283009813, scaleFactor=1, scaled=-283009813, absScaled=283009813, siPrefix='M', divisor=1000000, result='-283.01 MA'
+calculateDeltas.js:57 [formatScaledValue] value=1405205883, scaleFactor=1, scaled=1405205883, absScaled=1405205883, siPrefix='G', divisor=1000000000, result='1.41 GA'
+calculateDeltas.js:57 [formatScaledValue] value=-1671574031, scaleFactor=1, scaled=-1671574031, absScaled=1671574031, siPrefix='G', divisor=1000000000, result='-1.67 GA'
+calculateDeltas.js:57 [formatScaledValue] value=-247786589, scaleFactor=1, scaled=-247786589, absScaled=247786589, siPrefix='M', divisor=1000000, result='-247.79 MA'
+calculateDeltas.js:57 [formatScaledValue] value=161591624, scaleFactor=1, scaled=161591624, absScaled=161591624, siPrefix='M', divisor=1000000, result='161.59 MV'
+calculateDeltas.js:57 [formatScaledValue] value=-1375735327, scaleFactor=1, scaled=-1375735327, absScaled=1375735327, siPrefix='G', divisor=1000000000, result='-1.38 GV'
+calculateDeltas.js:57 [formatScaledValue] value=1688168251, scaleFactor=1, scaled=1688168251, absScaled=1688168251, siPrefix='G', divisor=1000000000, result='1.69 GV'
+4calculateDeltas.js:57 [formatScaledValue] value=1, scaleFactor=1, scaled=1, absScaled=1, siPrefix='', divisor=1, result='1.00 '
+calculateDeltas.js:57 [formatScaledValue] value=0, scaleFactor=1, scaled=0, absScaled=0, siPrefix='', divisor=1, result='0.00 '
+verticalLinePlugin.js:71 [verticalLinePlugin] 🔄 Calling deltaWindow.update() with debounce
+DeltaDrawer.js:172 [DeltaDrawer] update() called with 4 sections, 1 vertical lines, drawer open: true
+DeltaDrawer.js:186 [DeltaDrawer] ⏭️ Skipping duplicate update (data unchanged)
+calculateDeltas.js:57 [formatScaledValue] value=-283009813, scaleFactor=1, scaled=-283009813, absScaled=283009813, siPrefix='M', divisor=1000000, result='-283.01 MA'
+calculateDeltas.js:57 [formatScaledValue] value=1405205883, scaleFactor=1, scaled=1405205883, absScaled=1405205883, siPrefix='G', divisor=1000000000, result='1.41 GA'
+calculateDeltas.js:57 [formatScaledValue] value=-1671574031, scaleFactor=1, scaled=-1671574031, absScaled=1671574031, siPrefix='G', divisor=1000000000, result='-1.67 GA'
+calculateDeltas.js:57 [formatScaledValue] value=-247786589, scaleFactor=1, scaled=-247786589, absScaled=247786589, siPrefix='M', divisor=1000000, result='-247.79 MA'
+calculateDeltas.js:57 [formatScaledValue] value=161591624, scaleFactor=1, scaled=161591624, absScaled=161591624, siPrefix='M', divisor=1000000, result='161.59 MV'
+calculateDeltas.js:57 [formatScaledValue] value=-1375735327, scaleFactor=1, scaled=-1375735327, absScaled=1375735327, siPrefix='G', divisor=1000000000, result='-1.38 GV'
+calculateDeltas.js:57 [formatScaledValue] value=1688168251, scaleFactor=1, scaled=1688168251, absScaled=1688168251, siPrefix='G', divisor=1000000000, result='1.69 GV'
+4calculateDeltas.js:57 [formatScaledValue] value=1, scaleFactor=1, scaled=1, absScaled=1, siPrefix='', divisor=1, result='1.00 '
+calculateDeltas.js:57 [formatScaledValue] value=0, scaleFactor=1, scaled=0, absScaled=0, siPrefix='', divisor=1, result='0.00 '
+verticalLinePlugin.js:71 [verticalLinePlugin] 🔄 Calling deltaWindow.update() with debounce
+DeltaDrawer.js:172 [DeltaDrawer] update() called with 4 sections, 1 vertical lines, drawer open: true
+DeltaDrawer.js:186 [DeltaDrawer] ⏭️ Skipping duplicate update (data unchanged)
+calculateDeltas.js:57 [formatScaledValue] value=-283009813, scaleFactor=1, scaled=-283009813, absScaled=283009813, siPrefix='M', divisor=1000000, result='-283.01 MA'
+calculateDeltas.js:57 [formatScaledValue] value=1405205883, scaleFactor=1, scaled=1405205883, absScaled=1405205883, siPrefix='G', divisor=1000000000, result='1.41 GA'
+calculateDeltas.js:57 [formatScaledValue] value=-1671574031, scaleFactor=1, scaled=-1671574031, absScaled=1671574031, siPrefix='G', divisor=1000000000, result='-1.67 GA'
+calculateDeltas.js:57 [formatScaledValue] value=-247786589, scaleFactor=1, scaled=-247786589, absScaled=247786589, siPrefix='M', divisor=1000000, result='-247.79 MA'
+calculateDeltas.js:57 [formatScaledValue] value=161591624, scaleFactor=1, scaled=161591624, absScaled=161591624, siPrefix='M', divisor=1000000, result='161.59 MV'
+calculateDeltas.js:57 [formatScaledValue] value=-1375735327, scaleFactor=1, scaled=-1375735327, absScaled=1375735327, siPrefix='G', divisor=1000000000, result='-1.38 GV'
+calculateDeltas.js:57 [formatScaledValue] value=1688168251, scaleFactor=1, scaled=1688168251, absScaled=1688168251, siPrefix='G', divisor=1000000000, result='1.69 GV'
+4calculateDeltas.js:57 [formatScaledValue] value=1, scaleFactor=1, scaled=1, absScaled=1, siPrefix='', divisor=1, result='1.00 '
+calculateDeltas.js:57 [formatScaledValue] value=0, scaleFactor=1, scaled=0, absScaled=0, siPrefix='', divisor=1, result='0.00 '
+verticalLinePlugin.js:71 [verticalLinePlugin] 🔄 Calling deltaWindow.update() with debounce
+DeltaDrawer.js:172 [DeltaDrawer] update() called with 4 sections, 1 vertical lines, drawer open: true
+DeltaDrawer.js:186 [DeltaDrawer] ⏭️ Skipping duplicate update (data unchanged)
+calculateDeltas.js:57 [formatScaledValue] value=-283009813, scaleFactor=1, scaled=-283009813, absScaled=283009813, siPrefix='M', divisor=1000000, result='-283.01 MA'
+calculateDeltas.js:57 [formatScaledValue] value=1405205883, scaleFactor=1, scaled=1405205883, absScaled=1405205883, siPrefix='G', divisor=1000000000, result='1.41 GA'
+calculateDeltas.js:57 [formatScaledValue] value=-1671574031, scaleFactor=1, scaled=-1671574031, absScaled=1671574031, siPrefix='G', divisor=1000000000, result='-1.67 GA'
+calculateDeltas.js:57 [formatScaledValue] value=-247786589, scaleFactor=1, scaled=-247786589, absScaled=247786589, siPrefix='M', divisor=1000000, result='-247.79 MA'
+calculateDeltas.js:57 [formatScaledValue] value=161591624, scaleFactor=1, scaled=161591624, absScaled=161591624, siPrefix='M', divisor=1000000, result='161.59 MV'
+calculateDeltas.js:57 [formatScaledValue] value=-1375735327, scaleFactor=1, scaled=-1375735327, absScaled=1375735327, siPrefix='G', divisor=1000000000, result='-1.38 GV'
+calculateDeltas.js:57 [formatScaledValue] value=1688168251, scaleFactor=1, scaled=1688168251, absScaled=1688168251, siPrefix='G', divisor=1000000000, result='1.69 GV'
+4calculateDeltas.js:57 [formatScaledValue] value=1, scaleFactor=1, scaled=1, absScaled=1, siPrefix='', divisor=1, result='1.00 '
+calculateDeltas.js:57 [formatScaledValue] value=0, scaleFactor=1, scaled=0, absScaled=0, siPrefix='', divisor=1, result='0.00 '
+verticalLinePlugin.js:71 [verticalLinePlugin] 🔄 Calling deltaWindow.update() with debounce
+DeltaDrawer.js:172 [DeltaDrawer] update() called with 4 sections, 1 vertical lines, drawer open: true
+DeltaDrawer.js:186 [DeltaDrawer] ⏭️ Skipping duplicate update (data unchanged)
+calculateDeltas.js:57 [formatScaledValue] value=-283009813, scaleFactor=1, scaled=-283009813, absScaled=283009813, siPrefix='M', divisor=1000000, result='-283.01 MA'
+calculateDeltas.js:57 [formatScaledValue] value=1405205883, scaleFactor=1, scaled=1405205883, absScaled=1405205883, siPrefix='G', divisor=1000000000, result='1.41 GA'
+calculateDeltas.js:57 [formatScaledValue] value=-1671574031, scaleFactor=1, scaled=-1671574031, absScaled=1671574031, siPrefix='G', divisor=1000000000, result='-1.67 GA'
+calculateDeltas.js:57 [formatScaledValue] value=-247786589, scaleFactor=1, scaled=-247786589, absScaled=247786589, siPrefix='M', divisor=1000000, result='-247.79 MA'
+calculateDeltas.js:57 [formatScaledValue] value=161591624, scaleFactor=1, scaled=161591624, absScaled=161591624, siPrefix='M', divisor=1000000, result='161.59 MV'
+calculateDeltas.js:57 [formatScaledValue] value=-1375735327, scaleFactor=1, scaled=-1375735327, absScaled=1375735327, siPrefix='G', divisor=1000000000, result='-1.38 GV'
+calculateDeltas.js:57 [formatScaledValue] value=1688168251, scaleFactor=1, scaled=1688168251, absScaled=1688168251, siPrefix='G', divisor=1000000000, result='1.69 GV'
+4calculateDeltas.js:57 [formatScaledValue] value=1, scaleFactor=1, scaled=1, absScaled=1, siPrefix='', divisor=1, result='1.00 '
+calculateDeltas.js:57 [formatScaledValue] value=0, scaleFactor=1, scaled=0, absScaled=0, siPrefix='', divisor=1, result='0.00 '
+verticalLinePlugin.js:71 [verticalLinePlugin] 🔄 Calling deltaWindow.update() with debounce
+DeltaDrawer.js:172 [DeltaDrawer] update() called with 4 sections, 1 vertical lines, drawer open: true
+DeltaDrawer.js:186 [DeltaDrawer] ⏭️ Skipping duplicate update (data unchanged)
+calculateDeltas.js:57 [formatScaledValue] value=474024548, scaleFactor=1, scaled=474024548, absScaled=474024548, siPrefix='M', divisor=1000000, result='474.02 MA'
+verticalLinePlugin.js:71 [verticalLinePlugin] 🔄 Calling deltaWindow.update() with debounce
+DeltaDrawer.js:172 [DeltaDrawer] update() called with 1 sections, 1 vertical lines, drawer open: true
+DeltaTableRenderer.js:134 [DeltaTableRenderer] Destroyed
+DeltaDrawer.js:234 [DeltaDrawer] ✨ Content cleared, creating single table container
+DeltaDrawer.js:243 [DeltaDrawer] ✅ Table container appended to content (ONCE)
+DeltaDrawer.js:288 [DeltaDrawer] ⚠️ Using placeholder time values
+update @ DeltaDrawer.js:288
+await in update
+(anonymous) @ verticalLinePlugin.js:74
+await in (anonymous)
+(anonymous) @ computedChannelOptimization.js:224
+setTimeout
+(anonymous) @ computedChannelOptimization.js:224
+(anonymous) @ verticalLinePlugin.js:95
+wrapped @ createState.js:514
+(anonymous) @ createState.js:544
+requestAnimationFrame
+notify @ createState.js:538
+set @ createState.js:681
+handleVerticalLineShortcuts @ handleVerticalLineShortcuts.js:80
+(anonymous) @ main.js:2895Understand this warning
+DeltaTableDataFormatter.js:30 [formatTableData] 🔄 Formatting data for 1 lines from 1 sections {firstSection: {…}, lastSection: {…}}
+DeltaTableDataFormatter.js:43 [formatTableData] 📊 Single vertical line mode - no deltas
+DeltaTableDataFormatter.js:59 [formatTableData] ✨ New channel: V0
+DeltaTableDataFormatter.js:66 [formatTableData] Channel V0: v0 = 474.02 MA
+DeltaTableDataFormatter.js:211 [formatTableData] ✅ Consolidated 1 channels
+DeltaTableDataFormatter.js:243 [formatTableData] ✅ Formatted complete table with 2 rows (including time row) {totalChannels: 1, verticalLinesCount: 1, firstDataRow: {…}, lastDataRow: {…}}
+DeltaDrawer.js:301 [DeltaDrawer] formatTableData returned 2 rows
+DeltaTableRenderer.js:121 [DeltaTableRenderer] Subscribed to verticalLinesX state
+DeltaTableRenderer.js:34 [DeltaTableRenderer] render() called with: {rowCount: 2, linesCount: 1, containerExists: true, containerHtml: '', firstRow: {…}, …}
+DeltaTableRenderer.js:54 [DeltaTableRenderer] Extracted lines array: 0 lines
+DeltaTableRenderer.js:73 [DeltaTableRenderer] No time values extracted, using placeholders
+render @ DeltaTableRenderer.js:73
+update @ DeltaDrawer.js:331
+await in update
+(anonymous) @ verticalLinePlugin.js:74
+await in (anonymous)
+(anonymous) @ computedChannelOptimization.js:224
+setTimeout
+(anonymous) @ computedChannelOptimization.js:224
+(anonymous) @ verticalLinePlugin.js:95
+wrapped @ createState.js:514
+(anonymous) @ createState.js:544
+requestAnimationFrame
+notify @ createState.js:538
+set @ createState.js:681
+handleVerticalLineShortcuts @ handleVerticalLineShortcuts.js:80
+(anonymous) @ main.js:2895Understand this warning
+DeltaTableRenderer.js:82 [DeltaTableRenderer] Building HTML with 2 rows
+DeltaTable.js:80 [DeltaTable] First row structure: {channel: '__TIME_ROW__', color: '#3b82f6', v0: 'T1'}
+DeltaTable.js:81 [DeltaTable] Total rows: 2
+DeltaTable.js:82 [DeltaTable] VerticalLinesCount: 1
+DeltaTable.js:89 [DeltaTable] Row 1 values: {channel: 'V0', v0: '474.02 MA', v1: undefined, delta0: undefined, percentage0: undefined}
+DeltaTableRenderer.js:93 [DeltaTableRenderer] ✅ Rendered table with 2 rows and 1 lines in container: delta-table-main
+DeltaTableRenderer.js:97 [DeltaTableRenderer] First 500 chars of rendered HTML: 
+    <div class="mt-4 flow-root">
+      <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+        <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+          <div class="overflow-hidden shadow outline outline-1 outline-black/5 sm:rounded-lg dark:shadow-none dark:-outline-offset-1 dark:outline-white/10">
+            <table class="relative min-w-full divide-y divide-gray-300 dark:divide-white/15">           
+              <thead class="bg-gray-50 dark:bg-gray-800/75
+DeltaDrawer.js:333 [DeltaDrawer] ✅ Table rendered with 2 rows (including time row) and 1 columns
+calculateDeltas.js:57 [formatScaledValue] value=474024548, scaleFactor=1, scaled=474024548, absScaled=474024548, siPrefix='M', divisor=1000000, result='474.02 MA'
+verticalLinePlugin.js:71 [verticalLinePlugin] 🔄 Calling deltaWindow.update() with debounce
+DeltaDrawer.js:172 [DeltaDrawer] update() called with 1 sections, 1 vertical lines, drawer open: true
+DeltaDrawer.js:186 [DeltaDrawer] ⏭️ Skipping duplicate update (data unchanged)
+setupPolarChartIntegration.js:82 [setupPolarChartWithVerticalLines] Debounced subscription triggered with lines: {path: Array(1), newValue: 1, oldValue: 1, prop: 'length', root: Proxy(Array)}
+4chartDomUtils.js:200 [ResizeObserver] 📊 Chart resized to 787x398px

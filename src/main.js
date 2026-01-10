@@ -494,7 +494,8 @@ export function getChartsComputed() {
   return chartsComputed;
 }
 
-let charts = [null, null]; // [analogChart, digitalChart]
+// Main charts array - holds ALL charts: analog, digital, and computed
+let charts = [];
 const chartTypes = ["analog", "digital"];
 
 // Computed channels charts array - one chart per computed channel
@@ -1649,7 +1650,7 @@ async function processCombinedDataFromMerger(cfgText, datText) {
       renderComputedChannels(
         data,
         chartsContainer,
-        chartsComputed,
+        charts,
         verticalLinesX,
         channelState
       );
@@ -2324,7 +2325,7 @@ window.addEventListener("mergedFilesReceived", async (event) => {
       renderComputedChannels(
         data,
         chartsContainer,
-        chartsComputed,
+        charts,
         verticalLinesX,
         channelState
       );
@@ -3312,7 +3313,7 @@ async function handleLoadFiles() {
         renderComputedChannels(
           data,
           chartsContainer,
-          chartsComputed,
+          charts,
           verticalLinesX,
           channelState
         );
@@ -3926,11 +3927,11 @@ function setupComputedChannelsListener() {
           data.computedData?.length || 0
         );
 
-        // ✅ Pass chartsComputed array to renderComputedChannels (one chart per channel)
+        // ✅ Pass charts array to renderComputedChannels
         renderComputedChannels(
           data,
           chartsContainer,
-          chartsComputed, // ← Pass chartsComputed array
+          charts,
           verticalLinesX,
           channelState
         );

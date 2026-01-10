@@ -440,10 +440,12 @@ export function showChannelListWindow(
       channelState.digital?.yLabels?.map((id, idx) => {
         let color = channelState.digital.lineColors[idx];
         try {
-          if (charts && charts[1]) {
+          if (charts && charts.length > 0) {
+            const digitalChart = charts.find((c) => c && c._chartType === "digital");
             const plugin =
-              charts[1].plugins &&
-              charts[1].plugins.find((p) => p && p.id === "digitalFill");
+              digitalChart &&
+              digitalChart.plugins &&
+              digitalChart.plugins.find((p) => p && p.id === "digitalFill");
             if (plugin && typeof plugin.getSignalColors === "function") {
               const mapping = plugin.getSignalColors();
               // Each channel's original index in the state matches its idx in the channelList

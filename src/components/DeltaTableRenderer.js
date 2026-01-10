@@ -34,35 +34,62 @@ export function createDeltaTableRenderer(
     console.log("[DeltaTableRenderer] render() called with:", {
       rowCount: tableData.length,
       linesCount: verticalLinesCount,
+      containerExists: !!containerElement,
+      containerHtml: containerElement?.innerHTML?.substring(0, 100),
       firstRow: tableData[0],
+      lastRow: tableData[tableData.length - 1],
     });
+
+    if (!containerElement) {
+      console.error("[DeltaTableRenderer] Container element not found!");
+      return;
+    }
 
     // Extract time values from verticalLinesX state
     const verticalLineTimes = [];
     try {
-      const linesArray = verticalLinesXState.asArray
-        ? verticalLinesXState.asArray()
-        : verticalLinesXState.value || [];
-      linesArray.forEach((timeValue) => {
-        if (typeof timeValue === "number") {
-          verticalLineTimes.push(`${timeValue.toFixed(2)} μs`);
+      let linesArray = [];
+      
+      // ✅ FIX: Try multiple ways to get the lines array
+      if (verticalLinesXState.asArray && typeof verticalLinesXState.asArray === "function") {
+        linesArray = verticalLinesXState.asArray();
+        console.log("[DeltaTableRenderer] Got lines from asArray():", linesArray.length);
+      } else if (verticalLinesXState.value) {
+        linesArray = Array.isArray(verticalLinesXState.value) ? verticalLinesXState.value : [];
+        console.log("[DeltaTableRenderer] Got lines from .value:", linesArray.length);
+      } else if (Array.isArray(verticalLinesXState)) {
+        linesArray = verticalLinesXState;
+        console.log("[DeltaTableRenderer] State itself is array:", linesArray.length);
+      }
+      
+      // ✅ FALLBACK: If still no lines, generate placeholders based on verticalLinesCount
+      if (!linesArray || linesArray.length === 0) {
+        console.warn("[DeltaTableRenderer] ⚠️ Could not extract lines from state, generating placeholders based on verticalLinesCount:", verticalLinesCount);
+        for (let i = 0; i < verticalLinesCount; i++) {
+          verticalLineTimes.push(`T${i + 1}`);
         }
-      });
+      } else {
+        // Extract actual time values
+        linesArray.forEach((timeValue) => {
+          if (typeof timeValue === "number") {
+            verticalLineTimes.push(`${timeValue.toFixed(2)} μs`);
+          }
+        });
+        console.log("[DeltaTableRenderer] Extracted time values:", verticalLineTimes);
+      }
     } catch (e) {
       console.warn(
-        "[DeltaTableRenderer] Could not extract time values:",
+        "[DeltaTableRenderer] Error extracting time values, using placeholders:",
         e.message
       );
-    }
-
-    // Fallback to placeholders
-    if (verticalLineTimes.length === 0) {
+      // Fallback to placeholders
       for (let i = 0; i < verticalLinesCount; i++) {
         verticalLineTimes.push(`T${i + 1}`);
       }
     }
 
     // Build HTML
+    console.log("[DeltaTableRenderer] Building HTML with", tableData.length, "rows");
     const tableHTML = buildTableHTML(
       tableData,
       verticalLinesCount,
@@ -74,7 +101,12 @@ export function createDeltaTableRenderer(
     containerElement.innerHTML = tableHTML;
 
     console.log(
-      `[DeltaTableRenderer] ✅ Rendered table with ${tableData.length} rows and ${verticalLinesCount} lines`
+      `[DeltaTableRenderer] ✅ Rendered table with ${tableData.length} rows and ${verticalLinesCount} lines in container:`,
+      containerElement.id || containerElement.className
+    );
+    console.log(
+      "[DeltaTableRenderer] First 500 chars of rendered HTML:",
+      containerElement.innerHTML.substring(0, 500)
     );
   }
 
