@@ -8,9 +8,9 @@
   "scripts": {
     "dev": "parcel index.html comtrade-combiner/index.html --port 3000",
     "start": "parcel index.html comtrade-combiner/index.html --port 3000",
-    "build": "parcel build index.html comtrade-combiner/index.html --public-url ./ --no-source-maps",
-    "build:main": "parcel build index.html --public-url ./",
-    "build:combiner": "parcel build comtrade-combiner/index.html --public-url ./",
+    "build": "parcel build index.html comtrade-combiner/index.html --public-url ./ --no-source-maps --no-scope-hoist",
+    "build:main": "parcel build index.html --public-url ./ --no-scope-hoist",
+    "build:combiner": "parcel build comtrade-combiner/index.html --public-url ./ --no-scope-hoist",
     "preview": "npx serve dist -p 3000",
     "docs": "jsdoc -c jsdoc.json",
     "mermaid": "node generateMermaid.js",

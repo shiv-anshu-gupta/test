@@ -4400,30 +4400,42 @@ window.addEventListener("message", (ev) => {
 
         // ✅ STEP 4: Save to localStorage using static import (already imported at top)
         try {
-          // Get computed channels from any available source
-          const computedChannelsData =
-            cfg?.computedChannels ||
-            globalData?.computedData ||
-            window.globalData?.computedData ||
-            [];
+          // Defer storage save to avoid blocking
+          setTimeout(() => {
+            try {
+              // Get computed channels from any available source
+              const computedChannelsData =
+                cfg?.computedChannels ||
+                globalData?.computedData ||
+                window.globalData?.computedData ||
+                [];
 
-          if (
-            !Array.isArray(computedChannelsData) ||
-            computedChannelsData.length === 0
-          ) {
-            console.warn(
-              `[COMPUTED COLOR HANDLER] ⚠️ No computed channels data to save`
-            );
-          } else {
-            saveComputedChannelsToStorage(
-              computedChannelsData,
-              computedChannelsData
-            );
-            console.log(`[COMPUTED COLOR HANDLER] ✅ Saved to localStorage`);
-          }
+              if (
+                !Array.isArray(computedChannelsData) ||
+                computedChannelsData.length === 0
+              ) {
+                console.warn(
+                  `[COMPUTED COLOR HANDLER] ⚠️ No computed channels data to save`
+                );
+              } else {
+                saveComputedChannelsToStorage(
+                  computedChannelsData,
+                  computedChannelsData
+                );
+                console.log(
+                  `[COMPUTED COLOR HANDLER] ✅ Saved to localStorage`
+                );
+              }
+            } catch (e) {
+              console.error(
+                `[COMPUTED COLOR HANDLER] ❌ Storage save error:`,
+                e.message
+              );
+            }
+          }, 0);
         } catch (e) {
           console.error(
-            `[COMPUTED COLOR HANDLER] ❌ Storage save error:`,
+            `[COMPUTED COLOR HANDLER] ❌ Error queueing storage save:`,
             e.message
           );
         }
