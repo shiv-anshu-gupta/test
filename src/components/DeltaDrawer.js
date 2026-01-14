@@ -13,6 +13,7 @@ import { crosshairColors } from "../utils/constants.js";
 import { createDeltaTableRenderer } from "./DeltaTableRenderer.js";
 import { formatTableData } from "./DeltaTableDataFormatter.js";
 import { createSidebarResizer } from "./SidebarResizer.js";
+import { filterTableRows } from "./DeltaTable.js";
 
 export function createDeltaDrawer() {
   let isOpen = false;
@@ -21,6 +22,8 @@ export function createDeltaDrawer() {
   const maxWidth = 70;
   let tableRenderer = null;
   let lastUpdateHash = null;
+  let currentTableData = [];
+  let currentVerticalLinesCount = 0;
 
   function setupEventListeners() {
     const drawer = document.getElementById("delta-drawer");
@@ -28,6 +31,62 @@ export function createDeltaDrawer() {
       console.warn("[DeltaDrawer] Delta drawer element not found in DOM");
       return;
     }
+
+    // Setup search functionality
+    setupSearchFunctionality();
+  }
+
+  /**
+   * Setup search box event listeners
+   */
+  function setupSearchFunctionality() {
+    const searchInput = document.getElementById("delta-table-search");
+    const searchBtn = document.getElementById("delta-table-search-btn");
+
+    if (!searchInput || !searchBtn) {
+      console.warn("[DeltaDrawer] Search elements not found in DOM");
+      return;
+    }
+
+    // Handle search button click
+    const handleSearch = () => {
+      const searchQuery = searchInput.value;
+      console.log("[DeltaDrawer] Searching for:", searchQuery);
+
+      // Filter table data based on search query
+      const filteredData = filterTableRows(currentTableData, searchQuery);
+
+      // Re-render table with filtered data
+      if (tableRenderer) {
+        try {
+          tableRenderer.render(filteredData, currentVerticalLinesCount);
+          console.log("[DeltaDrawer] Table filtered to", filteredData.length, "rows");
+        } catch (err) {
+          console.error("[DeltaDrawer] Error filtering table:", err);
+        }
+      }
+    };
+
+    // Add event listeners
+    searchBtn.addEventListener("click", handleSearch);
+    searchInput.addEventListener("keypress", (e) => {
+      if (e.key === "Enter") {
+        handleSearch();
+      }
+    });
+
+    // Allow search input to update on key release for real-time filtering
+    searchInput.addEventListener("keyup", () => {
+      const searchQuery = searchInput.value;
+      if (searchQuery === "") {
+        // If search is cleared, show all rows
+        if (tableRenderer) {
+          tableRenderer.render(currentTableData, currentVerticalLinesCount);
+        }
+      }
+    });
+
+    console.log("[DeltaDrawer] Search functionality initialized");
   }
 
   const api = {
@@ -82,6 +141,12 @@ export function createDeltaDrawer() {
 
       isOpen = false;
 
+      // Clear search input when drawer is hidden
+      const searchInput = document.getElementById("delta-table-search");
+      if (searchInput) {
+        searchInput.value = "";
+      }
+
       // ✅ Reset CSS variables and remove resized class
       document.documentElement.style.setProperty(
         "--main-content-width",
@@ -103,6 +168,16 @@ export function createDeltaDrawer() {
     },
 
     update: async (deltaData = [], verticalLinesCount = 0) => {
+      // ✅ Log incoming data for debugging
+      console.log(
+        "[DeltaDrawer] update() called with",
+        deltaData.length,
+        "sections,",
+        verticalLinesCount,
+        "vertical lines, drawer open:",
+        isOpen
+      );
+
       // ✅ Generate hash of current data to prevent duplicate renders
       const currentHash = JSON.stringify({ deltaData, verticalLinesCount });
 
@@ -116,17 +191,11 @@ export function createDeltaDrawer() {
 
       lastUpdateHash = currentHash;
 
-      console.log(
-        "[DeltaDrawer] update() called with",
-        deltaData.length,
-        "sections and",
-        verticalLinesCount,
-        "vertical lines"
-      );
-
       const content = document.getElementById("delta-drawer-content");
       if (!content) {
-        console.error("[DeltaDrawer] Content element not found");
+        console.warn(
+          "[DeltaDrawer] Content element not found - drawer may not be rendered yet"
+        );
         return;
       }
 
@@ -153,6 +222,10 @@ export function createDeltaDrawer() {
             </div>
           </div>
         `;
+        console.log("[DeltaDrawer] Showing empty state:", {
+          deltaDataLength: deltaData?.length || 0,
+          verticalLinesCount,
+        });
         return;
       }
 
@@ -225,8 +298,17 @@ export function createDeltaDrawer() {
         verticalLineTimes
       );
 
+      console.log(
+        "[DeltaDrawer] formatTableData returned",
+        tableData.length,
+        "rows"
+      );
+
       if (tableData.length === 0) {
-        console.warn("[DeltaDrawer] No valid table data");
+        console.warn(
+          "[DeltaDrawer] No valid table data after formatting. Input deltaData:",
+          deltaData
+        );
         tableContainer.innerHTML =
           '<p style="padding: 16px; color: #9ca3af; text-align: center;">No data available</p>';
         return;
@@ -236,6 +318,10 @@ export function createDeltaDrawer() {
       try {
         const mainModule = await import("../main.js");
         const verticalLinesXState = mainModule.verticalLinesX;
+
+        // Store current table data for search functionality
+        currentTableData = tableData;
+        currentVerticalLinesCount = verticalLinesCount;
 
         // Create renderer and subscribe to state changes
         tableRenderer = createDeltaTableRenderer(
@@ -248,9 +334,15 @@ export function createDeltaDrawer() {
           `[DeltaDrawer] ✅ Table rendered with ${tableData.length} rows (including time row) and ${verticalLinesCount} columns`
         );
       } catch (error) {
-        console.error("[DeltaDrawer] ❌ Failed to create table:", error);
+        console.error(
+          "[DeltaDrawer] ❌ Failed to create table:",
+          error.message,
+          error.stack
+        );
         tableContainer.innerHTML =
-          '<p style="padding: 16px; color: #dc2626;">Error creating table</p>';
+          '<p style="padding: 16px; color: #dc2626;">Error creating table: ' +
+          error.message +
+          "</p>";
       }
     },
 
@@ -273,8 +365,9 @@ export function createDeltaDrawer() {
      */
     init: () => {
       setupEventListeners();
-      createSidebarResizer("delta-drawer-panel", "left");
-      console.log("[DeltaDrawer] ✅ Initialized with resizable functionality");
+      // ✅ REMOVED: createSidebarResizer - using explicit resizeDivider from HTML instead
+      // createSidebarResizer("delta-drawer-panel", "left");
+      console.log("[DeltaDrawer] ✅ Initialized with event listeners (resizer from HTML)");
     },
   };
 

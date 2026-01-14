@@ -20,12 +20,19 @@ export function formatTableData(
   verticalLineTimes = []
 ) {
   if (!Array.isArray(deltaData) || deltaData.length === 0) {
-    console.warn("[formatTableData] No delta data to format");
+    console.warn("[formatTableData] No delta data to format", {
+      isArray: Array.isArray(deltaData),
+      length: deltaData?.length || 0,
+    });
     return [];
   }
 
   console.log(
-    `[formatTableData] 🔄 Formatting data for ${verticalLinesCount} lines from ${deltaData.length} sections`
+    `[formatTableData] 🔄 Formatting data for ${verticalLinesCount} lines from ${deltaData.length} sections`,
+    {
+      firstSection: deltaData[0],
+      lastSection: deltaData[deltaData.length - 1],
+    }
   );
 
   // Build a map: { channelName: { color, v0, v1, v2, ..., delta0, delta1, ..., percentage0, percentage1, ... } }
@@ -232,6 +239,13 @@ export function formatTableData(
 
   // Insert time row at the beginning
   tableData.unshift(timeRow);
+
+  console.log("[formatTableData] ✅ Formatted complete table with", tableData.length, "rows (including time row)", {
+    totalChannels: channelMap.size,
+    verticalLinesCount,
+    firstDataRow: tableData[1],
+    lastDataRow: tableData[tableData.length - 1],
+  });
 
   return tableData;
 }

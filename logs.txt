@@ -1,0 +1,661 @@
+[DeltaDrawer] show() called
+DeltaDrawer.js:89 [DeltaDrawer] Search functionality initialized
+DeltaDrawer.js:124 [DeltaDrawer] ✅ Drawer shown with width: 30%
+DeltaDrawer.js:172 [DeltaDrawer] update() called with 4 sections, 1 vertical lines, drawer open: true
+DeltaDrawer.js:234 [DeltaDrawer] ✨ Content cleared, creating single table container
+DeltaDrawer.js:243 [DeltaDrawer] ✅ Table container appended to content (ONCE)
+DeltaDrawer.js:288 [DeltaDrawer] ⚠️ Using placeholder time values
+update @ DeltaDrawer.js:288
+await in update
+handleVerticalLineShortcuts @ handleVerticalLineShortcuts.js:100
+await in handleVerticalLineShortcuts
+(anonymous) @ main.js:2895Understand this warning
+DeltaTableDataFormatter.js:30 [formatTableData] 🔄 Formatting data for 1 lines from 4 sections {firstSection: {…}, lastSection: {…}}
+DeltaTableDataFormatter.js:43 [formatTableData] 📊 Single vertical line mode - no deltas
+DeltaTableDataFormatter.js:59 [formatTableData] ✨ New channel: IA
+DeltaTableDataFormatter.js:66 [formatTableData] Channel IA: v0 = -283.01 MA
+DeltaTableDataFormatter.js:59 [formatTableData] ✨ New channel: IB
+DeltaTableDataFormatter.js:66 [formatTableData] Channel IB: v0 = 1.41 GA
+DeltaTableDataFormatter.js:59 [formatTableData] ✨ New channel: IC
+DeltaTableDataFormatter.js:66 [formatTableData] Channel IC: v0 = -1.67 GA
+DeltaTableDataFormatter.js:59 [formatTableData] ✨ New channel: IN
+DeltaTableDataFormatter.js:66 [formatTableData] Channel IN: v0 = -247.79 MA
+DeltaTableDataFormatter.js:59 [formatTableData] ✨ New channel: VA
+DeltaTableDataFormatter.js:66 [formatTableData] Channel VA: v0 = 161.59 MV
+DeltaTableDataFormatter.js:59 [formatTableData] ✨ New channel: VB
+DeltaTableDataFormatter.js:66 [formatTableData] Channel VB: v0 = -1.38 GV
+DeltaTableDataFormatter.js:59 [formatTableData] ✨ New channel: VC
+DeltaTableDataFormatter.js:66 [formatTableData] Channel VC: v0 = 1.69 GV
+DeltaTableDataFormatter.js:59 [formatTableData] ✨ New channel: SV03
+DeltaTableDataFormatter.js:66 [formatTableData] Channel SV03: v0 = 1.00 
+DeltaTableDataFormatter.js:59 [formatTableData] ✨ New channel: SV03T
+DeltaTableDataFormatter.js:66 [formatTableData] Channel SV03T: v0 = 1.00 
+DeltaTableDataFormatter.js:59 [formatTableData] ✨ New channel: ER2
+DeltaTableDataFormatter.js:66 [formatTableData] Channel ER2: v0 = 1.00 
+DeltaTableDataFormatter.js:59 [formatTableData] ✨ New channel: EQC2
+DeltaTableDataFormatter.js:66 [formatTableData] Channel EQC2: v0 = 1.00 
+DeltaTableDataFormatter.js:59 [formatTableData] ✨ New channel: EQC3
+DeltaTableDataFormatter.js:66 [formatTableData] Channel EQC3: v0 = 0.00 
+DeltaTableDataFormatter.js:211 [formatTableData] ✅ Consolidated 12 channels
+DeltaTableDataFormatter.js:243 [formatTableData] ✅ Formatted complete table with 13 rows (including time row) {totalChannels: 12, verticalLinesCount: 1, firstDataRow: {…}, lastDataRow: {…}}
+DeltaDrawer.js:301 [DeltaDrawer] formatTableData returned 13 rows
+DeltaTableRenderer.js:121 [DeltaTableRenderer] Subscribed to verticalLinesX state
+DeltaTableRenderer.js:34 [DeltaTableRenderer] render() called with: {rowCount: 13, linesCount: 1, containerExists: true, containerHtml: '', firstRow: {…}, …}
+DeltaTableRenderer.js:54 [DeltaTableRenderer] Extracted lines array: 0 lines
+DeltaTableRenderer.js:73 [DeltaTableRenderer] No time values extracted, using placeholders
+render @ DeltaTableRenderer.js:73
+update @ DeltaDrawer.js:331
+await in update
+handleVerticalLineShortcuts @ handleVerticalLineShortcuts.js:100
+await in handleVerticalLineShortcuts
+(anonymous) @ main.js:2895Understand this warning
+DeltaTableRenderer.js:82 [DeltaTableRenderer] Building HTML with 13 rows
+DeltaTable.js:80 [DeltaTable] First row structure: {channel: '__TIME_ROW__', color: '#3b82f6', v0: 'T1'}
+DeltaTable.js:81 [DeltaTable] Total rows: 13
+DeltaTable.js:82 [DeltaTable] VerticalLinesCount: 1
+DeltaTable.js:89 [DeltaTable] Row 1 values: {channel: 'IA', v0: '-283.01 MA', v1: undefined, delta0: undefined, percentage0: undefined}
+DeltaTableRenderer.js:93 [DeltaTableRenderer] ✅ Rendered table with 13 rows and 1 lines in container: delta-table-main
+DeltaTableRenderer.js:97 [DeltaTableRenderer] First 500 chars of rendered HTML: 
+    <div class="mt-4 flow-root">
+      <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+        <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+          <div class="overflow-hidden shadow outline outline-1 outline-black/5 sm:rounded-lg dark:shadow-none dark:-outline-offset-1 dark:outline-white/10">
+            <table class="relative min-w-full divide-y divide-gray-300 dark:divide-white/15">           
+              <thead class="bg-gray-50 dark:bg-gray-800/75
+DeltaDrawer.js:333 [DeltaDrawer] ✅ Table rendered with 13 rows (including time row) and 1 columns
+20verticalLinePlugin.js:92 [verticalLinePlugin] Subscription triggered, calling debounced update
+2setupPolarChartIntegration.js:103 [setupPolarChartWithVerticalLines] Subscription triggered, calling debounced update
+DeltaTableRenderer.js:113 [DeltaTableRenderer] Vertical lines changed, re-rendering table
+DeltaTableRenderer.js:34 [DeltaTableRenderer] render() called with: {rowCount: 13, linesCount: 1, containerExists: true, containerHtml: '\n    <div class="mt-4 flow-root">\n      <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">\n', firstRow: {…}, …}
+DeltaTableRenderer.js:54 [DeltaTableRenderer] Extracted lines array: 0 lines
+DeltaTableRenderer.js:73 [DeltaTableRenderer] No time values extracted, using placeholders
+render @ DeltaTableRenderer.js:73
+(anonymous) @ DeltaTableRenderer.js:118
+wrapped @ createState.js:514
+(anonymous) @ createState.js:544
+requestAnimationFrame
+notify @ createState.js:538
+set @ createState.js:681
+createState @ createState.js:470
+fILKw../components/chartComponent.js @ main.js:287
+newRequire @ test.1fcc916e.js:84
+localRequire @ test.1fcc916e.js:144
+handleVerticalLineShortcuts @ handleVerticalLineShortcuts.js:97
+(anonymous) @ main.js:2895Understand this warning
+DeltaTableRenderer.js:82 [DeltaTableRenderer] Building HTML with 13 rows
+DeltaTable.js:80 [DeltaTable] First row structure: {channel: '__TIME_ROW__', color: '#3b82f6', v0: 'T1'}
+DeltaTable.js:81 [DeltaTable] Total rows: 13
+DeltaTable.js:82 [DeltaTable] VerticalLinesCount: 1
+DeltaTable.js:89 [DeltaTable] Row 1 values: {channel: 'IA', v0: '-283.01 MA', v1: undefined, delta0: undefined, percentage0: undefined}
+DeltaTableRenderer.js:93 [DeltaTableRenderer] ✅ Rendered table with 13 rows and 1 lines in container: delta-table-main
+DeltaTableRenderer.js:97 [DeltaTableRenderer] First 500 chars of rendered HTML: 
+    <div class="mt-4 flow-root">
+      <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+        <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+          <div class="overflow-hidden shadow outline outline-1 outline-black/5 sm:rounded-lg dark:shadow-none dark:-outline-offset-1 dark:outline-white/10">
+            <table class="relative min-w-full divide-y divide-gray-300 dark:divide-white/15">           
+              <thead class="bg-gray-50 dark:bg-gray-800/75
+DeltaTableRenderer.js:113 [DeltaTableRenderer] Vertical lines changed, re-rendering table
+DeltaTableRenderer.js:34 [DeltaTableRenderer] render() called with: {rowCount: 13, linesCount: 1, containerExists: true, containerHtml: '\n    <div class="mt-4 flow-root">\n      <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">\n', firstRow: {…}, …}
+DeltaTableRenderer.js:54 [DeltaTableRenderer] Extracted lines array: 0 lines
+DeltaTableRenderer.js:73 [DeltaTableRenderer] No time values extracted, using placeholders
+render @ DeltaTableRenderer.js:73
+(anonymous) @ DeltaTableRenderer.js:118
+wrapped @ createState.js:514
+(anonymous) @ createState.js:544
+requestAnimationFrame
+notify @ createState.js:538
+set @ createState.js:681
+createState @ createState.js:470
+fILKw../components/chartComponent.js @ main.js:287
+newRequire @ test.1fcc916e.js:84
+localRequire @ test.1fcc916e.js:144
+handleVerticalLineShortcuts @ handleVerticalLineShortcuts.js:97
+(anonymous) @ main.js:2895Understand this warning
+DeltaTableRenderer.js:82 [DeltaTableRenderer] Building HTML with 13 rows
+DeltaTable.js:80 [DeltaTable] First row structure: {channel: '__TIME_ROW__', color: '#3b82f6', v0: 'T1'}
+DeltaTable.js:81 [DeltaTable] Total rows: 13
+DeltaTable.js:82 [DeltaTable] VerticalLinesCount: 1
+DeltaTable.js:89 [DeltaTable] Row 1 values: {channel: 'IA', v0: '-283.01 MA', v1: undefined, delta0: undefined, percentage0: undefined}
+DeltaTableRenderer.js:93 [DeltaTableRenderer] ✅ Rendered table with 13 rows and 1 lines in container: delta-table-main
+DeltaTableRenderer.js:97 [DeltaTableRenderer] First 500 chars of rendered HTML: 
+    <div class="mt-4 flow-root">
+      <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+        <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+          <div class="overflow-hidden shadow outline outline-1 outline-black/5 sm:rounded-lg dark:shadow-none dark:-outline-offset-1 dark:outline-white/10">
+            <table class="relative min-w-full divide-y divide-gray-300 dark:divide-white/15">           
+              <thead class="bg-gray-50 dark:bg-gray-800/75
+DeltaTableRenderer.js:113 [DeltaTableRenderer] Vertical lines changed, re-rendering table
+DeltaTableRenderer.js:34 [DeltaTableRenderer] render() called with: {rowCount: 13, linesCount: 1, containerExists: true, containerHtml: '\n    <div class="mt-4 flow-root">\n      <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">\n', firstRow: {…}, …}
+DeltaTableRenderer.js:54 [DeltaTableRenderer] Extracted lines array: 0 lines
+DeltaTableRenderer.js:73 [DeltaTableRenderer] No time values extracted, using placeholders
+render @ DeltaTableRenderer.js:73
+(anonymous) @ DeltaTableRenderer.js:118
+wrapped @ createState.js:514
+(anonymous) @ createState.js:544
+requestAnimationFrame
+notify @ createState.js:538
+set @ createState.js:681
+createState @ createState.js:470
+fILKw../components/chartComponent.js @ main.js:287
+newRequire @ test.1fcc916e.js:84
+localRequire @ test.1fcc916e.js:144
+handleVerticalLineShortcuts @ handleVerticalLineShortcuts.js:97
+(anonymous) @ main.js:2895Understand this warning
+DeltaTableRenderer.js:82 [DeltaTableRenderer] Building HTML with 13 rows
+DeltaTable.js:80 [DeltaTable] First row structure: {channel: '__TIME_ROW__', color: '#3b82f6', v0: 'T1'}
+DeltaTable.js:81 [DeltaTable] Total rows: 13
+DeltaTable.js:82 [DeltaTable] VerticalLinesCount: 1
+DeltaTable.js:89 [DeltaTable] Row 1 values: {channel: 'IA', v0: '-283.01 MA', v1: undefined, delta0: undefined, percentage0: undefined}
+DeltaTableRenderer.js:93 [DeltaTableRenderer] ✅ Rendered table with 13 rows and 1 lines in container: delta-table-main
+DeltaTableRenderer.js:97 [DeltaTableRenderer] First 500 chars of rendered HTML: 
+    <div class="mt-4 flow-root">
+      <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+        <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+          <div class="overflow-hidden shadow outline outline-1 outline-black/5 sm:rounded-lg dark:shadow-none dark:-outline-offset-1 dark:outline-white/10">
+            <table class="relative min-w-full divide-y divide-gray-300 dark:divide-white/15">           
+              <thead class="bg-gray-50 dark:bg-gray-800/75
+DeltaTableRenderer.js:113 [DeltaTableRenderer] Vertical lines changed, re-rendering table
+DeltaTableRenderer.js:34 [DeltaTableRenderer] render() called with: {rowCount: 13, linesCount: 1, containerExists: true, containerHtml: '\n    <div class="mt-4 flow-root">\n      <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">\n', firstRow: {…}, …}
+DeltaTableRenderer.js:54 [DeltaTableRenderer] Extracted lines array: 0 lines
+DeltaTableRenderer.js:73 [DeltaTableRenderer] No time values extracted, using placeholders
+render @ DeltaTableRenderer.js:73
+(anonymous) @ DeltaTableRenderer.js:118
+wrapped @ createState.js:514
+(anonymous) @ createState.js:544
+requestAnimationFrame
+notify @ createState.js:538
+set @ createState.js:681
+createState @ createState.js:470
+fILKw../components/chartComponent.js @ main.js:287
+newRequire @ test.1fcc916e.js:84
+localRequire @ test.1fcc916e.js:144
+handleVerticalLineShortcuts @ handleVerticalLineShortcuts.js:97
+(anonymous) @ main.js:2895Understand this warning
+DeltaTableRenderer.js:82 [DeltaTableRenderer] Building HTML with 13 rows
+DeltaTable.js:80 [DeltaTable] First row structure: {channel: '__TIME_ROW__', color: '#3b82f6', v0: 'T1'}
+DeltaTable.js:81 [DeltaTable] Total rows: 13
+DeltaTable.js:82 [DeltaTable] VerticalLinesCount: 1
+DeltaTable.js:89 [DeltaTable] Row 1 values: {channel: 'IA', v0: '-283.01 MA', v1: undefined, delta0: undefined, percentage0: undefined}
+DeltaTableRenderer.js:93 [DeltaTableRenderer] ✅ Rendered table with 13 rows and 1 lines in container: delta-table-main
+DeltaTableRenderer.js:97 [DeltaTableRenderer] First 500 chars of rendered HTML: 
+    <div class="mt-4 flow-root">
+      <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+        <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+          <div class="overflow-hidden shadow outline outline-1 outline-black/5 sm:rounded-lg dark:shadow-none dark:-outline-offset-1 dark:outline-white/10">
+            <table class="relative min-w-full divide-y divide-gray-300 dark:divide-white/15">           
+              <thead class="bg-gray-50 dark:bg-gray-800/75
+DeltaTableRenderer.js:113 [DeltaTableRenderer] Vertical lines changed, re-rendering table
+DeltaTableRenderer.js:34 [DeltaTableRenderer] render() called with: {rowCount: 13, linesCount: 1, containerExists: true, containerHtml: '\n    <div class="mt-4 flow-root">\n      <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">\n', firstRow: {…}, …}
+DeltaTableRenderer.js:54 [DeltaTableRenderer] Extracted lines array: 0 lines
+DeltaTableRenderer.js:73 [DeltaTableRenderer] No time values extracted, using placeholders
+render @ DeltaTableRenderer.js:73
+(anonymous) @ DeltaTableRenderer.js:118
+wrapped @ createState.js:514
+(anonymous) @ createState.js:544
+requestAnimationFrame
+notify @ createState.js:538
+set @ createState.js:681
+createState @ createState.js:470
+fILKw../components/chartComponent.js @ main.js:287
+newRequire @ test.1fcc916e.js:84
+localRequire @ test.1fcc916e.js:144
+handleVerticalLineShortcuts @ handleVerticalLineShortcuts.js:97
+(anonymous) @ main.js:2895Understand this warning
+DeltaTableRenderer.js:82 [DeltaTableRenderer] Building HTML with 13 rows
+DeltaTable.js:80 [DeltaTable] First row structure: {channel: '__TIME_ROW__', color: '#3b82f6', v0: 'T1'}
+DeltaTable.js:81 [DeltaTable] Total rows: 13
+DeltaTable.js:82 [DeltaTable] VerticalLinesCount: 1
+DeltaTable.js:89 [DeltaTable] Row 1 values: {channel: 'IA', v0: '-283.01 MA', v1: undefined, delta0: undefined, percentage0: undefined}
+DeltaTableRenderer.js:93 [DeltaTableRenderer] ✅ Rendered table with 13 rows and 1 lines in container: delta-table-main
+DeltaTableRenderer.js:97 [DeltaTableRenderer] First 500 chars of rendered HTML: 
+    <div class="mt-4 flow-root">
+      <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+        <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+          <div class="overflow-hidden shadow outline outline-1 outline-black/5 sm:rounded-lg dark:shadow-none dark:-outline-offset-1 dark:outline-white/10">
+            <table class="relative min-w-full divide-y divide-gray-300 dark:divide-white/15">           
+              <thead class="bg-gray-50 dark:bg-gray-800/75
+DeltaTableRenderer.js:113 [DeltaTableRenderer] Vertical lines changed, re-rendering table
+DeltaTableRenderer.js:34 [DeltaTableRenderer] render() called with: {rowCount: 13, linesCount: 1, containerExists: true, containerHtml: '\n    <div class="mt-4 flow-root">\n      <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">\n', firstRow: {…}, …}
+DeltaTableRenderer.js:54 [DeltaTableRenderer] Extracted lines array: 0 lines
+DeltaTableRenderer.js:73 [DeltaTableRenderer] No time values extracted, using placeholders
+render @ DeltaTableRenderer.js:73
+(anonymous) @ DeltaTableRenderer.js:118
+wrapped @ createState.js:514
+(anonymous) @ createState.js:544
+requestAnimationFrame
+notify @ createState.js:538
+set @ createState.js:681
+createState @ createState.js:470
+fILKw../components/chartComponent.js @ main.js:287
+newRequire @ test.1fcc916e.js:84
+localRequire @ test.1fcc916e.js:144
+handleVerticalLineShortcuts @ handleVerticalLineShortcuts.js:97
+(anonymous) @ main.js:2895Understand this warning
+DeltaTableRenderer.js:82 [DeltaTableRenderer] Building HTML with 13 rows
+DeltaTable.js:80 [DeltaTable] First row structure: {channel: '__TIME_ROW__', color: '#3b82f6', v0: 'T1'}
+DeltaTable.js:81 [DeltaTable] Total rows: 13
+DeltaTable.js:82 [DeltaTable] VerticalLinesCount: 1
+DeltaTable.js:89 [DeltaTable] Row 1 values: {channel: 'IA', v0: '-283.01 MA', v1: undefined, delta0: undefined, percentage0: undefined}
+DeltaTableRenderer.js:93 [DeltaTableRenderer] ✅ Rendered table with 13 rows and 1 lines in container: delta-table-main
+DeltaTableRenderer.js:97 [DeltaTableRenderer] First 500 chars of rendered HTML: 
+    <div class="mt-4 flow-root">
+      <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+        <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+          <div class="overflow-hidden shadow outline outline-1 outline-black/5 sm:rounded-lg dark:shadow-none dark:-outline-offset-1 dark:outline-white/10">
+            <table class="relative min-w-full divide-y divide-gray-300 dark:divide-white/15">           
+              <thead class="bg-gray-50 dark:bg-gray-800/75
+DeltaTableRenderer.js:113 [DeltaTableRenderer] Vertical lines changed, re-rendering table
+DeltaTableRenderer.js:34 [DeltaTableRenderer] render() called with: {rowCount: 13, linesCount: 1, containerExists: true, containerHtml: '\n    <div class="mt-4 flow-root">\n      <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">\n', firstRow: {…}, …}
+DeltaTableRenderer.js:54 [DeltaTableRenderer] Extracted lines array: 0 lines
+DeltaTableRenderer.js:73 [DeltaTableRenderer] No time values extracted, using placeholders
+render @ DeltaTableRenderer.js:73
+(anonymous) @ DeltaTableRenderer.js:118
+wrapped @ createState.js:514
+(anonymous) @ createState.js:544
+requestAnimationFrame
+notify @ createState.js:538
+set @ createState.js:681
+createState @ createState.js:470
+fILKw../components/chartComponent.js @ main.js:287
+newRequire @ test.1fcc916e.js:84
+localRequire @ test.1fcc916e.js:144
+handleVerticalLineShortcuts @ handleVerticalLineShortcuts.js:97
+(anonymous) @ main.js:2895Understand this warning
+DeltaTableRenderer.js:82 [DeltaTableRenderer] Building HTML with 13 rows
+DeltaTable.js:80 [DeltaTable] First row structure: {channel: '__TIME_ROW__', color: '#3b82f6', v0: 'T1'}
+DeltaTable.js:81 [DeltaTable] Total rows: 13
+DeltaTable.js:82 [DeltaTable] VerticalLinesCount: 1
+DeltaTable.js:89 [DeltaTable] Row 1 values: {channel: 'IA', v0: '-283.01 MA', v1: undefined, delta0: undefined, percentage0: undefined}
+DeltaTableRenderer.js:93 [DeltaTableRenderer] ✅ Rendered table with 13 rows and 1 lines in container: delta-table-main
+DeltaTableRenderer.js:97 [DeltaTableRenderer] First 500 chars of rendered HTML: 
+    <div class="mt-4 flow-root">
+      <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+        <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+          <div class="overflow-hidden shadow outline outline-1 outline-black/5 sm:rounded-lg dark:shadow-none dark:-outline-offset-1 dark:outline-white/10">
+            <table class="relative min-w-full divide-y divide-gray-300 dark:divide-white/15">           
+              <thead class="bg-gray-50 dark:bg-gray-800/75
+DeltaTableRenderer.js:113 [DeltaTableRenderer] Vertical lines changed, re-rendering table
+DeltaTableRenderer.js:34 [DeltaTableRenderer] render() called with: {rowCount: 13, linesCount: 1, containerExists: true, containerHtml: '\n    <div class="mt-4 flow-root">\n      <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">\n', firstRow: {…}, …}
+DeltaTableRenderer.js:54 [DeltaTableRenderer] Extracted lines array: 0 lines
+DeltaTableRenderer.js:73 [DeltaTableRenderer] No time values extracted, using placeholders
+render @ DeltaTableRenderer.js:73
+(anonymous) @ DeltaTableRenderer.js:118
+wrapped @ createState.js:514
+(anonymous) @ createState.js:544
+requestAnimationFrame
+notify @ createState.js:538
+set @ createState.js:681
+createState @ createState.js:470
+fILKw../components/chartComponent.js @ main.js:287
+newRequire @ test.1fcc916e.js:84
+localRequire @ test.1fcc916e.js:144
+handleVerticalLineShortcuts @ handleVerticalLineShortcuts.js:97
+(anonymous) @ main.js:2895Understand this warning
+DeltaTableRenderer.js:82 [DeltaTableRenderer] Building HTML with 13 rows
+DeltaTable.js:80 [DeltaTable] First row structure: {channel: '__TIME_ROW__', color: '#3b82f6', v0: 'T1'}
+DeltaTable.js:81 [DeltaTable] Total rows: 13
+DeltaTable.js:82 [DeltaTable] VerticalLinesCount: 1
+DeltaTable.js:89 [DeltaTable] Row 1 values: {channel: 'IA', v0: '-283.01 MA', v1: undefined, delta0: undefined, percentage0: undefined}
+DeltaTableRenderer.js:93 [DeltaTableRenderer] ✅ Rendered table with 13 rows and 1 lines in container: delta-table-main
+DeltaTableRenderer.js:97 [DeltaTableRenderer] First 500 chars of rendered HTML: 
+    <div class="mt-4 flow-root">
+      <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+        <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+          <div class="overflow-hidden shadow outline outline-1 outline-black/5 sm:rounded-lg dark:shadow-none dark:-outline-offset-1 dark:outline-white/10">
+            <table class="relative min-w-full divide-y divide-gray-300 dark:divide-white/15">           
+              <thead class="bg-gray-50 dark:bg-gray-800/75
+DeltaTableRenderer.js:113 [DeltaTableRenderer] Vertical lines changed, re-rendering table
+DeltaTableRenderer.js:34 [DeltaTableRenderer] render() called with: {rowCount: 13, linesCount: 1, containerExists: true, containerHtml: '\n    <div class="mt-4 flow-root">\n      <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">\n', firstRow: {…}, …}
+DeltaTableRenderer.js:54 [DeltaTableRenderer] Extracted lines array: 0 lines
+DeltaTableRenderer.js:73 [DeltaTableRenderer] No time values extracted, using placeholders
+render @ DeltaTableRenderer.js:73
+(anonymous) @ DeltaTableRenderer.js:118
+wrapped @ createState.js:514
+(anonymous) @ createState.js:544
+requestAnimationFrame
+notify @ createState.js:538
+set @ createState.js:681
+createState @ createState.js:470
+fILKw../components/chartComponent.js @ main.js:287
+newRequire @ test.1fcc916e.js:84
+localRequire @ test.1fcc916e.js:144
+handleVerticalLineShortcuts @ handleVerticalLineShortcuts.js:97
+(anonymous) @ main.js:2895Understand this warning
+DeltaTableRenderer.js:82 [DeltaTableRenderer] Building HTML with 13 rows
+DeltaTable.js:80 [DeltaTable] First row structure: {channel: '__TIME_ROW__', color: '#3b82f6', v0: 'T1'}
+DeltaTable.js:81 [DeltaTable] Total rows: 13
+DeltaTable.js:82 [DeltaTable] VerticalLinesCount: 1
+DeltaTable.js:89 [DeltaTable] Row 1 values: {channel: 'IA', v0: '-283.01 MA', v1: undefined, delta0: undefined, percentage0: undefined}
+DeltaTableRenderer.js:93 [DeltaTableRenderer] ✅ Rendered table with 13 rows and 1 lines in container: delta-table-main
+DeltaTableRenderer.js:97 [DeltaTableRenderer] First 500 chars of rendered HTML: 
+    <div class="mt-4 flow-root">
+      <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+        <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+          <div class="overflow-hidden shadow outline outline-1 outline-black/5 sm:rounded-lg dark:shadow-none dark:-outline-offset-1 dark:outline-white/10">
+            <table class="relative min-w-full divide-y divide-gray-300 dark:divide-white/15">           
+              <thead class="bg-gray-50 dark:bg-gray-800/75
+DeltaTableRenderer.js:113 [DeltaTableRenderer] Vertical lines changed, re-rendering table
+DeltaTableRenderer.js:34 [DeltaTableRenderer] render() called with: {rowCount: 13, linesCount: 1, containerExists: true, containerHtml: '\n    <div class="mt-4 flow-root">\n      <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">\n', firstRow: {…}, …}
+DeltaTableRenderer.js:54 [DeltaTableRenderer] Extracted lines array: 0 lines
+DeltaTableRenderer.js:73 [DeltaTableRenderer] No time values extracted, using placeholders
+render @ DeltaTableRenderer.js:73
+(anonymous) @ DeltaTableRenderer.js:118
+wrapped @ createState.js:514
+(anonymous) @ createState.js:544
+requestAnimationFrame
+notify @ createState.js:538
+set @ createState.js:681
+createState @ createState.js:470
+fILKw../components/chartComponent.js @ main.js:287
+newRequire @ test.1fcc916e.js:84
+localRequire @ test.1fcc916e.js:144
+handleVerticalLineShortcuts @ handleVerticalLineShortcuts.js:97
+(anonymous) @ main.js:2895Understand this warning
+DeltaTableRenderer.js:82 [DeltaTableRenderer] Building HTML with 13 rows
+DeltaTable.js:80 [DeltaTable] First row structure: {channel: '__TIME_ROW__', color: '#3b82f6', v0: 'T1'}
+DeltaTable.js:81 [DeltaTable] Total rows: 13
+DeltaTable.js:82 [DeltaTable] VerticalLinesCount: 1
+DeltaTable.js:89 [DeltaTable] Row 1 values: {channel: 'IA', v0: '-283.01 MA', v1: undefined, delta0: undefined, percentage0: undefined}
+DeltaTableRenderer.js:93 [DeltaTableRenderer] ✅ Rendered table with 13 rows and 1 lines in container: delta-table-main
+DeltaTableRenderer.js:97 [DeltaTableRenderer] First 500 chars of rendered HTML: 
+    <div class="mt-4 flow-root">
+      <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+        <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+          <div class="overflow-hidden shadow outline outline-1 outline-black/5 sm:rounded-lg dark:shadow-none dark:-outline-offset-1 dark:outline-white/10">
+            <table class="relative min-w-full divide-y divide-gray-300 dark:divide-white/15">           
+              <thead class="bg-gray-50 dark:bg-gray-800/75
+DeltaTableRenderer.js:113 [DeltaTableRenderer] Vertical lines changed, re-rendering table
+DeltaTableRenderer.js:34 [DeltaTableRenderer] render() called with: {rowCount: 13, linesCount: 1, containerExists: true, containerHtml: '\n    <div class="mt-4 flow-root">\n      <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">\n', firstRow: {…}, …}
+DeltaTableRenderer.js:54 [DeltaTableRenderer] Extracted lines array: 0 lines
+DeltaTableRenderer.js:73 [DeltaTableRenderer] No time values extracted, using placeholders
+render @ DeltaTableRenderer.js:73
+(anonymous) @ DeltaTableRenderer.js:118
+wrapped @ createState.js:514
+(anonymous) @ createState.js:544
+requestAnimationFrame
+notify @ createState.js:538
+set @ createState.js:681
+createState @ createState.js:470
+fILKw../components/chartComponent.js @ main.js:287
+newRequire @ test.1fcc916e.js:84
+localRequire @ test.1fcc916e.js:144
+handleVerticalLineShortcuts @ handleVerticalLineShortcuts.js:97
+(anonymous) @ main.js:2895Understand this warning
+DeltaTableRenderer.js:82 [DeltaTableRenderer] Building HTML with 13 rows
+DeltaTable.js:80 [DeltaTable] First row structure: {channel: '__TIME_ROW__', color: '#3b82f6', v0: 'T1'}
+DeltaTable.js:81 [DeltaTable] Total rows: 13
+DeltaTable.js:82 [DeltaTable] VerticalLinesCount: 1
+DeltaTable.js:89 [DeltaTable] Row 1 values: {channel: 'IA', v0: '-283.01 MA', v1: undefined, delta0: undefined, percentage0: undefined}
+DeltaTableRenderer.js:93 [DeltaTableRenderer] ✅ Rendered table with 13 rows and 1 lines in container: delta-table-main
+DeltaTableRenderer.js:97 [DeltaTableRenderer] First 500 chars of rendered HTML: 
+    <div class="mt-4 flow-root">
+      <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+        <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+          <div class="overflow-hidden shadow outline outline-1 outline-black/5 sm:rounded-lg dark:shadow-none dark:-outline-offset-1 dark:outline-white/10">
+            <table class="relative min-w-full divide-y divide-gray-300 dark:divide-white/15">           
+              <thead class="bg-gray-50 dark:bg-gray-800/75
+DeltaTableRenderer.js:113 [DeltaTableRenderer] Vertical lines changed, re-rendering table
+DeltaTableRenderer.js:34 [DeltaTableRenderer] render() called with: {rowCount: 13, linesCount: 1, containerExists: true, containerHtml: '\n    <div class="mt-4 flow-root">\n      <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">\n', firstRow: {…}, …}
+DeltaTableRenderer.js:54 [DeltaTableRenderer] Extracted lines array: 0 lines
+DeltaTableRenderer.js:73 [DeltaTableRenderer] No time values extracted, using placeholders
+render @ DeltaTableRenderer.js:73
+(anonymous) @ DeltaTableRenderer.js:118
+wrapped @ createState.js:514
+(anonymous) @ createState.js:544
+requestAnimationFrame
+notify @ createState.js:538
+set @ createState.js:681
+createState @ createState.js:470
+fILKw../components/chartComponent.js @ main.js:287
+newRequire @ test.1fcc916e.js:84
+localRequire @ test.1fcc916e.js:144
+handleVerticalLineShortcuts @ handleVerticalLineShortcuts.js:97
+(anonymous) @ main.js:2895Understand this warning
+DeltaTableRenderer.js:82 [DeltaTableRenderer] Building HTML with 13 rows
+DeltaTable.js:80 [DeltaTable] First row structure: {channel: '__TIME_ROW__', color: '#3b82f6', v0: 'T1'}
+DeltaTable.js:81 [DeltaTable] Total rows: 13
+DeltaTable.js:82 [DeltaTable] VerticalLinesCount: 1
+DeltaTable.js:89 [DeltaTable] Row 1 values: {channel: 'IA', v0: '-283.01 MA', v1: undefined, delta0: undefined, percentage0: undefined}
+DeltaTableRenderer.js:93 [DeltaTableRenderer] ✅ Rendered table with 13 rows and 1 lines in container: delta-table-main
+DeltaTableRenderer.js:97 [DeltaTableRenderer] First 500 chars of rendered HTML: 
+    <div class="mt-4 flow-root">
+      <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+        <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+          <div class="overflow-hidden shadow outline outline-1 outline-black/5 sm:rounded-lg dark:shadow-none dark:-outline-offset-1 dark:outline-white/10">
+            <table class="relative min-w-full divide-y divide-gray-300 dark:divide-white/15">           
+              <thead class="bg-gray-50 dark:bg-gray-800/75
+DeltaTableRenderer.js:113 [DeltaTableRenderer] Vertical lines changed, re-rendering table
+DeltaTableRenderer.js:34 [DeltaTableRenderer] render() called with: {rowCount: 13, linesCount: 1, containerExists: true, containerHtml: '\n    <div class="mt-4 flow-root">\n      <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">\n', firstRow: {…}, …}
+DeltaTableRenderer.js:54 [DeltaTableRenderer] Extracted lines array: 0 lines
+DeltaTableRenderer.js:73 [DeltaTableRenderer] No time values extracted, using placeholders
+render @ DeltaTableRenderer.js:73
+(anonymous) @ DeltaTableRenderer.js:118
+wrapped @ createState.js:514
+(anonymous) @ createState.js:544
+requestAnimationFrame
+notify @ createState.js:538
+set @ createState.js:681
+createState @ createState.js:470
+fILKw../components/chartComponent.js @ main.js:287
+newRequire @ test.1fcc916e.js:84
+localRequire @ test.1fcc916e.js:144
+handleVerticalLineShortcuts @ handleVerticalLineShortcuts.js:97
+(anonymous) @ main.js:2895Understand this warning
+DeltaTableRenderer.js:82 [DeltaTableRenderer] Building HTML with 13 rows
+DeltaTable.js:80 [DeltaTable] First row structure: {channel: '__TIME_ROW__', color: '#3b82f6', v0: 'T1'}
+DeltaTable.js:81 [DeltaTable] Total rows: 13
+DeltaTable.js:82 [DeltaTable] VerticalLinesCount: 1
+DeltaTable.js:89 [DeltaTable] Row 1 values: {channel: 'IA', v0: '-283.01 MA', v1: undefined, delta0: undefined, percentage0: undefined}
+DeltaTableRenderer.js:93 [DeltaTableRenderer] ✅ Rendered table with 13 rows and 1 lines in container: delta-table-main
+DeltaTableRenderer.js:97 [DeltaTableRenderer] First 500 chars of rendered HTML: 
+    <div class="mt-4 flow-root">
+      <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+        <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+          <div class="overflow-hidden shadow outline outline-1 outline-black/5 sm:rounded-lg dark:shadow-none dark:-outline-offset-1 dark:outline-white/10">
+            <table class="relative min-w-full divide-y divide-gray-300 dark:divide-white/15">           
+              <thead class="bg-gray-50 dark:bg-gray-800/75
+DeltaTableRenderer.js:113 [DeltaTableRenderer] Vertical lines changed, re-rendering table
+DeltaTableRenderer.js:34 [DeltaTableRenderer] render() called with: {rowCount: 13, linesCount: 1, containerExists: true, containerHtml: '\n    <div class="mt-4 flow-root">\n      <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">\n', firstRow: {…}, …}
+DeltaTableRenderer.js:54 [DeltaTableRenderer] Extracted lines array: 0 lines
+DeltaTableRenderer.js:73 [DeltaTableRenderer] No time values extracted, using placeholders
+render @ DeltaTableRenderer.js:73
+(anonymous) @ DeltaTableRenderer.js:118
+wrapped @ createState.js:514
+(anonymous) @ createState.js:544
+requestAnimationFrame
+notify @ createState.js:538
+set @ createState.js:681
+createState @ createState.js:470
+fILKw../components/chartComponent.js @ main.js:287
+newRequire @ test.1fcc916e.js:84
+localRequire @ test.1fcc916e.js:144
+handleVerticalLineShortcuts @ handleVerticalLineShortcuts.js:97
+(anonymous) @ main.js:2895Understand this warning
+DeltaTableRenderer.js:82 [DeltaTableRenderer] Building HTML with 13 rows
+DeltaTable.js:80 [DeltaTable] First row structure: {channel: '__TIME_ROW__', color: '#3b82f6', v0: 'T1'}
+DeltaTable.js:81 [DeltaTable] Total rows: 13
+DeltaTable.js:82 [DeltaTable] VerticalLinesCount: 1
+DeltaTable.js:89 [DeltaTable] Row 1 values: {channel: 'IA', v0: '-283.01 MA', v1: undefined, delta0: undefined, percentage0: undefined}
+DeltaTableRenderer.js:93 [DeltaTableRenderer] ✅ Rendered table with 13 rows and 1 lines in container: delta-table-main
+DeltaTableRenderer.js:97 [DeltaTableRenderer] First 500 chars of rendered HTML: 
+    <div class="mt-4 flow-root">
+      <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+        <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+          <div class="overflow-hidden shadow outline outline-1 outline-black/5 sm:rounded-lg dark:shadow-none dark:-outline-offset-1 dark:outline-white/10">
+            <table class="relative min-w-full divide-y divide-gray-300 dark:divide-white/15">           
+              <thead class="bg-gray-50 dark:bg-gray-800/75
+ThemeContext.js:117 [ThemeContext] Received theme from another window: dark
+chartComponent.js:297 [chartComponent] 🎨 Theme changed, redrawing charts
+chartComponent.js:277 [updateAllChartAxisColors] 🎨 Redrawing 2 charts for theme change
+chartComponent.js:297 [chartComponent] 🎨 Theme changed, redrawing charts
+chartComponent.js:277 [updateAllChartAxisColors] 🎨 Redrawing 2 charts for theme change
+2main.js:2957 [Main] Global theme changed to: dark
+ThemeContext.js:230 [ThemeContext] Theme applied: dark → dark
+themeBroadcast.js:30 [themeBroadcast] Received theme from another tab: dark
+themeBroadcast.js:100 [themeBroadcast] Theme applied: dark
+calculateDeltas.js:57 [formatScaledValue] value=-283009813, scaleFactor=1, scaled=-283009813, absScaled=283009813, siPrefix='M', divisor=1000000, result='-283.01 MA'
+calculateDeltas.js:57 [formatScaledValue] value=1405205883, scaleFactor=1, scaled=1405205883, absScaled=1405205883, siPrefix='G', divisor=1000000000, result='1.41 GA'
+calculateDeltas.js:57 [formatScaledValue] value=-1671574031, scaleFactor=1, scaled=-1671574031, absScaled=1671574031, siPrefix='G', divisor=1000000000, result='-1.67 GA'
+calculateDeltas.js:57 [formatScaledValue] value=-247786589, scaleFactor=1, scaled=-247786589, absScaled=247786589, siPrefix='M', divisor=1000000, result='-247.79 MA'
+calculateDeltas.js:57 [formatScaledValue] value=161591624, scaleFactor=1, scaled=161591624, absScaled=161591624, siPrefix='M', divisor=1000000, result='161.59 MV'
+calculateDeltas.js:57 [formatScaledValue] value=-1375735327, scaleFactor=1, scaled=-1375735327, absScaled=1375735327, siPrefix='G', divisor=1000000000, result='-1.38 GV'
+calculateDeltas.js:57 [formatScaledValue] value=1688168251, scaleFactor=1, scaled=1688168251, absScaled=1688168251, siPrefix='G', divisor=1000000000, result='1.69 GV'
+4calculateDeltas.js:57 [formatScaledValue] value=1, scaleFactor=1, scaled=1, absScaled=1, siPrefix='', divisor=1, result='1.00 '
+calculateDeltas.js:57 [formatScaledValue] value=0, scaleFactor=1, scaled=0, absScaled=0, siPrefix='', divisor=1, result='0.00 '
+verticalLinePlugin.js:71 [verticalLinePlugin] 🔄 Calling deltaWindow.update() with debounce
+DeltaDrawer.js:172 [DeltaDrawer] update() called with 4 sections, 1 vertical lines, drawer open: true
+DeltaDrawer.js:186 [DeltaDrawer] ⏭️ Skipping duplicate update (data unchanged)
+calculateDeltas.js:57 [formatScaledValue] value=-283009813, scaleFactor=1, scaled=-283009813, absScaled=283009813, siPrefix='M', divisor=1000000, result='-283.01 MA'
+calculateDeltas.js:57 [formatScaledValue] value=1405205883, scaleFactor=1, scaled=1405205883, absScaled=1405205883, siPrefix='G', divisor=1000000000, result='1.41 GA'
+calculateDeltas.js:57 [formatScaledValue] value=-1671574031, scaleFactor=1, scaled=-1671574031, absScaled=1671574031, siPrefix='G', divisor=1000000000, result='-1.67 GA'
+calculateDeltas.js:57 [formatScaledValue] value=-247786589, scaleFactor=1, scaled=-247786589, absScaled=247786589, siPrefix='M', divisor=1000000, result='-247.79 MA'
+calculateDeltas.js:57 [formatScaledValue] value=161591624, scaleFactor=1, scaled=161591624, absScaled=161591624, siPrefix='M', divisor=1000000, result='161.59 MV'
+calculateDeltas.js:57 [formatScaledValue] value=-1375735327, scaleFactor=1, scaled=-1375735327, absScaled=1375735327, siPrefix='G', divisor=1000000000, result='-1.38 GV'
+calculateDeltas.js:57 [formatScaledValue] value=1688168251, scaleFactor=1, scaled=1688168251, absScaled=1688168251, siPrefix='G', divisor=1000000000, result='1.69 GV'
+4calculateDeltas.js:57 [formatScaledValue] value=1, scaleFactor=1, scaled=1, absScaled=1, siPrefix='', divisor=1, result='1.00 '
+calculateDeltas.js:57 [formatScaledValue] value=0, scaleFactor=1, scaled=0, absScaled=0, siPrefix='', divisor=1, result='0.00 '
+verticalLinePlugin.js:71 [verticalLinePlugin] 🔄 Calling deltaWindow.update() with debounce
+DeltaDrawer.js:172 [DeltaDrawer] update() called with 4 sections, 1 vertical lines, drawer open: true
+DeltaDrawer.js:186 [DeltaDrawer] ⏭️ Skipping duplicate update (data unchanged)
+calculateDeltas.js:57 [formatScaledValue] value=-283009813, scaleFactor=1, scaled=-283009813, absScaled=283009813, siPrefix='M', divisor=1000000, result='-283.01 MA'
+calculateDeltas.js:57 [formatScaledValue] value=1405205883, scaleFactor=1, scaled=1405205883, absScaled=1405205883, siPrefix='G', divisor=1000000000, result='1.41 GA'
+calculateDeltas.js:57 [formatScaledValue] value=-1671574031, scaleFactor=1, scaled=-1671574031, absScaled=1671574031, siPrefix='G', divisor=1000000000, result='-1.67 GA'
+calculateDeltas.js:57 [formatScaledValue] value=-247786589, scaleFactor=1, scaled=-247786589, absScaled=247786589, siPrefix='M', divisor=1000000, result='-247.79 MA'
+calculateDeltas.js:57 [formatScaledValue] value=161591624, scaleFactor=1, scaled=161591624, absScaled=161591624, siPrefix='M', divisor=1000000, result='161.59 MV'
+calculateDeltas.js:57 [formatScaledValue] value=-1375735327, scaleFactor=1, scaled=-1375735327, absScaled=1375735327, siPrefix='G', divisor=1000000000, result='-1.38 GV'
+calculateDeltas.js:57 [formatScaledValue] value=1688168251, scaleFactor=1, scaled=1688168251, absScaled=1688168251, siPrefix='G', divisor=1000000000, result='1.69 GV'
+4calculateDeltas.js:57 [formatScaledValue] value=1, scaleFactor=1, scaled=1, absScaled=1, siPrefix='', divisor=1, result='1.00 '
+calculateDeltas.js:57 [formatScaledValue] value=0, scaleFactor=1, scaled=0, absScaled=0, siPrefix='', divisor=1, result='0.00 '
+verticalLinePlugin.js:71 [verticalLinePlugin] 🔄 Calling deltaWindow.update() with debounce
+DeltaDrawer.js:172 [DeltaDrawer] update() called with 4 sections, 1 vertical lines, drawer open: true
+DeltaDrawer.js:186 [DeltaDrawer] ⏭️ Skipping duplicate update (data unchanged)
+calculateDeltas.js:57 [formatScaledValue] value=-283009813, scaleFactor=1, scaled=-283009813, absScaled=283009813, siPrefix='M', divisor=1000000, result='-283.01 MA'
+calculateDeltas.js:57 [formatScaledValue] value=1405205883, scaleFactor=1, scaled=1405205883, absScaled=1405205883, siPrefix='G', divisor=1000000000, result='1.41 GA'
+calculateDeltas.js:57 [formatScaledValue] value=-1671574031, scaleFactor=1, scaled=-1671574031, absScaled=1671574031, siPrefix='G', divisor=1000000000, result='-1.67 GA'
+calculateDeltas.js:57 [formatScaledValue] value=-247786589, scaleFactor=1, scaled=-247786589, absScaled=247786589, siPrefix='M', divisor=1000000, result='-247.79 MA'
+calculateDeltas.js:57 [formatScaledValue] value=161591624, scaleFactor=1, scaled=161591624, absScaled=161591624, siPrefix='M', divisor=1000000, result='161.59 MV'
+calculateDeltas.js:57 [formatScaledValue] value=-1375735327, scaleFactor=1, scaled=-1375735327, absScaled=1375735327, siPrefix='G', divisor=1000000000, result='-1.38 GV'
+calculateDeltas.js:57 [formatScaledValue] value=1688168251, scaleFactor=1, scaled=1688168251, absScaled=1688168251, siPrefix='G', divisor=1000000000, result='1.69 GV'
+4calculateDeltas.js:57 [formatScaledValue] value=1, scaleFactor=1, scaled=1, absScaled=1, siPrefix='', divisor=1, result='1.00 '
+calculateDeltas.js:57 [formatScaledValue] value=0, scaleFactor=1, scaled=0, absScaled=0, siPrefix='', divisor=1, result='0.00 '
+verticalLinePlugin.js:71 [verticalLinePlugin] 🔄 Calling deltaWindow.update() with debounce
+DeltaDrawer.js:172 [DeltaDrawer] update() called with 4 sections, 1 vertical lines, drawer open: true
+DeltaDrawer.js:186 [DeltaDrawer] ⏭️ Skipping duplicate update (data unchanged)
+calculateDeltas.js:57 [formatScaledValue] value=-283009813, scaleFactor=1, scaled=-283009813, absScaled=283009813, siPrefix='M', divisor=1000000, result='-283.01 MA'
+calculateDeltas.js:57 [formatScaledValue] value=1405205883, scaleFactor=1, scaled=1405205883, absScaled=1405205883, siPrefix='G', divisor=1000000000, result='1.41 GA'
+calculateDeltas.js:57 [formatScaledValue] value=-1671574031, scaleFactor=1, scaled=-1671574031, absScaled=1671574031, siPrefix='G', divisor=1000000000, result='-1.67 GA'
+calculateDeltas.js:57 [formatScaledValue] value=-247786589, scaleFactor=1, scaled=-247786589, absScaled=247786589, siPrefix='M', divisor=1000000, result='-247.79 MA'
+calculateDeltas.js:57 [formatScaledValue] value=161591624, scaleFactor=1, scaled=161591624, absScaled=161591624, siPrefix='M', divisor=1000000, result='161.59 MV'
+calculateDeltas.js:57 [formatScaledValue] value=-1375735327, scaleFactor=1, scaled=-1375735327, absScaled=1375735327, siPrefix='G', divisor=1000000000, result='-1.38 GV'
+calculateDeltas.js:57 [formatScaledValue] value=1688168251, scaleFactor=1, scaled=1688168251, absScaled=1688168251, siPrefix='G', divisor=1000000000, result='1.69 GV'
+4calculateDeltas.js:57 [formatScaledValue] value=1, scaleFactor=1, scaled=1, absScaled=1, siPrefix='', divisor=1, result='1.00 '
+calculateDeltas.js:57 [formatScaledValue] value=0, scaleFactor=1, scaled=0, absScaled=0, siPrefix='', divisor=1, result='0.00 '
+verticalLinePlugin.js:71 [verticalLinePlugin] 🔄 Calling deltaWindow.update() with debounce
+DeltaDrawer.js:172 [DeltaDrawer] update() called with 4 sections, 1 vertical lines, drawer open: true
+DeltaDrawer.js:186 [DeltaDrawer] ⏭️ Skipping duplicate update (data unchanged)
+calculateDeltas.js:57 [formatScaledValue] value=-283009813, scaleFactor=1, scaled=-283009813, absScaled=283009813, siPrefix='M', divisor=1000000, result='-283.01 MA'
+calculateDeltas.js:57 [formatScaledValue] value=1405205883, scaleFactor=1, scaled=1405205883, absScaled=1405205883, siPrefix='G', divisor=1000000000, result='1.41 GA'
+calculateDeltas.js:57 [formatScaledValue] value=-1671574031, scaleFactor=1, scaled=-1671574031, absScaled=1671574031, siPrefix='G', divisor=1000000000, result='-1.67 GA'
+calculateDeltas.js:57 [formatScaledValue] value=-247786589, scaleFactor=1, scaled=-247786589, absScaled=247786589, siPrefix='M', divisor=1000000, result='-247.79 MA'
+calculateDeltas.js:57 [formatScaledValue] value=161591624, scaleFactor=1, scaled=161591624, absScaled=161591624, siPrefix='M', divisor=1000000, result='161.59 MV'
+calculateDeltas.js:57 [formatScaledValue] value=-1375735327, scaleFactor=1, scaled=-1375735327, absScaled=1375735327, siPrefix='G', divisor=1000000000, result='-1.38 GV'
+calculateDeltas.js:57 [formatScaledValue] value=1688168251, scaleFactor=1, scaled=1688168251, absScaled=1688168251, siPrefix='G', divisor=1000000000, result='1.69 GV'
+4calculateDeltas.js:57 [formatScaledValue] value=1, scaleFactor=1, scaled=1, absScaled=1, siPrefix='', divisor=1, result='1.00 '
+calculateDeltas.js:57 [formatScaledValue] value=0, scaleFactor=1, scaled=0, absScaled=0, siPrefix='', divisor=1, result='0.00 '
+verticalLinePlugin.js:71 [verticalLinePlugin] 🔄 Calling deltaWindow.update() with debounce
+DeltaDrawer.js:172 [DeltaDrawer] update() called with 4 sections, 1 vertical lines, drawer open: true
+DeltaDrawer.js:186 [DeltaDrawer] ⏭️ Skipping duplicate update (data unchanged)
+calculateDeltas.js:57 [formatScaledValue] value=-283009813, scaleFactor=1, scaled=-283009813, absScaled=283009813, siPrefix='M', divisor=1000000, result='-283.01 MA'
+calculateDeltas.js:57 [formatScaledValue] value=1405205883, scaleFactor=1, scaled=1405205883, absScaled=1405205883, siPrefix='G', divisor=1000000000, result='1.41 GA'
+calculateDeltas.js:57 [formatScaledValue] value=-1671574031, scaleFactor=1, scaled=-1671574031, absScaled=1671574031, siPrefix='G', divisor=1000000000, result='-1.67 GA'
+calculateDeltas.js:57 [formatScaledValue] value=-247786589, scaleFactor=1, scaled=-247786589, absScaled=247786589, siPrefix='M', divisor=1000000, result='-247.79 MA'
+calculateDeltas.js:57 [formatScaledValue] value=161591624, scaleFactor=1, scaled=161591624, absScaled=161591624, siPrefix='M', divisor=1000000, result='161.59 MV'
+calculateDeltas.js:57 [formatScaledValue] value=-1375735327, scaleFactor=1, scaled=-1375735327, absScaled=1375735327, siPrefix='G', divisor=1000000000, result='-1.38 GV'
+calculateDeltas.js:57 [formatScaledValue] value=1688168251, scaleFactor=1, scaled=1688168251, absScaled=1688168251, siPrefix='G', divisor=1000000000, result='1.69 GV'
+4calculateDeltas.js:57 [formatScaledValue] value=1, scaleFactor=1, scaled=1, absScaled=1, siPrefix='', divisor=1, result='1.00 '
+calculateDeltas.js:57 [formatScaledValue] value=0, scaleFactor=1, scaled=0, absScaled=0, siPrefix='', divisor=1, result='0.00 '
+verticalLinePlugin.js:71 [verticalLinePlugin] 🔄 Calling deltaWindow.update() with debounce
+DeltaDrawer.js:172 [DeltaDrawer] update() called with 4 sections, 1 vertical lines, drawer open: true
+DeltaDrawer.js:186 [DeltaDrawer] ⏭️ Skipping duplicate update (data unchanged)
+calculateDeltas.js:57 [formatScaledValue] value=-283009813, scaleFactor=1, scaled=-283009813, absScaled=283009813, siPrefix='M', divisor=1000000, result='-283.01 MA'
+calculateDeltas.js:57 [formatScaledValue] value=1405205883, scaleFactor=1, scaled=1405205883, absScaled=1405205883, siPrefix='G', divisor=1000000000, result='1.41 GA'
+calculateDeltas.js:57 [formatScaledValue] value=-1671574031, scaleFactor=1, scaled=-1671574031, absScaled=1671574031, siPrefix='G', divisor=1000000000, result='-1.67 GA'
+calculateDeltas.js:57 [formatScaledValue] value=-247786589, scaleFactor=1, scaled=-247786589, absScaled=247786589, siPrefix='M', divisor=1000000, result='-247.79 MA'
+calculateDeltas.js:57 [formatScaledValue] value=161591624, scaleFactor=1, scaled=161591624, absScaled=161591624, siPrefix='M', divisor=1000000, result='161.59 MV'
+calculateDeltas.js:57 [formatScaledValue] value=-1375735327, scaleFactor=1, scaled=-1375735327, absScaled=1375735327, siPrefix='G', divisor=1000000000, result='-1.38 GV'
+calculateDeltas.js:57 [formatScaledValue] value=1688168251, scaleFactor=1, scaled=1688168251, absScaled=1688168251, siPrefix='G', divisor=1000000000, result='1.69 GV'
+4calculateDeltas.js:57 [formatScaledValue] value=1, scaleFactor=1, scaled=1, absScaled=1, siPrefix='', divisor=1, result='1.00 '
+calculateDeltas.js:57 [formatScaledValue] value=0, scaleFactor=1, scaled=0, absScaled=0, siPrefix='', divisor=1, result='0.00 '
+verticalLinePlugin.js:71 [verticalLinePlugin] 🔄 Calling deltaWindow.update() with debounce
+DeltaDrawer.js:172 [DeltaDrawer] update() called with 4 sections, 1 vertical lines, drawer open: true
+DeltaDrawer.js:186 [DeltaDrawer] ⏭️ Skipping duplicate update (data unchanged)
+calculateDeltas.js:57 [formatScaledValue] value=474024548, scaleFactor=1, scaled=474024548, absScaled=474024548, siPrefix='M', divisor=1000000, result='474.02 MA'
+verticalLinePlugin.js:71 [verticalLinePlugin] 🔄 Calling deltaWindow.update() with debounce
+DeltaDrawer.js:172 [DeltaDrawer] update() called with 1 sections, 1 vertical lines, drawer open: true
+DeltaTableRenderer.js:134 [DeltaTableRenderer] Destroyed
+DeltaDrawer.js:234 [DeltaDrawer] ✨ Content cleared, creating single table container
+DeltaDrawer.js:243 [DeltaDrawer] ✅ Table container appended to content (ONCE)
+DeltaDrawer.js:288 [DeltaDrawer] ⚠️ Using placeholder time values
+update @ DeltaDrawer.js:288
+await in update
+(anonymous) @ verticalLinePlugin.js:74
+await in (anonymous)
+(anonymous) @ computedChannelOptimization.js:224
+setTimeout
+(anonymous) @ computedChannelOptimization.js:224
+(anonymous) @ verticalLinePlugin.js:95
+wrapped @ createState.js:514
+(anonymous) @ createState.js:544
+requestAnimationFrame
+notify @ createState.js:538
+set @ createState.js:681
+handleVerticalLineShortcuts @ handleVerticalLineShortcuts.js:80
+(anonymous) @ main.js:2895Understand this warning
+DeltaTableDataFormatter.js:30 [formatTableData] 🔄 Formatting data for 1 lines from 1 sections {firstSection: {…}, lastSection: {…}}
+DeltaTableDataFormatter.js:43 [formatTableData] 📊 Single vertical line mode - no deltas
+DeltaTableDataFormatter.js:59 [formatTableData] ✨ New channel: V0
+DeltaTableDataFormatter.js:66 [formatTableData] Channel V0: v0 = 474.02 MA
+DeltaTableDataFormatter.js:211 [formatTableData] ✅ Consolidated 1 channels
+DeltaTableDataFormatter.js:243 [formatTableData] ✅ Formatted complete table with 2 rows (including time row) {totalChannels: 1, verticalLinesCount: 1, firstDataRow: {…}, lastDataRow: {…}}
+DeltaDrawer.js:301 [DeltaDrawer] formatTableData returned 2 rows
+DeltaTableRenderer.js:121 [DeltaTableRenderer] Subscribed to verticalLinesX state
+DeltaTableRenderer.js:34 [DeltaTableRenderer] render() called with: {rowCount: 2, linesCount: 1, containerExists: true, containerHtml: '', firstRow: {…}, …}
+DeltaTableRenderer.js:54 [DeltaTableRenderer] Extracted lines array: 0 lines
+DeltaTableRenderer.js:73 [DeltaTableRenderer] No time values extracted, using placeholders
+render @ DeltaTableRenderer.js:73
+update @ DeltaDrawer.js:331
+await in update
+(anonymous) @ verticalLinePlugin.js:74
+await in (anonymous)
+(anonymous) @ computedChannelOptimization.js:224
+setTimeout
+(anonymous) @ computedChannelOptimization.js:224
+(anonymous) @ verticalLinePlugin.js:95
+wrapped @ createState.js:514
+(anonymous) @ createState.js:544
+requestAnimationFrame
+notify @ createState.js:538
+set @ createState.js:681
+handleVerticalLineShortcuts @ handleVerticalLineShortcuts.js:80
+(anonymous) @ main.js:2895Understand this warning
+DeltaTableRenderer.js:82 [DeltaTableRenderer] Building HTML with 2 rows
+DeltaTable.js:80 [DeltaTable] First row structure: {channel: '__TIME_ROW__', color: '#3b82f6', v0: 'T1'}
+DeltaTable.js:81 [DeltaTable] Total rows: 2
+DeltaTable.js:82 [DeltaTable] VerticalLinesCount: 1
+DeltaTable.js:89 [DeltaTable] Row 1 values: {channel: 'V0', v0: '474.02 MA', v1: undefined, delta0: undefined, percentage0: undefined}
+DeltaTableRenderer.js:93 [DeltaTableRenderer] ✅ Rendered table with 2 rows and 1 lines in container: delta-table-main
+DeltaTableRenderer.js:97 [DeltaTableRenderer] First 500 chars of rendered HTML: 
+    <div class="mt-4 flow-root">
+      <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+        <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+          <div class="overflow-hidden shadow outline outline-1 outline-black/5 sm:rounded-lg dark:shadow-none dark:-outline-offset-1 dark:outline-white/10">
+            <table class="relative min-w-full divide-y divide-gray-300 dark:divide-white/15">           
+              <thead class="bg-gray-50 dark:bg-gray-800/75
+DeltaDrawer.js:333 [DeltaDrawer] ✅ Table rendered with 2 rows (including time row) and 1 columns
+calculateDeltas.js:57 [formatScaledValue] value=474024548, scaleFactor=1, scaled=474024548, absScaled=474024548, siPrefix='M', divisor=1000000, result='474.02 MA'
+verticalLinePlugin.js:71 [verticalLinePlugin] 🔄 Calling deltaWindow.update() with debounce
+DeltaDrawer.js:172 [DeltaDrawer] update() called with 1 sections, 1 vertical lines, drawer open: true
+DeltaDrawer.js:186 [DeltaDrawer] ⏭️ Skipping duplicate update (data unchanged)
+setupPolarChartIntegration.js:82 [setupPolarChartWithVerticalLines] Debounced subscription triggered with lines: {path: Array(1), newValue: 1, oldValue: 1, prop: 'length', root: Proxy(Array)}
+4chartDomUtils.js:200 [ResizeObserver] 📊 Chart resized to 787x398px

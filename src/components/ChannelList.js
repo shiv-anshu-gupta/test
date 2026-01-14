@@ -2138,9 +2138,32 @@ export function createChannelList(
       formatter: () =>
         `<button class="theme-btn-danger px-2 py-1 rounded transition duration-150">Delete</button>`,
       hozAlign: "center",
-      cellClick: (e, cell) => cell.getRow().delete(),
+      cellClick: (e, cell) => {
+        console.log("[ChannelList] 🗑️ DELETE BUTTON CLICKED");
+        console.log("[ChannelList] Cell info:", {
+          hasRow: !!cell.getRow,
+          rowData: cell.getRow?.().getData?.(),
+        });
+        try {
+          const row = cell.getRow();
+          console.log("[ChannelList] Row object:", row);
+          console.log("[ChannelList] Calling row.delete()...");
+          row.delete();
+          console.log("[ChannelList] ✅ row.delete() called successfully");
+        } catch (err) {
+          console.error("[ChannelList] ❌ Error calling row.delete():", err);
+        }
+      },
     },
   ];
+
+  console.log("[ChannelList] 🎯 DELETE COLUMN DEFINITION:");
+  const deleteCol = columns.find((c) => c.field === "delete");
+  console.log({
+    found: !!deleteCol,
+    hasCellClick: deleteCol && typeof deleteCol.cellClick === "function",
+    formatter: deleteCol?.formatter?.toString().substring(0, 100),
+  });
 
   // Use Tabulator from popup window if provided, fallback to global
   // Prefer Tabulator from the popup's window (ownerDocument.defaultView) if available
@@ -2407,7 +2430,20 @@ export function createChannelList(
 
     // Listen for rowAdded and rowDeleted events so we can notify parent
     try {
+      console.log(
+        "[ChannelList] 🎯 Registering table event handlers - checking table object",
+        {
+          hasTable: !!table,
+          hasOn: table && typeof table.on === "function",
+          tableType: table?.constructor?.name,
+        }
+      );
+
       if (table && typeof table.on === "function") {
+        console.log(
+          "[ChannelList] ✅ table.on() method found, registering event handlers"
+        );
+
         table.on("rowAdded", (row) => {
           const data = row.getData ? row.getData() : row;
           // local callback
@@ -2419,38 +2455,69 @@ export function createChannelList(
             }
           }
         });
+        console.log("[ChannelList] ✅ rowAdded event handler registered");
 
         table.on("rowDeleted", (row) => {
+          console.log("[ChannelList] 🔔 rowDeleted event handler callback FIRED");
           const data = row.getData ? row.getData() : row;
+          console.group("[ChannelList] 📤 ROW DELETED EVENT FIRED");
+          console.log("  Row data:", data);
+          console.log("  Row object:", row);
+          console.groupEnd();
+
+          // local callback
           if (typeof onChannelUpdate === "function") {
             try {
+              console.log("[ChannelList] 🔔 Calling local onChannelUpdate('delete', data)");
               onChannelUpdate("delete", data);
+              console.log("[ChannelList] ✅ Local callback executed");
             } catch (e) {
-              /* ignore */
+              console.error("[ChannelList] ❌ Local callback error:", e);
             }
           }
+          
           try {
+            const targetParent =
+              parentWindow ||
+              (typeof window !== "undefined" && window.globalParentWindow) ||
+              (typeof window !== "undefined" && window.opener);
+
+            console.group("[ChannelList] 📤 DELETE MESSAGE TO PARENT");
+            console.log("  Target parent exists:", !!targetParent);
+            console.log("  Parent closed:", targetParent?.closed);
+            console.log("  Row data:", data);
+            console.groupEnd();
+
             if (
               typeof window !== "undefined" &&
-              window.opener &&
-              !window.opener.closed
+              targetParent &&
+              !targetParent.closed
             ) {
-              window.opener.postMessage(
-                {
-                  source: "ChildWindow",
-                  type: "callback_delete",
-                  payload: data,
-                },
-                "*"
-              );
+              const messagePayload = {
+                source: "ChildWindow",
+                type: "callback_delete",
+                payload: data,
+              };
+              console.log("[ChannelList] 📤 Posting message:", messagePayload);
+              targetParent.postMessage(messagePayload, "*");
+              console.log("[ChannelList] ✅ Message posted successfully");
+            } else {
+              console.error("[ChannelList] ❌ Cannot post message:", {
+                hasParent: !!targetParent,
+                parentClosed: targetParent?.closed,
+              });
             }
           } catch (e) {
-            /* ignore */
+            console.error("[ChannelList] ❌ Error posting delete message:", e);
           }
         });
       }
     } catch (e) {
-      /* ignore */
+      console.error(
+        "[ChannelList] ❌ CRITICAL ERROR during table.on() registration:",
+        e
+      );
+      console.error("[ChannelList] This explains why delete/rowDeleted isn't working!");
     }
     // Listen for parent ack when a newly added row is accepted and assigned a stable channelID
     try {

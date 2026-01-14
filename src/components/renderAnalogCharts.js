@@ -45,6 +45,11 @@ export function renderAnalogCharts(
     ? cfg.analogChannels
     : [];
   const channelIDs = channelState?.analog?.channelIDs || [];
+  
+  console.log(
+    "[renderAnalogCharts] channelIDs from state:",
+    channelIDs
+  );
 
   if (
     Array.isArray(userGroups) &&
@@ -117,7 +122,17 @@ export function renderAnalogCharts(
     );
     const autoStartTime = performance.now();
 
-    const autoGroups = autoGroupChannels(cfg.analogChannels || []);
+    // ✅ FIX: Build current channel objects from state instead of using stale cfg.analogChannels
+    // This ensures indices are correct after deletions
+    const currentChannels = channelIDs.map((id, idx) => ({
+      id: id || `analog-${idx}`,
+      channelID: id,
+      unit: channelState.analog.yUnits?.[idx] || "",
+      name: channelState.analog.yLabels?.[idx] || `Ch ${idx}`,
+      index: idx,
+    }));
+
+    const autoGroups = autoGroupChannels(currentChannels || []);
 
     const autoEndTime = performance.now();
     console.log(
@@ -132,7 +147,7 @@ export function renderAnalogCharts(
       ids: (g.indices || []).map((idx) => channelIDs[idx]),
       colors: g.colors,
       axisCount: calculateAxisCountForGroup(
-        (g.indices || []).map((idx) => cfg.analogChannels[idx])
+        (g.indices || []).map((idx) => currentChannels[idx])
       ),
     }));
   }
@@ -146,9 +161,35 @@ export function renderAnalogCharts(
   console.log(
     `[renderAnalogCharts] 🔧 Starting chart creation for ${groups.length} groups... maxYAxes=${globalMaxYAxes}`
   );
+  
+  // Log groups structure for debugging
+  console.log(
+    "[renderAnalogCharts] 📦 Groups structure:",
+    groups.map((g) => ({
+      name: g.name,
+      ids: g.ids,
+      indices: g.indices,
+    }))
+  );
 
-  // Render each group as a chart
-  groups.forEach((group) => {
+  // ✅ FIX: Filter groups to only those with actual channels (prevent phantom empty containers)
+  const groupsWithChannels = groups.filter(group => {
+    const hasChannels = (group.ids && group.ids.length > 0) || 
+                        (group.indices && group.indices.filter(i => i >= 0).length > 0);
+    if (!hasChannels) {
+      console.log(
+        `[renderAnalogCharts] ⏭️ Skipping group "${group.name}" - no channels assigned`
+      );
+    }
+    return hasChannels;
+  });
+
+  console.log(
+    `[renderAnalogCharts] ✅ Filtered ${groups.length} → ${groupsWithChannels.length} groups with channels`
+  );
+
+  // Render each group as a chart (only groups with actual channels)
+  groupsWithChannels.forEach((group) => {
     const groupStartTime = performance.now();
     // resolve any missing ids -> indices mapping defensively
     const resolvedIndicesRaw = (group.ids || []).map((id, i) => {
@@ -156,6 +197,11 @@ export function renderAnalogCharts(
       const idx = channelIDs.indexOf(id);
       return idx >= 0 ? idx : group.indices ? group.indices[i] : -1;
     });
+    
+    console.log(
+      `[renderAnalogCharts] 🔍 Group "${group.name}": ids=[${(group.ids || []).join(", ")}], resolvedIndicesRaw=[${resolvedIndicesRaw.join(", ")}]`
+    );
+    
     // filter out unresolved indices
     const resolvedIndices = resolvedIndicesRaw.filter(
       (idx) => Number.isFinite(idx) && idx >= 0
@@ -170,31 +216,50 @@ export function renderAnalogCharts(
       channelState
     );
 
-    const yLabels = channelState.analog.yLabels;
-    const lineColors = channelState.analog.lineColors;
-    const yUnits = channelState.analog.yUnits;
-    const axesScales = channelState.analog.axesScales;
-    const xLabel = channelState.analog.xLabel;
-    const xUnit = channelState.analog.xUnit;
+    // ✅ FIX: Defensive checks for undefined properties
+    const yLabels = channelState?.analog?.yLabels || [];
+    const lineColors = channelState?.analog?.lineColors || [];
+    const yUnits = channelState?.analog?.yUnits || [];
+    const axesScales = channelState?.analog?.axesScales || [];
+    const xLabel = channelState?.analog?.xLabel || "";
+    const xUnit = channelState?.analog?.xUnit || "";
 
-    const groupYLabels = resolvedIndices.map((idx) => yLabels[idx]);
-    const groupLineColors = resolvedIndices.map((idx) => lineColors[idx]);
-    const groupYUnits = resolvedIndices.map((idx) => yUnits[idx]);
+    // Filter out indices that are out of bounds (after deletion)
+    const validIndices = resolvedIndices.filter(
+      (idx) => idx >= 0 && idx < (yLabels?.length || 0)
+    );
+
+    // Skip this group if all indices are invalid
+    if (validIndices.length === 0) {
+      console.log(
+        `[renderAnalogCharts] ⏭️ Group "${group.name}" has no valid channel indices, skipping`
+      );
+      return;
+    }
+
+    const groupYLabels = validIndices.map((idx) => yLabels[idx]);
+    const groupLineColors = validIndices.map((idx) => lineColors[idx]);
+    const groupYUnits = validIndices.map((idx) => yUnits[idx]);
+    
+    console.log(
+      `[renderAnalogCharts] 📋 Group "${group.name}": yLabels=[${groupYLabels.join(", ")}]`
+    );
+    
     const groupAxesScales = [
       axesScales[0],
-      ...resolvedIndices.map((idx) => axesScales[idx + 1]),
+      ...validIndices.map((idx) => axesScales[idx + 1]),
     ];
 
     // Extract group ID from first channel in this group
     // All channels in the same group share the same groupId, so just take the first one
     const groupId =
-      resolvedIndices.length > 0 ? userGroups[resolvedIndices[0]] : "";
+      validIndices.length > 0 ? userGroups[validIndices[0]] : "";
 
     // LOG: Debug group extraction
     console.log(
       `[renderAnalogCharts] 🏷️ Group "${
         group.name
-      }": resolved indices = [${resolvedIndices.join(
+      }": valid indices = [${validIndices.join(
         ","
       )}], extracted groupId = "${groupId}"`
     );
@@ -205,7 +270,7 @@ export function renderAnalogCharts(
       name: group.name,
       groupName: group.name,
       userGroupId: groupId,
-      channels: resolvedIndices.map((idx) => {
+      channels: validIndices.map((idx) => {
         const ch = cfg.analogChannels?.[idx];
         return (
           ch?.id ||
@@ -217,7 +282,7 @@ export function renderAnalogCharts(
         );
       }),
       colors: group.colors || groupLineColors,
-      indices: resolvedIndices.slice(),
+      indices: validIndices.slice(),
       sourceGroupId: groupId,
     });
 
@@ -242,8 +307,12 @@ export function renderAnalogCharts(
 
     const chartData = [
       data.time,
-      ...resolvedIndices.map((idx) => data.analogData[idx]),
+      ...validIndices.map((idx) => data.analogData[idx]),
     ];
+    
+    console.log(
+      `[renderAnalogCharts] 📊 Group "${group.name}": validIndices=[${validIndices.join(", ")}], analogData.length=${data.analogData?.length || 0}, chartData series count=${chartData.length}`
+    );
 
     const opts = createChartOptions({
       title: group.name || "",
@@ -287,7 +356,7 @@ export function renderAnalogCharts(
 
     // store mapping from chart series -> global channel indices so chartManager can map updates
     try {
-      chart._channelIndices = resolvedIndices.slice();
+      chart._channelIndices = validIndices.slice();
       chart._type = "analog";
     } catch (e) {}
 

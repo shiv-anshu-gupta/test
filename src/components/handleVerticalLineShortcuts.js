@@ -75,8 +75,10 @@ export async function handleVerticalLineShortcuts(
   }
   if (e.altKey && e.key === "1") {
     if (charts.length === 0) return;
-    const cursorX = charts[0].cursor.left;
-    const xVal = charts[0].posToVal(cursorX, "x");
+    const firstChart = charts.find((c) => c && c.cursor);
+    if (!firstChart) return;
+    const cursorX = firstChart.cursor.left;
+    const xVal = firstChart.posToVal(cursorX, "x");
     verticalLinesX.push(xVal);
     charts.forEach((c) => c.redraw());
 

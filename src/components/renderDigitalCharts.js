@@ -29,6 +29,14 @@ export function renderDigitalCharts(
     changedIndices
   );
 
+  // ✅ FIX: Skip rendering if no digital channels exist (prevent phantom containers)
+  if (changedIndices.length === 0) {
+    console.log(
+      `[renderDigitalCharts] ⏭️ No digital channels to render, skipping container creation`
+    );
+    return;
+  }
+
   const digitalIndicesToShow = changedIndices;
   // Keep originalIndex on displayed channel objects so mapping is stable
   const digitalChannelsToShow = digitalIndicesToShow.map((i) => ({
@@ -394,13 +402,35 @@ export function renderDigitalCharts(
   );
 
   const resizeObserverStartTime = performance.now();
+  // ✅ FIX: Add debouncing to prevent ResizeObserver loop during animations
+  let resizeTimeout = null;
+  let lastSize = { width: 0, height: 0 };
+
   const ro = new ResizeObserver((entries) => {
-    for (let entry of entries) {
-      chart.setSize({
-        width: entry.contentRect.width,
-        height: entry.contentRect.height,
-      });
+    // Clear pending resize
+    if (resizeTimeout) {
+      clearTimeout(resizeTimeout);
     }
+
+    resizeTimeout = setTimeout(() => {
+      for (let entry of entries) {
+        const newWidth = Math.floor(entry.contentRect.width);
+        const newHeight = Math.floor(entry.contentRect.height);
+
+        // Only resize if dimensions actually changed (prevents resize loops)
+        if (
+          newWidth > 0 &&
+          newHeight > 0 &&
+          (newWidth !== lastSize.width || newHeight !== lastSize.height)
+        ) {
+          lastSize = { width: newWidth, height: newHeight };
+          chart.setSize({
+            width: newWidth,
+            height: newHeight,
+          });
+        }
+      }
+    }, 50); // Debounce resize calls by 50ms
   });
   ro.observe(chartDiv);
 

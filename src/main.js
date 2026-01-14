@@ -337,6 +337,66 @@ if (!window.handleDeltaButtonClick) {
   };
 }
 
+// Setup event listener for delta drawer close button
+function setupDeltaDrawerCloseButton() {
+  const closeBtn = document.getElementById("delta-drawer-close");
+  if (closeBtn && !closeBtn.__hasListener) {
+    closeBtn.__hasListener = true;
+    closeBtn.addEventListener("click", (event) => {
+      console.log("[main.js] Delta drawer close button clicked");
+      event.preventDefault();
+      event.stopPropagation();
+      // Call the same toggle function as the Crosshair Data button
+      window.handleDeltaButtonClick(event);
+    });
+  }
+}
+
+// Setup event listener for delta drawer minimize button
+function setupDeltaDrawerMinimizeButton() {
+  const minimizeBtn = document.getElementById("delta-drawer-minimize");
+  if (minimizeBtn && !minimizeBtn.__hasListener) {
+    minimizeBtn.__hasListener = true;
+    minimizeBtn.addEventListener("click", (event) => {
+      console.log("[main.js] Delta drawer minimize button clicked");
+      event.preventDefault();
+      event.stopPropagation();
+      // Close the drawer (same as close button)
+      window.handleDeltaButtonClick(event);
+    });
+  }
+}
+
+// Setup event listener for analysis sidebar close button
+function setupAnalysisSidebarCloseButton() {
+  const closeBtn = document.getElementById("analysis-sidebar-close");
+  if (closeBtn && !closeBtn.__hasListener) {
+    closeBtn.__hasListener = true;
+    closeBtn.addEventListener("click", (event) => {
+      console.log("[main.js] Analysis sidebar close button clicked");
+      event.preventDefault();
+      event.stopPropagation();
+      // Call the same toggle function as the Analysis button
+      window.handleAnalysisButtonClick(event);
+    });
+  }
+}
+
+// Setup event listener for analysis sidebar minimize button
+function setupAnalysisSidebarMinimizeButton() {
+  const minimizeBtn = document.getElementById("analysis-sidebar-minimize");
+  if (minimizeBtn && !minimizeBtn.__hasListener) {
+    minimizeBtn.__hasListener = true;
+    minimizeBtn.addEventListener("click", (event) => {
+      console.log("[main.js] Analysis sidebar minimize button clicked");
+      event.preventDefault();
+      event.stopPropagation();
+      // Close the sidebar (same as close button)
+      window.handleAnalysisButtonClick(event);
+    });
+  }
+}
+
 if (!window.handleAnalysisButtonClick) {
   window.handleAnalysisButtonClick = function (event) {
     console.log(
@@ -400,6 +460,12 @@ function initializeSidebarRegistry() {
   // Initialize all sidebars to their default closed state
   sidebarStore.initializeDefaults();
 
+  // Setup button event listeners for close/minimize buttons
+  setupDeltaDrawerCloseButton();
+  setupDeltaDrawerMinimizeButton();
+  setupAnalysisSidebarCloseButton();
+  setupAnalysisSidebarMinimizeButton();
+
   console.log(
     "[SidebarRegistry] Sidebar registry initialized. Active sidebars:",
     sidebarStore.getRegisteredSidebars()
@@ -428,7 +494,8 @@ export function getChartsComputed() {
   return chartsComputed;
 }
 
-let charts = [null, null]; // [analogChart, digitalChart]
+// Main charts array - holds ALL charts: analog, digital, and computed
+let charts = [];
 const chartTypes = ["analog", "digital"];
 
 // Computed channels charts array - one chart per computed channel
@@ -751,6 +818,7 @@ export const CALLBACK_TYPE = {
   CHANNEL_NAME: "callback_channelName",
   GROUP: "callback_group",
   ADD_CHANNEL: "callback_addChannel",
+  DELETE: "callback_delete",
 };
 
 const COMPUTED_COLOR_PALETTE = computedPalette;
@@ -1582,7 +1650,7 @@ async function processCombinedDataFromMerger(cfgText, datText) {
       renderComputedChannels(
         data,
         chartsContainer,
-        chartsComputed,
+        charts,
         verticalLinesX,
         channelState
       );
@@ -2257,7 +2325,7 @@ window.addEventListener("mergedFilesReceived", async (event) => {
       renderComputedChannels(
         data,
         chartsContainer,
-        chartsComputed,
+        charts,
         verticalLinesX,
         channelState
       );
@@ -3245,7 +3313,7 @@ async function handleLoadFiles() {
         renderComputedChannels(
           data,
           chartsContainer,
-          chartsComputed,
+          charts,
           verticalLinesX,
           channelState
         );
@@ -3859,11 +3927,11 @@ function setupComputedChannelsListener() {
           data.computedData?.length || 0
         );
 
-        // ✅ Pass chartsComputed array to renderComputedChannels (one chart per channel)
+        // ✅ Pass charts array to renderComputedChannels
         renderComputedChannels(
           data,
           chartsContainer,
-          chartsComputed, // ← Pass chartsComputed array
+          charts,
           verticalLinesX,
           channelState
         );
@@ -4789,6 +4857,17 @@ window.addEventListener("message", (ev) => {
       }
       /* Removed CALLBACK_TYPE.ADD_CHANNEL mechanism to avoid unintended re-renders and message acks */
       case CALLBACK_TYPE.DELETE: {
+        console.group(`[DELETE CALLBACK] 🗑️ DELETE MESSAGE RECEIVED`);
+        console.log(`Payload received:`, payload);
+        console.log(`Payload type:`, typeof payload);
+        console.log(`Is array:`, Array.isArray(payload));
+        console.log(`Payload keys:`, payload ? Object.keys(payload) : "N/A");
+        console.groupEnd();
+
+        // ✅ REACTIVE APPROACH: Let channelState updates trigger subscribers
+        // Instead of calling renderComtradeCharts directly, update channelState
+        // and let the reactive system handle it (chartManager.js subscribers will react)
+
         // Accept payload shapes: channelID-based or legacy row object
         const channelID =
           Array.isArray(payload) && payload.length >= 2
@@ -4796,30 +4875,74 @@ window.addEventListener("message", (ev) => {
             : payload && payload.channelID
             ? payload.channelID
             : null;
+
+        const row = payload && !Array.isArray(payload) ? payload : null;
+
+        console.log(`[DELETE CALLBACK] 🔍 Parsed delete request:`, {
+          channelID,
+          hasRow: !!row,
+          rowType: row?.type,
+          rowIdx: row?.originalIndex ?? row?.idx,
+          rowName: row?.name,
+        });
+
         if (channelID) {
-          const deleted = deleteChannelByID(channelID);
-          if (deleted) {
-            // Force recreation so chart._channelIndices and series alignment are rebuilt
-            renderComtradeCharts(
-              cfg,
-              data,
-              chartsContainer,
-              charts,
-              verticalLinesX,
-              createState,
-              calculateDeltas,
-              TIME_UNIT,
-              channelState
-            );
-            return;
+          console.log(`[DELETE CALLBACK] 📍 Deleting by channelID: ${channelID}`);
+          try {
+            const deleted = deleteChannelByID(channelID);
+            console.log(`[DELETE CALLBACK] Result: ${deleted ? "✅ DELETED" : "❌ NOT FOUND"}`);
+
+            if (deleted) {
+              // ✅ FIX: Call renderComtradeCharts DIRECTLY instead of relying on subscribers
+              // Subscribers fire too early, before all deletions are complete
+              // Direct call ensures proper cleanup of empty containers
+              console.log(
+                `[DELETE CALLBACK] 🔄 Triggering renderComtradeCharts to rebuild with new state...`
+              );
+              
+              (async () => {
+                try {
+                  const { renderComtradeCharts } = await import("./components/renderComtradeCharts.js");
+                  renderComtradeCharts(
+                    globalCfg,
+                    globalData,
+                    chartsContainer,
+                    window.chartsArray,
+                    verticalLinesX,
+                    channelState,
+                    createState,
+                    calculateDeltas,
+                    TIME_UNIT
+                  );
+                  console.log(`[DELETE CALLBACK] ✅ Charts rebuilt successfully - empty containers removed`);
+                } catch (err) {
+                  console.error(`[DELETE CALLBACK] ❌ Failed to rebuild charts:`, err);
+                }
+              })();
+              return;
+            }
+          } catch (err) {
+            console.error(`[DELETE CALLBACK] ❌ Error deleting by channelID:`, err);
           }
           // fall through to legacy if delete by ID failed
         }
 
-        const row = payload;
-        if (!row) return;
+        // ✅ FALLBACK: Legacy row-based deletion
+        if (!row) {
+          console.warn(
+            `[DELETE CALLBACK] ❌ No channelID and no row data, aborting`
+          );
+          return;
+        }
+
         const t = (row.type || "").toLowerCase();
         const oi = Number(row.originalIndex ?? row.idx ?? -1);
+
+        console.log(`[DELETE CALLBACK] 📍 Fallback: Deleting by row:`, {
+          type: t,
+          index: oi,
+          name: row.name,
+        });
 
         const perChannelArrays = [
           "yLabels",
@@ -4835,13 +4958,20 @@ window.addEventListener("message", (ev) => {
         ];
 
         const removeSeriesForType = (type, index) => {
+          console.log(`[DELETE CALLBACK] 🔧 Splicing from ${type}[${index}]...`);
           const s = channelState[type];
+          let splicedCount = 0;
           perChannelArrays.forEach((name) => {
             if (s[name] && Array.isArray(s[name])) {
-              if (index >= 0 && index < s[name].length)
+              if (index >= 0 && index < s[name].length) {
                 s[name].splice(index, 1);
+                splicedCount++;
+                console.log(`[DELETE CALLBACK]   ✓ Spliced ${name}`);
+              }
             }
           });
+          console.log(`[DELETE CALLBACK] ✅ Spliced ${splicedCount} arrays`);
+          
           try {
             const arr = dataState && dataState[type];
             const raw = data && data[type];
@@ -4852,6 +4982,7 @@ window.addEventListener("message", (ev) => {
               seriesIdx < arr.length
             ) {
               arr.splice(seriesIdx, 1);
+              console.log(`[DELETE CALLBACK]   ✓ Spliced dataState`);
             }
             if (
               raw &&
@@ -4860,75 +4991,62 @@ window.addEventListener("message", (ev) => {
               seriesIdx < raw.length
             ) {
               raw.splice(seriesIdx, 1);
+              console.log(`[DELETE CALLBACK]   ✓ Spliced raw data`);
             }
           } catch (e) {
-            /* non-fatal */
+            console.warn(`[DELETE CALLBACK] ⚠️ Error splicing data:`, e);
+          }
+        };
+
+        const triggerRebuild = async () => {
+          try {
+            const { renderComtradeCharts } = await import("./components/renderComtradeCharts.js");
+            renderComtradeCharts(
+              globalCfg,
+              globalData,
+              chartsContainer,
+              window.chartsArray,
+              verticalLinesX,
+              channelState,
+              createState,
+              calculateDeltas,
+              TIME_UNIT
+            );
+            console.log(`[DELETE CALLBACK] ✅ Charts rebuilt successfully`);
+          } catch (err) {
+            console.error(`[DELETE CALLBACK] ❌ Failed to rebuild charts:`, err);
           }
         };
 
         if (t === "analog" && oi >= 0) {
+          console.log(`[DELETE CALLBACK] ✅ Deleting analog[${oi}]`);
           removeSeriesForType("analog", oi);
-          renderComtradeCharts(
-            cfg,
-            data,
-            chartsContainer,
-            charts,
-            verticalLinesX,
-            createState,
-            calculateDeltas,
-            TIME_UNIT,
-            channelState
-          );
+          triggerRebuild();
           return;
         } else if (t === "digital" && oi >= 0) {
+          console.log(`[DELETE CALLBACK] ✅ Deleting digital[${oi}]`);
           removeSeriesForType("digital", oi);
-          renderComtradeCharts(
-            cfg,
-            data,
-            chartsContainer,
-            charts,
-            verticalLinesX,
-            createState,
-            calculateDeltas,
-            TIME_UNIT,
-            channelState
-          );
+          triggerRebuild();
           return;
         } else {
           // fallback: delete by label match
+          console.log(`[DELETE CALLBACK] 🔍 Fallback: Searching by label...`);
           let idx = channelState.analog.yLabels.indexOf(row.id ?? row.name);
           if (idx >= 0) {
+            console.log(`[DELETE CALLBACK] ✅ Found analog[${idx}] by label match`);
             removeSeriesForType("analog", idx);
-            renderComtradeCharts(
-              cfg,
-              data,
-              chartsContainer,
-              charts,
-              verticalLinesX,
-              createState,
-              calculateDeltas,
-              TIME_UNIT,
-              channelState
-            );
+            triggerRebuild();
             return;
           } else {
             idx = channelState.digital.yLabels.indexOf(row.id ?? row.name);
             if (idx >= 0) {
+              console.log(`[DELETE CALLBACK] ✅ Found digital[${idx}] by label match`);
               removeSeriesForType("digital", idx);
-              renderComtradeCharts(
-                cfg,
-                data,
-                chartsContainer,
-                charts,
-                verticalLinesX,
-                createState,
-                calculateDeltas,
-                TIME_UNIT,
-                channelState
-              );
+              triggerRebuild();
               return;
             }
           }
+          console.warn(`[DELETE CALLBACK] ❌ Could not find channel to delete`);
         }
         break;
       }
